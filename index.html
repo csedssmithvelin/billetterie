@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"LjTTd4kESPwwcBfqLQ5+KQ==","iv":"Nr67QYWlipXoWzTx","rev":"boot","lastModified":"2026-11-23T15:56:39.033Z","by":"Michaël GROSJEAN","data":"WesyjthVO0wtmsu28F7jl7bCOhDfUcgRdtxKH16y5U0UyunhAx9DX4RZa6CONXVQORBMQl8ynanqD+qqSoKyGQ=="},"at":"2026-11-23T15:56:39.067Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"PaNvOuOCKd/L6fO7bzw5sg==","iv":"lBpIt7MSl007IM/1","rev":"boot","lastModified":"2026-11-23T16:30:18.986Z","by":"Michaël GROSJEAN","data":"UavawmRz8RDBcJPUAAN8CtMhhuynOvVqK0zW9TpJLyNyPG+WwBPQR7molOkkMRLO8GtWCj5MDcrMFOEzFnYudQ=="},"at":"2026-11-23T16:30:19.017Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6935,7 +6935,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.6.7";
+        const APP_VERSION = "V.6.8";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21693,6 +21693,13 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.6.8', date: '2026-11-23', items: [
+                "🔄 Documents du CSE / Textes & accords : bouton « Actualiser depuis le Drive » qui propose les nouveaux PV, ordres du jour, accords… déposés dans les dossiers du CSE (connexion Google requise). Un document retiré de la liste n'est plus reproposé.",
+                "📅 Réunions : la fiche d'une réunion affiche la convocation, l'ordre du jour et le PV du Drive de la même date, avec « Utiliser comme lien du PV ». La liste des réunions indique celles qui ont des documents.",
+                "📎 Budget › Banque : bouton « Justificatifs Drive » qui relie les PDF nommés « JJ-MM-AAAA Libellé 12.50€ » aux factures et dépenses de même montant (date à 5 jours près), après vérification.",
+                "💳 Caisse : « Encaisser par carte (SumUp) » ouvre l'appli SumUp du téléphone avec le montant rempli ; en permanence, un bouton SumUp apparaît quand le paiement est « Carte ». Réglage : clé d'affiliation SumUp.",
+                "⚡ Appli en ligne : la page n'est plus retéléchargée en entier à chaque ouverture quand elle n'a pas changé (ouverture plus rapide sur téléphone)."
+            ] },
             { v: 'V.6.7', date: '2026-11-23', items: [
                 "🔎 Documents du CSE et Textes & accords : nouvelle barre « Chercher dans le texte des documents » qui lance la recherche Google Drive (elle lit l'intérieur des PDF, même scannés).",
                 "📚 Documents du CSE et Textes & accords : un bandeau propose d'ajouter en un clic les documents trouvés sur le Google Drive du CSE (PV, ordres du jour, convocations, rapports ECAM et avis, règlement intérieur, accords d'entreprise, convention collective et avenants, PV de NAO), avec leur date et leur lien. Les fichiers restent sur le Drive."
@@ -39637,6 +39644,7 @@ function v65YcExtra(y, I) {
         if (!r.ok) { var m = 'Google Drive : erreur ' + r.status; try { var j = await r.json(); m = (j.error && j.error.message) || m; } catch (e) {} throw new Error(m); }
         return r.status === 204 ? null : r.json();
     }
+    window.cseDriveApi = api; window.cseDriveIsConnected = connected;
     function cur() { return stack.length ? stack[stack.length - 1] : { id: folderId(), name: 'Drive du CSE' }; }
     var qs = function (t) { return String(t).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); };
     async function load() {
@@ -40027,7 +40035,7 @@ function v65YcExtra(y, I) {
   function url(r){return r[4]?'https://drive.google.com/drive/folders/'+r[3]:'https://drive.google.com/file/d/'+r[3]+'/view';}
   function E(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function docs(k){db.cseDocs=db.cseDocs||{};return db.cseDocs[k];}
-  function missing(k){var d=docs(k),have={};((d&&d.items)||[]).forEach(function(x){var m=/[-\w]{25,}/.exec(x.url||'');if(m)have[m[0]]=1;});return CAT[k].filter(function(r){return !have[r[3]];});}
+  function missing(k){var d=docs(k),have={};((d&&d.items)||[]).forEach(function(x){var m=/[-\w]{25,}/.exec(x.url||'');if(m)have[m[0]]=1;});((d&&d.ignored)||[]).forEach(function(i){have[i]=1;});return CAT[k].filter(function(r){return !have[r[3]];});}
   function hidden(k){try{return localStorage.getItem('cse_drivecat_hide_'+k)==='1';}catch(e){return false;}}
   window.cseDriveCatImport=function(tab){var k=TAB[tab];if(!k)return;
     window.cdRender&&window.cdRender.__orig&&window.cdRender.__orig(tab);/* crée la structure si besoin */
@@ -40053,6 +40061,376 @@ function v65YcExtra(y, I) {
   function hook(){if(typeof window.cdRender!=='function'||window.cdRender.__v67)return !!(window.cdRender&&window.cdRender.__v67);var o=window.cdRender;
     var w=function(tab){var r=o.apply(this,arguments);try{ftBar(tab);}catch(e){console.warn(e);}try{banner(tab);}catch(e){console.warn(e);}return r;};w.__v67=1;w.__orig=o;window.cdRender=w;return true;}
   if(!hook())document.addEventListener('DOMContentLoaded',hook);
+})();
+</script>
+<script id="v68-ameliorations">
+/* V.6.8 — Actualiser les documents depuis le Drive, documents dans les réunions,
+   justificatifs du Drive retrouvés par date + montant, caisse SumUp (carte). */
+(function () {
+  function E(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function say(m, t) { try { toast(m, t || 'info', { ms: 6000 }); } catch (e) { } }
+  function strip(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+  function did(u) { var m = /[-\w]{25,}/.exec(u || ''); return m ? m[0] : ''; }
+  function eur(n) { try { return formatEuro(n); } catch (e) { return (Math.round(n * 100) / 100) + ' €'; } }
+  function fdate(d) { try { return formatDateDisplay(d); } catch (e) { return d; } }
+  function modal(id, title, icon) { return v59Modal(id, title, icon); }
+  function closeModal(id) { var m = document.getElementById(id); if (m) m.classList.add('hidden'); }
+
+  // ------------------------------------------------------------------
+  // Connexion Google Drive (celle de l'onglet Documents › Google Drive)
+  // ------------------------------------------------------------------
+  async function driveReady() {
+    if (typeof window.cseDriveIsConnected === 'function' && window.cseDriveIsConnected()) return true;
+    var cid = db.config && String(db.config.googleClientId || '').trim();
+    if (!cid) {
+      if (await uiConfirm('Pour lire le Google Drive, la connexion Google doit être réglée une fois (identifiant client Google, étape 4 du guide). Ouvrir l\'onglet Google Drive pour la régler ?', { okLabel: 'Ouvrir', cancelLabel: 'Plus tard' })) switchTab('drive');
+      return false;
+    }
+    if (typeof window.cseDriveConnect !== 'function') return false;
+    return !!(await window.cseDriveConnect());
+  }
+  async function listAll(q, fields) {
+    var out = [], tok = '', n = 0;
+    do {
+      var j = await window.cseDriveApi('files?q=' + encodeURIComponent(q) + '&fields=' + encodeURIComponent('nextPageToken,files(' + fields + ')') + '&pageSize=1000&supportsAllDrives=true&includeItemsFromAllDrives=true' + (tok ? '&pageToken=' + encodeURIComponent(tok) : ''));
+      out = out.concat(j.files || []); tok = j.nextPageToken || ''; n++;
+    } while (tok && n < 30);
+    return out;
+  }
+
+  // ------------------------------------------------------------------
+  // 1) Documents du CSE / Textes & accords : « Actualiser depuis le Drive »
+  // ------------------------------------------------------------------
+  var ROOTS = { cse: ['1uLVV_4mTko9s7bKF-j_mR-ukg54XRlWK', '1VNzN3oyVsLmE9dthcFK8nlI0obPLGJZ1'], legal: ['1RWk6oxpc5DsWWL5YuN4MgjI87DHob9sR', '1YCUdfsW0RsP9pXigF2pjW1Bti6ecCnYj', '1dm8TxSM-dNyEnFJqA5oJoX9u5wWv7tl6'] };
+  var BRANCHE = { '1YCUdfsW0RsP9pXigF2pjW1Bti6ecCnYj': 1 };
+  var TABK = { csedocs: 'cse', legaldocs: 'legal' };
+  var MOIS = ['janvier', 'fevrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'decembre'];
+  function okd(y, m, d) { return y >= 1990 && y <= 2035 && m >= 1 && m <= 12 && d >= 1 && d <= 31; }
+  function p2(n) { return (n < 10 ? '0' : '') + n; }
+  function parseDate(t) {
+    var s = strip(t), m;
+    m = new RegExp('(\\d{1,2}) (' + MOIS.join('|') + ') (20\\d\\d)').exec(s); if (m) return m[3] + '-' + p2(MOIS.indexOf(m[2]) + 1) + '-' + p2(+m[1]);
+    m = /(20\d\d)[ _-]?(\d\d)[ _-]?(\d\d)/.exec(s); if (m && okd(+m[1], +m[2], +m[3]) && +m[1] >= 2016) return m[1] + '-' + m[2] + '-' + m[3];
+    m = /(?:^|\D)(\d\d)[ ._-]?(\d\d)[ ._-]?(20\d\d|\d\d)(?!\d)/.exec(s);
+    if (m) {
+      var d = +m[1], mo = +m[2], y = +m[3]; y = y > 100 ? y : 2000 + y;
+      if (okd(y, mo, d) && y >= 2016) return y + '-' + p2(mo) + '-' + p2(d);
+      if (m[3].length === 2 && okd(2000 + d, mo, +m[3])) return (2000 + d) + '-' + p2(mo) + '-' + p2(+m[3]);
+    }
+    m = new RegExp('(' + MOIS.join('|') + ') (20\\d\\d)').exec(s); if (m) return m[2] + '-' + p2(MOIS.indexOf(m[1]) + 1) + '-01';
+    return '';
+  }
+  var SKIP = /(untitled|participants|ilovepdf|\.smbdelete|^projet |liste de postes|avis de retraite|\.zip$|\.msg$)/;
+  function classify(k, f, rootOf) {
+    var t = strip(f.name);
+    if (SKIP.test(t) || /^image\//.test(f.mimeType) || /^video\//.test(f.mimeType)) return null;
+    var sec = (/secu|ssct/.test(t)) ? ' (sécurité / SSCT)' : (/extra/.test(t) ? ' (extraordinaire)' : '');
+    if (k === 'cse') {
+      if (/^pv/.test(t)) return ['Procès-verbaux', /sign/.test(t) ? 'PV signé' : 'Réunion' + sec];
+      if (/avis|rapport|ecam/.test(t)) return ['Consultations et avis', 'Consultation annuelle'];
+      if (/odj|ordre du jour|orj/.test(t)) return ['Ordres du jour', (/convoc/.test(t) ? 'Convocation + ordre du jour' : 'Ordre du jour') + sec];
+      if (/convoc/.test(t)) return ['Convocations', 'Convocation' + sec];
+      if (/^cse (du )?\d/.test(t)) return ['Comptes rendus', 'Document de la réunion du CSE'];
+      if (/annexe/.test(t)) return ['Autres', 'Documents annexes de réunion'];
+      if (/bilan/.test(t)) return ['Consultations et avis', 'Bilan'];
+      return ['Autres', 'Document du CSE'];
+    }
+    if (/^ri |reglement interieur/.test(t)) return ['Règlement intérieur', 'Règlement intérieur du CSE'];
+    if (/nao/.test(t)) return ['NAO', 'Négociation annuelle obligatoire'];
+    if (rootOf === '1dm8TxSM-dNyEnFJqA5oJoX9u5wWv7tl6') return ['NAO', 'Négociation annuelle obligatoire'];
+    if (BRANCHE[rootOf]) return ['Convention collective', /ccn/.test(t) ? 'Texte de la convention collective' : 'Convention collective / avenant de branche'];
+    return ["Accords d'entreprise", /avenant/.test(t) ? 'Avenant' : 'Accord DSSP Velin'];
+  }
+  function docsOf(k) { db.cseDocs = db.cseDocs || {}; return db.cseDocs[k]; }
+  function ignored(k) { var d = docsOf(k); return (d && d.ignored) || []; }
+  window.cseDocIgnored = ignored;
+  var FOUND = null;
+  window.cseDocsRefresh = async function (tab) {
+    var k = TABK[tab]; if (!k) return;
+    if (!(await driveReady())) return;
+    var b = modal('modal-v68-refresh', 'Nouveaux documents sur le Drive', 'fa-rotate');
+    b.innerHTML = '<p class="text-slate-600"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Lecture des dossiers du Drive…</p>';
+    try {
+      var files = [], seenF = {}, queue = ROOTS[k].map(function (r) { return { id: r, root: r }; }), n = 0;
+      while (queue.length && n < 400) {
+        var cur = queue.shift(); if (seenF[cur.id]) continue; seenF[cur.id] = 1; n++;
+        var L = await listAll("'" + cur.id + "' in parents and trashed=false", 'id,name,mimeType,modifiedTime');
+        L.forEach(function (f) {
+          if (f.mimeType === 'application/vnd.google-apps.folder') { if (!/ilovepdf/i.test(f.name)) queue.push({ id: f.id, root: cur.root }); }
+          else { f.root = cur.root; files.push(f); }
+        });
+        if (n % 10 === 0) b.innerHTML = '<p class="text-slate-600"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Lecture des dossiers du Drive… (' + n + ' dossiers, ' + files.length + ' fichiers)</p>';
+      }
+      var d = docsOf(k) || { items: [] }, have = {}, titles = {};
+      (d.items || []).forEach(function (x) { var i = did(x.url); if (i) have[i] = 1; titles[strip(x.title).replace(/\s+/g, '')] = 1; });
+      ignored(k).forEach(function (i) { have[i] = 1; });
+      var neu = [];
+      files.forEach(function (f) {
+        if (have[f.id]) return;
+        var c = classify(k, f, f.root); if (!c) return;
+        var title = f.name.replace(/\.(pdf|docx?|pptx?|xlsx?)$/i, '').replace(/\s+/g, ' ').trim(), key = strip(title).replace(/\s+/g, '');
+        if (titles[key]) return; titles[key] = 1;
+        neu.push({ id: f.id, title: title, cat: c[0], note: c[1], date: parseDate(f.name), url: 'https://drive.google.com/file/d/' + f.id + '/view' });
+      });
+      neu.sort(function (a, c) { return String(c.date).localeCompare(String(a.date)); });
+      FOUND = { tab: tab, k: k, list: neu };
+      if (!neu.length) { b.innerHTML = '<p class="text-emerald-700 font-semibold"><i class="fa-solid fa-check mr-1"></i> Rien de nouveau : tous les documents du Drive (' + files.length + ' fichiers lus) sont déjà dans la liste.</p>'; return; }
+      b.innerHTML = '<p class="text-slate-600">' + neu.length + ' document(s) du Drive ne sont pas encore dans la liste. Décochez ceux que vous ne voulez pas : ils ne seront plus proposés.</p>'
+        + '<div class="border border-slate-200 rounded-xl divide-y divide-slate-100">' + neu.map(function (x, i) {
+          return '<label class="flex items-center gap-3 p-2"><input type="checkbox" data-v68n="' + i + '" checked><span class="flex-1 min-w-0"><span class="font-semibold text-slate-800 block truncate">' + E(x.title) + '</span><span class="text-[11px] text-slate-500">' + E(x.cat) + ' · ' + (x.date ? fdate(x.date) : 'sans date') + '</span></span></label>';
+        }).join('') + '</div>'
+        + '<div class="flex gap-2"><button type="button" class="' + V59_BTNP + '" onclick="cseDocsRefreshApply()"><i class="fa-solid fa-plus"></i> Ajouter les documents cochés</button><button type="button" class="' + V59_BTN + '" onclick="document.querySelectorAll(\'[data-v68n]\').forEach(function(c){c.checked=!c.checked})">Inverser la sélection</button></div>';
+    } catch (e) { b.innerHTML = '<p class="text-rose-700 font-semibold">✖ ' + E(e.message) + '</p>'; }
+  };
+  window.cseDocsRefreshApply = function () {
+    if (!FOUND) return; var d = docsOf(FOUND.k); if (!d) return;
+    var add = 0, ign = 0; d.ignored = d.ignored || [];
+    document.querySelectorAll('[data-v68n]').forEach(function (c) {
+      var x = FOUND.list[+c.getAttribute('data-v68n')]; if (!x) return;
+      if (c.checked) { if (d.cats.indexOf(x.cat) < 0) d.cats.push(x.cat); d.items.push({ id: 'drv' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), title: x.title, cat: x.cat, date: x.date, url: x.url, note: x.note }); add++; }
+      else if (d.ignored.indexOf(x.id) < 0) { d.ignored.push(x.id); ign++; }
+    });
+    try { logAction('Modification', 'documents', add + ' document(s) ajouté(s) depuis le Google Drive' + (ign ? ', ' + ign + ' ignoré(s)' : '')); } catch (e) { }
+    saveDB(); closeModal('modal-v68-refresh'); window.cdRender(FOUND.tab);
+  };
+  // Un document retiré de la liste n'est plus reproposé (bandeau ou actualisation).
+  function hookDel() {
+    if (typeof window.cdDel !== 'function' || window.cdDel.__v68) return;
+    var o = window.cdDel;
+    var w = async function (tab, id) {
+      var k = TABK[tab], d = k && docsOf(k), x = d && (d.items || []).filter(function (i) { return i.id === id; })[0], u = x && did(x.url);
+      var r = await o.apply(this, arguments);
+      try { if (u && d && !(d.items || []).some(function (i) { return i.id === id; })) { d.ignored = d.ignored || []; if (d.ignored.indexOf(u) < 0) { d.ignored.push(u); saveDB(); } } } catch (e) { }
+      return r;
+    };
+    w.__v68 = 1; window.cdDel = w;
+  }
+  // Bouton dans la barre de recherche des deux onglets
+  function hookDocs() {
+    if (typeof window.cdRender !== 'function' || window.cdRender.__v68) return;
+    var o = window.cdRender;
+    var w = function (tab) {
+      var r = o.apply(this, arguments);
+      try {
+        var bar = document.getElementById('v67-ftbar-' + tab);
+        if (bar && !bar.querySelector('[data-v68r]')) {
+          var bt = document.createElement('button'); bt.type = 'button'; bt.setAttribute('data-v68r', '1');
+          bt.className = 'px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold';
+          bt.innerHTML = '<i class="fa-solid fa-rotate"></i> Actualiser depuis le Drive'; bt.title = 'Ajoute les nouveaux documents déposés dans les dossiers du CSE sur Google Drive';
+          bt.onclick = function () { cseDocsRefresh(tab); }; bar.appendChild(bt);
+        }
+      } catch (e) { console.warn(e); }
+      return r;
+    };
+    for (var p in o) w[p] = o[p]; w.__v68 = 1; window.cdRender = w;
+  }
+
+  // ------------------------------------------------------------------
+  // 2) Réunions : convocation, ordre du jour et PV du Drive de la même date
+  // ------------------------------------------------------------------
+  function meetDocs(date) {
+    if (!date || !db.cseDocs || !db.cseDocs.cse) return [];
+    return (db.cseDocs.cse.items || []).filter(function (x) { return x.date === date; }).sort(function (a, b) { return String(a.cat).localeCompare(String(b.cat)); });
+  }
+  window.cseMeetUsePv = function (url) { if (typeof mtDraft !== 'undefined' && mtDraft) { mtDraft.pv = mtDraft.pv || {}; mtDraft.pv.link = url; if (typeof mtRefresh === 'function') mtRefresh(); say('Lien du PV rempli : pensez à enregistrer la réunion.', 'success'); } };
+  function hookMeetings() {
+    if (typeof window.mtFormHtml === 'function' && !window.mtFormHtml.__v68) {
+      var of = window.mtFormHtml;
+      window.mtFormHtml = function () {
+        var h = of.apply(this, arguments);
+        try {
+          var m = mtDraft, L = meetDocs(m && m.date);
+          var sec = '<div class="rounded-xl border border-slate-200 p-3 space-y-2"><p class="text-xs font-bold text-slate-700"><i class="fa-brands fa-google-drive text-amber-500 mr-1"></i>Documents du Drive pour cette date</p>'
+            + (L.length ? '<ul class="divide-y divide-slate-100">' + L.map(function (x) {
+              var pv = x.cat === 'Procès-verbaux' && !(m.pv && m.pv.link);
+              return '<li class="py-1.5 flex flex-wrap items-center gap-2"><span class="text-[11px] font-bold text-slate-500 w-28">' + E(x.cat) + '</span><span class="flex-1 min-w-[160px] text-xs font-semibold text-slate-800 truncate">' + E(x.title) + '</span><a href="' + E(x.url) + '" target="_blank" rel="noopener" class="px-2 py-1 rounded-lg bg-brand-600 text-white text-[11px] font-bold">Ouvrir</a>'
+                + (pv ? '<button type="button" onclick="cseMeetUsePv(\'' + E(x.url) + '\')" class="px-2 py-1 rounded-lg border border-slate-300 text-[11px] font-bold text-slate-700">Utiliser comme lien du PV</button>' : '') + '</li>';
+            }).join('') + '</ul>' : '<p class="text-[11px] text-slate-500">Aucun document daté du ' + E(fdate(m.date)) + ' dans « Documents du CSE ».</p>') + '</div>';
+          var mark = '<div class="rounded-xl border border-slate-200 p-3 space-y-2"><p class="text-xs font-bold text-slate-700">Procès-verbal</p>';
+          h = h.indexOf(mark) >= 0 ? h.replace(mark, sec + mark) : h + sec;
+        } catch (e) { console.warn(e); }
+        return h;
+      };
+      window.mtFormHtml.__v68 = 1;
+    }
+    if (typeof window.mtRender === 'function' && !window.mtRender.__v68) {
+      var orr = window.mtRender;
+      window.mtRender = function () {
+        var r = orr.apply(this, arguments);
+        try {
+          document.querySelectorAll('#inst-meetings button[onclick^="mtOpen(\'"]').forEach(function (bt) {
+            var id = (/mtOpen\('([^']*)'\)/.exec(bt.getAttribute('onclick')) || [])[1];
+            var m = (db.meetings || []).filter(function (x) { return String(x.id) === id; })[0]; if (!m) return;
+            var L = meetDocs(m.date); if (!L.length) return;
+            var zone = bt.lastElementChild; if (!zone || zone.querySelector('[data-v68m]')) return;
+            var s = document.createElement('span'); s.setAttribute('data-v68m', '1'); s.className = 'pill pill-ok'; s.setAttribute('data-keep-color', '');
+            s.innerHTML = '<i class="fa-brands fa-google-drive"></i> ' + L.length + ' doc' + (L.length > 1 ? 's' : '') + ' Drive'; zone.appendChild(s);
+          });
+        } catch (e) { console.warn(e); }
+        return r;
+      };
+      window.mtRender.__v68 = 1;
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // 4) Justificatifs du Drive retrouvés par date et montant
+  //    (fichiers nommés « JJ-MM-AAAA Libellé 123.45€.pdf »)
+  // ------------------------------------------------------------------
+  var RX = /^(\d{2})-(\d{2})-(\d{4})\s+(.+?)\s+(\d+(?:[.,]\d{1,2})?)\s*€/;
+  function days(a, b) { return Math.abs((new Date(a + 'T12:00:00') - new Date(b + 'T12:00:00')) / 864e5); }
+  function iso(d) { try { return ccIso(d) || ''; } catch (e) { return String(d || '').slice(0, 10); } }
+  var MATCH = null;
+  window.cseReceiptsMatch = async function () {
+    if (typeof reconCanEdit === 'function' && !reconCanEdit()) { try { rbacToast('Votre rôle ne permet pas de modifier le budget.'); } catch (e) { } return; }
+    if (!(await driveReady())) return;
+    var b = modal('modal-v68-receipts', 'Justificatifs du Drive (date + montant)', 'fa-paperclip');
+    b.innerHTML = '<p class="text-slate-600"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Recherche des PDF du Drive…</p>';
+    try {
+      var files = (await listAll("mimeType='application/pdf' and trashed=false", 'id,name,webViewLink')).map(function (f) {
+        var m = RX.exec(f.name); if (!m || !okd(+m[3], +m[2], +m[1])) return null;
+        return { id: f.id, name: f.name, url: f.webViewLink || ('https://drive.google.com/file/d/' + f.id + '/view'), date: m[3] + '-' + m[2] + '-' + m[1], amount: Math.round(parseFloat(m[5].replace(',', '.')) * 100) };
+      }).filter(Boolean);
+      var usedUrl = {}; (db.attachments || []).forEach(function (a) { var i = did(a.url); if (i) usedUrl[i] = 1; });
+      files = files.filter(function (f) { return !usedUrl[f.id]; });
+      var targets = [];
+      (db.supplierInvoices || []).forEach(function (i) {
+        if (typeof docsFor === 'function' && docsFor('supplierInvoice', i.id).length) return;
+        var a = Math.round(Math.abs(Number(i.amount) || 0) * 100); if (!a) return;
+        targets.push({ type: 'supplierInvoice', id: i.id, amount: a, dates: [iso(i.paidDate), iso(i.date)].filter(Boolean), label: ((i.supplierId ? 'Facture ' : 'Note de frais ') + (i.number || '') + ' — ' + (typeof supPartyName === 'function' ? supPartyName(i) : '')).trim() });
+      });
+      (db.budgetEntries || []).forEach(function (e) {
+        if (e.type !== 'expense' || e.supplierInvoiceId != null || e.transfer) return;
+        if (typeof budgetEntrySources === 'function' && typeof docsFor === 'function' && budgetEntrySources(e).some(function (s) { return docsFor(s.entityType, s.entityId).length; })) return;
+        var a = Math.round(Math.abs(Number(e.amount) || 0) * 100); if (!a) return;
+        targets.push({ type: 'budgetEntry', id: e.id, amount: a, dates: [iso(e.date)].filter(Boolean), label: 'Dépense ' + (e.label || e.category || '') });
+      });
+      var byAmt = {}; files.forEach(function (f) { (byAmt[f.amount] = byAmt[f.amount] || []).push(f); });
+      var props = [], taken = {};
+      targets.map(function (t) {
+        var best = null, tie = false;
+        (byAmt[t.amount] || []).forEach(function (f) {
+          var dd = Math.min.apply(null, t.dates.map(function (x) { return days(x, f.date); }));
+          if (dd > 5) return;
+          if (!best || dd < best.dd) { best = { f: f, dd: dd }; tie = false; } else if (dd === best.dd) tie = true;
+        });
+        return best && !tie ? { t: t, f: best.f, dd: best.dd } : null;
+      }).filter(Boolean).sort(function (a, c) { return a.dd - c.dd; }).forEach(function (p) { if (taken[p.f.id]) return; taken[p.f.id] = 1; props.push(p); });
+      MATCH = props;
+      if (!props.length) { b.innerHTML = '<p class="text-slate-600">Aucune correspondance trouvée : ' + files.length + ' PDF « date + montant » lus sur le Drive, ' + targets.length + ' dépense(s) sans justificatif dans l\'appli. Il faut le même montant et une date à 5 jours près.</p>'; return; }
+      b.innerHTML = '<p class="text-slate-600">' + props.length + ' justificatif(s) trouvé(s) sur le Drive : même montant, date à 5 jours près. Vérifiez puis validez : le lien Drive est ajouté à la dépense, le fichier ne bouge pas.</p>'
+        + '<div class="border border-slate-200 rounded-xl divide-y divide-slate-100">' + props.map(function (p, i) {
+          return '<label class="flex items-start gap-3 p-2"><input type="checkbox" class="mt-1" data-v68j="' + i + '" checked><span class="flex-1 min-w-0"><span class="font-semibold text-slate-800 block">' + E(p.t.label) + ' · ' + eur(p.t.amount / 100) + '</span><span class="text-[11px] text-slate-500 block truncate"><i class="fa-brands fa-google-drive mr-1"></i>' + E(p.f.name) + (p.dd ? ' (' + p.dd + ' j d\'écart)' : '') + '</span></span><a href="' + E(p.f.url) + '" target="_blank" rel="noopener" class="text-[11px] font-bold text-brand-700">Voir</a></label>';
+        }).join('') + '</div><button type="button" class="' + V59_BTNP + '" onclick="cseReceiptsApply()"><i class="fa-solid fa-link"></i> Relier les justificatifs cochés</button>';
+    } catch (e) { b.innerHTML = '<p class="text-rose-700 font-semibold">✖ ' + E(e.message) + '</p>'; }
+  };
+  window.cseReceiptsApply = function () {
+    if (!MATCH) return; var n = 0;
+    document.querySelectorAll('[data-v68j]').forEach(function (c) {
+      if (!c.checked) return; var p = MATCH[+c.getAttribute('data-v68j')]; if (!p) return;
+      if (typeof driveAttach === 'function' && driveAttach(p.t.type, p.t.id, p.f.name, p.f.url)) n++;
+    });
+    try { logAction('Modification', 'attachment', n + ' justificatif(s) du Google Drive relié(s) par date et montant'); } catch (e) { }
+    saveDB(); closeModal('modal-v68-receipts');
+    try { if (typeof renderAll === 'function') renderAll(); else if (typeof switchTab === 'function') switchTab(rbacActiveTabIdSafe ? rbacActiveTabIdSafe() : 'budget'); } catch (e) { }
+  };
+  function addReceiptsBtn() {
+    var src = document.querySelector('button[onclick="driveSetupOpen()"]');
+    if (!src || document.getElementById('v68-receipts-btn')) return;
+    var bt = document.createElement('button'); bt.type = 'button'; bt.id = 'v68-receipts-btn'; bt.className = src.className;
+    bt.title = 'Relie les PDF du Drive nommés « JJ-MM-AAAA Libellé 12.50€ » aux dépenses de même montant et de même date';
+    bt.innerHTML = '<i class="fa-solid fa-paperclip"></i> Justificatifs Drive';
+    bt.onclick = function () { cseReceiptsMatch(); };
+    src.parentNode.insertBefore(bt, src.nextSibling);
+  }
+
+  // ------------------------------------------------------------------
+  // 6) Caisse : encaisser par carte avec l'appli SumUp du téléphone
+  // ------------------------------------------------------------------
+  function sumCfg() { var c = db.config || {}; return { key: String(c.sumupAffiliateKey || '').trim(), app: String(c.sumupAppId || '').trim() }; }
+  window.cseSumupSetup = function () {
+    var c = sumCfg(), b = modal('modal-v68-sumup', 'Encaisser par carte avec SumUp', 'fa-credit-card');
+    b.innerHTML = '<p class="text-slate-600">L\'appli CSE ouvre l\'appli <b>SumUp</b> du téléphone avec le montant déjà rempli. Vous présentez le lecteur de carte, puis SumUp revient sur l\'appli CSE avec le résultat. Cela marche sur le téléphone (Android ou iPhone) où l\'appli SumUp est installée et connectée au compte du CSE.</p>'
+      + '<ol class="list-decimal pl-5 space-y-1 text-slate-600"><li>Sur <b>me.sumup.com</b> (compte du CSE) : Paramètres › Pour les développeurs › <b>Clés d\'affiliation</b> › créer une clé.</li><li>Dans « Identifiants d\'application », ajoutez l\'adresse de l\'appli en ligne (par ex. <b>' + E(location.host || 'csedssmithvelin.github.io') + '</b>).</li><li>Collez la clé ici et enregistrez.</li></ol>'
+      + '<label class="block space-y-1"><span class="font-semibold text-slate-600">Clé d\'affiliation SumUp</span><input id="v68-sk" class="w-full p-2 bg-slate-50 border rounded-lg" value="' + E(c.key) + '" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"></label>'
+      + '<label class="block space-y-1"><span class="font-semibold text-slate-600">Identifiant d\'application (celui déclaré chez SumUp)</span><input id="v68-sa" class="w-full p-2 bg-slate-50 border rounded-lg" value="' + E(c.app || location.host || '') + '"></label>'
+      + '<button type="button" class="' + V59_BTNP + '" onclick="cseSumupSave()"><i class="fa-solid fa-check"></i> Enregistrer</button>';
+  };
+  window.cseSumupSave = function () {
+    var k = (document.getElementById('v68-sk') || {}).value || '', a = (document.getElementById('v68-sa') || {}).value || '';
+    if (!k.trim()) { say('Collez la clé d\'affiliation SumUp.', 'warning'); return; }
+    db.config = db.config || {}; db.config.sumupAffiliateKey = k.trim(); db.config.sumupAppId = a.trim();
+    try { logAction('Modification', 'config', 'Paiement par carte SumUp configuré'); } catch (e) { }
+    saveDB(); closeModal('modal-v68-sumup'); say('SumUp configuré pour tous les PC et téléphones ✔', 'success'); cashCard();
+  };
+  window.cseSumupPay = function (amount, title) {
+    amount = Math.round((Number(amount) || 0) * 100) / 100;
+    if (!(amount > 0)) { say('Indiquez un montant à encaisser.', 'warning'); return; }
+    var c = sumCfg(); if (!c.key) { cseSumupSetup(); return; }
+    if (!/android|iphone|ipad/i.test(navigator.userAgent)) say('À faire depuis le téléphone où l\'appli SumUp est installée.', 'warning');
+    var back = location.origin + location.pathname;
+    try { localStorage.setItem('cse_sumup_pending', JSON.stringify({ amount: amount, title: title || '', at: Date.now() })); } catch (e) { }
+    location.href = 'sumupmerchant://pay/1.0?affiliate-key=' + encodeURIComponent(c.key) + '&app-id=' + encodeURIComponent(c.app || location.host)
+      + '&total=' + amount.toFixed(2) + '&currency=EUR&title=' + encodeURIComponent(title || 'CSE Velin') + '&callback=' + encodeURIComponent(back);
+  };
+  function sumupReturn() {
+    var q = new URLSearchParams(location.search), st = q.get('smp-status'); if (!st) return;
+    var p = null; try { p = JSON.parse(localStorage.getItem('cse_sumup_pending') || 'null'); localStorage.removeItem('cse_sumup_pending'); } catch (e) { }
+    var res = { status: st, tx: q.get('smp-tx-code') || '', msg: q.get('smp-message') || '', amount: p && p.amount, title: p && p.title, at: Date.now() };
+    try { localStorage.setItem('cse_sumup_last', JSON.stringify(res)); } catch (e) { }
+    try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { }
+    setTimeout(function () { showResult(res); }, 2500);
+  }
+  function showResult(r) {
+    if (!r) return;
+    if (r.status === 'success') say('✔ Paiement SumUp accepté' + (r.amount ? ' : ' + eur(r.amount) : '') + (r.tx ? ' (transaction ' + r.tx + ')' : '') + '. Validez maintenant la vente en « Carte ».', 'success');
+    else say('✖ Paiement SumUp non abouti' + (r.msg ? ' : ' + r.msg : '') + '. Rien n\'a été encaissé.', 'error');
+  }
+  window.addEventListener('storage', function (ev) { if (ev.key === 'cse_sumup_last' && ev.newValue) { try { showResult(JSON.parse(ev.newValue)); } catch (e) { } } });
+  function cashCard() {
+    var tab = document.getElementById('tab-cash'); if (!tab) return;
+    var el = document.getElementById('v68-sumup-card');
+    if (!el) { el = document.createElement('div'); el.id = 'v68-sumup-card'; tab.insertBefore(el, tab.firstChild); }
+    var on = !!sumCfg().key;
+    el.className = 'bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center gap-3';
+    el.innerHTML = '<div class="flex items-center gap-2 font-bold text-slate-800 text-sm"><i class="fa-solid fa-credit-card text-emerald-600"></i> Encaisser par carte (SumUp)</div>'
+      + '<input id="v68-sum-amt" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Montant €" class="w-full sm:w-32 p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm">'
+      + '<input id="v68-sum-lbl" type="text" placeholder="Pour quoi ? (ex. Sortie karting)" class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm">'
+      + '<button type="button" onclick="cseSumupPay(document.getElementById(\'v68-sum-amt\').value,document.getElementById(\'v68-sum-lbl\').value)" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold whitespace-nowrap">Encaisser avec SumUp</button>'
+      + '<button type="button" onclick="cseSumupSetup()" class="px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-xs font-bold" title="Réglages SumUp"><i class="fa-solid fa-gear"></i>' + (on ? '' : ' Régler') + '</button>';
+  }
+  function hookSale() {
+    if (typeof window.permSaleRender !== 'function' || window.permSaleRender.__v68) return;
+    var o = window.permSaleRender;
+    window.permSaleRender = function () {
+      var r = o.apply(this, arguments);
+      try {
+        var conf = document.getElementById('perm-sale-confirm'), ex = document.getElementById('v68-sumup-sale');
+        var total = (cartItems || []).reduce(function (s, ci) { var t = (db.tickets || []).filter(function (x) { return x.id === ci.ticketId; })[0]; return s + (t ? t.price * ci.qty : 0); }, 0);
+        if (permSale.method === 'Carte Bancaire' && total > 0 && conf) {
+          if (!ex) { ex = document.createElement('button'); ex.id = 'v68-sumup-sale'; ex.type = 'button'; ex.className = 'flex-1 px-4 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-2xl text-sm font-black shadow'; conf.parentNode.insertBefore(ex, conf); }
+          ex.innerHTML = '<i class="fa-solid fa-credit-card mr-1"></i> SumUp · ' + eur(total);
+          ex.onclick = function () { cseSumupPay(total, 'Billetterie CSE'); };
+        } else if (ex) ex.remove();
+      } catch (e) { console.warn(e); }
+      return r;
+    };
+    window.permSaleRender.__v68 = 1;
+  }
+
+  // ------------------------------------------------------------------
+  function init() {
+    hookDocs(); hookDel(); hookMeetings(); hookSale(); addReceiptsBtn();
+    try { cashCard(); } catch (e) { }
+  }
+  if (typeof window.switchTab === 'function' && !window.switchTab.__v68) {
+    var os = window.switchTab;
+    window.switchTab = function () { var r = os.apply(this, arguments); try { init(); } catch (e) { } return r; };
+    for (var p in os) window.switchTab[p] = os[p]; window.switchTab.__v68 = 1;
+  }
+  sumupReturn();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  setTimeout(init, 3000);
 })();
 </script>
 </body>
