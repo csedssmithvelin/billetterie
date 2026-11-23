@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"G70+ornU/OsXRvQrXTzgBQ==","iv":"/EBSqnHcvp4na8gs","rev":"boot","lastModified":"2026-11-23T18:22:21.908Z","by":"Michaël GROSJEAN","data":"JTtGv1yjkcigCpecOW0BU6C5tdSFD0FRJ7WrNqaLABCzipNZTvmQE9CJ1aWhoPxhQp7uQxMwmgC21cu9T0tKAQ=="},"at":"2026-11-23T18:22:21.948Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"QuIZnHtbHV22m6cgD/EfMg==","iv":"Zt1NkBkcq12wuDb3","rev":"boot","lastModified":"2026-11-23T18:23:50.634Z","by":"Michaël GROSJEAN","data":"0EAIkorI0GuGh/+bMMBlFK6mbBk3c8nRZCH6v3YjTo5jaOjKqLqd+xLwqirE3pYEXuZUa44ufnCGnIFjEN+hNw=="},"at":"2026-11-23T18:23:50.666Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21695,7 +21695,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         const CHANGELOG = [
             { v: 'V.7.3', date: '2026-11-23', items: [
                 "✅ Bouton « À faire » du menu : il amène bien à la liste des choses à faire (il visait un bloc masqué).",
-                "👥 Demandes des salariés et boîte à idées : accessibles à tous les membres du CSE (administrateur, trésorier, secrétaire, élu), pas à la permanence. Le journal note qui a accepté ou refusé."
+                "👥 Demandes des salariés et boîte à idées : accessibles à tous les membres du CSE (administrateur, trésorier, secrétaire, élu et permanence). Le journal note qui a accepté ou refusé."
             ] },
             { v: 'V.7.2', date: '2026-11-23', items: [
                 "⛺ Espace salarié : on choisit le matériel que les salariés peuvent réserver (le matériel réservé au CSE, micro, TPE, frigo…, n'apparaît plus).",
@@ -43224,8 +43224,8 @@ var qrcode = function() {
   function cfg() { db.config = db.config || {}; return db.config; }
   function scriptOk() { return typeof driveCfg === 'function' && !!driveCfg(); }
   function isAdmin() { try { return typeof rbacRole !== 'function' || rbacRole() === 'admin'; } catch (e) { return true; } }
-  // Membres du CSE (administrateur, trésorier, secrétaire, élu) : ils voient et traitent les demandes. Pas la permanence ni les invités.
-  function isCse() { try { return typeof rbacRole !== 'function' || ['admin', 'tresorier', 'secretaire', 'elu'].indexOf(rbacRole()) >= 0; } catch (e) { return true; } }
+  // Membres du CSE (administrateur, trésorier, secrétaire, élu, permanence) : ils voient et traitent les demandes. Pas les invités.
+  function isCse() { try { return typeof rbacRole !== 'function' || ['admin', 'tresorier', 'secretaire', 'elu', 'permanence'].indexOf(rbacRole()) >= 0; } catch (e) { return true; } }
   window.cseIsCseMember = isCse;
   function canWrite() { try { return typeof rbacHasAnyWrite !== 'function' || rbacHasAnyWrite(); } catch (e) { return true; } }
   function empName(e) { return e ? String(e.lastname || '').toUpperCase() + ' ' + (e.firstname || '') : 'Salarié inconnu'; }
