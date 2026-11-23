@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"/g6BPgUEtgo8/PvilAcqgA==","iv":"8lZVcmvrzEUd9Uo6","rev":"boot","lastModified":"2026-11-23T17:07:18.881Z","by":"Michaël GROSJEAN","data":"NEsAxIL7GceFpHy9Y/fyVlVzEjBenfarXPsYGSvIWrwRaIFp3lAcC6vOlFk04jJgbQF597+vcQK83BptA+6RxA=="},"at":"2026-11-23T17:07:18.914Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"XzFVW4e7XdEaEC+1HOC5Uw==","iv":"TY9lsn+8NMKefjZe","rev":"boot","lastModified":"2026-11-23T17:23:19.489Z","by":"Michaël GROSJEAN","data":"1JOL3txl1ddlurPmFaSl+8QKLqVd47lih6Iz1cJatMu0g+gwfeFZKjXTmvhvZ2UfG2KVyEV3QH86XV6UYjen+w=="},"at":"2026-11-23T17:23:19.524Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6935,7 +6935,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.6.8";
+        const APP_VERSION = "V.6.9";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -20505,7 +20505,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             // Ouverture directe via window.location : plus fiable que créer/cliquer/supprimer un <a>
             // (certaines combinaisons navigateur + client mail, dont Outlook, perdent le destinataire
             // si le lien est retiré du DOM immédiatement après le clic simulé).
-            window.location.href = url;
+            cseMailOpen(url);
             if (url.length > REMINDER_MAILTO_SOFT_LIMIT) setReminderFeedback('Messagerie ouverte. Message long : si le texte est tronqué, utilisez « Copier le message ».', 'warn');
             else setReminderFeedback(`Outlook ouvert pour ${reminderState.entries[reminderState.idx].name}. Vérifiez l'expéditeur : ${CSE_SENDER_EMAIL}.`);
             markReminderPrepared('mail ouvert');
@@ -21693,6 +21693,13 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.6.9', date: '2026-11-23', items: [
+                "📧 E-mails envoyés directement depuis la boîte Gmail du CSE (convocations, relances, reçus, billets, messages groupés) : l'appli montre le message, on relit, on envoie. Pièces jointes possibles. Paramètres › Sauvegardes › « Boîte mail du CSE, agenda et rappels ».",
+                "🗓️ Agenda Google « CSE Velin » rempli tout seul : réunions, permanences, sorties, consultations, événements du calendrier (mise à jour une fois par jour).",
+                "⏰ Rappels automatiques aux salariés à 8 h, même PC éteint : la veille d'une sortie, le jour de l'échéance d'un paiement puis 7 jours après (avec les liens de paiement). Désactivés tant qu'on ne les active pas.",
+                "💼 Tableau du trésorier (accueil et barre du téléphone) : soldes, à encaisser, retards, dépenses sans justificatif, opérations à rapprocher, paiements SumUp à vérifier.",
+                "Nécessite la nouvelle version du script Google du CSE (script-google-cse-v69.txt)."
+            ] },
             { v: 'V.6.8', date: '2026-11-23', items: [
                 "🔄 Documents du CSE / Textes & accords : bouton « Actualiser depuis le Drive » qui propose les nouveaux PV, ordres du jour, accords… déposés dans les dossiers du CSE (connexion Google requise). Un document retiré de la liste n'est plus reproposé.",
                 "📅 Réunions : la fiche d'une réunion affiche la convocation, l'ordre du jour et le PV du Drive de la même date, avec « Utiliser comme lien du PV ». La liste des réunions indique celles qui ont des documents.",
@@ -22687,7 +22694,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             const { batches } = gmBatches(g.recipients.map(r => r.email));
             const b = batches[i]; if (!b) return;
             const subject = document.getElementById('gm-subject').value || '', body = document.getElementById('gm-body').value || '';
-            window.location.href = `mailto:${CSE_SENDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\r?\n/g, '\r\n'))}&bcc=${b.map(encodeURIComponent).join(',')}`;
+            cseMailOpen(`mailto:${CSE_SENDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\r?\n/g, '\r\n'))}&bcc=${b.map(encodeURIComponent).join(',')}`);
             document.getElementById('gm-feedback').textContent = `Outlook ouvert${batches.length > 1 ? ` (lot ${i + 1}/${batches.length})` : ''} : vérifiez l'expéditeur (${CSE_SENDER_EMAIL}) puis envoyez.`;
             if (gmState && gmState.onSent) gmState.onSent(g, b);
         }
@@ -27692,7 +27699,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             // Ouverture directe via window.location : plus fiable que créer/cliquer/supprimer un <a>
             // (certaines combinaisons navigateur + client mail, dont Outlook, perdent le destinataire
             // si le lien est retiré du DOM immédiatement après le clic simulé).
-            window.location.href = url;
+            cseMailOpen(url);
             try { logAction('Édition', 'document', `${(dgDoc() || {}).title || 'Document'} — envoyé par mail`); } catch (e) {}
             dgMailFeedback(`Outlook ouvert avec le message prêt à partir. Vérifiez l'expéditeur (${CSE_SENDER_EMAIL}) et joignez le PDF avant l'envoi.`);
         }
@@ -30165,7 +30172,7 @@ Vous pouvez demander à consulter, corriger ou effacer vos données, ou vous opp
             // 2) Sinon : téléchargement des PDF + messagerie ouverte, fichiers à glisser à la main
             if (!emp || !emp.email) { toast('Ce salarié n\'a pas d\'e-mail dans sa fiche.', 'warning'); return; }
             files.forEach(a => { try { attachDownloadOne(a.id); } catch (e) {} });
-            window.location.href = `mailto:${encodeURIComponent(emp.email)}?subject=${encodeURIComponent('Vos billets — ' + (db.config.cseName || 'CSE'))}&body=${encodeURIComponent(body.replace(/\n/g, '\r\n'))}`;
+            cseMailOpen(`mailto:${encodeURIComponent(emp.email)}?subject=${encodeURIComponent('Vos billets — ' + (db.config.cseName || 'CSE'))}&body=${encodeURIComponent(body.replace(/\n/g, '\r\n'))}`);
             mark('e-mail');
         }
 
@@ -31338,7 +31345,7 @@ Vous pouvez demander à consulter, corriger ou effacer vos données, ou vous opp
             const m = mtDraft; if (!db.meetings.some(x => x.id === m.id)) { toast('Enregistrez d\'abord la réunion.', 'warning'); return; }
             const body = `Bonjour,\n\nVous êtes convoqué(e) à la ${(INST_TYPES[m.type] || 'réunion').toLowerCase()} du ${db.config.cseName || 'CSE'} le ${formatDateDisplay(m.date)}${m.time ? ' à ' + m.time : ''}${m.place ? ', ' + m.place : ''}.\n\nOrdre du jour :\n${mtAgendaText(m)}\n\n${mailClosing()}`;
             copyTextToClipboard(body).then(ok => { if (ok) toast('Convocation copiée : collez-la dans votre messagerie.', 'success'); });
-            window.location.href = `mailto:?subject=${encodeURIComponent('Convocation — ' + (m.title || INST_TYPES[m.type]) + ' du ' + formatDateDisplay(m.date))}&body=${encodeURIComponent(body.replace(/\n/g, '\r\n'))}`;
+            cseMailOpen(`mailto:?subject=${encodeURIComponent('Convocation — ' + (m.title || INST_TYPES[m.type]) + ' du ' + formatDateDisplay(m.date))}&body=${encodeURIComponent(body.replace(/\n/g, '\r\n'))}`);
             const saved = db.meetings.find(x => x.id === m.id); saved.convocationSentAt = todayLocalISO(); mtDraft.convocationSentAt = saved.convocationSentAt;
             logAction('Modification', 'meeting', `Convocation préparée : réunion du ${formatDateDisplay(m.date)}`); saveDB(); mtRefresh();
         }
@@ -32032,7 +32039,7 @@ try {
     var r=document.getElementById('printable-receipt'),txt=r?r.innerText.replace(/^Exemplaire.*$/mi,'').replace(/\n{3,}/g,'\n\n').trim():'';
     var d=(document.getElementById('rec-date')||{}).textContent||'';
     var body='Bonjour '+e.firstname+',\n\nVoici le récapitulatif de votre reçu :\n\n'+txt.slice(0,1400)+'\n\n'+mailClosing();
-    location.href='mailto:'+encodeURIComponent(e.email).replace('%40','@')+'?subject='+encodeURIComponent('Reçu CSE'+(d?' du '+d.trim():''))+'&body='+encodeURIComponent(body);}
+    cseMailOpen('mailto:'+encodeURIComponent(e.email).replace('%40','@')+'?subject='+encodeURIComponent('Reçu CSE'+(d?' du '+d.trim():''))+'&body='+encodeURIComponent(body));}
   function add(){var pb=document.querySelector('#modal-receipt button[onclick="window.print()"]');if(!pb||document.getElementById('ux-mail'))return;
     var b=document.createElement('button');b.id='ux-mail';b.type='button';b.className=pb.className.replace(/bg-slate-900/,'bg-brand-600');
     b.innerHTML='<i class="fa-solid fa-envelope"></i> Envoyer par e-mail';b.title='Ouvre votre messagerie avec l\'adresse du salarié et le récapitulatif (sans pièce jointe)';
@@ -42947,6 +42954,232 @@ var qrcode = function() {
   if (typeof window.switchTab === 'function' && !window.switchTab.__v68s) { var os = window.switchTab; window.switchTab = function () { var r = os.apply(this, arguments); try { init(); } catch (e) { } return r; }; for (var k in os) window.switchTab[k] = os[k]; window.switchTab.__v68s = 1; }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
   setTimeout(init, 3000); setTimeout(daily, 15000);
+})();
+</script>
+<script id="v69-mail-agenda-rappels">
+/* V.6.9 — Par le script Google du CSE : e-mails envoyés depuis la boîte Gmail du CSE,
+   agenda Google « CSE Velin » rempli tout seul, rappels automatiques aux salariés.
+   + Tableau de bord du trésorier. */
+(function () {
+  function E(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function say(m, t) { try { toast(m, t || 'info', { ms: 7000 }); } catch (e) { } }
+  function eur(n) { try { return formatEuro(n); } catch (e) { return n + ' €'; } }
+  function fd(d) { try { return formatDateDisplay(d); } catch (e) { return d; } }
+  function today() { return todayLocalISO(); }
+  function addDays(iso, n) { var d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function cfg() { db.config = db.config || {}; return db.config; }
+  function scriptOk() { return typeof driveCfg === 'function' && !!driveCfg(); }
+  function modal(id, t, ic) { return v59Modal(id, t, ic); }
+  function close(id) { var m = document.getElementById(id); if (m) m.classList.add('hidden'); }
+  async function post(action, payload) {
+    var c = driveCfg(); if (!c) throw new Error('script Google du CSE non configuré (Budget › Banque › Liens Drive)');
+    var r = await fetch(c.url, { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({ key: c.key, action: action }, payload || {})) });
+    var j; try { j = await r.json(); } catch (e) { throw new Error('réponse inattendue du script Google'); }
+    if (j.error) throw new Error(/inconnue/i.test(j.error) ? 'le script Google du CSE est une ancienne version : installez « script-google-cse-v69.txt »' : j.error);
+    return j;
+  }
+  window.cseScriptPost = post;
+  function sig() { try { return typeof mailSignatureText === 'function' ? mailSignatureText() : ''; } catch (e) { return ''; } }
+
+  // ------------------------------------------------------------------
+  // 1) E-mails : envoyés depuis la boîte du CSE (sinon, messagerie habituelle)
+  // ------------------------------------------------------------------
+  function parseMailto(u) {
+    var s = String(u).replace(/^mailto:/i, ''), i = s.indexOf('?'), to = decodeURIComponent(i < 0 ? s : s.slice(0, i)), q = new URLSearchParams(i < 0 ? '' : s.slice(i + 1).replace(/\+/g, '%2B'));
+    var g = function (k) { var v = q.get(k); return v == null ? '' : v; };
+    return { to: to, cc: g('cc'), bcc: g('bcc'), subject: g('subject'), body: g('body').replace(/\r\n/g, '\n') };
+  }
+  var MAIL = null;
+  window.cseMailOpen = function (url) {
+    if (!cfg().mailViaScript || !scriptOk()) { window.location.href = url; return; }
+    MAIL = { url: url, m: parseMailto(url) };
+    var m = MAIL.m, nb = m.bcc ? m.bcc.split(',').filter(Boolean).length : 0;
+    var b = modal('modal-v69-mail', 'Envoyer depuis la boîte du CSE', 'fa-paper-plane');
+    b.innerHTML = '<p class="text-slate-600">Expéditeur : <b>' + E(typeof CSE_SENDER_EMAIL !== 'undefined' ? CSE_SENDER_EMAIL : 'boîte du CSE') + '</b>. Relisez puis envoyez.</p>'
+      + '<label class="block space-y-1"><span class="font-semibold text-slate-600">À</span><input id="v69m-to" class="w-full p-2 bg-slate-50 border rounded-lg text-sm" value="' + E(m.to) + '" placeholder="adresse@exemple.fr (plusieurs : séparées par des virgules)"></label>'
+      + (nb ? '<p class="text-slate-600"><i class="fa-solid fa-user-secret mr-1"></i> En copie cachée : <b>' + nb + ' destinataire(s)</b>.</p>' : '')
+      + '<label class="block space-y-1"><span class="font-semibold text-slate-600">Objet</span><input id="v69m-sub" class="w-full p-2 bg-slate-50 border rounded-lg text-sm" value="' + E(m.subject) + '"></label>'
+      + '<label class="block space-y-1"><span class="font-semibold text-slate-600">Message</span><textarea id="v69m-body" rows="10" class="w-full p-2 bg-slate-50 border rounded-lg text-sm">' + E(m.body) + '</textarea></label>'
+      + '<label class="block space-y-1"><span class="font-semibold text-slate-600">Pièces jointes (PDF…, facultatif)</span><input id="v69m-files" type="file" multiple class="block text-xs"></label>'
+      + '<div id="v69m-msg" class="font-semibold"></div>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" id="v69m-send" class="' + V59_BTNP + '"><i class="fa-solid fa-paper-plane"></i> Envoyer</button><button type="button" class="' + V59_BTN + '" onclick="cseMailFallback()">Ouvrir ma messagerie à la place</button></div>';
+    document.getElementById('v69m-send').onclick = cseMailSend;
+  };
+  window.cseMailFallback = function () { if (!MAIL) return; close('modal-v69-mail'); window.location.href = MAIL.url; };
+  function b64(file) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(',')[1] || ''); }; r.onerror = rej; r.readAsDataURL(file); }); }
+  async function cseMailSend() {
+    var msg = document.getElementById('v69m-msg'), bt = document.getElementById('v69m-send');
+    var to = document.getElementById('v69m-to').value.trim(), sub = document.getElementById('v69m-sub').value.trim(), body = document.getElementById('v69m-body').value;
+    if (!to && !(MAIL.m.bcc)) { msg.style.color = '#b91c1c'; msg.textContent = 'Indiquez au moins un destinataire.'; return; }
+    var files = Array.prototype.slice.call(document.getElementById('v69m-files').files || []), att = [], size = 0;
+    for (var i = 0; i < files.length; i++) { size += files[i].size; if (size > 15e6) { msg.style.color = '#b91c1c'; msg.textContent = 'Pièces jointes trop lourdes (15 Mo maximum).'; return; } att.push({ name: files[i].name, type: files[i].type || 'application/octet-stream', data: await b64(files[i]) }); }
+    bt.disabled = true; msg.style.color = '#475569'; msg.textContent = 'Envoi en cours…';
+    try {
+      var j = await post('mail', { to: to, cc: MAIL.m.cc, bcc: MAIL.m.bcc, subject: sub, body: body, attachments: att });
+      close('modal-v69-mail');
+      try { logAction('Envoi', 'mail', 'E-mail « ' + sub + ' » envoyé depuis la boîte du CSE' + (to ? ' à ' + to : '') + (MAIL.m.bcc ? ' (+ copie cachée)' : '')); saveDB(); } catch (e) { }
+      say('✔ E-mail envoyé depuis la boîte du CSE' + (j.quota != null ? ' (envois restants aujourd\'hui : ' + j.quota + ')' : '') + '.', 'success');
+    } catch (e) { bt.disabled = false; msg.style.color = '#b91c1c'; msg.textContent = '✖ ' + e.message + ' — vous pouvez « Ouvrir ma messagerie à la place ».'; }
+  }
+
+  // ------------------------------------------------------------------
+  // 2) Agenda Google « CSE Velin »
+  // ------------------------------------------------------------------
+  function calEvents() {
+    var from = addDays(today(), -30), to = addDays(today(), 240), L = [], G = (typeof gcalState !== 'undefined') ? gcalState : null, keep = G ? G.auto : true;
+    try { if (G) G.auto = true; L = gcalCollect(from, to); } catch (e) { console.warn(e); } finally { if (G) G.auto = keep; }
+    return { from: from, to: to, events: L.filter(function (e) { return e && e.key && e.date && !e.pending && !e.done; }).slice(0, 400).map(function (e) {
+      var t = /^\d{1,2}:\d{2}/.test(e.time || '') ? e.time.slice(0, 5) : '';
+      return { key: String(e.key), title: String(e.title || 'CSE').slice(0, 200), date: e.date, time: t, dur: /^mt:/.test(e.key) ? 180 : 120, desc: [e.sub, e.notes].filter(Boolean).join('\n').slice(0, 1500) };
+    }) };
+  }
+  window.cseCalSync = async function (silent) {
+    if (!scriptOk()) { if (!silent) say('Réglez d\'abord le script Google du CSE (Budget › Banque › Liens Drive).', 'warning'); return; }
+    try {
+      var p = calEvents(); if (!silent) say('Agenda Google : envoi de ' + p.events.length + ' événement(s)…');
+      var j = await post('cal', p);
+      cfg().gcalSyncAt = new Date().toISOString(); saveDB();
+      try { localStorage.setItem('cse_cal_day', today()); } catch (e) { }
+      if (!silent) say('✔ Agenda Google « ' + (j.agenda || 'CSE Velin') + ' » à jour : ' + (j.created || 0) + ' ajouté(s), ' + (j.updated || 0) + ' modifié(s), ' + (j.deleted || 0) + ' retiré(s).', 'success');
+    } catch (e) { if (!silent) say('Agenda Google : ' + e.message, 'error'); }
+  };
+
+  // ------------------------------------------------------------------
+  // 3) Rappels automatiques aux salariés (envoyés par le script, même PC éteint)
+  // ------------------------------------------------------------------
+  function first(e) { return (e && (e.firstname || '')) || ''; }
+  function buildRappels() {
+    var out = [], t0 = today(), horizon = addDays(t0, 10), c = cfg();
+    var R = []; try { R = recvCollect(); } catch (e) { }
+    var dueOf = {}; R.forEach(function (r) { if (r.employeeId != null) (dueOf[r.employeeId] = dueOf[r.employeeId] || []).push(r); });
+    var cse = c.cseName || 'CSE DS Smith Velin';
+    if (c.rappelSorties !== false) (db.outings || []).forEach(function (o) {
+      var d = ccIso(o.date); if (!d || d <= t0 || d > addDays(t0, 11)) return;
+      (regsActive() || []).filter(function (r) { return r.outingId === o.id; }).forEach(function (r) {
+        var e = (db.employees || []).filter(function (x) { return x.id === r.employeeId; })[0]; if (!e || !e.email) return;
+        var owe = (dueOf[e.id] || []).filter(function (x) { return x.type !== 'sale'; }).reduce(function (s, x) { return s + (Number(x.amount) || 0); }, 0);
+        var body = 'Bonjour ' + first(e) + ',\n\nPetit rappel : la sortie « ' + o.name + ' » a lieu le ' + fd(d) + (o.location ? ' (' + o.location + ')' : '') + '.\n'
+          + ((r.guests || []).length ? 'Vous êtes inscrit(e) avec ' + r.guests.length + ' accompagnant(s).\n' : '')
+          + (owe > 0 ? '\nIl reste ' + eur(owe) + ' à régler.\n' : '') + '\nBonne sortie !\n\n' + sig();
+        if (owe > 0) try { body = remWithPayLinks(body, 'registrations'); } catch (er) { }
+        out.push({ id: 'out:' + o.id + ':' + e.id + ':' + d, on: addDays(d, -1), to: e.email, subject: 'Rappel : ' + o.name + ' le ' + fd(d), body: body, who: e.firstname + ' ' + (e.lastname || ''), what: 'Sortie ' + o.name });
+      });
+    });
+    if (c.rappelPaiements !== false) R.forEach(function (r) {
+      var e = r.emp || (db.employees || []).filter(function (x) { return x.id === r.employeeId; })[0]; if (!e || !e.email || !r.due || !(Number(r.amount) > 0)) return;
+      [[r.due, ''], [addDays(r.due, 7), ':j7']].forEach(function (p) {
+        if (p[0] < t0 || p[0] > horizon) return;
+        var body = 'Bonjour ' + first(e) + ',\n\n' + (p[1] ? 'Sauf erreur de notre part, ce règlement est toujours en attente' : 'Ce règlement arrive à échéance aujourd\'hui') + ' :\n- ' + (r.object || 'Règlement CSE') + ' : ' + eur(r.amount) + '\n\nVous pouvez régler lors d\'une permanence du CSE.\n\n' + sig();
+        try { body = remWithPayLinks(body, ({ sale: 'sales', registration: 'registrations', reg: 'registrations', cv: 'cv', loan: 'loans' })[r.type] || 'all'); } catch (er) { }
+        out.push({ id: 'pay:' + r.type + ':' + r.id + ':' + r.due + p[1], on: p[0], to: e.email, subject: (p[1] ? 'Relance : ' : 'Échéance : ') + (r.object || 'règlement CSE') + ' (' + eur(r.amount) + ')', body: body, who: e.firstname + ' ' + (e.lastname || ''), what: 'Paiement ' + eur(r.amount) });
+      });
+    });
+    return out.sort(function (a, b) { return a.on.localeCompare(b.on); });
+  }
+  window.cseRappelsBuild = buildRappels;
+  window.cseRappelsSync = async function (silent) {
+    if (!cfg().rappelsAuto || !scriptOk()) return;
+    try {
+      var L = buildRappels();
+      var j = await post('rappels', { list: L.map(function (x) { return { id: x.id, on: x.on, to: x.to, subject: x.subject, body: x.body }; }) });
+      try { localStorage.setItem('cse_rap_day', today()); } catch (e) { }
+      (j.sent || []).forEach(function (s) { try { logAction('Envoi', 'mail', 'Rappel automatique envoyé : ' + s.subject + ' (' + s.to + ', le ' + s.at + ')'); } catch (e) { } });
+      if ((j.sent || []).length) saveDB();
+      if (!silent) say('✔ Rappels automatiques à jour : ' + L.length + ' prévu(s) dans les 10 prochains jours.', 'success');
+    } catch (e) { if (!silent) say('Rappels : ' + e.message, 'error'); }
+  };
+
+  // ------------------------------------------------------------------
+  // Réglages (Paramètres) : une carte « Boîte mail, agenda et rappels »
+  // ------------------------------------------------------------------
+  window.cseAutoOpen = function () {
+    var c = cfg(), ok = scriptOk(), b = modal('modal-v69-auto', 'Boîte mail du CSE, agenda et rappels', 'fa-wand-magic-sparkles');
+    var L = []; try { L = buildRappels(); } catch (e) { }
+    b.innerHTML = (ok ? '' : '<p class="text-rose-700 font-semibold">Le script Google du CSE n\'est pas réglé : Budget › Banque › « Liens Drive ».</p>')
+      + '<p class="text-slate-600">Tout passe par le script Google installé sur le compte du CSE (version « script-google-cse-v69.txt »). Rien n\'est envoyé sans que ce soit activé ici.</p>'
+      + '<div class="rounded-xl border border-slate-200 p-3 space-y-2"><label class="flex items-center gap-2 font-bold text-slate-800"><input type="checkbox" id="v69-mail" ' + (c.mailViaScript ? 'checked' : '') + '> 1. Envoyer les e-mails depuis la boîte Gmail du CSE</label><p class="text-slate-500">Convocations, relances, reçus, billets, messages groupés : l\'appli affiche le message, vous relisez, puis « Envoyer ». Pièces jointes possibles. Limite Gmail : environ 100 destinataires par jour.</p></div>'
+      + '<div class="rounded-xl border border-slate-200 p-3 space-y-2"><label class="flex items-center gap-2 font-bold text-slate-800"><input type="checkbox" id="v69-cal" ' + (c.gcalSync ? 'checked' : '') + '> 2. Remplir l\'agenda Google « CSE Velin »</label><p class="text-slate-500">Réunions, permanences, sorties, consultations, événements du calendrier de l\'appli. Mis à jour une fois par jour à l\'ouverture de l\'appli. ' + (c.gcalSyncAt ? 'Dernière mise à jour : ' + fd(c.gcalSyncAt.slice(0, 10)) + '.' : '') + '</p><button type="button" class="' + V59_BTN + '" onclick="cseCalSync(false)"><i class="fa-solid fa-rotate"></i> Mettre à jour l\'agenda maintenant</button></div>'
+      + '<div class="rounded-xl border border-slate-200 p-3 space-y-2"><label class="flex items-center gap-2 font-bold text-slate-800"><input type="checkbox" id="v69-rap" ' + (c.rappelsAuto ? 'checked' : '') + '> 3. Rappels automatiques aux salariés (8 h du matin)</label>'
+      + '<label class="flex items-center gap-2 text-slate-600 pl-6"><input type="checkbox" id="v69-rap-s" ' + (c.rappelSorties !== false ? 'checked' : '') + '> la veille d\'une sortie, aux inscrits</label>'
+      + '<label class="flex items-center gap-2 text-slate-600 pl-6"><input type="checkbox" id="v69-rap-p" ' + (c.rappelPaiements !== false ? 'checked' : '') + '> le jour de l\'échéance d\'un paiement, puis 7 jours après si toujours impayé (avec vos liens de paiement)</label>'
+      + '<p class="text-slate-500">Prévus dans les 10 prochains jours : <b>' + L.length + '</b>. La liste est remise à jour à chaque ouverture de l\'appli (un paiement encaissé retire son rappel).</p>'
+      + (L.length ? '<details><summary class="cursor-pointer font-semibold text-brand-700">Voir les rappels prévus et le texte</summary><div class="mt-2 space-y-2">' + L.slice(0, 30).map(function (x) { return '<div class="border border-slate-200 rounded-lg p-2"><div class="font-semibold text-slate-800">' + E(fd(x.on)) + ' · ' + E(x.who) + ' · ' + E(x.what) + '</div><div class="text-slate-500">' + E(x.subject) + '</div><pre class="whitespace-pre-wrap text-[11px] text-slate-600 mt-1">' + E(x.body) + '</pre></div>'; }).join('') + '</div></details>' : '')
+      + '</div><button type="button" class="' + V59_BTNP + '" onclick="cseAutoSave()"><i class="fa-solid fa-check"></i> Enregistrer</button>';
+  };
+  window.cseAutoSave = async function () {
+    var c = cfg(), g = function (id) { var x = document.getElementById(id); return !!(x && x.checked); };
+    var turnOnRap = g('v69-rap') && !c.rappelsAuto;
+    if (turnOnRap && !(await uiConfirm('Activer les rappels automatiques ? Des e-mails partiront tout seuls aux salariés depuis la boîte du CSE, à 8 h, selon la liste affichée.', { okLabel: 'Activer' }))) return;
+    c.mailViaScript = g('v69-mail'); c.gcalSync = g('v69-cal'); c.rappelsAuto = g('v69-rap'); c.rappelSorties = g('v69-rap-s'); c.rappelPaiements = g('v69-rap-p');
+    try { logAction('Modification', 'config', 'Boîte mail / agenda / rappels : ' + [c.mailViaScript ? 'e-mails par le CSE' : '', c.gcalSync ? 'agenda Google' : '', c.rappelsAuto ? 'rappels auto' : ''].filter(Boolean).join(', ')); } catch (e) { }
+    saveDB(); close('modal-v69-auto');
+    if (c.gcalSync) cseCalSync(false);
+    if (c.rappelsAuto) cseRappelsSync(false); else if (scriptOk()) post('rappels', { list: [] }).catch(function () { });
+    say('Réglages enregistrés pour tous les PC.', 'success');
+  };
+  function settingsCard() {
+    if (document.getElementById('v69-auto-card')) return;
+    var anchor = document.getElementById('v66-cloud-card') || document.getElementById('v66-deploy-card'); if (!anchor) return;
+    var el = document.createElement('div'); el.id = 'v69-auto-card'; el.className = anchor.className; el.setAttribute('data-sg', anchor.getAttribute('data-sg') || '');
+    el.innerHTML = '<div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-between"><div><h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-brand-600"></i> Boîte mail du CSE, agenda et rappels</h3><p class="text-xs text-slate-500">Envoyer les e-mails depuis la boîte du CSE, remplir l\'agenda Google, rappels automatiques aux salariés.</p></div><button type="button" class="' + V59_BTN + '" onclick="cseAutoOpen()"><i class="fa-solid fa-gear"></i> Régler</button></div>';
+    anchor.parentNode.insertBefore(el, anchor.nextSibling);
+  }
+
+  // ------------------------------------------------------------------
+  // 4) Tableau de bord du trésorier
+  // ------------------------------------------------------------------
+  window.cseTreso = function () {
+    var b = modal('modal-v69-treso', 'Tableau du trésorier', 'fa-wallet'), t = today();
+    var bal = {}; try { bal = xBudgetBalance().env || {}; } catch (e) { }
+    var R = []; try { R = recvCollect(); } catch (e) { }
+    var late = R.filter(function (r) { return r.due && r.due < t; }), owe = R.reduce(function (s, r) { return s + (Number(r.amount) || 0); }, 0);
+    var noDoc = 0; try {
+      (db.supplierInvoices || []).forEach(function (i) { if (!docsFor('supplierInvoice', i.id).length) noDoc++; });
+      (db.budgetEntries || []).forEach(function (e) { if (e.type === 'expense' && e.supplierInvoiceId == null && !e.transfer && !budgetEntrySources(e).some(function (s) { return docsFor(s.entityType, s.entityId).length; })) noDoc++; });
+    } catch (e) { }
+    var pend = 0; try { pend = reconPending().length; } catch (e) { }
+    var sum = 0; try { sum = (db.sumupTx || []).filter(function (x) { return !x.validated && !sumupIsCancelled(x) && x.type === 'Vente'; }).length; } catch (e) { }
+    var card = function (ic, lbl, val, sub, go, warn) { return '<button type="button" onclick="document.getElementById(\'modal-v69-treso\').classList.add(\'hidden\');' + go + '" class="text-left bg-white p-3 rounded-2xl border ' + (warn ? 'border-amber-300 bg-amber-50' : 'border-slate-200') + ' shadow-sm"><div class="text-[11px] font-bold text-slate-400 uppercase"><i class="fa-solid ' + ic + ' mr-1"></i>' + lbl + '</div><div class="text-xl font-extrabold text-slate-800">' + val + '</div><div class="text-[11px] text-slate-500">' + sub + '</div></button>'; };
+    b.innerHTML = '<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">' + (window.V59_ENVS || ['ASC', 'FCT', 'PECHE']).map(function (e) { return card('fa-building-columns', 'Solde ' + (typeof v59Env === 'function' ? v59Env(e) : e), eur(bal[e] || 0), 'd\'après les comptes de l\'appli', "switchTab('budget')", (bal[e] || 0) < 0); }).join('') + '</div>'
+      + '<div class="grid grid-cols-2 gap-2">'
+      + card('fa-hand-holding-dollar', 'À encaisser', eur(owe), R.length + ' règlement(s)' + (late.length ? ', dont ' + late.length + ' en retard' : ''), "switchTab('receivables')", late.length > 0)
+      + card('fa-paperclip', 'Sans justificatif', String(noDoc), 'factures / dépenses sans pièce', "switchTab('budget')", noDoc > 0)
+      + card('fa-scale-balanced', 'À rapprocher', String(pend), 'opérations bancaires', "switchTab('budget')", pend > 0)
+      + card('fa-credit-card', 'SumUp à vérifier', String(sum), 'paiements carte non validés', "switchTab('sumup')", sum > 0)
+      + '</div>' + (late.length ? '<div class="rounded-xl border border-slate-200 p-2"><div class="font-bold text-slate-700 mb-1">En retard</div>' + late.slice(0, 8).map(function (r) { return '<div class="flex justify-between gap-2 py-0.5"><span class="truncate">' + E((r.emp ? (r.emp.firstname || '') + ' ' + (r.emp.lastname || '') : '') + ' · ' + (r.object || '')) + '</span><b>' + eur(r.amount) + '</b></div>'; }).join('') + '</div>' : '');
+  };
+  function tresoEntry() {
+    var dash = document.getElementById('dash-kpi-strip');
+    if (dash && !document.getElementById('v69-treso-btn')) {
+      var bt = document.createElement('button'); bt.type = 'button'; bt.id = 'v69-treso-btn'; bt.className = V59_BTN; bt.style.marginBottom = '8px';
+      bt.innerHTML = '<i class="fa-solid fa-wallet"></i> Tableau du trésorier'; bt.onclick = function () { cseTreso(); };
+      dash.parentNode.insertBefore(bt, dash);
+    }
+    var nav = document.getElementById('v66-bnav');
+    if (nav && !nav.querySelector('[data-v69t]')) {
+      var last = nav.lastElementChild; var x = document.createElement(last ? last.tagName : 'button');
+      if (last) x.className = last.className; x.setAttribute('data-v69t', '1'); x.type = 'button';
+      x.innerHTML = '<i class="fa-solid fa-wallet"></i><span>Trésorier</span>'; x.onclick = function () { cseTreso(); };
+      nav.insertBefore(x, last);
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // Brancher l'envoi sur les boutons existants
+  // ------------------------------------------------------------------
+  function daily() {
+    try {
+      if (!window.__dbLoaded || isSeedData(db) || !scriptOk()) return;
+      var c = cfg();
+      if (c.gcalSync && localStorage.getItem('cse_cal_day') !== today()) cseCalSync(true);
+      if (c.rappelsAuto) cseRappelsSync(true);
+    } catch (e) { }
+  }
+  function init() { settingsCard(); tresoEntry(); }
+  if (typeof window.switchTab === 'function' && !window.switchTab.__v69) { var os = window.switchTab; window.switchTab = function () { var r = os.apply(this, arguments); try { init(); } catch (e) { } return r; }; for (var k in os) window.switchTab[k] = os[k]; window.switchTab.__v69 = 1; }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  setTimeout(init, 3000); setTimeout(daily, 20000);
+  try { if (new URLSearchParams(location.search).has('treso')) setTimeout(function () { if (window.__dbLoaded) cseTreso(); else setTimeout(cseTreso, 4000); }, 2500); } catch (e) { }
 })();
 </script>
 </body>
