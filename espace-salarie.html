@@ -6,6 +6,11 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#1e40af">
+<link rel="manifest" href="espace-manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mon CSE">
 <title>Mon espace CSE</title>
 <style>
 :root{--bg:#f1f5f9;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--brand:#1d4ed8;--brand2:#dbeafe;--ok:#047857;--okb:#d1fae5;--warn:#b45309;--warnb:#fef3c7;--bad:#b91c1c;--badb:#fee2e2}
@@ -25,7 +30,7 @@ nav .n{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-
 .card h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .card h3{font-size:14px;margin:14px 0 6px}
 .mute{color:var(--mute);font-size:13px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpis{margin-bottom:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}
 .kpi b{display:block;font-size:20px;margin-top:2px}
 .kpi span{color:var(--mute);font-size:12px;font-weight:600}
@@ -184,8 +189,9 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
           + '<div class="kpi" onclick="cseGo(\'cv\')"><span>Chèques vacances : à payer</span><b>' + eur(cvDue) + '</b></div>'
           + '<div class="kpi" onclick="cseGo(\'sorties\')"><span>Sorties ouvertes</span><b>' + open.length + '</b></div></div>';
         if (open.length) h += '<div class="card" style="margin-top:12px"><h2>🎭 Sorties où vous pouvez vous inscrire</h2>' + open.slice(0, 4).map(outingRow).join('') + '</div>';
-        if (P.cv && P.cv.ouvert) h += '<div class="card"><h2>🏖️ Chèques vacances</h2><p>' + E(P.cv.texte || 'Les inscriptions aux chèques vacances sont ouvertes.') + '</p><button class="btn p" onclick="cseCv()">S\'inscrire aux chèques vacances</button></div>';
+        h += cvCard('🏖️ Chèques vacances');
         h += '<div class="card"><h2>💡 Une idée, une question pour la réunion ?</h2><p class="mute">Boîte à idées, idée de sortie, question à poser à la prochaine réunion du CSE : avec votre nom ou en anonyme.</p><button class="btn p" onclick="cseGo(\'idees\')">Donner mon idée</button></div>';
+        h += installCard();
         h += '<div class="card"><h2>💬 Une question ?</h2><p class="mute">Écrivez au CSE directement d\'ici, ou par e-mail.</p><button class="btn" onclick="cseMsg()">Écrire au CSE</button> '
           + (P.cse && P.cse.email ? '<a class="btn" href="mailto:' + E(P.cse.email) + '">✉️ ' + E(P.cse.email) + '</a>' : '') + '</div>';
       },
@@ -217,7 +223,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
             + (c.livraison ? '<p class="mute">' + E(c.livraison) + '</p>' : '');
         }).join('') : '<p class="empty">Aucun dossier de chèques vacances.</p>';
         h += '</div>';
-        if (P.cv && P.cv.ouvert) h += '<div class="card"><h2>S\'inscrire</h2><p>' + E(P.cv.texte || 'Les inscriptions sont ouvertes.') + '</p><button class="btn p" onclick="cseCv()">S\'inscrire aux chèques vacances</button></div>';
+        if (P.cv && P.cv.ouvert) h += cvCard('S\'inscrire');
         else h += '<p class="mute">Les inscriptions aux chèques vacances ne sont pas ouvertes en ce moment.</p>';
       },
       sorties: function () {
@@ -351,6 +357,25 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
   $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeSheet(); });
   window.cseClose = closeSheet;
   function head(t, sub) { return '<div class="top"><div><h2>' + E(t) + '</h2>' + (sub ? '<div class="mute">' + sub + '</div>' : '') + '</div><button class="x" onclick="cseClose()" aria-label="Fermer">×</button></div>'; }
+  function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
+
+  // --- Installer l'appli sur le téléphone ---
+  var PROMPT = null, STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); PROMPT = e; var b = $('inst-btn'); if (b) b.hidden = false; });
+  window.addEventListener('appinstalled', function () { var b = $('inst-card'); if (b) b.hidden = true; });
+  function installCard() {
+    if (STANDALONE) return '';
+    return '<div class="card" id="inst-card"><h2>📲 Installer l\'appli sur mon téléphone</h2><p class="mute">Gardez votre espace CSE comme une appli, sur l\'écran d\'accueil, sans rien télécharger dans un magasin d\'applications.</p>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" onclick="cseInstall(\'android\')">🤖 Android</button><button class="btn p" onclick="cseInstall(\'ios\')">🍏 iPhone</button></div></div>';
+  }
+  window.cseInstall = async function (os) {
+    if (os === 'android' && PROMPT) { PROMPT.prompt(); try { await PROMPT.userChoice; } catch (e) { } PROMPT = null; return; }
+    if (os === 'ios') sheet(head('Installer sur iPhone') + '<ol style="padding-left:20px;line-height:1.8"><li>Ouvrez ce lien avec <b>Safari</b> (pas dans l\'appli Gmail : appuyez sur ⋯ puis « Ouvrir dans Safari »).</li><li>Appuyez sur le bouton <b>Partager</b> <span style="font-size:18px">⬆︎</span> en bas de l\'écran.</li><li>Choisissez <b>« Sur l\'écran d\'accueil »</b>, puis <b>Ajouter</b>.</li></ol><p class="mute">L\'icône « Mon CSE » apparaît sur votre écran d\'accueil.</p><button class="btn" onclick="cseClose()">OK</button>');
+    else sheet(head('Installer sur Android') + '<ol style="padding-left:20px;line-height:1.8"><li>Ouvrez ce lien avec <b>Chrome</b> (dans Gmail : ⋮ puis « Ouvrir dans Chrome »).</li><li>Appuyez sur <b>⋮</b> en haut à droite.</li><li>Choisissez <b>« Installer l\'application »</b> ou <b>« Ajouter à l\'écran d\'accueil »</b>.</li></ol><p class="mute">L\'icône « Mon CSE » apparaît avec vos applications.</p><button class="btn" onclick="cseClose()">OK</button>');
+  };
+  try { if ('serviceWorker' in navigator && /^https:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function () { }); } catch (e) { }
+
   function say(id, m, cl) { var el = $(id); if (el) el.innerHTML = '<div class="msg ' + (cl || 'info') + '">' + E(m) + '</div>'; }
 
   async function send(type, data, resume, msgId, btnId) {
@@ -394,8 +419,22 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
     sheet(head('Annuler mon inscription', E(x.nom) + ' · ' + fd(x.date)) + '<p>Vous demandez l\'annulation de votre inscription. Le CSE vous confirmera, notamment pour un éventuel remboursement.</p><label>Raison (facultatif)</label><textarea id="a-note"></textarea><div style="margin-top:12px"><button class="btn p" id="a-go">Demander l\'annulation</button></div><div id="a-msg"></div>');
     $('a-go').onclick = function () { send('sortie-annul', { outingId: outingId, regId: regId, sortie: x.nom, note: $('a-note').value.trim() }, 'Annuler mon inscription : ' + x.nom + ' (' + fd(x.date) + ')', 'a-msg', 'a-go'); };
   };
+  function cvAnnee() { return String((D.pub.cv && D.pub.cv.annee) || new Date().getFullYear()); }
+  function cvBloque() {
+    var a = cvAnnee();
+    if ((D.fiche.cv || []).some(function (c) { return String(c.annee) === a; })) return 'Vous avez déjà un dossier de chèques vacances pour ' + a + '.';
+    if ((D.demandes || []).some(function (d) { return d.type === 'cv' && d.statut !== 'refusée' && String(d.at).slice(0, 4) >= String(Number(a) - 1); })) return 'Votre demande de chèques vacances est déjà envoyée au CSE : vous la suivez dans « Mes demandes ».';
+    return '';
+  }
+  function cvCard(titre) {
+    var C = D.pub.cv || {}; if (!C.ouvert) return '';
+    var b = cvBloque();
+    return '<div class="card"><h2>' + titre + '</h2><p>' + E(C.texte || 'Les inscriptions aux chèques vacances ' + cvAnnee() + ' sont ouvertes.') + '</p>'
+      + (b ? '<div class="msg info">' + E(b) + '</div>' : '<button class="btn p" onclick="cseCv()">S\'inscrire aux chèques vacances ' + cvAnnee() + '</button>') + '</div>';
+  }
   window.cseCv = function () {
     var C = D.pub.cv || {};
+    if (cvBloque()) { alertBox(cvBloque()); return; }
     sheet(head('S\'inscrire aux chèques vacances') + (C.texte ? '<p>' + E(C.texte) + '</p>' : '')
       + '<label>Montant de chèques souhaité (€)</label><input id="c-m" type="number" min="0" step="10" placeholder="ex. 400">'
       + '<label>Format</label><select id="c-f"><option>Papier</option><option>Connect (sur le téléphone)</option><option>Swile</option></select>'
