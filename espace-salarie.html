@@ -103,9 +103,10 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
         children: [{ name: 'Léa Exemple', birthdate: '2015-04-12' }, { name: 'Hugo Exemple', birthdate: '2019-09-30' }], spouse: { name: 'Alex Exemple', birthdate: '1988-02-03' },
         achats: [{ date: d(10, 18), desc: '4 x Cinéma', total: 24, regle: true, mode: 'Carte Bancaire' }, { date: d(7, 2), desc: '2 x Parc Astérix', total: 70, regle: true, mode: 'Chèque' }, { date: d(11, 20), desc: '2 x Fraispertuis', total: 30, regle: false, mode: '' }, { date: d(12, 5, y - 1), desc: '3 x Cinéma', total: 18, regle: true, mode: 'Espèces' }],
         offert: [{ date: d(10, 18), label: 'Billets : 4 x Cinéma', montant: 12, type: 'Billetterie' }, { date: d(7, 2), label: 'Billets : 2 x Parc Astérix', montant: 40, type: 'Billetterie' }, { date: d(11, 20), label: 'Billets : 2 x Fraispertuis', montant: 18, type: 'Billetterie' }, { date: d(3, 15), label: 'Chèques vacances (part du CSE)', montant: 200, type: 'Chèques vacances' }, { date: d(12, 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }, { date: d(6, 10), label: 'Rentrée scolaire (Léa Exemple)', montant: 40, type: 'Œuvres sociales' }, { date: d(12, 10, y - 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }],
-        cv: [{ annee: String(y), total: 500, cse: 200, salarie: 300, formats: 'Papier 300,00 € · Connect 200,00 €', livraison: '', echeances: [{ date: d(3, 15), montant: 100, mode: 'Prélèvement', statut: 'payé' }, { date: d(4, 15), montant: 100, mode: 'Prélèvement', statut: 'payé' }, { date: plus(-5), montant: 50, mode: 'Chèque', statut: 'en retard' }, { date: plus(20), montant: 50, mode: 'Chèque', statut: 'à venir' }] }],
+        cv: [{ annee: String(y), total: 500, cse: 200, salarie: 300, formats: 'Papier 300,00 € · Connect 200,00 €', livraison: '', echeances: [{ date: d(3, 15), montant: 100, mode: 'Prélèvement', statut: 'payé' }, { date: d(4, 15), montant: 100, mode: 'Prélèvement', statut: 'payé' }, { date: plus(-5), montant: 50, mode: 'Chèque', statut: 'reçu' }, { date: plus(20), montant: 50, mode: 'Chèque', statut: 'à venir' }] }],
         sorties: [{ regId: 11, outingId: 901, nom: 'Marché de Noël de Strasbourg', date: plus(12), lieu: 'Strasbourg', invites: [{ name: 'Alex Exemple', isChild: false }, { name: 'Léa Exemple', isChild: true }], montant: 45, regle: false, aRegler: 45 }, { regId: 10, outingId: 900, nom: 'Bowling', date: d(9, 14), lieu: 'Épinal', invites: [], montant: 5, regle: true, aRegler: 0 }],
         attente: [{ outingId: 903, nom: 'Concert au Zénith', date: plus(40), pos: 2 }],
+        foyer: 4, pris: { 11: 4, 12: 2 }, cinePris: 4,
         idees: [{ date: plus(-20), type: 'sortie', texte: 'Pourquoi pas une sortie au parc Walygator l\'été prochain ?', statut: 'Retenue', reponse: 'Bonne idée, on la met au programme 2027 !' }],
         prets: [{ debut: plus(5), fin: plus(7), items: '4 x Tables pliantes, 8 x Bancs', statut: 'Réservé' }, { debut: d(8, 20), fin: d(8, 22), items: '1 x Chapiteau 3x6', statut: 'Rendu' }] },
       pub: { cse: { nom: 'CSE (exemple)', email: '' }, swile: { url: '', texte: 'Cinéma, parcs, spectacles : vos billets à prix CSE, avec la subvention déjà déduite.' }, cv: { ouvert: true, texte: 'Inscriptions ouvertes jusqu\'au 15 mars. Montant de 100 € à 600 €, participation du CSE selon le quotient familial.' },
@@ -113,6 +114,8 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
           { id: 902, nom: 'Karting en famille', date: plus(26), lieu: 'Épinal', notes: '', limite: plus(18), prix: { salarie: 10, adulte: 25, enfant: 15 }, places: 30, restantes: 8 },
           { id: 903, nom: 'Concert au Zénith', date: plus(40), lieu: 'Nancy', notes: '', limite: plus(30), prix: { salarie: 20, adulte: 35, enfant: 35 }, places: 20, restantes: 0 }],
         materiel: [{ id: 1, nom: 'Tables pliantes', qte: 12, occupe: [{ d: plus(5), f: plus(7), q: 4 }] }, { id: 2, nom: 'Bancs', qte: 24, occupe: [{ d: plus(5), f: plus(7), q: 8 }] }, { id: 3, nom: 'Chapiteau 3x6', qte: 2, occupe: [] }, { id: 4, nom: 'Appareil à raclette', qte: 4, occupe: [] }],
+        billets: [{ id: 11, titre: 'Cinéma Épinal', prix: 5.5, prixPublic: 11.9, stock: 23, expire: d(5, 2, y + 1), cinema: true }, { id: 13, titre: 'Cinéma Remiremont', prix: 5.5, prixPublic: 10.5, stock: 42, expire: d(5, 20, y + 1), cinema: true }, { id: 12, titre: 'Parc Astérix', prix: 35, prixPublic: 62, stock: 4, expire: d(10, 31, y + 1), cinema: false }, { id: 14, titre: 'Fraispertuis City', prix: 15, prixPublic: 29, stock: 18, expire: '', cinema: false }],
+        quotas: { std: 2, stdFoyer: true, cine: 10, cineFoyer: false },
         reponses: [{ date: plus(-10), type: 'question', texte: 'Est-ce que les intérimaires ont droit à la billetterie ?', reponse: 'Non, la billetterie est réservée aux salariés de l\'entreprise, conformément au règlement intérieur du CSE.' }, { date: plus(-30), type: 'idee', texte: 'Mettre des places de cinéma moins chères.', reponse: 'Depuis octobre, la place de cinéma passe de 8 € à 6 €.' }],
         materielInfo: 'Retrait et retour le vendredi à la permanence du CSE.',
         docs: [{ titre: 'Règlement intérieur du CSE', date: d(1, 15), url: '#demo' }, { titre: 'Accord d\'entreprise (exemple)', date: d(2, 1), url: '#demo' }] },
@@ -157,7 +160,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
     }
   }
 
- var TABS = [['accueil', '🏠 Accueil'], ['idees', '💡 Idées & questions'], ['achats', '🎟️ Mes achats'], ['offert', '🎁 Offert par le CSE'], ['cv', '🏖️ Chèques vacances'], ['sorties', '🎭 Sorties'], ['materiel', '⛺ Matériel'], ['docs', '📄 Documents'], ['fiche', '👤 Ma fiche'], ['demandes', '📨 Mes demandes']];
+ var TABS = [['accueil', '🏠 Accueil'], ['billets', '🎟️ Billetterie'], ['idees', '💡 Idées & questions'], ['achats', '🎟️ Mes achats'], ['offert', '🎁 Offert par le CSE'], ['cv', '🏖️ Chèques vacances'], ['sorties', '🎭 Sorties'], ['materiel', '⛺ Matériel'], ['docs', '📄 Documents'], ['fiche', '👤 Ma fiche'], ['demandes', '📨 Mes demandes']];
   function nav() {
     var n = (D.demandes || []).filter(function (d) { return d.statut === 'en attente'; }).length;
     var el = $('nav'); el.hidden = false;
@@ -224,7 +227,10 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
           return '<h3>Dossier ' + E(c.annee) + '</h3><div class="row"><div class="l">Montant des chèques<div class="mute">' + E(c.formats || '') + '</div></div><div class="r">' + eur(c.total) + '</div></div>'
             + '<div class="row"><div class="l">Part du CSE</div><div class="r" style="color:var(--ok)">' + eur(c.cse) + '</div></div>'
             + '<div class="row"><div class="l">Votre part</div><div class="r">' + eur(c.salarie) + '</div></div>'
-            + (c.echeances || []).map(function (e) { var cl = e.statut === 'payé' ? 'ok' : e.statut === 'en retard' ? 'bad' : e.statut === 'reçu' ? 'info' : 'warn'; return '<div class="row"><div class="l">Échéance du ' + fd(e.date) + '<div class="mute">' + E(e.mode || '') + '</div></div><div class="r">' + eur(e.montant) + '<br><span class="tag ' + cl + '">' + E(e.statut) + '</span></div></div>'; }).join('')
+            + chqResume(c.echeances || [])
+            + (c.echeances || []).map(function (e) { var chq = /ch[eè]que/i.test(e.mode || ''), cl = e.statut === 'payé' ? 'ok' : e.statut === 'en retard' ? 'bad' : e.statut === 'reçu' ? 'info' : 'warn', lb = e.statut;
+              if (chq) lb = e.statut === 'payé' ? '✅ Chèque encaissé' : e.statut === 'reçu' ? '📥 Chèque remis au CSE' : '📭 Chèque pas encore remis' + (e.statut === 'en retard' ? ' (en retard)' : '');
+              return '<div class="row"><div class="l">Échéance du ' + fd(e.date) + '<div class="mute">' + E(e.mode || '') + (chq && e.statut === 'reçu' ? ' · le CSE a votre chèque, il sera encaissé à la date prévue' : '') + '</div></div><div class="r">' + eur(e.montant) + '<br><span class="tag ' + cl + '">' + E(lb) + '</span></div></div>'; }).join('')
             + (c.livraison ? '<p class="mute">' + E(c.livraison) + '</p>' : '');
         }).join('') : '<p class="empty">Aucun dossier de chèques vacances.</p>';
         h += '</div>';
@@ -307,6 +313,22 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
         }, 0);
       },
       idees: function () { h += ideaBox(true); },
+      billets: function () {
+        var B = P.billets || [], Q = P.quotas || { std: 2, stdFoyer: true, cine: 10 }, foyer = f.foyer || 1, pris = f.pris || {};
+        var limStd = Q.std * (Q.stdFoyer ? foyer : 1), limCine = Q.cine * (Q.cineFoyer ? foyer : 1), resteCine = Math.max(0, limCine - (f.cinePris || 0));
+        h += '<div class="card"><h2>🎟️ Mes quotas ' + new Date().getFullYear() + '</h2>'
+          + (B.some(function (b) { return b.cinema; }) ? '<div class="row"><div class="l"><b>Cinéma</b><div class="mute">tous cinémas confondus · ' + (f.cinePris || 0) + ' place(s) prise(s) sur ' + limCine + '</div></div><div class="r"><span class="tag ' + (resteCine ? 'ok' : 'bad') + '">' + resteCine + ' restante(s)</span></div></div>' : '')
+          + '<div class="row"><div class="l"><b>Autres billets</b><div class="mute">' + Q.std + ' par an' + (Q.stdFoyer ? ' et par personne du foyer (' + foyer + ' personne' + (foyer > 1 ? 's' : '') + ' : vous' + (foyer > 1 ? ', vos enfants et conjoint' : '') + ')' : '') + ', pour chaque type de billet</div></div><div class="r">' + limStd + ' / billet</div></div>'
+          + '<p class="mute" style="margin-top:8px">À titre d\'information : le CSE vérifie à la vente. Votre foyer est calculé d\'après votre fiche (onglet « Ma fiche »).</p></div>';
+        h += '<div class="card"><h2>🎫 Billets disponibles au CSE</h2>' + (B.length ? B.map(function (b) {
+          var deja = pris[b.id] || 0, reste = b.cinema ? resteCine : Math.max(0, limStd - deja);
+          return '<div class="row"><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + (b.prixPublic ? '<s>' + eur(b.prixPublic) + '</s> ' : '') + '<b style="color:var(--ink)">' + eur(b.prix) + '</b>' + (b.expire ? ' · valable jusqu\'au ' + fd(b.expire) : '') + '</div>'
+            + '<div class="mute">Votre quota : ' + (deja ? deja + ' pris · ' : '') + '<b>' + reste + ' restant(s)</b>' + (b.cinema ? ' (cinéma)' : '') + '</div></div>'
+            + '<div class="r">' + (b.stock > 0 ? '<span class="tag ' + (b.stock <= 5 ? 'warn' : 'ok') + '">' + (b.stock <= 5 ? 'Plus que ' + b.stock : b.stock + ' en stock') + '</span>' : '<span class="tag bad">Épuisé</span>') + '</div></div>';
+        }).join('') : '<p class="empty">Aucun billet disponible en ce moment.</p>')
+          + '<p class="mute" style="margin-top:8px">Les billets s\'achètent à la permanence du CSE.</p></div>';
+        h += swileCard(true);
+      },
       demandes: function () {
         var L = (D.demandes || []).slice().reverse();
         h += '<div class="card"><h2>📨 Mes demandes</h2>' + (L.length ? L.map(function (d) {
@@ -349,9 +371,9 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
   }
   window.cseIdeaPublic = function () { $('h-nom').textContent = 'Boîte à idées du CSE'; $('app').innerHTML = ideaBox(false); $('foot').textContent = 'Message anonyme : aucune information sur vous n\'est transmise.'; };
 
-  function swileCard() {
+  function swileCard(memeTarif) {
     var W = D && D.pub && D.pub.swile; if (!W) return '';
-    return '<div class="card"><h2>🛍️ Billetterie en ligne Swile</h2><p class="mute">' + E(W.texte || 'Achetez vos billets à prix CSE sur la boutique Swile du CSE.') + '</p>'
+    return '<div class="card"><h2>🛍️ Billetterie en ligne Swile</h2>' + (memeTarif ? '<p><b>Vous pouvez aussi prendre vos places aux mêmes tarifs sur la boutique Swile du CSE</b>, quand vous voulez, depuis votre téléphone.</p>' : '') + '<p class="mute">' + E(W.texte || 'Achetez vos billets à prix CSE sur la boutique Swile du CSE.') + '</p>'
       + (W.url ? '<a class="btn p" href="' + E(W.url) + '" target="_blank" rel="noopener">Ouvrir la boutique Swile</a>' : '')
       + '<p class="mute" style="margin:12px 0 6px">Pas encore l\'appli Swile ?</p><div style="display:flex;gap:8px;flex-wrap:wrap">'
       + '<a class="btn s" href="https://play.google.com/store/apps/developer?id=Swile" target="_blank" rel="noopener">🤖 Android (Google Play)</a>'
@@ -436,6 +458,11 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
     sheet(head('Annuler mon inscription', E(x.nom) + ' · ' + fd(x.date)) + '<p>Vous demandez l\'annulation de votre inscription. Le CSE vous confirmera, notamment pour un éventuel remboursement.</p><label>Raison (facultatif)</label><textarea id="a-note"></textarea><div style="margin-top:12px"><button class="btn p" id="a-go">Demander l\'annulation</button></div><div id="a-msg"></div>');
     $('a-go').onclick = function () { send('sortie-annul', { outingId: outingId, regId: regId, sortie: x.nom, note: $('a-note').value.trim() }, 'Annuler mon inscription : ' + x.nom + ' (' + fd(x.date) + ')', 'a-msg', 'a-go'); };
   };
+  function chqResume(L) {
+    var C = L.filter(function (e) { return /ch[eè]que/i.test(e.mode || ''); }); if (!C.length) return '';
+    var ok = C.filter(function (e) { return e.statut === 'reçu' || e.statut === 'payé'; }), manque = C.length - ok.length;
+    return '<div class="row"><div class="l"><b>Vos chèques</b><div class="mute">' + ok.length + ' sur ' + C.length + ' remis au CSE' + (manque ? ' · ' + manque + ' à remettre à la permanence (' + eur(C.filter(function (e) { return e.statut !== 'reçu' && e.statut !== 'payé'; }).reduce(function (a, e) { return a + (e.montant || 0); }, 0)) + ')' : '') + '</div></div><div class="r"><span class="tag ' + (manque ? 'warn' : 'ok') + '">' + (manque ? 'Chèques manquants' : 'Tous remis') + '</span></div></div>';
+  }
   function cvAnnee() { return String((D.pub.cv && D.pub.cv.annee) || new Date().getFullYear()); }
   function cvBloque() {
     var a = cvAnnee();

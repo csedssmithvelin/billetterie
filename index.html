@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"N1Sb60YvpykFh6Pb8diSDA==","iv":"KWYxSDMfgEmMIuBi","rev":"boot","lastModified":"2026-11-23T19:12:52.029Z","by":"Michaël GROSJEAN","data":"ZZwcj6aqbRLkSCJkzwVUGsf9YsXqT6qiUQVoF56ntjB16HIbIphRHwKcJD+Hz99nbLDucow6Eaw95Qg9qUeYCA=="},"at":"2026-11-23T19:12:52.108Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"GNxEKs5HflVOB7UwYN47eQ==","iv":"kKe4TaGoPzb2CCLt","rev":"boot","lastModified":"2026-11-23T19:29:56.215Z","by":"Michaël GROSJEAN","data":"4BkYg8KbJ1GPtKFEzdUmS5gLfjSHnP5CbJJ/6B0Pa9JQK2ljBKhPbbf1T7vvneJPPbcFUK/jzO8BiLU5hrooPw=="},"at":"2026-11-23T19:29:56.254Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -3870,15 +3870,19 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Quota billets standards / an</label>
                                 <input type="number" min="0" id="cfg-quota-standard" class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm" placeholder="2">
+                                <label class="flex items-start gap-2 text-[11px] text-slate-600 mt-2"><input type="checkbox" id="cfg-quota-std-foyer" class="w-4 h-4 mt-0.5 rounded border-slate-300"> <span><b>Par personne du foyer</b> : ce nombre de billets par an <b>pour chaque</b> salarié, enfant et conjoint (ex. 2 × 4 personnes = 8 billets de chaque type)</span></label>
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Quota places Cinéma / an</label>
                                 <input type="number" min="0" id="cfg-quota-cinema" class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm" placeholder="10">
+                                <p class="text-[11px] text-slate-500 mt-1">Toutes les places de cinéma comptent ensemble (Épinal, Remiremont…).</p>
+                                <label class="flex items-start gap-2 text-[11px] text-slate-600 mt-2"><input type="checkbox" id="cfg-quota-cine-foyer" class="w-4 h-4 mt-0.5 rounded border-slate-300"> <span><b>Par personne du foyer</b> (salarié, enfants, conjoint)</span></label>
+                                <label class="flex items-start gap-2 text-[11px] text-slate-600 mt-2"><input type="checkbox" id="cfg-quota-cine-block" class="w-4 h-4 mt-0.5 rounded border-slate-300 text-rose-600"> <span><b>Bloquer</b> la vente si le plafond cinéma est dépassé (sinon, message d'avertissement seulement)</span></label>
                             </div>
                         </div>
                         <label class="flex items-center gap-2 text-xs font-semibold text-slate-600">
                             <input type="checkbox" id="cfg-quota-blocking" class="w-4 h-4 rounded border-slate-300 text-rose-600">
-                            Bloquer la vente si le quota est dépassé (sinon, avertissement seulement — la vente reste possible)
+                            Bloquer la vente si le quota billets standards est dépassé (sinon, avertissement seulement — la vente reste possible)
                         </label>
                         <button onclick="saveCSESettings()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs rounded-xl transition">
                             Enregistrer les quotas
@@ -6935,7 +6939,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.7.6";
+        const APP_VERSION = "V.8.0";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -12859,11 +12863,17 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
             const saleDateVal = document.getElementById('sale-date').value || todayLocalISO();
             const saleYear = saleDateVal.split('-')[0];
             const quotaStandard = (db.config && db.config.quotaStandardPerYear) || 2;
-            const quotaCinema = (db.config && db.config.quotaCinemaPerYear) || 10;
+            const quotaCinema0 = (db.config && db.config.quotaCinemaPerYear) || 10;
+            // Foyer = le salarié + ses enfants + son conjoint (pour les quotas « par personne du foyer »).
+            const empQ = empId ? db.employees.find(e => e.id === empId) : null;
+            const foyer = empQ ? 1 + (empQ.children || []).filter(c => c && (c.name || '').trim()).length + (empQ.spouse && empQ.spouse.name ? 1 : 0) : 1;
+            const stdFoyer = !(db.config && db.config.quotaStdPerFoyer === false), cineFoyer = !!(db.config && db.config.quotaCinePerFoyer);
+            const quotaCinema = cineFoyer ? quotaCinema0 * foyer : quotaCinema0;
+            const foyerTxt = `${foyer} personne${foyer > 1 ? 's' : ''} dans le foyer`;
 
             let grandTotal = 0;
             let warningMessages = [];
-            let hardQuotaExceeded = false;
+            let hardQuotaExceeded = false, cineExceeded = false, cineChecked = false;
             window.saleEntBlocked = false;
             window.saleEntMessage = '';
 
@@ -12911,24 +12921,38 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
                         warningMessages.push(`⚠️ Le salarié a déjà acheté "${ticket.title}" le ${formatDateDisplay(saleDateVal)}. Impossible de racheter le même jour.`);
                     }
 
-                    if (!isCinema) {
+                    if (!isCinema && stdFoyer) {
+                        // Quota en nombre de billets : X par personne du foyer et par an, pour ce billet.
+                        const pastQty = pastSales.reduce((sum, s) => {
+                            if (s.items && Array.isArray(s.items)) { const f = s.items.find(i => i.ticketId === ticket.id); return sum + (f ? (f.qty || 0) : 0); }
+                            return s.ticketId === ticket.id ? sum + (s.qty || 0) : sum;
+                        }, 0);
+                        const cartQ = cartItems.filter(ci => ci.ticketId === ticket.id).reduce((sum, ci) => sum + (parseInt(ci.qty) || 0), 0);
+                        const lim = quotaStandard * foyer;
+                        if (pastQty + cartQ > lim) {
+                            warningMessages.push(`❌ QUOTA DÉPASSÉ : "${ticket.title}" : ${pastQty + cartQ} billets / ${lim} autorisés cette année (${quotaStandard} par personne × ${foyerTxt}).`);
+                            hardQuotaExceeded = true;
+                        }
+                    } else if (!isCinema) {
                         if (purchaseDaysCount >= quotaStandard) {
                             warningMessages.push(`❌ QUOTA DÉPASSÉ : "${ticket.title}" est limité à ${quotaStandard} fois par an.`);
                             hardQuotaExceeded = true;
                         }
                     } else {
-                        const pastCinemaQty = pastSales.reduce((sum, s) => {
-                            if (s.items && Array.isArray(s.items)) {
-                                const found = s.items.find(i => i.ticketId === ticket.id);
-                                return sum + (found ? found.qty : 0);
-                            } else if (s.ticketId === ticket.id) return sum + s.qty;
-                            return sum;
-                        }, 0);
-
-                        const currentCartQty = cartItems.filter(ci => ci.ticketId === ticket.id).reduce((sum, ci) => sum + ci.qty, 0);
-                        if (pastCinemaQty + currentCartQty > quotaCinema) {
-                            warningMessages.push(`⚠️ PLAFOND CINÉMA : ${pastCinemaQty + currentCartQty}/${quotaCinema} places max par an.`);
-                            hardQuotaExceeded = true;
+                        // Plafond cinéma : toutes les places de cinéma ensemble (Épinal, Remiremont…), une seule fois par panier.
+                        if (!cineChecked) {
+                            cineChecked = true;
+                            const isCineId = id => { const t = db.tickets.find(x => x.id === id); const ti = ((t && t.title) || '').toLowerCase(); return ti.includes('cinéma') || ti.includes('cinema'); };
+                            const isCineItem = i => isCineId(i.ticketId) || /cin[ée]ma/i.test(i.ticketTitle || '');
+                            const pastCinemaQty = pastSales.reduce((sum, s) => {
+                                if (s.items && Array.isArray(s.items)) return sum + s.items.filter(isCineItem).reduce((a, i) => a + (i.qty || 0), 0);
+                                return isCineId(s.ticketId) ? sum + (s.qty || 0) : sum;
+                            }, 0);
+                            const currentCartQty = cartItems.filter(ci => ci.ticketId && isCineId(ci.ticketId)).reduce((sum, ci) => sum + (parseInt(ci.qty) || 0), 0);
+                            if (pastCinemaQty + currentCartQty > quotaCinema) {
+                                warningMessages.push(`⚠️ PLAFOND CINÉMA : ${pastCinemaQty + currentCartQty}/${quotaCinema} places de cinéma par an (tous cinémas confondus)${cineFoyer ? ` (${quotaCinema0} par personne × ${foyerTxt})` : ''}.`);
+                                cineExceeded = true;
+                            }
                         }
                     }
                 }
@@ -12946,13 +12970,17 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
             }
 
             document.getElementById('sale-calc-total').innerText = formatEuro(grandTotal);
-            window.saleQuotaHardExceeded = hardQuotaExceeded;
+            // Blocage : billets standards selon « Bloquer la vente… », cinéma selon sa propre case.
+            const blockStd = !!(db.config && db.config.quotaBlocking);
+            const blockCine = db.config && typeof db.config.quotaCinemaBlocking === 'boolean' ? db.config.quotaCinemaBlocking : blockStd;
+            const quotaBlocks = (hardQuotaExceeded && blockStd) || (cineExceeded && blockCine);
+            window.saleQuotaHardExceeded = quotaBlocks;
 
             const warningBox = document.getElementById('quota-warning-box');
             const warningText = document.getElementById('quota-warning-text');
             if (warningMessages.length > 0) {
                 warningBox.classList.remove('hidden');
-                warningText.innerHTML = warningMessages.join('<br>') + ((db.config && db.config.quotaBlocking && hardQuotaExceeded) ? '<br><strong>Le quota est configuré comme bloquant : cette vente sera refusée.</strong>' : '');
+                warningText.innerHTML = warningMessages.join('<br>') + (quotaBlocks ? '<br><strong>Le quota est configuré comme bloquant : cette vente sera refusée.</strong>' : ((hardQuotaExceeded || cineExceeded) ? '<br><em>Avertissement seulement : la vente reste possible.</em>' : ''));
             } else {
                 warningBox.classList.add('hidden');
             }
@@ -13158,7 +13186,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
                 return;
             }
 
-            if (window.saleQuotaHardExceeded && db.config && db.config.quotaBlocking) {
+            if (window.saleQuotaHardExceeded) {
                 alert("Vente refusée : un quota annuel est dépassé pour ce salarié et le blocage est activé dans Paramètres. Décochez « Bloquer si quota dépassé » si vous souhaitez autoriser une exception ponctuelle.");
                 return;
             }
@@ -21133,6 +21161,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             db.config.quotaStandardPerYear = parseInt(document.getElementById('cfg-quota-standard').value) || 2;
             db.config.quotaCinemaPerYear = parseInt(document.getElementById('cfg-quota-cinema').value) || 10;
             db.config.quotaBlocking = document.getElementById('cfg-quota-blocking').checked;
+            { const f1 = document.getElementById('cfg-quota-std-foyer'), f2 = document.getElementById('cfg-quota-cine-foyer'); if (f1) db.config.quotaStdPerFoyer = f1.checked; if (f2) db.config.quotaCinePerFoyer = f2.checked; const f3 = document.getElementById('cfg-quota-cine-block'); if (f3) db.config.quotaCinemaBlocking = f3.checked; }
             const tokenInput = document.getElementById('cfg-github-token').value.trim();
             if (tokenInput) localStorage.setItem(TOKEN_STORAGE_KEY, tokenInput);
             logAction('Modification', 'settings', 'Paramètres CSE mis à jour');
@@ -21693,6 +21722,18 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.8.0', date: '2026-11-23', items: [
+                "🏖️ Espace salarié, chèques vacances payés par chèque : chaque échéance affiche « Chèque remis au CSE », « Chèque encaissé » ou « Chèque pas encore remis », avec un résumé « X sur Y remis au CSE ». Se règle comme avant dans l'appli (case de l'échéance : Non reçu → Reçu → Encaissé)."
+            ] },
+            { v: 'V.7.9', date: '2026-11-23', items: [
+                "🎟️ Espace salarié : onglet « Billetterie » avec les billets disponibles, le prix, ce qu'il reste en stock, et le quota restant du salarié pour l'année (cinéma tous cinémas confondus). Rappel : mêmes tarifs sur la boutique Swile."
+            ] },
+            { v: 'V.7.8', date: '2026-11-23', items: [
+                "🎬 Plafond cinéma : 10 places par salarié et par an, TOUS cinémas confondus (Épinal + Remiremont…), et non plus 10 par cinéma. Case séparée « Bloquer » ou simple avertissement."
+            ] },
+            { v: 'V.7.7', date: '2026-11-23', items: [
+                "🎟️ Quotas billetterie « par personne du foyer » (Paramètres › Droits & quotas) : le quota devient X billets par an pour chaque salarié, enfant et conjoint (ex. 2 × 4 personnes = 8 billets). Option séparée pour le cinéma."
+            ] },
             { v: 'V.7.6', date: '2026-11-23', items: [
                 "🔗 Demandes des salariés : « Accepter » enregistre tout seul dans l'appli l'inscription à la sortie (avec les invités et les tarifs de la sortie), sa modification ou son annulation, et la réservation de matériel. Bouton « Enregistrer maintenant » pour les demandes déjà acceptées avant cette version."
             ] },
@@ -23016,6 +23057,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
                 document.getElementById('cfg-quota-standard').value = db.config.quotaStandardPerYear || 2;
                 document.getElementById('cfg-quota-cinema').value = db.config.quotaCinemaPerYear || 10;
                 document.getElementById('cfg-quota-blocking').checked = !!db.config.quotaBlocking;
+                { const f1 = document.getElementById('cfg-quota-std-foyer'), f2 = document.getElementById('cfg-quota-cine-foyer'); if (f1) f1.checked = db.config.quotaStdPerFoyer !== false; if (f2) f2.checked = !!db.config.quotaCinePerFoyer; const f3 = document.getElementById('cfg-quota-cine-block'); if (f3) f3.checked = typeof db.config.quotaCinemaBlocking === 'boolean' ? db.config.quotaCinemaBlocking : !!db.config.quotaBlocking; }
             }
             const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
             if (storedToken) {
@@ -43303,10 +43345,14 @@ var qrcode = function() {
     });
     try { (typeof swileEmpLines === 'function' ? swileEmpLines(e) : []).forEach(function (l) { var d = String(l.useDate || '').slice(0, 10); if (d && d.slice(0, 4) >= lim && l.amount > 0) f.offert.push({ date: d, label: 'Billetterie en ligne Swile' + (l.label ? ' : ' + l.label : ''), montant: l.amount, type: 'Swile' }); }); } catch (er) { }
     f.idees = (db.ideas || []).filter(function (x) { return !x.anonyme && String(x.empId) === String(id) && !x.deleted; }).map(function (x) { return { date: String(x.at).slice(0, 10), type: x.type, texte: x.texte, statut: IDEE_ST[x.statut] || 'Reçue', reponse: x.reponse || '' }; });
+    // Quotas billetterie de l'année (à titre d'information dans l'espace)
+    var yq = String(new Date().getFullYear()); f.foyer = 1 + (e.children || []).filter(function (k) { return k && String(k.name || '').trim(); }).length + (e.spouse && e.spouse.name ? 1 : 0); f.pris = {}; f.cinePris = 0;
+    (db.sales || []).forEach(function (s) { if (s.employeeId !== id || String(iso(s.date)).slice(0, 4) !== yq) return; (s.items || []).forEach(function (i) { f.pris[i.ticketId] = (f.pris[i.ticketId] || 0) + (i.qty || 0); if (/cin[ée]ma/i.test(i.ticketTitle || '') || isCine(i.ticketId)) f.cinePris += i.qty || 0; }); });
     var byD = function (a, b) { return String(b.date || b.debut).localeCompare(String(a.date || a.debut)); };
     f.achats.sort(byD); f.offert.sort(byD); f.sorties.sort(byD); f.prets.sort(byD); f.cv.sort(function (a, b) { return b.annee.localeCompare(a.annee); });
     return f;
   }
+  function isCine(tid) { var t = (db.tickets || []).filter(function (x) { return x.id === tid; })[0]; return !!t && /cin[ée]ma/i.test(t.title || ''); }
   function allDocs() {
     var L = []; Object.keys(db.cseDocs || {}).forEach(function (k) { ((db.cseDocs[k] || {}).items || []).forEach(function (d) { if (d && d.url && !d.ignored) L.push({ id: d.id, titre: d.title || 'Document', date: d.date || '', url: d.url, k: k }); }); });
     return L;
@@ -43328,6 +43374,8 @@ var qrcode = function() {
     var c = cfg();
     return { cse: { nom: c.cseName || 'CSE', email: typeof CSE_SENDER_EMAIL !== 'undefined' ? CSE_SENDER_EMAIL : '' }, appUrl: /^https:/.test(location.protocol) ? location.origin + location.pathname : '',
       sorties: sorties, materiel: materiel, materielInfo: c.espaceMatInfo || '', docs: docsChosen().map(function (d) { return { titre: d.titre, date: d.date, url: d.url }; }),
+      billets: (db.tickets || []).filter(function (t) { return t && !t.archived && !t.espaceHidden && (!t.expiryDate || iso(t.expiryDate) >= T); }).map(function (t) { return { id: t.id, titre: t.title, prix: t.price, prixPublic: t.publicPrice != null && t.publicPrice > t.price ? t.publicPrice : null, stock: Math.max(0, t.stock || 0), expire: iso(t.expiryDate), cinema: /cin[ée]ma/i.test(t.title || '') }; }).sort(function (a, b) { return String(a.titre).localeCompare(String(b.titre)); }),
+      quotas: { std: c.quotaStandardPerYear || 2, stdFoyer: c.quotaStdPerFoyer !== false, cine: c.quotaCinemaPerYear || 10, cineFoyer: !!c.quotaCinePerFoyer },
       swile: c.espaceSwileOn ? { url: c.espaceSwileUrl || '', texte: c.espaceSwileText || '' } : null,
       cv: { ouvert: !!c.espaceCvOpen, texte: c.espaceCvText || '', annee: Number(c.espaceCvYear) || new Date().getFullYear() },
       reponses: (db.ideas || []).filter(function (x) { return x.publier && x.reponse && !x.deleted; }).sort(function (a, b) { return String(b.repAt || b.at).localeCompare(String(a.repAt || a.at)); }).slice(0, 40).map(function (x) { return { date: String(x.repAt || x.at).slice(0, 10), type: x.type, texte: x.texte, reponse: x.reponse }; }) };
