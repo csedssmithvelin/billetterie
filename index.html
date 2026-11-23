@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"/LrAxzLtb9zUjach1kaAaQ==","iv":"s9bzTMYirNd/jIhq","rev":"boot","lastModified":"2026-11-23T16:45:05.450Z","by":"Michaël GROSJEAN","data":"ylKHlPG3XdZojKidBFeX4DobHMRuFjLLwSZXmzLe/sX/4tarwoOe6+WhD01EmPxGloB9yaJqz2jq/xYUoxrA/w=="},"at":"2026-11-23T16:45:05.479Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Em9mnJxEEZBu6nRaV8N1og==","iv":"FdSDBya6OTeOtYbM","rev":"boot","lastModified":"2026-11-23T16:50:19.392Z","by":"Michaël GROSJEAN","data":"7YH0kFTXTQCml2t531pVqO572zXq1w2+7Ow9N+qvI6MsFxjhjl2GRamwUqmtBrIkvRbgDiF1xyCB7KVPssIoCw=="},"at":"2026-11-23T16:50:19.423Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21699,6 +21699,9 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
                 "📎 Budget › Banque : bouton « Justificatifs Drive » qui relie les PDF nommés « JJ-MM-AAAA Libellé 12.50€ » aux factures et dépenses de même montant (date à 5 jours près), après vérification.",
                 "💳 Caisse : « Encaisser par carte (SumUp) » ouvre l'appli SumUp du téléphone avec le montant rempli ; en permanence, un bouton SumUp apparaît quand le paiement est « Carte ». Réglage : clé d'affiliation SumUp.",
                 "📱 SumUp depuis le PC : un QR code s'affiche ; scanné avec le téléphone (appli SumUp installée), il lance le paiement avec le montant, et le résultat revient sur le PC tout seul.",
+                "✅ SumUp : quand le paiement est accepté, la vente de la permanence est enregistrée toute seule en « Carte » (avec le code de transaction SumUp).",
+                "🧾 SumUp : le reçu est envoyé directement à l'e-mail et au portable du salarié servi.",
+                "☁️ Paiements SumUp : bouton « Importer depuis SumUp » qui récupère les transactions sans fichier, puis une fois par jour tout seul (nouvelle version du script Google du CSE + clé API SumUp).",
                 "🔕 Bandeaux « Sauvegarde de secours » et « données de démonstration / sauvegarde bloquée » retirés. La protection reste : des données de démonstration ne sont jamais envoyées sur GitHub.",
                 "⚡ Appli en ligne : la page n'est plus retéléchargée en entier à chaque ouverture quand elle n'a pas changé (ouverture plus rapide sur téléphone)."
             ] },
@@ -40373,7 +40376,7 @@ function v65YcExtra(y, I) {
     var back = location.origin + location.pathname;
     try { localStorage.setItem('cse_sumup_pending', JSON.stringify({ amount: amount, title: title || '', at: Date.now() })); } catch (e) { }
     location.href = 'sumupmerchant://pay/1.0?affiliate-key=' + encodeURIComponent(c.key) + '&app-id=' + encodeURIComponent(c.app || location.host)
-      + '&total=' + amount.toFixed(2) + '&currency=EUR&title=' + encodeURIComponent(title || 'CSE Velin') + '&callback=' + encodeURIComponent(back);
+      + '&total=' + amount.toFixed(2) + '&currency=EUR&title=' + encodeURIComponent(title || 'CSE Velin') + (function () { var r = window.__cseSumupReceipt || {}; window.__cseSumupReceipt = null; return (r.email ? '&receipt-email=' + encodeURIComponent(r.email) : '') + (r.phone ? '&receipt-mobilephone=' + encodeURIComponent(r.phone) : ''); })() + '&callback=' + encodeURIComponent(back);
   };
   function sumupReturn() {
     var q = new URLSearchParams(location.search), st = q.get('smp-status'); if (!st) return;
@@ -40385,6 +40388,7 @@ function v65YcExtra(y, I) {
   }
   function showResult(r) {
     if (!r) return;
+    if (r.status === 'success' && typeof window.cseSumupOnSuccess === 'function' && window.cseSumupOnSuccess(r.amount, r.tx)) return;
     if (r.status === 'success') say('✔ Paiement SumUp accepté' + (r.amount ? ' : ' + eur(r.amount) : '') + (r.tx ? ' (transaction ' + r.tx + ')' : '') + '. Validez maintenant la vente en « Carte ».', 'success');
     else say('✖ Paiement SumUp non abouti' + (r.msg ? ' : ' + r.msg : '') + '. Rien n\'a été encaissé.', 'error');
   }
@@ -42784,7 +42788,7 @@ var qrcode = function() {
     var req = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     window.__v68req = req;
     var url = (/^https?:/.test(location.protocol) ? location.origin + location.pathname : 'https://csedssmithvelin.github.io/billetterie/')
-      + '?sumuppay=' + amount.toFixed(2) + '&t=' + encodeURIComponent(title || 'CSE Velin') + '&req=' + req;
+      + '?sumuppay=' + amount.toFixed(2) + '&t=' + encodeURIComponent(title || 'CSE Velin') + '&req=' + req + (function () { var r = window.__cseSumupReceipt || {}; window.__cseSumupReceipt = null; return (r.email ? '&em=' + encodeURIComponent(r.email) : '') + (r.phone ? '&ph=' + encodeURIComponent(r.phone) : ''); })();
     var b = v59Modal('modal-v68-sumupqr', 'Encaisser ' + eur(amount) + ' avec SumUp', 'fa-qrcode');
     b.innerHTML = '<div class="flex flex-col sm:flex-row gap-4 items-center"><div id="v68-qr" class="shrink-0 bg-white p-2 rounded-xl border border-slate-200" style="width:232px;height:232px"></div>'
       + '<div class="space-y-2 text-sm text-slate-700"><p><b>1.</b> Scannez ce code avec l\'appareil photo du téléphone où l\'appli <b>SumUp</b> est installée.</p><p><b>2.</b> L\'appli CSE s\'ouvre sur le téléphone : touchez « Encaisser avec SumUp ».</p><p><b>3.</b> Présentez le lecteur de carte. Le résultat s\'affiche ici tout seul.</p>'
@@ -42801,6 +42805,7 @@ var qrcode = function() {
       if (!r) return;
       clearInterval(poll);
       var st = document.getElementById('v68-qr-st');
+      if (r.status === 'success' && typeof window.cseSumupOnSuccess === 'function' && window.cseSumupOnSuccess(r.amount || amount, r.tx)) { var mm = document.getElementById('modal-v68-sumupqr'); if (mm) mm.classList.add('hidden'); return; }
       if (r.status === 'success') { if (st) st.innerHTML = '<span style="color:#047857"><i class="fa-solid fa-circle-check mr-1"></i> Paiement accepté : ' + eur(r.amount || amount) + (r.tx ? ' (transaction ' + E(r.tx) + ')' : '') + '. Vous pouvez valider la vente en « Carte ».</span>'; try { toast('✔ Paiement SumUp accepté : ' + eur(r.amount || amount), 'success'); } catch (e) { } }
       else if (st) st.innerHTML = '<span style="color:#b91c1c"><i class="fa-solid fa-circle-xmark mr-1"></i> Paiement non abouti' + (r.msg ? ' : ' + E(r.msg) : '') + '. Rien n\'a été encaissé.</span>';
     }, 5000);
@@ -42808,13 +42813,13 @@ var qrcode = function() {
   // --- Téléphone : ouvert depuis le QR code ---
   var q = new URLSearchParams(location.search);
   if (q.get('sumuppay')) {
-    var amt = parseFloat(q.get('sumuppay')), t = q.get('t') || '', req = q.get('req') || '';
+    var amt = parseFloat(q.get('sumuppay')), t = q.get('t') || '', req = q.get('req') || '', rcpt = { email: q.get('em') || '', phone: q.get('ph') || '' };
     try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { }
     var ask = function () {
       if (!window.__dbLoaded) return setTimeout(ask, 800);
       var b = v59Modal('modal-v68-sumupgo', 'Encaisser par carte', 'fa-credit-card');
       b.innerHTML = '<p class="text-base text-slate-800">Montant : <b>' + eur(amt) + '</b>' + (t ? ' · ' + E(t) : '') + '</p><button type="button" id="v68-go" class="w-full px-4 py-4 rounded-2xl bg-emerald-600 text-white text-base font-black">Encaisser avec SumUp</button>';
-      document.getElementById('v68-go').onclick = function () { try { localStorage.setItem('cse_sumup_req', JSON.stringify({ req: req, amount: amt, at: Date.now() })); } catch (e) { } phonePay(amt, t); };
+      document.getElementById('v68-go').onclick = function () { try { localStorage.setItem('cse_sumup_req', JSON.stringify({ req: req, amount: amt, at: Date.now() })); } catch (e) { } window.__cseSumupReceipt = rcpt; phonePay(amt, t); };
     };
     setTimeout(ask, 1000);
   }
@@ -42831,6 +42836,111 @@ var qrcode = function() {
     };
     send();
   })();
+})();
+</script>
+<script id="v68-sumup-plus">
+/* V.6.8 — SumUp : vente validée toute seule, reçu envoyé au salarié, import automatique des transactions. */
+(function () {
+  function say(m, t) { try { toast(m, t || 'info', { ms: 7000 }); } catch (e) { } }
+  function eur(n) { try { return formatEuro(n); } catch (e) { return n + ' €'; } }
+  function intl(p) { p = String(p || '').replace(/[^\d+]/g, ''); if (/^0[67]\d{8}$/.test(p)) return '+33' + p.slice(1); return /^\+\d{9,15}$/.test(p) ? p : ''; }
+  function saleOpen() { var m = document.getElementById('modal-perm-sale'); return !!(m && !m.classList.contains('hidden')); }
+  function saleTotal() { return (window.cartItems || (typeof cartItems !== 'undefined' ? cartItems : []) || []).reduce(function (s, ci) { var t = (db.tickets || []).filter(function (x) { return x.id === ci.ticketId; })[0]; return s + (t ? t.price * ci.qty : 0); }, 0); }
+
+  // --- 2) Reçu : e-mail / portable du salarié servi en permanence ---
+  var payBase = window.cseSumupPay;
+  window.cseSumupPay = function (amount, title) {
+    try {
+      var e = saleOpen() && typeof permEmp === 'function' ? permEmp() : null;
+      window.__cseSumupReceipt = e ? { email: String(e.email || '').trim(), phone: intl(e.phone) } : null;
+      if (e) localStorage.setItem('cse_sumup_ctx', JSON.stringify({ at: Date.now(), amount: Math.round(amount * 100) / 100, who: (typeof permName === 'function' ? permName(e) : '') }));
+    } catch (er) { }
+    return payBase.apply(this, arguments);
+  };
+
+  // --- 1) Vente validée toute seule quand SumUp répond « accepté » ---
+  var done = {};
+  window.cseSumupOnSuccess = function (amount, tx) {
+    if (tx && done[tx]) return true;
+    try {
+      if (saleOpen() && typeof permSale !== 'undefined' && permSale.method === 'Carte Bancaire' && Math.abs(saleTotal() - Number(amount || 0)) < 0.01) {
+        var before = (db.sales || []).length;
+        permSaleConfirm();
+        if ((db.sales || []).length > before) {
+          var s = db.sales[db.sales.length - 1]; if (tx) { s.sumupTx = tx; done[tx] = 1; }
+          saveDB();
+          say('✔ Paiement SumUp accepté (' + eur(amount) + ') : la vente est enregistrée en « Carte »' + (tx ? ' · transaction ' + tx : '') + '.', 'success');
+          return true;
+        }
+      }
+      var c = JSON.parse(localStorage.getItem('cse_sumup_ctx') || 'null');
+      if (c && Date.now() - c.at < 20 * 60000) {
+        say('✔ Paiement SumUp accepté : ' + eur(amount || c.amount) + (c.who ? ' pour ' + c.who : '') + '. La vente n\'était plus ouverte : enregistrez-la en « Carte » dans la permanence.', 'warning');
+        localStorage.removeItem('cse_sumup_ctx'); if (tx) done[tx] = 1; return true;
+      }
+    } catch (e) { console.warn(e); }
+    return false;
+  };
+
+  // --- 4) Import automatique des transactions SumUp (via le script Google du CSE) ---
+  function p2(n) { return (n < 10 ? '0' : '') + n; }
+  function local(ts) { var d = new Date(ts); if (isNaN(d)) return String(ts || '').slice(0, 16).replace('T', ' '); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()); }
+  var STATUS = { SUCCESSFUL: 'Accepté', PAID_OUT: 'Accepté', REFUNDED: 'Accepté', CANCELLED: 'Annulé', FAILED: 'Échoué', PENDING: 'En attente' };
+  function csvCell(v) { v = String(v == null ? '' : v); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function toCsv(items) {
+    var H = ['Email', 'Date', 'Réf. transaction', 'Type de transaction', 'Status', 'Type de carte', '4 derniers chiffres', 'Méthode de paiement', 'Mode de saisie', 'Description', 'Montant total'];
+    var rows = items.map(function (t) {
+      var refund = String(t.type || '').toUpperCase() === 'REFUND', amt = Math.abs(Number(t.amount) || 0) * (refund ? -1 : 1);
+      return [t.user || '', local(t.timestamp), t.transaction_code || t.id || '', refund ? 'Remboursement' : 'Vente', STATUS[String(t.status || '').toUpperCase()] || t.status || '',
+        t.card_type || '', (t.card && t.card.last_4_digits) || t.last_4_digits || '', t.payment_type || '', t.entry_mode || '', t.product_summary || '', amt.toFixed(2).replace('.', ',')].map(csvCell).join(';');
+    });
+    return [H.join(';')].concat(rows).join('\n');
+  }
+  window.cseSumupApiImport = async function (silent) {
+    if (typeof driveCfg !== 'function' || !driveCfg()) {
+      if (!silent) { say('L\'import automatique passe par le script Google du CSE : réglez-le d\'abord dans Budget › Banque › « Liens Drive » (avec la nouvelle version du script).', 'warning'); try { driveSetupOpen(); } catch (e) { } }
+      return;
+    }
+    var from = db.sumupUpdateDate ? new Date(new Date(db.sumupUpdateDate + 'T12:00:00').getTime() - 10 * 864e5) : new Date(Date.now() - 120 * 864e5);
+    var fromIso = from.getFullYear() + '-' + p2(from.getMonth() + 1) + '-' + p2(from.getDate());
+    try {
+      if (!silent) say('SumUp : récupération des transactions depuis le ' + fromIso.split('-').reverse().join('/') + '…');
+      var j = await driveCall({ action: 'sumup', from: fromIso });
+      var items = (j.items || []).filter(function (t) { return t && (t.transaction_code || t.id); });
+      try { localStorage.setItem('cse_sumup_api_day', todayLocalISO()); } catch (e) { }
+      if (!items.length) { if (!silent) say('SumUp : aucune nouvelle transaction.', 'info'); return; }
+      var days = items.map(function (t) { return local(t.timestamp).slice(0, 10).replace(/-/g, ''); }).sort();
+      var f = new File([toCsv(items)], 'SumUp-auto-' + days[0] + '-' + days[days.length - 1] + '.csv', { type: 'text/csv' });
+      await sumupImport(f);
+    } catch (e) {
+      var m = String(e.message || e);
+      if (!silent) say(/inconnue/i.test(m) ? 'Le script Google du CSE est l\'ancienne version : remplacez-le par la nouvelle (fichier « script-google-cse-v68.txt ») et ajoutez la clé API SumUp.' : 'Import SumUp impossible : ' + m, 'error');
+    }
+  };
+  function addBtn() {
+    var src = document.querySelector('button[onclick="sumupPickFile()"]');
+    if (!src || document.getElementById('v68-sumup-api')) return;
+    var bt = document.createElement('button'); bt.type = 'button'; bt.id = 'v68-sumup-api';
+    bt.className = 'px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs rounded-xl flex items-center gap-1.5';
+    bt.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i> Importer depuis SumUp';
+    bt.title = 'Récupère directement les transactions sur SumUp (sans fichier). Se fait aussi tout seul une fois par jour.';
+    bt.onclick = function () { cseSumupApiImport(false); };
+    src.parentNode.insertBefore(bt, src.nextSibling);
+  }
+  function daily() {
+    try {
+      if (!window.__dbLoaded || isSeedData(db) || typeof driveCfg !== 'function' || !driveCfg() || !db.config.sumupApiOk) return;
+      if (localStorage.getItem('cse_sumup_api_day') === todayLocalISO()) return;
+      cseSumupApiImport(true);
+    } catch (e) { }
+  }
+  // Après un premier import réussi, l'import quotidien s'active tout seul.
+  var imp = window.sumupImport;
+  if (typeof imp === 'function') window.sumupImport = async function (file) { var r = await imp.apply(this, arguments); try { if (file && /^SumUp-auto-/.test(file.name) && !db.config.sumupApiOk) { db.config.sumupApiOk = true; saveDB(); } } catch (e) { } return r; };
+  function init() { addBtn(); }
+  if (typeof window.switchTab === 'function' && !window.switchTab.__v68s) { var os = window.switchTab; window.switchTab = function () { var r = os.apply(this, arguments); try { init(); } catch (e) { } return r; }; for (var k in os) window.switchTab[k] = os[k]; window.switchTab.__v68s = 1; }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  setTimeout(init, 3000); setTimeout(daily, 15000);
 })();
 </script>
 </body>
