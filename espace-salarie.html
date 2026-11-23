@@ -476,7 +476,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
   function cvBloque() {
     var a = cvAnnee();
     if ((D.fiche.cv || []).some(function (c) { return String(c.annee) === a; })) return 'Vous avez déjà un dossier de chèques vacances pour ' + a + '.';
-    if ((D.demandes || []).some(function (d) { return d.type === 'cv' && d.statut !== 'refusée' && String(d.at).slice(0, 4) >= String(Number(a) - 1); })) return 'Votre demande de chèques vacances est déjà envoyée au CSE : vous la suivez dans « Mes demandes ».';
+    if ((D.demandes || []).some(function (d) { return d.type === 'cv' && d.statut !== 'refusée' && (d.data && d.data.annee ? String(d.data.annee) === a : d.statut === 'en attente'); })) return 'Votre demande de chèques vacances est déjà envoyée au CSE : vous la suivez dans « Mes demandes ».';
     return '';
   }
   function cvCard(titre) {
@@ -496,7 +496,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
       + '<div style="margin-top:12px"><button class="btn p" id="c-go">Envoyer mon inscription</button></div><div id="c-msg"></div>');
     $('c-go').onclick = function () {
       var m = parseFloat($('c-m').value) || 0; if (m <= 0) return say('c-msg', 'Indiquez un montant.', 'bad');
-      send('cv', { montant: m, format: $('c-f').value, paiement: $('c-p').value, note: $('c-n').value.trim() }, 'Chèques vacances : ' + eur(m) + ' (' + $('c-f').value + ')', 'c-msg', 'c-go');
+      send('cv', { annee: cvAnnee(), montant: m, format: $('c-f').value, paiement: $('c-p').value, note: $('c-n').value.trim() }, 'Chèques vacances : ' + eur(m) + ' (' + $('c-f').value + ')', 'c-msg', 'c-go');
     };
   };
   window.cseMsg = function () {

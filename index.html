@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"LdeWelnFiatrUCnM/Elzeg==","iv":"offQT4VxX/npn7qt","rev":"boot","lastModified":"2026-11-23T19:45:23.511Z","by":"Michaël GROSJEAN","data":"Ew1i/0LZr/RZ2QbrmvpdiazO2wxik/A5Sm1sAEYgdCrWX9r6T5k7yRx/s37bEm6bR98lqbDOzzMr8yYUhfxFaA=="},"at":"2026-11-23T19:45:23.549Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"eXnAf0KbXe5JPmlg09pNaA==","iv":"/IzB+X4u/MEPkqb9","rev":"boot","lastModified":"2026-11-23T19:53:12.468Z","by":"Michaël GROSJEAN","data":"U2BV4do0NwCnENYL2+ofS2yhAET/7ktl39uaVyouuJkFtRIRrbnmhp530TPl6ATeexH+zms3UdwMSsiY3Fy5yg=="},"at":"2026-11-23T19:53:12.506Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6939,7 +6939,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.8.1";
+        const APP_VERSION = "V.8.2";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21722,6 +21722,9 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.8.2', date: '2026-11-23', items: [
+                "🏖️ Espace salarié, chèques vacances : les chèques de l'année N+1 se prennent pendant l'année N : un dossier créé en 2026 est affiché « chèques vacances 2027 », et dès janvier 2027 la campagne passe toute seule à 2028. Réglable dans Espace salarié › Année des chèques vacances."
+            ] },
             { v: 'V.8.1', date: '2026-11-23', items: [
                 "🔄 Espace salarié : les fiches sont republiées automatiquement à l'ouverture après chaque mise à jour de l'appli, pour que les nouveautés (billets disponibles, quotas du foyer…) apparaissent tout de suite chez les salariés.",
                 "⛺ Espace salarié des membres du CSE (élus, trésorier, secrétaire, permanence, admin) : ils voient aussi le matériel réservé au CSE (micro, enceinte, TPE…) et peuvent le réserver, toujours avec validation.",
@@ -43325,7 +43328,7 @@ var qrcode = function() {
       try { var sub = tkSaleSubsidy(s); if (sub && sub.sub > 0.004) f.offert.push({ date: d, label: 'Billets : ' + desc, montant: Math.round(sub.sub * 100) / 100, type: 'Billetterie' }); } catch (er) { }
     });
     (db.chequesVacances || []).forEach(function (c) {
-      if (c.employeeId !== id) return; var an = String(cvDossierYear(c)); if (an < lim) return;
+      if (c.employeeId !== id) return; var an = String(cvDossierYear(c) + 1); if (an < lim) return;
       var fm = c.formats || {}, fmt = [fm.paper ? 'Papier ' + eur(fm.paper) : '', fm.connect ? 'Connect ' + eur(fm.connect) : '', fm.swile ? 'Swile ' + eur(fm.swile) : ''].filter(Boolean).join(' · ');
       var ech = (c.installments || []).map(function (i) { var st = i.status || (i.paid ? 'paye' : 'attente'), dd = iso(i.dueDate);
         return { date: st === 'paye' && i.paidDate ? iso(i.paidDate) || dd : dd, montant: Number(i.amount) || 0, mode: i.method || '', statut: st === 'paye' ? 'payé' : st === 'recu' ? 'reçu' : (dd && dd < T ? 'en retard' : 'à venir') }; });
@@ -43368,6 +43371,10 @@ var qrcode = function() {
     if (!Array.isArray(c)) return L.filter(function (d) { return /r[eè]glement\s+int/i.test(d.titre); });
     return L.filter(function (d) { return c.indexOf(d.id) >= 0; });
   }
+  // Les chèques vacances de l'année N+1 sont pris et payés pendant l'année N (2027 en 2026, 2028 dès janvier 2027).
+  function cvAutoYear() { return new Date().getFullYear() + 1; }
+  function cvCampYear() { var n = Number(cfg().espaceCvYear), a = cvAutoYear(); return n && n >= a ? n : a; }
+  window.cseCvCampYear = cvCampYear;
   function matMap(q, T) {
     return { id: q.id, nom: q.name, qte: q.quantity || 0, occupe: (db.loans || []).filter(function (l) { return !l.returned && String(l.endDate || '') >= T; }).reduce(function (a, l) { (l.items || []).forEach(function (i) { if (i.equipmentId === q.id) a.push({ d: l.startDate, f: l.endDate, q: i.qty || 0 }); }); return a; }, []) };
   }
@@ -43386,7 +43393,7 @@ var qrcode = function() {
       billets: (db.tickets || []).filter(function (t) { return t && !t.archived && !t.espaceHidden && (!t.expiryDate || iso(t.expiryDate) >= T); }).map(function (t) { return { id: t.id, titre: t.title, prix: t.price, prixPublic: t.publicPrice != null && t.publicPrice > t.price ? t.publicPrice : null, stock: Math.max(0, t.stock || 0), expire: iso(t.expiryDate), cinema: /cin[ée]ma/i.test(t.title || '') }; }).sort(function (a, b) { return String(a.titre).localeCompare(String(b.titre)); }),
       quotas: { std: c.quotaStandardPerYear || 2, stdFoyer: c.quotaStdPerFoyer !== false, cine: c.quotaCinemaPerYear || 10, cineFoyer: !!c.quotaCinePerFoyer },
       swile: c.espaceSwileOn ? { url: c.espaceSwileUrl || '', texte: c.espaceSwileText || '' } : null,
-      cv: { ouvert: !!c.espaceCvOpen, texte: c.espaceCvText || '', annee: Number(c.espaceCvYear) || new Date().getFullYear() },
+      cv: { ouvert: !!c.espaceCvOpen, texte: c.espaceCvText || '', annee: cvCampYear() },
       reponses: (db.ideas || []).filter(function (x) { return x.publier && x.reponse && !x.deleted; }).sort(function (a, b) { return String(b.repAt || b.at).localeCompare(String(a.repAt || a.at)); }).slice(0, 40).map(function (x) { return { date: String(x.repAt || x.at).slice(0, 10), type: x.type, texte: x.texte, reponse: x.reponse }; }) };
   }
   function build() { var F = {}; actives().forEach(function (e) { F[token(e)] = fiche(e); }); return { fiches: F, pub: pub() }; }
@@ -43545,8 +43552,8 @@ var qrcode = function() {
       say('Prêt prérempli : vérifiez, validez, puis revenez « Accepter » la demande.', 'info'); return;
     }
     if (d.type === 'cv') {
-      var yy = Number(cfg().espaceCvYear) || new Date().getFullYear();
-      if ((db.chequesVacances || []).some(function (c) { return c.employeeId === e.id && cvDossierYear(c) === yy; }) && !(await uiConfirm(empName(e) + ' a déjà un dossier de chèques vacances pour ' + yy + '.\n\nCréer quand même un autre dossier ?'))) return;
+      var yy = cvCampYear();
+      if ((db.chequesVacances || []).some(function (c) { return c.employeeId === e.id && cvDossierYear(c) + 1 === yy; }) && !(await uiConfirm(empName(e) + ' a déjà un dossier de chèques vacances pour ' + yy + '.\n\nCréer quand même un autre dossier ?'))) return;
       switchTab('cheques-vacances'); openCVModal(); selectCVEmployee(e.id, e.lastname, e.firstname);
       var k = /connect/i.test(x.format) ? 'connect' : /swile/i.test(x.format) ? 'swile' : 'paper';
       var inp = document.getElementById('cv-format-' + k); if (inp) { inp.value = x.montant || 0; try { updateCVRemainingDisplay(); } catch (er) { } }
@@ -43685,7 +43692,7 @@ var qrcode = function() {
     b.innerHTML = '<p class="text-slate-600">Chaque salarié voit <b>uniquement ses données</b> avec son lien personnel : achats, ce que le CSE lui a offert, chèques vacances, sorties, prêts et les documents cochés ci-dessous. Ses demandes arrivent ici et par e-mail : rien ne change sans votre validation. Les paiements restent enregistrés uniquement par le CSE.</p>'
       + (scriptOk() ? '' : '<p class="text-red-700 font-semibold">Réglez d\'abord le script Google du CSE (Budget › Banque › « Liens Drive »), version script-google-cse-v70.txt.</p>')
       + '<label class="flex items-center gap-2 font-bold text-sm"><input type="checkbox" id="v70s-on"' + (c.espaceOn ? ' checked' : '') + '> Activer l\'espace salarié</label>'
-      + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">🏖️ Chèques vacances</div><label class="flex items-center gap-2"><input type="checkbox" id="v70s-cv"' + (c.espaceCvOpen ? ' checked' : '') + '> Inscriptions ouvertes (bouton « S\'inscrire » dans l\'espace)</label><label class="flex items-center gap-2">Année des chèques vacances : <input id="v70s-cvy" type="number" min="2024" max="2100" class="w-24 p-1.5 bg-slate-50 border rounded-lg text-xs" value="' + E(c.espaceCvYear || new Date().getFullYear()) + '"></label><p class="text-slate-500">Un salarié qui a déjà un dossier cette année-là (ou une demande en cours) ne peut pas en redemander.</p><textarea id="v70s-cvt" rows="2" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Texte affiché (ex. : inscriptions jusqu\'au 15 mars, montant de 100 à 600 €, participation du CSE selon le quotient familial…)">' + E(c.espaceCvText || '') + '</textarea></div>'
+      + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">🏖️ Chèques vacances</div><label class="flex items-center gap-2"><input type="checkbox" id="v70s-cv"' + (c.espaceCvOpen ? ' checked' : '') + '> Inscriptions ouvertes (bouton « S\'inscrire » dans l\'espace)</label><label class="flex items-center gap-2">Année des chèques vacances : <input id="v70s-cvy" type="number" min="2024" max="2100" class="w-24 p-1.5 bg-slate-50 border rounded-lg text-xs" value="' + E(cvCampYear()) + '"></label><p class="text-slate-500">Un salarié qui a déjà un dossier cette année-là (ou une demande en cours) ne peut pas en redemander.</p><textarea id="v70s-cvt" rows="2" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Texte affiché (ex. : inscriptions jusqu\'au 15 mars, montant de 100 à 600 €, participation du CSE selon le quotient familial…)">' + E(c.espaceCvText || '') + '</textarea></div>'
       + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">🛍️ Boutique / billetterie Swile</div><label class="flex items-center gap-2"><input type="checkbox" id="v70s-sw"' + (c.espaceSwileOn ? ' checked' : '') + '> Afficher le lien Swile dans l\'espace salarié (avec les boutons pour installer l\'appli Swile)</label><input id="v70s-swu" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Lien de la boutique Swile du CSE (copiez-le depuis Swile), facultatif" value="' + E(c.espaceSwileUrl || '') + '"><input id="v70s-swt" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Texte affiché (ex. : billets de cinéma, parcs, spectacles à prix CSE)" value="' + E(c.espaceSwileText || '') + '"></div>'
       + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">⛺ Matériel que les salariés peuvent réserver</div><p class="text-slate-500">Décochez le matériel réservé au CSE (micro, TPE, frigo…) : il n\'apparaît plus dans l\'espace salarié.</p><div class="flex flex-wrap gap-x-4 gap-y-1">' + (db.equipment || []).map(function (q) { return '<label class="flex items-center gap-1"><input type="checkbox" data-eq="' + q.id + '"' + (q.espaceHidden ? '' : ' checked') + '> ' + E(q.name) + '</label>'; }).join('') + '</div><input id="v70s-mat" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Info affichée (ex. : retrait le vendredi à la permanence)" value="' + E(c.espaceMatInfo || '') + '"></div>'
       + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">📄 Documents visibles par les salariés</div><p class="text-slate-500">Le fichier Drive doit être partagé « Tous les utilisateurs disposant du lien » pour s\'ouvrir chez le salarié.</p><input id="v70s-q" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Filtrer…"><div id="v70s-docs" class="max-h-56 overflow-y-auto divide-y border rounded-lg">'
@@ -43698,7 +43705,7 @@ var qrcode = function() {
       var was = !!c.espaceOn;
       c.espaceOn = document.getElementById('v70s-on').checked; c.espaceCvOpen = document.getElementById('v70s-cv').checked; c.espaceCvText = document.getElementById('v70s-cvt').value.trim();
       c.espaceMatInfo = document.getElementById('v70s-mat').value.trim(); c.espaceUrl = document.getElementById('v70s-url').value.trim();
-      c.espaceCvYear = Number(document.getElementById('v70s-cvy').value) || new Date().getFullYear();
+      var vy = Number(document.getElementById('v70s-cvy').value) || 0; c.espaceCvYear = vy && vy !== cvAutoYear() ? vy : 0;
       c.espaceSwileOn = document.getElementById('v70s-sw').checked; c.espaceSwileUrl = document.getElementById('v70s-swu').value.trim(); c.espaceSwileText = document.getElementById('v70s-swt').value.trim();
       if (c.espaceSwileUrl && !/^https:\/\//.test(c.espaceSwileUrl)) { say('Le lien Swile doit commencer par https://', 'warning'); c.espaceSwileUrl = ''; }
       b.querySelectorAll('[data-eq]').forEach(function (x) { var q = (db.equipment || []).filter(function (z) { return String(z.id) === x.getAttribute('data-eq'); })[0]; if (q) { if (x.checked) delete q.espaceHidden; else q.espaceHidden = true; } });
