@@ -314,18 +314,19 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
       },
       idees: function () { h += ideaBox(true); },
       billets: function () {
-        var B = P.billets || [], Q = P.quotas || { std: 2, stdFoyer: true, cine: 10 }, foyer = f.foyer || 1, pris = f.pris || {};
+        var vieux = !P.billets, B = P.billets || [], Q = P.quotas || { std: 2, stdFoyer: true, cine: 10 }, pris = f.pris || {};
+        var foyer = f.foyer || (1 + (f.children || []).filter(function (k) { return k && String(k.name || '').trim(); }).length + (f.spouse && f.spouse.name ? 1 : 0));
         var limStd = Q.std * (Q.stdFoyer ? foyer : 1), limCine = Q.cine * (Q.cineFoyer ? foyer : 1), resteCine = Math.max(0, limCine - (f.cinePris || 0));
         h += '<div class="card"><h2>🎟️ Mes quotas ' + new Date().getFullYear() + '</h2>'
           + (B.some(function (b) { return b.cinema; }) ? '<div class="row"><div class="l"><b>Cinéma</b><div class="mute">tous cinémas confondus · ' + (f.cinePris || 0) + ' place(s) prise(s) sur ' + limCine + '</div></div><div class="r"><span class="tag ' + (resteCine ? 'ok' : 'bad') + '">' + resteCine + ' restante(s)</span></div></div>' : '')
-          + '<div class="row"><div class="l"><b>Autres billets</b><div class="mute">' + Q.std + ' par an' + (Q.stdFoyer ? ' et par personne du foyer (' + foyer + ' personne' + (foyer > 1 ? 's' : '') + ' : vous' + (foyer > 1 ? ', vos enfants et conjoint' : '') + ')' : '') + ', pour chaque type de billet</div></div><div class="r">' + limStd + ' / billet</div></div>'
+          + '<div class="row"><div class="l"><b>Autres billets</b><div class="mute">' + Q.std + ' par an' + (Q.stdFoyer ? ' et par personne du foyer (' + foyer + ' personne' + (foyer > 1 ? 's' : '') + ' : vous' + [].concat(f.spouse && f.spouse.name ? [f.spouse.name] : [], (f.children || []).map(function (k) { return k && k.name; }).filter(Boolean)).map(function (n) { return ', ' + E(n); }).join('') + ')' : '') + ', pour chaque type de billet</div></div><div class="r">' + limStd + ' / billet</div></div>'
           + '<p class="mute" style="margin-top:8px">À titre d\'information : le CSE vérifie à la vente. Votre foyer est calculé d\'après votre fiche (onglet « Ma fiche »).</p></div>';
         h += '<div class="card"><h2>🎫 Billets disponibles au CSE</h2>' + (B.length ? B.map(function (b) {
           var deja = pris[b.id] || 0, reste = b.cinema ? resteCine : Math.max(0, limStd - deja);
           return '<div class="row"><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + (b.prixPublic ? '<s>' + eur(b.prixPublic) + '</s> ' : '') + '<b style="color:var(--ink)">' + eur(b.prix) + '</b>' + (b.expire ? ' · valable jusqu\'au ' + fd(b.expire) : '') + '</div>'
             + '<div class="mute">Votre quota : ' + (deja ? deja + ' pris · ' : '') + '<b>' + reste + ' restant(s)</b>' + (b.cinema ? ' (cinéma)' : '') + '</div></div>'
             + '<div class="r">' + (b.stock > 0 ? '<span class="tag ' + (b.stock <= 5 ? 'warn' : 'ok') + '">' + (b.stock <= 5 ? 'Plus que ' + b.stock : b.stock + ' en stock') + '</span>' : '<span class="tag bad">Épuisé</span>') + '</div></div>';
-        }).join('') : '<p class="empty">Aucun billet disponible en ce moment.</p>')
+        }).join('') : (vieux ? '<p class="empty">La liste des billets apparaîtra dès la prochaine mise à jour des informations par le CSE.</p>' : '<p class="empty">Aucun billet disponible en ce moment.</p>'))
           + '<p class="mute" style="margin-top:8px">Les billets s\'achètent à la permanence du CSE.</p></div>';
         h += swileCard(true);
       },
