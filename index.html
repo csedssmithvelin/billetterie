@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"NY9P1dJL4R1GMcfN17b9EA==","iv":"Sup6lOwOHNu7el6G","rev":"boot","lastModified":"2026-11-23T13:06:15.032Z","by":"Michaël GROSJEAN","data":"gLGwn8CWgdo7YNzJDtDdZOdaic1/5SeVxMw5/Vgbd0rvAZLL3wUUHsHWbrFM/hEgAFW+buBKIXG+Rbnwilj4kw=="},"at":"2026-11-23T13:06:15.082Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"umlM6aASDG4K07WUfqvk0g==","iv":"7+CQVqnOanSXyhOp","rev":"boot","lastModified":"2026-11-23T13:29:23.585Z","by":"Michaël GROSJEAN","data":"oG0JhU+lp+F1XJVibtjFv7Ml54yRM6aqqCKWsgFdEUYQXnyy5epQoC+D3yTOzLi/VOT02132r0TFDV7f4Pzqzw=="},"at":"2026-11-23T13:29:23.636Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -1489,6 +1489,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
                 <button type="button" id="nav-legaldocs" onclick="switchTab('legaldocs')" class="tab-btn subnav-pill" data-tab="legaldocs"><i class="fa-solid fa-scale-balanced"></i> Textes &amp; accords</button>
                 <button type="button" id="nav-otherdocs" onclick="switchTab('otherdocs')" class="tab-btn subnav-pill" data-tab="otherdocs"><i class="fa-solid fa-id-card"></i> Justificatifs des salariés</button>
                 <button type="button" id="nav-drive" onclick="switchTab('drive')" class="tab-btn subnav-pill" data-tab="drive"><i class="fa-brands fa-google-drive"></i> Google Drive</button>
+                <button type="button" id="nav-synology" onclick="switchTab('synology')" class="tab-btn subnav-pill" data-tab="synology"><i class="fa-solid fa-server"></i> Synology</button>
             </div>
             <div id="subnav-meetings" class="subnav hidden" role="tablist" aria-label="Instances du CSE">
                 <button type="button" id="sub-meetings" onclick="switchTab('meetings')" class="subnav-pill" data-tab="meetings"><i class="fa-solid fa-people-group"></i> Réunions</button>
@@ -3490,6 +3491,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
 
             <!-- TAB : GOOGLE DRIVE (V.6.6) -->
             <div id="tab-drive" class="tab-content hidden space-y-4"><div id="drive-root" class="space-y-4"></div></div>
+            <div id="tab-synology" class="tab-content hidden space-y-4"><div id="syno-root" class="space-y-4"></div></div>
 
             <!-- TAB : AUTRES DOCUMENTS (justificatifs des salariés, classés par nom) -->
             <div id="tab-otherdocs" class="tab-content hidden space-y-6">
@@ -21698,6 +21700,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
                 "📁 Documents › Google Drive : les dossiers du Drive du CSE dans l'appli (aperçu sans réglage, ou mode complet : naviguer, chercher, déposer, créer, renommer, corbeille).",
                 "📱 Version téléphone : barre de navigation en bas (Accueil, Permanence, Billetterie, Salariés, Menu), champs sans zoom sur iPhone.",
                 "💻 Appli installable sur PC, Mac, Android et iPhone depuis l'adresse en ligne : bouton « Installer l'appli » (Paramètres › Sécurité) et invitation automatique.",
+                "🖥️ Documents › Synology : les dossiers du NAS (File Station) affichés dans l'appli, avec l'adresse QuickConnect.",
                 "🗄️ Copie de secours chiffrée chaque jour dans le Drive, recopiée par le Synology (Cloud Sync), et lien d'accès à distance au Synology (QuickConnect) : Paramètres › Sauvegardes."
             ] },
             { v: 'V.6.5', date: '2026-11-19', items: [
@@ -39576,8 +39579,12 @@ function v65YcExtra(y, I) {
     try { var gs = JSON.parse(sessionStorage.getItem(G_SS) || 'null'); if (gs && gs.exp > Date.now()) { gTok = gs.tok; gExp = gs.exp; gUser = gs.user || ''; } } catch (e) {}
     function connected() { return !!gTok && Date.now() < gExp; }
     function clientId() { return String(cfg().googleClientId || '').trim(); }
+    // Dossiers du Drive du CSE (compte cse.dssmith.velin) utilisés tant que rien d'autre n'est réglé
+    var DEF_FOLDER = 'https://drive.google.com/drive/folders/1ceAoU9XFEl6p0G5Mg-AbR3F1oFUvrdxs';   // « Mon ordinateur »
+    var DEF_BK_FOLDER = 'https://drive.google.com/drive/folders/1uxK0YHR8mmOwFzOSsbZbc-dE8yPPRQud'; // Suivi des comptes (Trésorier) › Billetterie logiciel
+    function bkFolderId() { return folderId(cfg().driveBackupFolderUrl || DEF_BK_FOLDER); }
     function folderId(u) {
-        u = u == null ? (cfg().driveFolderUrl || '') : u;
+        u = u == null ? (cfg().driveFolderUrl || DEF_FOLDER) : u;
         var m = u.match(/\/folders\/([\w-]{10,})/) || u.match(/[?&]id=([\w-]{10,})/);
         return m ? m[1] : (/^[\w-]{20,}$/.test(u.trim()) ? u.trim() : '');
     }
@@ -39732,7 +39739,9 @@ function v65YcExtra(y, I) {
         var c = cfg(), admin = !rbacEnabled() || rbacRole() === 'admin';
         var origin = /^https?:/.test(location.protocol) ? location.origin : 'https://VOTRE-COMPTE.github.io';
         var b = v59Modal('modal-v66-drive-setup', 'Google Drive : réglages', 'fa-cloud');
-        b.innerHTML = '<label class="block space-y-1"><span class="font-semibold text-slate-600">Lien du dossier Google Drive du CSE</span><input id="v66-drive-url" class="' + IN + '" placeholder="https://drive.google.com/drive/folders/…" value="' + E(c.driveFolderUrl || '') + '"' + (admin ? '' : ' disabled') + '></label>'
+        b.innerHTML = '<label class="block space-y-1"><span class="font-semibold text-slate-600">Dossier Google Drive affiché dans l\'onglet</span><input id="v66-drive-url" class="' + IN + '" placeholder="Mon ordinateur (réglé d\'office)" value="' + E(c.driveFolderUrl || '') + '"' + (admin ? '' : ' disabled') + '></label>'
+            + '<label class="block space-y-1"><span class="font-semibold text-slate-600">Dossier des copies de secours chiffrées</span><input id="v66-drive-bk" class="' + IN + '" placeholder="Billetterie logiciel (réglé d\'office)" value="' + E(c.driveBackupFolderUrl || '') + '"' + (admin ? '' : ' disabled') + '></label>'
+            + '<p class="text-[11px] text-slate-500">Laissez vide pour garder les dossiers du CSE réglés d\'office : « Mon ordinateur » pour l\'onglet, « Suivi des comptes (Trésorier) › Billetterie logiciel » pour les copies. Sinon, collez l\'adresse d\'un dossier (elle contient /folders/…).</p>'
             + '<label class="block space-y-1"><span class="font-semibold text-slate-600">ID client Google (mode complet, facultatif)</span><input id="v66-drive-cid" class="' + IN + '" placeholder="123456-abc….apps.googleusercontent.com" value="' + E(c.googleClientId || '') + '"' + (admin ? '' : ' disabled') + '></label>'
             + '<details class="text-slate-600"><summary class="font-semibold cursor-pointer">Créer l\'ID client Google (une seule fois, environ 10 minutes)</summary><ol class="list-decimal pl-5 space-y-1" style="margin-top:6px">'
             + '<li>Allez sur <b>console.cloud.google.com</b> avec le compte Google du CSE → « Sélectionner un projet » → <b>Nouveau projet</b> « CSE ».</li>'
@@ -39744,8 +39753,9 @@ function v65YcExtra(y, I) {
             + (admin ? '<div><button type="button" class="' + BTNP + '" onclick="cseDriveSetupSave()"><i class="fa-solid fa-check"></i> Enregistrer pour tous les PC</button></div>' : '<p class="text-amber-700">Seul l\'administrateur peut modifier ces réglages.</p>');
     };
     window.cseDriveSetupSave = function () {
-        var u = document.getElementById('v66-drive-url').value.trim(), cid = document.getElementById('v66-drive-cid').value.trim();
-        if (u && !folderId(u)) { alert("Ce lien n'est pas celui d'un dossier Drive (il doit contenir /folders/…)."); return; }
+        var u = document.getElementById('v66-drive-url').value.trim(), bk = document.getElementById('v66-drive-bk').value.trim(), cid = document.getElementById('v66-drive-cid').value.trim();
+        if ((u && !folderId(u)) || (bk && !folderId(bk))) { alert("Ce lien n'est pas celui d'un dossier Drive (il doit contenir /folders/…)."); return; }
+        cfg().driveBackupFolderUrl = bk;
         if (cid && !/\.apps\.googleusercontent\.com$/.test(cid)) { alert("L'ID client Google doit se terminer par .apps.googleusercontent.com"); return; }
         cfg().driveFolderUrl = u; cfg().googleClientId = cid;
         logAction('Modification', 'settings', 'Réglages Google Drive modifiés'); saveQuiet();
@@ -39774,7 +39784,7 @@ function v65YcExtra(y, I) {
         if (isSeedData(db)) { if (manual) alert("Données de démonstration : rien à sauvegarder."); return; }
         bkBusy = true; if (manual) toast('Copie chiffrée vers le Drive…', 'info');
         try {
-            var f = await driveFolder(BK_FOLDER, folderId());
+            var f = await driveFolder(BK_FOLDER, bkFolderId());
             var env = await cloudEncrypt(db, dataPassword(), { rev: 'drive-' + Date.now(), lastModified: db.lastModified, by: getCurrentUserName() || '' });
             var fd = new FormData(), name = 'CSE_sauvegarde_chiffree_' + fileStamp() + '.json';
             fd.append('metadata', new Blob([JSON.stringify({ name: name, parents: [f.id] })], { type: 'application/json' }));
@@ -39793,10 +39803,32 @@ function v65YcExtra(y, I) {
     };
     setInterval(function () { if (backupDue()) cseDriveBackup(false); }, 90000);
     window.cseDriveBackupToggle = function (on) { cfg().driveBackupAuto = !!on; saveQuiet(); cloudPanelsRender(); };
-    window.cseSynoSave = function () {
-        var u = (document.getElementById('v66-syno-url').value || '').trim();
+    // Onglet Documents › Synology : File Station du NAS affichée dans l'appli (ou dans un nouvel onglet)
+    function synoBase() { return String(cfg().synologyUrl || '').trim().replace(/\/+$/, ''); }
+    function synoRender() {
+        var root = document.getElementById('syno-root'); if (!root) return;
+        var u = synoBase(), admin = !rbacEnabled() || rbacRole() === 'admin';
+        var fs = u ? u + '/?launchApp=SYNO.SDS.App.FileStation3.Instance' : '';
+        var head = '<div class="' + CARD + '" style="padding:14px"><div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">'
+            + '<input id="v66-syno-url2" class="' + IN + '" style="flex:1;min-width:220px" placeholder="https://VOTRE-ID.quickconnect.to" value="' + E(u) + '"' + (admin ? '' : ' disabled') + '>'
+            + (admin ? '<button type="button" class="' + BTN + '" onclick="cseSynoSave(\'v66-syno-url2\')">Enregistrer</button>' : '')
+            + (u ? '<a class="' + BTNP + '" target="_blank" rel="noopener" href="' + E(fs) + '"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ouvrir File Station</a>' : '') + '</div>'
+            + '<p class="text-[11px] text-slate-500">Identifiant et mot de passe du NAS demandés. Si le cadre ci-dessous reste vide ou refuse la connexion, utilisez « Ouvrir File Station » : le NAS interdit parfois d\'être affiché dans une autre page (voir les réglages plus bas).</p></div>';
+        if (!u) { root.innerHTML = head + '<div class="' + CARD + '" style="text-align:center;padding:40px 20px"><i class="fa-solid fa-server" style="font-size:34px;color:#94a3b8"></i><p class="text-sm text-slate-600" style="margin-top:10px">Indiquez l\'adresse QuickConnect du Synology du CSE (par exemple https://cse-velin.quickconnect.to).</p></div>' + synoHelp(); return; }
+        root.innerHTML = head + '<div class="bg-white rounded-2xl border border-slate-200 shadow-sm" style="overflow:hidden"><iframe src="' + E(fs) + '" style="width:100%;height:calc(100vh - 260px);min-height:480px;border:0;background:#fff" title="File Station du Synology" allow="clipboard-read; clipboard-write; fullscreen"></iframe></div>' + synoHelp();
+    }
+    function synoHelp() {
+        return '<details class="' + CARD + '" style="padding:14px"><summary class="text-xs font-semibold text-slate-700 cursor-pointer">Réglages du Synology pour l\'afficher ici (une seule fois)</summary><ol class="list-decimal pl-5 space-y-1 text-xs text-slate-600" style="margin-top:6px">'
+            + '<li>DSM → Panneau de configuration → <b>Accès externe → QuickConnect</b> : activez et choisissez un identifiant. L\'adresse est https://IDENTIFIANT.quickconnect.to</li>'
+            + '<li>DSM → Panneau de configuration → <b>Sécurité → Sécurité</b> : décochez « Ne pas autoriser l\'intégration de DSM avec iFrame », ou ajoutez <code>https://csedssmithvelin.github.io</code> aux sites autorisés.</li>'
+            + '<li>Créez un compte NAS pour chaque élu, avec accès au seul dossier partagé du CSE, et activez la double authentification.</li>'
+            + '<li>Si le navigateur bloque quand même la connexion dans le cadre (cookies tiers), « Ouvrir File Station » marche toujours.</li></ol>'
+            + '<p class="text-[11px] text-slate-500" style="margin-top:6px">Autre solution : dans Cloud Sync, synchronisez un dossier du NAS dans les deux sens avec un dossier du Drive : il apparaît alors aussi dans l\'onglet Google Drive.</p></details>';
+    }
+    window.cseSynoSave = function (inputId) {
+        var u = (document.getElementById(inputId || 'v66-syno-url').value || '').trim();
         if (u && !/^https:\/\/\S+$/i.test(u)) { alert("L'adresse doit commencer par https:// (par exemple https://VOTRE-ID.quickconnect.to)."); return; }
-        cfg().synologyUrl = u; logAction('Modification', 'settings', 'Adresse du Synology enregistrée'); saveQuiet(); cloudPanelsRender();
+        cfg().synologyUrl = u; logAction('Modification', 'settings', 'Adresse du Synology enregistrée'); saveQuiet(); cloudPanelsRender(); synoRender();
         toast('Adresse du Synology enregistrée ✔', 'success');
     };
 
@@ -39816,7 +39848,7 @@ function v65YcExtra(y, I) {
         if (b) {
             var c = cfg(), lb = lastBk(), ok = lb && (Date.now() - Date.parse(lb)) < 3 * 864e5;
             b.innerHTML = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-server text-indigo-600"></i> Copie de secours : Google Drive → Synology</h3>'
-                + '<p class="text-xs text-slate-500">Une fois par jour, le premier PC connecté à Google dépose une <b>sauvegarde chiffrée</b> dans le dossier « ' + E(BK_FOLDER) + ' » du Drive du CSE (les ' + BK_KEEP + ' dernières sont gardées). Le Synology recopie ce dossier tout seul avec <b>Cloud Sync</b> : vous avez ainsi une 3e copie, chez vous, même si GitHub ou Google tombaient en panne.</p>'
+                + '<p class="text-xs text-slate-500">Une fois par jour, le premier PC connecté à Google dépose une <b>sauvegarde chiffrée</b> dans le dossier « Billetterie logiciel › ' + E(BK_FOLDER) + ' » du Drive du CSE (les ' + BK_KEEP + ' dernières sont gardées). Le Synology recopie ce dossier tout seul avec <b>Cloud Sync</b> : vous avez ainsi une 3e copie, chez vous, même si GitHub ou Google tombaient en panne.</p>'
                 + '<p class="text-[11px] ' + (ok ? 'text-emerald-700' : 'text-amber-700') + '">Dernière copie dans le Drive : ' + (lb ? new Date(lb).toLocaleString('fr-FR') + (c.lastDriveBackupBy ? ' (par ' + E(c.lastDriveBackupBy) + ')' : '') : 'jamais') + (folderId() ? '' : ' · <b>dossier Drive non indiqué</b>') + (c.googleClientId ? '' : ' · <b>mode complet Google non activé</b>') + '</p>'
                 + '<label class="flex items-center gap-2 text-xs text-slate-700"><input type="checkbox" ' + (c.driveBackupAuto !== false ? 'checked' : '') + ' onchange="cseDriveBackupToggle(this.checked)"> Copie automatique chaque jour</label>'
                 + '<div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" class="' + BTN + '" onclick="cseDriveSetup()"><i class="fa-brands fa-google-drive"></i> Réglages du Drive</button><button type="button" class="' + BTNP + '" onclick="cseDriveBackup(true)"><i class="fa-solid fa-upload"></i> Copier maintenant</button></div>'
@@ -39850,8 +39882,8 @@ function v65YcExtra(y, I) {
     // ---------------------------------------------------------------
     // Branchements : onglet, droits, sous-menu, titres
     // ---------------------------------------------------------------
-    try { RBAC_TAB_MODULES.drive = ['documents']; } catch (e) {}
-    try { if (SUBNAV_GROUPS.documents.indexOf('drive') < 0) SUBNAV_GROUPS.documents.push('drive'); } catch (e) {}
+    try { RBAC_TAB_MODULES.drive = ['documents']; RBAC_TAB_MODULES.synology = ['documents']; } catch (e) {}
+    try { ['drive', 'synology'].forEach(function (t) { if (SUBNAV_GROUPS.documents.indexOf(t) < 0) SUBNAV_GROUPS.documents.push(t); }); } catch (e) {}
     var origSwitch = window.switchTab;
     if (typeof origSwitch === 'function') {
         window.switchTab = function (tabId) {
@@ -39861,6 +39893,11 @@ function v65YcExtra(y, I) {
                     var t = document.getElementById('page-title'), s = document.getElementById('page-subtitle');
                     if (t) t.innerText = 'Google Drive du CSE'; if (s) s.innerText = 'Les dossiers et fichiers du Drive, directement dans l\'appli';
                     render(); if (connected() && items === null && folderId()) load();
+                }
+                if (tabId === 'synology' && rbacActiveTabIdSafe() === 'synology') {
+                    var t2 = document.getElementById('page-title'), s2 = document.getElementById('page-subtitle');
+                    if (t2) t2.innerText = 'Synology du CSE'; if (s2) s2.innerText = 'Les dossiers du NAS, depuis l\'appli';
+                    synoRender();
                 }
                 if (tabId === 'settings') cloudPanelsRender();
             } catch (e) { console.error(e); }
