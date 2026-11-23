@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"lSzA7ArOxvnEfUyuIfGmaQ==","iv":"+SOt5JQc7G9a01cy","rev":"boot","lastModified":"2026-11-23T19:37:42.011Z","by":"Michaël GROSJEAN","data":"rhhRwXrjdsyZ7dQ4C50q9rFR7W7L5WS2Fibn1WYxttK112dYdLxgKFKOjOufQmHkuY937m1Lt58IN94jROc5SQ=="},"at":"2026-11-23T19:37:42.051Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"LdeWelnFiatrUCnM/Elzeg==","iv":"offQT4VxX/npn7qt","rev":"boot","lastModified":"2026-11-23T19:45:23.511Z","by":"Michaël GROSJEAN","data":"Ew1i/0LZr/RZ2QbrmvpdiazO2wxik/A5Sm1sAEYgdCrWX9r6T5k7yRx/s37bEm6bR98lqbDOzzMr8yYUhfxFaA=="},"at":"2026-11-23T19:45:23.549Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21723,7 +21723,9 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         // =====================================================================
         const CHANGELOG = [
             { v: 'V.8.1', date: '2026-11-23', items: [
-                "🔄 Espace salarié : les fiches sont republiées automatiquement à l'ouverture après chaque mise à jour de l'appli, pour que les nouveautés (billets disponibles, quotas du foyer…) apparaissent tout de suite chez les salariés."
+                "🔄 Espace salarié : les fiches sont republiées automatiquement à l'ouverture après chaque mise à jour de l'appli, pour que les nouveautés (billets disponibles, quotas du foyer…) apparaissent tout de suite chez les salariés.",
+                "⛺ Espace salarié des membres du CSE (élus, trésorier, secrétaire, permanence, admin) : ils voient aussi le matériel réservé au CSE (micro, enceinte, TPE…) et peuvent le réserver, toujours avec validation.",
+                "🎟️ Espace salarié : quota détaillé parc par parc (2 pour le salarié, 2 par ayant droit, 2 pour le conjoint), avec ce qui est déjà pris et ce qui reste."
             ] },
             { v: 'V.8.0', date: '2026-11-23', items: [
                 "🏖️ Espace salarié, chèques vacances payés par chèque : chaque échéance affiche « Chèque remis au CSE », « Chèque encaissé » ou « Chèque pas encore remis », avec un résumé « X sur Y remis au CSE ». Se règle comme avant dans l'appli (case de l'échéance : Non reçu → Reçu → Encaissé)."
@@ -43349,6 +43351,7 @@ var qrcode = function() {
     try { (typeof swileEmpLines === 'function' ? swileEmpLines(e) : []).forEach(function (l) { var d = String(l.useDate || '').slice(0, 10); if (d && d.slice(0, 4) >= lim && l.amount > 0) f.offert.push({ date: d, label: 'Billetterie en ligne Swile' + (l.label ? ' : ' + l.label : ''), montant: l.amount, type: 'Swile' }); }); } catch (er) { }
     f.idees = (db.ideas || []).filter(function (x) { return !x.anonyme && String(x.empId) === String(id) && !x.deleted; }).map(function (x) { return { date: String(x.at).slice(0, 10), type: x.type, texte: x.texte, statut: IDEE_ST[x.statut] || 'Reçue', reponse: x.reponse || '' }; });
     // Quotas billetterie de l'année (à titre d'information dans l'espace)
+    if (empIsCse(e)) { f.membreCse = true; f.materielCse = (db.equipment || []).filter(function (q) { return q.espaceHidden; }).map(function (q) { return matMap(q, today()); }); }
     var yq = String(new Date().getFullYear()); f.foyer = 1 + (e.children || []).filter(function (k) { return k && String(k.name || '').trim(); }).length + (e.spouse && e.spouse.name ? 1 : 0); f.pris = {}; f.cinePris = 0;
     (db.sales || []).forEach(function (s) { if (s.employeeId !== id || String(iso(s.date)).slice(0, 4) !== yq) return; (s.items || []).forEach(function (i) { f.pris[i.ticketId] = (f.pris[i.ticketId] || 0) + (i.qty || 0); if (/cin[ée]ma/i.test(i.ticketTitle || '') || isCine(i.ticketId)) f.cinePris += i.qty || 0; }); });
     var byD = function (a, b) { return String(b.date || b.debut).localeCompare(String(a.date || a.debut)); };
@@ -43365,15 +43368,18 @@ var qrcode = function() {
     if (!Array.isArray(c)) return L.filter(function (d) { return /r[eè]glement\s+int/i.test(d.titre); });
     return L.filter(function (d) { return c.indexOf(d.id) >= 0; });
   }
+  function matMap(q, T) {
+    return { id: q.id, nom: q.name, qte: q.quantity || 0, occupe: (db.loans || []).filter(function (l) { return !l.returned && String(l.endDate || '') >= T; }).reduce(function (a, l) { (l.items || []).forEach(function (i) { if (i.equipmentId === q.id) a.push({ d: l.startDate, f: l.endDate, q: i.qty || 0 }); }); return a; }, []) };
+  }
+  // Membre du CSE (rôle dans les accès de l'appli) : son espace propose aussi le matériel réservé au CSE.
+  function empIsCse(e) { try { var u = ((db.rbac && db.rbac.users) || []).filter(function (x) { return String(x.employeeId) === String(e.id); })[0]; return !!u && ['admin', 'tresorier', 'secretaire', 'elu', 'permanence'].indexOf(u.role) >= 0; } catch (er) { return false; } }
   function pub() {
     var T = today();
     var sorties = (db.outings || []).filter(function (o) { var d = iso(o.date); return !o.archived && d && d >= T && (!o.registrationDeadline || iso(o.registrationDeadline) >= T) && !o.espaceHidden; }).map(function (o) {
       var p = getOutingDefaultPrices(o.id), free = o.capacity ? outingPlacesFree(o) : null;
       return { id: o.id, nom: o.name, date: iso(o.date), lieu: o.location || '', notes: o.notes || '', limite: iso(o.registrationDeadline), prix: { salarie: p.employee, adulte: p.adultGuest, enfant: p.childGuest }, places: o.capacity || null, restantes: free == null ? null : Math.max(0, free) };
     }).sort(function (a, b) { return a.date.localeCompare(b.date); });
-    var materiel = (db.equipment || []).filter(function (q) { return !q.espaceHidden; }).map(function (q) {
-      return { id: q.id, nom: q.name, qte: q.quantity || 0, occupe: (db.loans || []).filter(function (l) { return !l.returned && String(l.endDate || '') >= T; }).reduce(function (a, l) { (l.items || []).forEach(function (i) { if (i.equipmentId === q.id) a.push({ d: l.startDate, f: l.endDate, q: i.qty || 0 }); }); return a; }, []) };
-    });
+    var materiel = (db.equipment || []).filter(function (q) { return !q.espaceHidden; }).map(function (q) { return matMap(q, T); });
     var c = cfg();
     return { cse: { nom: c.cseName || 'CSE', email: typeof CSE_SENDER_EMAIL !== 'undefined' ? CSE_SENDER_EMAIL : '' }, appUrl: /^https:/.test(location.protocol) ? location.origin + location.pathname : '',
       sorties: sorties, materiel: materiel, materielInfo: c.espaceMatInfo || '', docs: docsChosen().map(function (d) { return { titre: d.titre, date: d.date, url: d.url }; }),

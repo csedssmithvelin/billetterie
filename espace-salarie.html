@@ -249,7 +249,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
         h += '<div class="card"><h2>🎭 Sorties ouvertes</h2>' + (open.length ? open.map(outingRow).join('') : '<p class="empty">Pas de sortie ouverte aux inscriptions pour le moment.</p>') + '</div>';
       },
       materiel: function () {
-        var M = P.materiel || [];
+        var M = (P.materiel || []).concat((f.materielCse || []).map(function (m) { var x = {}; for (var k in m) x[k] = m[k]; x.cse = true; return x; }));
         h += '<div class="card"><h2>⛺ Réserver du matériel</h2><p class="mute">Tables, bancs, chapiteaux… Choisissez vos dates : les quantités libres s\'affichent. Le CSE valide votre réservation.</p>'
           + '<div class="grid2"><div><label>Du</label><input type="date" id="m-d" value="' + today() + '" min="' + today() + '"></div><div><label>Au</label><input type="date" id="m-f" value="' + today() + '" min="' + today() + '"></div></div>'
           + '<div id="m-list" style="margin-top:8px"></div><label>Remarque (facultatif)</label><textarea id="m-note" placeholder="Pour quelle occasion, heure de retrait…"></textarea>'
@@ -261,7 +261,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
             $('m-list').innerHTML = M.length ? M.map(function (m) {
               var used = 0; (m.occupe || []).forEach(function (o) { if (!(o.f < d || o.d > fi)) used += o.q; });
               var free = Math.max(0, m.qte - used);
-              return '<div class="row"><div class="l"><b>' + E(m.nom) + '</b><div class="mute">' + free + ' libre(s) sur ' + m.qte + '</div></div><div class="r"><input type="number" min="0" max="' + free + '" value="0" data-id="' + m.id + '" data-nom="' + E(m.nom) + '" data-max="' + free + '" style="width:80px" ' + (free ? '' : 'disabled') + '></div></div>';
+              return '<div class="row"><div class="l"><b>' + E(m.nom) + '</b>' + (m.cse ? ' <span class="tag info">réservé CSE</span>' : '') + '<div class="mute">' + free + ' libre(s) sur ' + m.qte + '</div></div><div class="r"><input type="number" min="0" max="' + free + '" value="0" data-id="' + m.id + '" data-nom="' + E(m.nom) + '" data-max="' + free + '" style="width:80px" ' + (free ? '' : 'disabled') + '></div></div>';
             }).join('') : '<p class="empty">Aucun matériel proposé.</p>';
           }
           $('m-d').onchange = upd; $('m-f').onchange = upd; upd();
@@ -319,7 +319,15 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
         var limStd = Q.std * (Q.stdFoyer ? foyer : 1), limCine = Q.cine * (Q.cineFoyer ? foyer : 1), resteCine = Math.max(0, limCine - (f.cinePris || 0));
         h += '<div class="card"><h2>🎟️ Mes quotas ' + new Date().getFullYear() + '</h2>'
           + (B.some(function (b) { return b.cinema; }) ? '<div class="row"><div class="l"><b>Cinéma</b><div class="mute">tous cinémas confondus · ' + (f.cinePris || 0) + ' place(s) prise(s) sur ' + limCine + '</div></div><div class="r"><span class="tag ' + (resteCine ? 'ok' : 'bad') + '">' + resteCine + ' restante(s)</span></div></div>' : '')
-          + '<div class="row"><div class="l"><b>Autres billets</b><div class="mute">' + Q.std + ' par an' + (Q.stdFoyer ? ' et par personne du foyer (' + foyer + ' personne' + (foyer > 1 ? 's' : '') + ' : vous' + [].concat(f.spouse && f.spouse.name ? [f.spouse.name] : [], (f.children || []).map(function (k) { return k && k.name; }).filter(Boolean)).map(function (n) { return ', ' + E(n); }).join('') + ')' : '') + ', pour chaque type de billet</div></div><div class="r">' + limStd + ' / billet</div></div>'
+          + (function () {
+            var pers = [{ n: 'Vous', r: 'salarié' }].concat(f.spouse && f.spouse.name ? [{ n: f.spouse.name, r: 'conjoint(e)' }] : [], (f.children || []).filter(function (k) { return k && String(k.name || '').trim(); }).map(function (k) { return { n: k.name, r: 'ayant droit' }; }));
+            var det = Q.stdFoyer ? pers.map(function (p) { return E(p.n) + ' (' + p.r + ') : ' + Q.std; }).join(' · ') : 'Vous : ' + Q.std;
+            var parcs = B.filter(function (b) { return !b.cinema; });
+            var x = '<h3 style="margin-top:12px">Parcs et autres billets</h3><p class="mute">' + det + ' → <b>' + limStd + ' par billet et par an</b></p>';
+            if (!parcs.length) return x;
+            return x + parcs.map(function (b) { var deja = pris[b.id] || 0, reste = Math.max(0, limStd - deja);
+              return '<div class="row"><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + deja + ' pris sur ' + limStd + '</div></div><div class="r"><span class="tag ' + (reste ? 'ok' : 'bad') + '">' + reste + ' restant' + (reste > 1 ? 's' : '') + '</span></div></div>'; }).join('');
+          })()
           + '<p class="mute" style="margin-top:8px">À titre d\'information : le CSE vérifie à la vente. Votre foyer est calculé d\'après votre fiche (onglet « Ma fiche »).</p></div>';
         h += '<div class="card"><h2>🎫 Billets disponibles au CSE</h2>' + (B.length ? B.map(function (b) {
           var deja = pris[b.id] || 0, reste = b.cinema ? resteCine : Math.max(0, limStd - deja);
