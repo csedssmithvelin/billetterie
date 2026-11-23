@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Em9mnJxEEZBu6nRaV8N1og==","iv":"FdSDBya6OTeOtYbM","rev":"boot","lastModified":"2026-11-23T16:50:19.392Z","by":"Michaël GROSJEAN","data":"7YH0kFTXTQCml2t531pVqO572zXq1w2+7Ow9N+qvI6MsFxjhjl2GRamwUqmtBrIkvRbgDiF1xyCB7KVPssIoCw=="},"at":"2026-11-23T16:50:19.423Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"/g6BPgUEtgo8/PvilAcqgA==","iv":"8lZVcmvrzEUd9Uo6","rev":"boot","lastModified":"2026-11-23T17:07:18.881Z","by":"Michaël GROSJEAN","data":"NEsAxIL7GceFpHy9Y/fyVlVzEjBenfarXPsYGSvIWrwRaIFp3lAcC6vOlFk04jJgbQF597+vcQK83BptA+6RxA=="},"at":"2026-11-23T17:07:18.914Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21700,6 +21700,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
                 "💳 Caisse : « Encaisser par carte (SumUp) » ouvre l'appli SumUp du téléphone avec le montant rempli ; en permanence, un bouton SumUp apparaît quand le paiement est « Carte ». Réglage : clé d'affiliation SumUp.",
                 "📱 SumUp depuis le PC : un QR code s'affiche ; scanné avec le téléphone (appli SumUp installée), il lance le paiement avec le montant, et le résultat revient sur le PC tout seul.",
                 "✅ SumUp : quand le paiement est accepté, la vente de la permanence est enregistrée toute seule en « Carte » (avec le code de transaction SumUp).",
+                "🎟️ SumUp : la désignation de l'achat (ex. « 2 x Cinéma Remiremont, 1 x Parc - DUPONT Jean ») est envoyée à SumUp comme description du paiement, et revient dans l'import des transactions.",
                 "🧾 SumUp : le reçu est envoyé directement à l'e-mail et au portable du salarié servi.",
                 "☁️ Paiements SumUp : bouton « Importer depuis SumUp » qui récupère les transactions sans fichier, puis une fois par jour tout seul (nouvelle version du script Google du CSE + clé API SumUp).",
                 "🔕 Bandeaux « Sauvegarde de secours » et « données de démonstration / sauvegarde bloquée » retirés. La protection reste : des données de démonstration ne sont jamais envoyées sur GitHub.",
@@ -40416,7 +40417,12 @@ function v65YcExtra(y, I) {
         if (permSale.method === 'Carte Bancaire' && total > 0 && conf) {
           if (!ex) { ex = document.createElement('button'); ex.id = 'v68-sumup-sale'; ex.type = 'button'; ex.className = 'flex-1 px-4 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-2xl text-sm font-black shadow'; conf.parentNode.insertBefore(ex, conf); }
           ex.innerHTML = '<i class="fa-solid fa-credit-card mr-1"></i> SumUp · ' + eur(total);
-          ex.onclick = function () { cseSumupPay(total, 'Billetterie CSE'); };
+          ex.onclick = function () {
+            var desc = (cartItems || []).filter(function (ci) { return ci.qty > 0; }).map(function (ci) { var t = (db.tickets || []).filter(function (x) { return x.id === ci.ticketId; })[0]; return t ? ci.qty + ' x ' + t.title : ''; }).filter(Boolean).join(', ');
+            var who = ''; try { var e = typeof permEmp === 'function' ? permEmp() : null; if (e) who = permName(e); } catch (er) { }
+            desc = (desc || 'Billetterie CSE') + (who ? ' - ' + who : '');
+            cseSumupPay(total, desc.length > 120 ? desc.slice(0, 117) + '...' : desc);
+          };
         } else if (ex) ex.remove();
       } catch (e) { console.warn(e); }
       return r;
