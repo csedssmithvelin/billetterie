@@ -70,7 +70,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
 </style>
 </head>
 <body>
-<header><div class="in"><small id="h-cse">CSE</small><h1 id="h-nom">Mon espace CSE</h1></div></header>
+<header><div class="in" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><small id="h-cse">CSE</small><h1 id="h-nom">Mon espace CSE</h1></div><button id="h-inst" class="btn s" hidden style="background:#ffffff22;border-color:#ffffff66;color:#fff;flex:0 0 auto">📲 Installer l'appli</button></div></header>
 <main>
   <nav id="nav" hidden></nav>
   <div id="app"><div class="card loading">Chargement de votre espace…</div></div>
@@ -271,6 +271,8 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
         h += '<div class="card"><h2>📄 Documents du CSE</h2>' + (L.length ? L.map(function (d) { return '<div class="row"><div class="l"><b>' + E(d.titre) + '</b>' + (d.date ? '<div class="mute">' + fd(d.date) + '</div>' : '') + '</div><div class="r"><a class="btn s" href="' + E(d.url) + '" target="_blank" rel="noopener">Ouvrir</a></div></div>'; }).join('') : '<p class="empty">Aucun document pour le moment.</p>') + '</div>';
       },
       fiche: function () {
+        var pf = (D.demandes || []).filter(function (d) { return d.type === 'fiche' && d.statut === 'en attente'; }).length;
+        if (pf) h += '<div class="msg warn" style="margin:0 0 12px">⏳ Votre demande de modification est en attente : votre fiche changera seulement quand le CSE l\'aura acceptée.</div>';
         h += '<div class="card"><h2>👤 Ma fiche</h2><p class="mute">Vérifiez vos informations. Pour corriger, modifiez puis envoyez : le CSE valide le changement.</p>'
           + '<div class="row"><div class="l">Nom</div><div class="r">' + E(f.nom) + '</div></div>' + (f.service ? '<div class="row"><div class="l">Service</div><div class="r">' + E(f.service) + '</div></div>' : '')
           + '<label>Adresse</label><textarea id="f-adr">' + E(f.address) + '</textarea>'
@@ -299,7 +301,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
             var note = $('f-note').value.trim();
             if (!Object.keys(ch).length && !note) return say('f-msg', 'Rien n\'a changé.', 'bad');
             var labels = { address: 'adresse', phone: 'téléphone', email: 'e-mail', spouse: 'conjoint', children: 'enfants' };
-            send('fiche', { changes: ch, note: note }, 'Modifier : ' + (Object.keys(ch).map(function (k) { return labels[k]; }).join(', ') || 'voir le message'), 'f-msg', 'f-go');
+            send('fiche', { changes: ch, note: note }, 'Modifier ma fiche : ' + (Object.keys(ch).map(function (k) { return labels[k]; }).join(', ') || 'voir le message'), 'f-msg', 'f-go');
           };
         }, 0);
       },
@@ -376,8 +378,10 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
   window.cseInstall = async function (os) {
     if (os === 'android' && PROMPT) { PROMPT.prompt(); try { await PROMPT.userChoice; } catch (e) { } PROMPT = null; return; }
     if (os === 'ios') sheet(head('Installer sur iPhone') + '<ol style="padding-left:20px;line-height:1.8"><li>Ouvrez ce lien avec <b>Safari</b> (pas dans l\'appli Gmail : appuyez sur ⋯ puis « Ouvrir dans Safari »).</li><li>Appuyez sur le bouton <b>Partager</b> <span style="font-size:18px">⬆︎</span> en bas de l\'écran.</li><li>Choisissez <b>« Sur l\'écran d\'accueil »</b>, puis <b>Ajouter</b>.</li></ol><p class="mute">L\'icône « Mon CSE » apparaît sur votre écran d\'accueil.</p><button class="btn" onclick="cseClose()">OK</button>');
+    else if (os === 'choix') sheet(head('Installer l\'appli') + '<p>Ouvrez ce lien sur votre téléphone, puis choisissez :</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" onclick="cseInstall(\'android\')">🤖 Android</button><button class="btn p" onclick="cseInstall(\'ios\')">🍏 iPhone</button></div><p class="mute" style="margin-top:10px">Astuce : sur PC (Chrome ou Edge), l\'icône ⊕ dans la barre d\'adresse installe aussi l\'appli.</p>');
     else sheet(head('Installer sur Android') + '<ol style="padding-left:20px;line-height:1.8"><li>Ouvrez ce lien avec <b>Chrome</b> (dans Gmail : ⋮ puis « Ouvrir dans Chrome »).</li><li>Appuyez sur <b>⋮</b> en haut à droite.</li><li>Choisissez <b>« Installer l\'application »</b> ou <b>« Ajouter à l\'écran d\'accueil »</b>.</li></ol><p class="mute">L\'icône « Mon CSE » apparaît avec vos applications.</p><button class="btn" onclick="cseClose()">OK</button>');
   };
+  (function () { var b = $('h-inst'); if (!b || STANDALONE || PUBLIC) return; b.hidden = false; b.onclick = function () { if (PROMPT) cseInstall('android'); else cseInstall(IOS ? 'ios' : (/android/i.test(navigator.userAgent) ? 'android' : 'choix')); }; })();
   try { if ('serviceWorker' in navigator && /^https:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function () { }); } catch (e) { }
 
   function say(id, m, cl) { var el = $(id); if (el) el.innerHTML = '<div class="msg ' + (cl || 'info') + '">' + E(m) + '</div>'; }
