@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"umlM6aASDG4K07WUfqvk0g==","iv":"7+CQVqnOanSXyhOp","rev":"boot","lastModified":"2026-11-23T13:29:23.585Z","by":"Michaël GROSJEAN","data":"oG0JhU+lp+F1XJVibtjFv7Ml54yRM6aqqCKWsgFdEUYQXnyy5epQoC+D3yTOzLi/VOT02132r0TFDV7f4Pzqzw=="},"at":"2026-11-23T13:29:23.636Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"C2PV4Oky+p+NwE1k6Ej0VA==","iv":"CfnBgfJxz9CIYbax","rev":"boot","lastModified":"2026-11-23T13:38:47.876Z","by":"Michaël GROSJEAN","data":"o5/+UZWm47QnOjChyGX6zfoQsxiIUsocsE65DbP1PEjG8/tSU7KdtDUxw9gJWHgE1G7WDnA/J91tl9xumi/88A=="},"at":"2026-11-23T13:38:47.917Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -39815,7 +39815,7 @@ function v65YcExtra(y, I) {
             + (u ? '<a class="' + BTNP + '" target="_blank" rel="noopener" href="' + E(fs) + '"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ouvrir File Station</a>' : '') + '</div>'
             + '<p class="text-[11px] text-slate-500">Identifiant et mot de passe du NAS demandés. Si le cadre ci-dessous reste vide ou refuse la connexion, utilisez « Ouvrir File Station » : le NAS interdit parfois d\'être affiché dans une autre page (voir les réglages plus bas).</p></div>';
         if (!u) { root.innerHTML = head + '<div class="' + CARD + '" style="text-align:center;padding:40px 20px"><i class="fa-solid fa-server" style="font-size:34px;color:#94a3b8"></i><p class="text-sm text-slate-600" style="margin-top:10px">Indiquez l\'adresse QuickConnect du Synology du CSE (par exemple https://cse-velin.quickconnect.to).</p></div>' + synoHelp(); return; }
-        root.innerHTML = head + '<div class="bg-white rounded-2xl border border-slate-200 shadow-sm" style="overflow:hidden"><iframe src="' + E(fs) + '" style="width:100%;height:calc(100vh - 260px);min-height:480px;border:0;background:#fff" title="File Station du Synology" allow="clipboard-read; clipboard-write; fullscreen"></iframe></div>' + synoHelp();
+        root.innerHTML = head + '<div class="bg-white rounded-2xl border border-slate-200 shadow-sm" style="overflow:hidden"><iframe src="' + E(u + '/') + '" style="width:100%;height:calc(100vh - 260px);min-height:480px;border:0;background:#fff" title="File Station du Synology" allow="clipboard-read; clipboard-write; fullscreen"></iframe></div>' + synoHelp();
     }
     function synoHelp() {
         return '<details class="' + CARD + '" style="padding:14px"><summary class="text-xs font-semibold text-slate-700 cursor-pointer">Réglages du Synology pour l\'afficher ici (une seule fois)</summary><ol class="list-decimal pl-5 space-y-1 text-xs text-slate-600" style="margin-top:6px">'
