@@ -108,7 +108,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
         attente: [{ outingId: 903, nom: 'Concert au Zénith', date: plus(40), pos: 2 }],
         idees: [{ date: plus(-20), type: 'sortie', texte: 'Pourquoi pas une sortie au parc Walygator l\'été prochain ?', statut: 'Retenue', reponse: 'Bonne idée, on la met au programme 2027 !' }],
         prets: [{ debut: plus(5), fin: plus(7), items: '4 x Tables pliantes, 8 x Bancs', statut: 'Réservé' }, { debut: d(8, 20), fin: d(8, 22), items: '1 x Chapiteau 3x6', statut: 'Rendu' }] },
-      pub: { cse: { nom: 'CSE (exemple)', email: '' }, cv: { ouvert: true, texte: 'Inscriptions ouvertes jusqu\'au 15 mars. Montant de 100 € à 600 €, participation du CSE selon le quotient familial.' },
+      pub: { cse: { nom: 'CSE (exemple)', email: '' }, swile: { url: '', texte: 'Cinéma, parcs, spectacles : vos billets à prix CSE, avec la subvention déjà déduite.' }, cv: { ouvert: true, texte: 'Inscriptions ouvertes jusqu\'au 15 mars. Montant de 100 € à 600 €, participation du CSE selon le quotient familial.' },
         sorties: [{ id: 901, nom: 'Marché de Noël de Strasbourg', date: plus(12), lieu: 'Strasbourg', notes: 'Départ en car à 8 h du parking de l\'usine.', limite: plus(5), prix: { salarie: 15, adulte: 20, enfant: 10 }, places: 50, restantes: 12 },
           { id: 902, nom: 'Karting en famille', date: plus(26), lieu: 'Épinal', notes: '', limite: plus(18), prix: { salarie: 10, adulte: 25, enfant: 15 }, places: 30, restantes: 8 },
           { id: 903, nom: 'Concert au Zénith', date: plus(40), lieu: 'Nancy', notes: '', limite: plus(30), prix: { salarie: 20, adulte: 35, enfant: 35 }, places: 20, restantes: 0 }],
@@ -195,6 +195,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
         if (open.length) h += '<div class="card" style="margin-top:12px"><h2>🎭 Sorties où vous pouvez vous inscrire</h2>' + open.slice(0, 4).map(outingRow).join('') + '</div>';
         h += cvCard('🏖️ Chèques vacances');
         h += '<div class="card"><h2>💡 Une idée, une question pour la réunion ?</h2><p class="mute">Boîte à idées, idée de sortie, question à poser à la prochaine réunion du CSE : avec votre nom ou en anonyme.</p><button class="btn p" onclick="cseGo(\'idees\')">Donner mon idée</button></div>';
+        h += swileCard();
         h += installCard();
         h += '<div class="card"><h2>💬 Une question ?</h2><p class="mute">Écrivez au CSE directement d\'ici, ou par e-mail.</p><button class="btn" onclick="cseMsg()">Écrire au CSE</button> '
           + (P.cse && P.cse.email ? '<a class="btn" href="mailto:' + E(P.cse.email) + '">✉️ ' + E(P.cse.email) + '</a>' : '') + '</div>';
@@ -214,7 +215,7 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
         h += '<div class="card"><h2>🎁 Ce que le CSE vous a offert</h2>' + yearBar(ys)
           + '<div class="kpi" style="cursor:default;margin-bottom:8px"><span>Total ' + YEAR + '</span><b style="color:var(--ok)">' + eur(tot) + '</b></div>'
           + (Y.length ? Y.map(function (o) { return '<div class="row"><div class="l"><b>' + E(o.label) + '</b><div class="mute">' + fd(o.date) + ' · ' + E(o.type) + '</div></div><div class="r" style="color:var(--ok)">' + eur(o.montant) + '</div></div>'; }).join('') : '<p class="empty">Rien d\'enregistré pour ' + YEAR + '.</p>')
-          + '<p class="mute" style="margin-top:10px">Billets : différence entre le prix payé par le CSE et votre prix. Chèques vacances : part payée par le CSE.</p></div>';
+          + '<p class="mute" style="margin-top:10px">Billets : différence entre le prix payé par le CSE et votre prix. Chèques vacances : part payée par le CSE.</p></div>' + swileCard();
       },
       cv: function () {
         var L = f.cv || [];
@@ -348,6 +349,14 @@ footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
   }
   window.cseIdeaPublic = function () { $('h-nom').textContent = 'Boîte à idées du CSE'; $('app').innerHTML = ideaBox(false); $('foot').textContent = 'Message anonyme : aucune information sur vous n\'est transmise.'; };
 
+  function swileCard() {
+    var W = D && D.pub && D.pub.swile; if (!W) return '';
+    return '<div class="card"><h2>🛍️ Billetterie en ligne Swile</h2><p class="mute">' + E(W.texte || 'Achetez vos billets à prix CSE sur la boutique Swile du CSE.') + '</p>'
+      + (W.url ? '<a class="btn p" href="' + E(W.url) + '" target="_blank" rel="noopener">Ouvrir la boutique Swile</a>' : '')
+      + '<p class="mute" style="margin:12px 0 6px">Pas encore l\'appli Swile ?</p><div style="display:flex;gap:8px;flex-wrap:wrap">'
+      + '<a class="btn s" href="https://play.google.com/store/apps/developer?id=Swile" target="_blank" rel="noopener">🤖 Android (Google Play)</a>'
+      + '<a class="btn s" href="https://apps.apple.com/fr/app/swile/id1190612035" target="_blank" rel="noopener">🍏 iPhone (App Store)</a></div></div>';
+  }
   function outingRow(o) {
     var full = o.places != null && o.restantes <= 0, late = o.limite && o.limite < today();
     return '<div class="row"><div class="l"><b>' + E(o.nom) + '</b><div class="mute">' + fd(o.date) + (o.lieu ? ' · ' + E(o.lieu) : '') + '</div>'
