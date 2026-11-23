@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"wopEX6Zb0w2eI834QA8IdQ==","iv":"oe9Msb49XmQ4q4i9","rev":"boot","lastModified":"2026-11-23T18:39:39.490Z","by":"Michaël GROSJEAN","data":"jQnfGZWDv/SXoaw5/IqWHedN5/wPt/5UYvfckodh68LFRom8ZEZM+chVJI52JAVkTeIszYvJSu4aCadSgasxzw=="},"at":"2026-11-23T18:39:39.523Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"N1Sb60YvpykFh6Pb8diSDA==","iv":"KWYxSDMfgEmMIuBi","rev":"boot","lastModified":"2026-11-23T19:12:52.029Z","by":"Michaël GROSJEAN","data":"ZZwcj6aqbRLkSCJkzwVUGsf9YsXqT6qiUQVoF56ntjB16HIbIphRHwKcJD+Hz99nbLDucow6Eaw95Qg9qUeYCA=="},"at":"2026-11-23T19:12:52.108Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6935,7 +6935,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.7.5";
+        const APP_VERSION = "V.7.6";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21693,6 +21693,9 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.7.6', date: '2026-11-23', items: [
+                "🔗 Demandes des salariés : « Accepter » enregistre tout seul dans l'appli l'inscription à la sortie (avec les invités et les tarifs de la sortie), sa modification ou son annulation, et la réservation de matériel. Bouton « Enregistrer maintenant » pour les demandes déjà acceptées avant cette version."
+            ] },
             { v: 'V.7.5', date: '2026-11-23', items: [
                 "🛍️ Espace salarié : lien vers la boutique / billetterie Swile du CSE, avec les boutons pour installer l'appli Swile (Android et iPhone). Réglage : Paramètres › Sauvegardes › Espace salarié."
             ] },
@@ -43421,7 +43424,7 @@ var qrcode = function() {
   }
   function act(d) {
     var x = d.data || {};
-    if (d.type === 'sortie' || d.type === 'sortie-modif') return '<button type="button" class="' + V59_BTN + '" onclick="cseDemOpen(\'' + d.id + '\')"><i class="fa-solid fa-up-right-from-square"></i> ' + (d.type === 'sortie' ? 'Inscrire (formulaire prérempli)' : 'Ouvrir l\'inscription') + '</button>';
+    if (d.type === 'sortie' || d.type === 'sortie-modif') return '<button type="button" class="' + V59_BTN + '" onclick="cseDemOpen(\'' + d.id + '\')"><i class="fa-solid fa-up-right-from-square"></i> ' + (d.type === 'sortie' ? 'Voir / ajuster dans le formulaire' : 'Ouvrir l\'inscription') + '</button>';
     if (d.type === 'sortie-annul') return '<button type="button" class="' + V59_BTN + '" onclick="cseDemOpen(\'' + d.id + '\')"><i class="fa-solid fa-trash"></i> Supprimer l\'inscription</button>';
     if (d.type === 'materiel') return '<button type="button" class="' + V59_BTN + '" onclick="cseDemOpen(\'' + d.id + '\')"><i class="fa-solid fa-up-right-from-square"></i> Créer le prêt (prérempli)</button>';
     if (d.type === 'cv') return '<button type="button" class="' + V59_BTN + '" onclick="cseDemOpen(\'' + d.id + '\')"><i class="fa-solid fa-up-right-from-square"></i> Créer le dossier (prérempli)</button>';
@@ -43436,7 +43439,7 @@ var qrcode = function() {
       return '<div class="rounded-xl border ' + (wait ? 'border-indigo-200 bg-indigo-50/40' : 'border-slate-200') + ' p-3 space-y-2">'
         + '<div class="flex flex-wrap justify-between gap-2"><div class="font-bold text-slate-800"><i class="fa-solid ' + t[0] + ' text-indigo-600 mr-1"></i>' + E(t[1]) + ' · ' + E(e ? empName(e) : d.nom) + '</div><div class="text-slate-500">' + fd(String(d.at).slice(0, 10)) + ' ' + String(d.at).slice(11, 16) + ' · <b class="' + (wait ? 'text-amber-700' : d.statut === 'acceptée' ? 'text-emerald-700' : 'text-red-700') + '">' + E(d.statut) + '</b></div></div>'
         + (/^(materiel|cv|sortie)/.test(d.type) ? '' : '<div class="text-slate-700">' + E(d.resume) + '</div>') + detail(d)
-        + (ok ? '<div class="text-emerald-700 font-semibold">' + ok + '</div>' : '')
+        + (ok ? '<div class="text-emerald-700 font-semibold">' + ok + '</div>' : (d.statut === 'acceptée' && /^(sortie|materiel)/.test(d.type) ? '<div class="flex flex-wrap items-center gap-2"><span class="text-amber-700 font-semibold"><i class="fa-solid fa-triangle-exclamation"></i> Acceptée mais pas encore enregistrée dans l\'appli.</span><button type="button" class="' + V59_BTNP + '" onclick="cseDemApply(\'' + d.id + '\')"><i class="fa-solid fa-check"></i> Enregistrer maintenant</button></div>' : ''))
         + (d.reponse ? '<div class="text-slate-600">Réponse : ' + E(d.reponse) + '</div>' : '')
         + (wait ? '<div class="flex flex-wrap gap-2 items-center">' + act(d) + (e && e.email ? '<button type="button" class="' + V59_BTN + '" onclick="cseDemMail(\'' + d.id + '\')"><i class="fa-solid fa-envelope"></i> Écrire</button>' : '') + '</div>'
           + '<div class="flex flex-wrap gap-2 items-center"><input id="v70r-' + d.id + '" class="flex-1 min-w-[180px] p-2 bg-white border rounded-lg text-xs" placeholder="Message au salarié (facultatif)"><label class="flex items-center gap-1"><input type="checkbox" id="v70p-' + d.id + '"' + (e && e.email ? ' checked' : ' disabled') + '> prévenir par e-mail</label>'
@@ -43501,6 +43504,48 @@ var qrcode = function() {
     try { logAction('Modification', 'employee', empName(e) + ' (demande depuis son espace, acceptée)', { subject: typeof auditPerson === 'function' ? auditPerson(e) : undefined, changes: typeof empAuditChanges === 'function' ? empAuditChanges(before, e) : [] }); } catch (er) { }
     return ch;
   }
+  // « Accepter » enregistre la demande directement dans l'appli (inscription, modification, annulation, prêt).
+  async function autoApply(d, ask) {
+    var x = d.data || {}, e = empById(d.empId); if (!e) { say('Salarié introuvable dans l\'appli.', 'error'); return false; }
+    var who = empName(e), today2 = todayLocalISO(), fr = today2.split('-').reverse().join('/');
+    if (d.type === 'sortie' || d.type === 'sortie-modif') {
+      var o = (db.outings || []).filter(function (z) { return z.id === x.outingId; })[0]; if (!o) { say('Cette sortie n\'existe plus dans l\'appli.', 'error'); return false; }
+      var p = getOutingDefaultPrices(o.id), reg = (db.registrations || []).filter(function (r) { return r.outingId === o.id && r.employeeId === e.id && !r.cancelled; })[0];
+      var guests = (x.invites || []).map(function (g) { var prev = reg && (reg.guests || []).filter(function (z) { return normalizeName(z.name) === normalizeName(g.name); })[0]; return { name: g.name, isChild: !!g.isChild, price: prev && typeof prev.price === 'number' ? prev.price : (g.isChild ? p.childGuest : p.adultGuest) }; });
+      var need = 1 + guests.length, used = outingPlacesUsed(o, reg ? reg.id : null);
+      var full = o.capacity && used + need > o.capacity ? '\n\n⚠️ Sortie complète : ' + used + ' / ' + o.capacity + ' places déjà prises, il en faut ' + need + '.' : '';
+      if (ask && !(await uiConfirm((reg ? 'Accepter et modifier l\'inscription de ' : 'Accepter et inscrire ') + who + ' à « ' + o.name + ' » ?\n\n' + who + (guests.length ? ' + ' + guests.map(function (g) { return g.name + (g.isChild ? ' (enfant)' : ''); }).join(', ') : '') + full))) return false;
+      if (reg) { reg.guests = guests; if (x.note) reg.note = (reg.note ? reg.note + ' · ' : '') + x.note; }
+      else {
+        reg = { id: Date.now(), outingId: o.id, employeeId: e.id, employeePrice: p.employee, guests: guests, paymentMethod: '', paid: false, paidDate: '', dueDate: '', note: 'Demande depuis son espace' + (x.note ? ' : ' + x.note : '') };
+        if (computeRegistrationAmount(o.id, guests, p.employee) === 0) { reg.paymentMethod = 'Gratuit'; reg.paid = true; reg.paidDate = fr; reg.settledDate = today2; }
+        db.registrations.push(reg);
+        if ((o.waitlist || []).length) o.waitlist = o.waitlist.filter(function (w) { return w.employeeId !== e.id; });
+      }
+      try { logAction(d.type === 'sortie' ? 'Création' : 'Modification', 'registration', who + ' - ' + o.name + ' (demande en ligne acceptée)'); } catch (er) { }
+      await saveDB(); say('✔ ' + who + ' est inscrit(e) à « ' + o.name + ' » (' + need + ' personne(s)).', 'success'); return true;
+    }
+    if (d.type === 'sortie-annul') {
+      var r2 = (db.registrations || []).filter(function (r) { return r.id === x.regId; })[0];
+      if (!r2) return true;
+      if (ask && !(await uiConfirm('Accepter et supprimer l\'inscription de ' + who + ' à « ' + (x.sortie || '') + ' » ?' + (r2.paid && r2.paymentMethod !== 'Gratuit' ? '\n\n⚠️ Elle était réglée (' + r2.paymentMethod + ') : pensez au remboursement.' : '')))) return false;
+      try { moveToTrash('registration', who, r2); } catch (er) { }
+      db.registrations = db.registrations.filter(function (r) { return r.id !== r2.id; });
+      try { logAction('Suppression', 'registration', who + ' - ' + (x.sortie || '') + ' (annulation demandée en ligne)'); } catch (er) { }
+      await saveDB(); say('✔ Inscription de ' + who + ' supprimée.', 'success'); return true;
+    }
+    if (d.type === 'materiel') {
+      var items = (x.items || []).map(function (i) { var q = (db.equipment || []).filter(function (z) { return z.id === i.id; })[0]; return q ? { equipmentId: q.id, equipmentName: q.name, qty: Math.min(i.qte, q.quantity || i.qte) } : null; }).filter(Boolean);
+      if (!items.length) { say('Ce matériel n\'existe plus dans l\'appli.', 'error'); return false; }
+      var pb = ''; try { pb = loanDatesClosureProblem(x.debut, x.fin) || ''; } catch (er) { }
+      if (ask && !(await uiConfirm('Accepter et créer le prêt pour ' + who + ' ?\n\n' + items.map(function (i) { return i.qty + ' x ' + i.equipmentName; }).join(', ') + '\ndu ' + fd(x.debut) + ' au ' + fd(x.fin) + (pb ? '\n\n⚠️ ' + pb : '')))) return false;
+      db.loans.push({ id: Date.now(), employeeId: e.id, startDate: x.debut, endDate: x.fin, pickedUp: false, pickedUpDate: '', returned: false, returnedDate: '', items: items, note: x.note || '' });
+      try { logAction('Création', 'loan', who + ' - ' + items.map(function (i) { return i.equipmentName; }).join(', ') + ' (demande en ligne acceptée)'); } catch (er) { }
+      await saveDB(); say('✔ Prêt créé pour ' + who + '.', 'success'); return true;
+    }
+    return true;
+  }
+  window.cseDemApply = async function (id) { var d = dem(id); if (!d) return; if (await autoApply(d, true)) { renderDem(); cseEspacePublish(true, true); } };
   window.cseDemDecide = async function (id, statut) {
     var d = dem(id); if (!d) return;
     if (d.type === 'fiche' && statut === 'acceptée') {
@@ -43512,7 +43557,8 @@ var qrcode = function() {
       }
     }
     var msg = (document.getElementById('v70r-' + id) || {}).value || '', pv = !!(document.getElementById('v70p-' + id) || {}).checked;
-    if (statut === 'acceptée' && /^(sortie|materiel|cv)/.test(d.type) && !done(d) && !(await uiConfirm('Rien n\'a encore été enregistré dans l\'appli pour cette demande (bouton « ' + (d.type === 'sortie-annul' ? 'Supprimer' : 'prérempli') + ' »).\n\nAccepter quand même ?'))) return;
+    if (statut === 'acceptée' && /^(sortie|materiel)/.test(d.type) && !done(d)) { if (!(await autoApply(d, true))) return; }
+    if (statut === 'acceptée' && d.type === 'cv' && !done(d) && !(await uiConfirm('Le dossier de chèques vacances n\'est pas encore créé (il faut la part du CSE et les échéances).\n\nAccepter quand même et le créer ensuite avec « Créer le dossier (prérempli) » ?'))) return;
     try {
       var j = await post('decision', { id: id, statut: statut, reponse: msg.trim(), prevenir: pv });
       d.statut = statut; d.reponse = msg.trim();
