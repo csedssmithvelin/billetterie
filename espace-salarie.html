@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1e40af">
+<title>Mon espace CSE</title>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--brand:#1d4ed8;--brand2:#dbeafe;--ok:#047857;--okb:#d1fae5;--warn:#b45309;--warnb:#fef3c7;--bad:#b91c1c;--badb:#fee2e2}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:18px 16px 54px}
+header .in{max-width:860px;margin:0 auto}
+header small{opacity:.8;font-weight:600;letter-spacing:.02em}
+header h1{margin:4px 0 0;font-size:22px}
+main{max-width:860px;margin:-40px auto 40px;padding:0 12px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:6px;background:var(--card);border-radius:14px;box-shadow:0 2px 10px #0f172a14;margin-bottom:12px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;border:0;background:none;padding:9px 12px;border-radius:10px;font:600 13px system-ui,sans-serif;color:var(--mute);cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--brand2);color:var(--brand)}
+nav .n{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:#ef4444;color:#fff;font-size:11px;line-height:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.card h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.card h3{font-size:14px;margin:14px 0 6px}
+.mute{color:var(--mute);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}
+.kpi b{display:block;font-size:20px;margin-top:2px}
+.kpi span{color:var(--mute);font-size:12px;font-weight:600}
+.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .l{min-width:0}
+.row .r{text-align:right;white-space:nowrap;font-weight:700}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:4px;vertical-align:middle}
+.ok{background:var(--okb);color:var(--ok)}.warn{background:var(--warnb);color:var(--warn)}.bad{background:var(--badb);color:var(--bad)}.info{background:var(--brand2);color:var(--brand)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 14px;border-radius:10px;font:600 14px system-ui,sans-serif;cursor:pointer;text-decoration:none}
+.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.s{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+label{display:block;font-size:13px;font-weight:600;color:#334155;margin:10px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px;font:15px system-ui,sans-serif;background:#f8fafc;color:var(--ink)}
+textarea{min-height:70px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+.empty{color:var(--mute);font-size:14px;padding:6px 0}
+.msg{padding:10px 12px;border-radius:10px;font-weight:600;font-size:14px;margin-top:10px}
+.guest{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;margin-top:6px}
+.guest input{padding:8px}
+.guest label{margin:0;font-weight:500;display:flex;gap:4px;align-items:center}
+.guest label input{width:auto}
+#overlay{position:fixed;inset:0;background:#0f172a99;display:none;align-items:flex-end;justify-content:center;z-index:9}
+#overlay.on{display:flex}
+#sheet{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px 24px}
+@media(min-width:620px){#overlay{align-items:center}#sheet{border-radius:18px}}
+#sheet h2{margin:0 0 4px;font-size:18px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.x{border:0;background:none;font-size:24px;line-height:1;color:var(--mute);cursor:pointer}
+.year{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.loading{text-align:center;padding:50px 10px;color:var(--mute)}
+footer{text-align:center;color:var(--mute);font-size:12px;margin:20px 0}
+</style>
+</head>
+<body>
+<header><div class="in"><small id="h-cse">CSE</small><h1 id="h-nom">Mon espace CSE</h1></div></header>
+<main>
+  <nav id="nav" hidden></nav>
+  <div id="app"><div class="card loading">Chargement de votre espace…</div></div>
+  <footer id="foot"></footer>
+</main>
+<div id="overlay"><div id="sheet"></div></div>
+
+<script>
+(function () {
+  'use strict';
+  // --- Lien personnel : #u=<adresse du script en base64>&t=<code personnel> ---
+  var H = new URLSearchParams(location.hash.replace(/^#/, ''));
+  var U = H.get('u'), T = H.get('t');
+  try {
+    if (U && T) localStorage.setItem('cse_espace', JSON.stringify({ u: U, t: T }));
+    else if (!(U && /(^|[#&])idees\b/.test(location.hash))) { var mem = JSON.parse(localStorage.getItem('cse_espace') || 'null'); if (mem) { U = mem.u; T = mem.t; } }
+  } catch (e) { }
+  var URLS = ''; try { URLS = atob(String(U || '').replace(/-/g, '+').replace(/_/g, '/')); } catch (e) { }
+  var PUBLIC = !T && !!U && /(^|[#&])idees\b/.test(location.hash);
+  var D = null, TAB = 'accueil', YEAR = String(new Date().getFullYear());
+
+  // --- Mode démonstration (#demo) : salarié fictif, rien n'est envoyé ---
+  var DEMO = /(^|[#&?])demo\b/.test(location.hash + location.search);
+  function demoData() {
+    var y = new Date().getFullYear(), t = today();
+    function d(m, j, yy) { return (yy || y) + '-' + String(m).padStart(2, '0') + '-' + String(j).padStart(2, '0'); }
+    function plus(n) { var x = new Date(); x.setDate(x.getDate() + n); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); }
+    return { ok: true, le: new Date().toISOString(),
+      fiche: { id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
+        children: [{ name: 'Léa Exemple', birthdate: '2015-04-12' }, { name: 'Hugo Exemple', birthdate: '2019-09-30' }], spouse: { name: 'Alex Exemple', birthdate: '1988-02-03' },
+        achats: [{ date: d(10, 18), desc: '4 x Cinéma', total: 24, regle: true, mode: 'Carte Bancaire' }, { date: d(7, 2), desc: '2 x Parc Astérix', total: 70, regle: true, mode: 'Chèque' }, { date: d(11, 20), desc: '2 x Fraispertuis', total: 30, regle: false, mode: '' }, { date: d(12, 5, y - 1), desc: '3 x Cinéma', total: 18, regle: true, mode: 'Espèces' }],
+        offert: [{ date: d(10, 18), label: 'Billets : 4 x Cinéma', montant: 12, type: 'Billetterie' }, { date: d(7, 2), label: 'Billets : 2 x Parc Astérix', montant: 40, type: 'Billetterie' }, { date: d(11, 20), label: 'Billets : 2 x Fraispertuis', montant: 18, type: 'Billetterie' }, { date: d(3, 15), label: 'Chèques vacances (part du CSE)', montant: 200, type: 'Chèques vacances' }, { date: d(12, 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }, { date: d(6, 10), label: 'Rentrée scolaire (Léa Exemple)', montant: 40, type: 'Œuvres sociales' }, { date: d(12, 10, y - 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }],
+        cv: [{ annee: String(y), total: 500, cse: 200, salarie: 300, formats: 'Papier 300,00 € · Connect 200,00 €', livraison: '', echeances: [{ date: d(3, 15), montant: 100, mode: 'Prélèvement', statut: 'payé' }, { date: d(4, 15), montant: 100, mode: 'Prélèvement', statut: 'payé' }, { date: plus(-5), montant: 50, mode: 'Chèque', statut: 'en retard' }, { date: plus(20), montant: 50, mode: 'Chèque', statut: 'à venir' }] }],
+        sorties: [{ regId: 11, outingId: 901, nom: 'Marché de Noël de Strasbourg', date: plus(12), lieu: 'Strasbourg', invites: [{ name: 'Alex Exemple', isChild: false }, { name: 'Léa Exemple', isChild: true }], montant: 45, regle: false, aRegler: 45 }, { regId: 10, outingId: 900, nom: 'Bowling', date: d(9, 14), lieu: 'Épinal', invites: [], montant: 5, regle: true, aRegler: 0 }],
+        attente: [{ outingId: 903, nom: 'Concert au Zénith', date: plus(40), pos: 2 }],
+        idees: [{ date: plus(-20), type: 'sortie', texte: 'Pourquoi pas une sortie au parc Walygator l\'été prochain ?', statut: 'Retenue', reponse: 'Bonne idée, on la met au programme 2027 !' }],
+        prets: [{ debut: plus(5), fin: plus(7), items: '4 x Tables pliantes, 8 x Bancs', statut: 'Réservé' }, { debut: d(8, 20), fin: d(8, 22), items: '1 x Chapiteau 3x6', statut: 'Rendu' }] },
+      pub: { cse: { nom: 'CSE (exemple)', email: '' }, cv: { ouvert: true, texte: 'Inscriptions ouvertes jusqu\'au 15 mars. Montant de 100 € à 600 €, participation du CSE selon le quotient familial.' },
+        sorties: [{ id: 901, nom: 'Marché de Noël de Strasbourg', date: plus(12), lieu: 'Strasbourg', notes: 'Départ en car à 8 h du parking de l\'usine.', limite: plus(5), prix: { salarie: 15, adulte: 20, enfant: 10 }, places: 50, restantes: 12 },
+          { id: 902, nom: 'Karting en famille', date: plus(26), lieu: 'Épinal', notes: '', limite: plus(18), prix: { salarie: 10, adulte: 25, enfant: 15 }, places: 30, restantes: 8 },
+          { id: 903, nom: 'Concert au Zénith', date: plus(40), lieu: 'Nancy', notes: '', limite: plus(30), prix: { salarie: 20, adulte: 35, enfant: 35 }, places: 20, restantes: 0 }],
+        materiel: [{ id: 1, nom: 'Tables pliantes', qte: 12, occupe: [{ d: plus(5), f: plus(7), q: 4 }] }, { id: 2, nom: 'Bancs', qte: 24, occupe: [{ d: plus(5), f: plus(7), q: 8 }] }, { id: 3, nom: 'Chapiteau 3x6', qte: 2, occupe: [] }, { id: 4, nom: 'Appareil à raclette', qte: 4, occupe: [] }],
+        reponses: [{ date: plus(-10), type: 'question', texte: 'Est-ce que les intérimaires ont droit à la billetterie ?', reponse: 'Non, la billetterie est réservée aux salariés de l\'entreprise, conformément au règlement intérieur du CSE.' }, { date: plus(-30), type: 'idee', texte: 'Mettre des places de cinéma moins chères.', reponse: 'Depuis octobre, la place de cinéma passe de 8 € à 6 €.' }],
+        materielInfo: 'Retrait et retour le vendredi à la permanence du CSE.',
+        docs: [{ titre: 'Règlement intérieur du CSE', date: d(1, 15), url: '#demo' }, { titre: 'Accord d\'entreprise (exemple)', date: d(2, 1), url: '#demo' }] },
+      demandes: [{ id: 'x1', at: plus(-3) + 'T10:00:00', type: 'materiel', resume: '1 x Chapiteau 3x6 du ' + fd(d(8, 20)) + ' au ' + fd(d(8, 22)), statut: 'acceptée', reponse: 'C\'est noté, à récupérer vendredi.' }, { id: 'x2', at: plus(-1) + 'T18:00:00', type: 'fiche', resume: 'Modifier : téléphone', statut: 'en attente', reponse: '' }] };
+  }
+
+
+  function E(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function eur(n) { return (Number(n) || 0).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }); }
+  function fd(iso) { if (!iso) return ''; var p = String(iso).slice(0, 10).split('-'); return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : iso; }
+  function today() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function $(id) { return document.getElementById(id); }
+
+  async function api(method, body) {
+    if (DEMO) {
+      if (!D) D = demoData();
+      if (method === 'POST' && body.action === 'idee') { await new Promise(function (r) { setTimeout(r, 500); }); if (!body.anonyme) D.fiche.idees.unshift({ date: today(), type: body.type, texte: body.texte, statut: 'Reçue', reponse: '' }); return { ok: true }; }
+      if (method === 'POST') { await new Promise(function (r) { setTimeout(r, 500); }); D.demandes.push({ id: 'n' + Date.now(), at: new Date().toISOString(), type: body.type, resume: body.resume, statut: 'en attente', reponse: '' }); return { ok: true }; }
+      return D;
+    }
+    if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(URLS) || (!T && !(PUBLIC && method === 'POST'))) throw new Error('Lien incomplet. Ouvrez le lien reçu par e-mail du CSE.');
+    var r = method === 'GET'
+      ? await fetch(URLS + '?action=moi&t=' + encodeURIComponent(T), { redirect: 'follow', cache: 'no-store' })
+      : await fetch(URLS, { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({ action: 'demande', t: T || '' }, body)) });
+    var j; try { j = await r.json(); } catch (e) { throw new Error('Le service du CSE ne répond pas. Réessayez dans un moment.'); }
+    if (j.error) throw new Error(j.error);
+    return j;
+  }
+
+  async function load() {
+    try {
+      D = await api('GET');
+      var f = D.fiche, P = D.pub || {};
+      $('h-cse').textContent = (P.cse && P.cse.nom) || 'CSE';
+      $('h-nom').textContent = 'Bonjour ' + (f.prenom || f.nom || '');
+      document.title = 'Mon espace CSE · ' + (f.prenom || '');
+      if (DEMO) $('nav').insertAdjacentHTML('beforebegin', '<div class="msg warn" style="margin:0 0 10px">👀 Exemple avec un salarié fictif : rien n\'est envoyé au CSE.</div>');
+      $('foot').innerHTML = 'Informations mises à jour le ' + E(fd(String(D.le || '').slice(0, 10))) + '. Cette page est personnelle : ne partagez pas son lien.';
+      nav(); render();
+    } catch (e) {
+      $('app').innerHTML = '<div class="card"><h2>⚠️ Impossible d\'ouvrir votre espace</h2><p>' + E(e.message) + '</p><p class="mute">Si le problème continue, contactez le CSE.</p><button class="btn" onclick="location.reload()">Réessayer</button></div>';
+    }
+  }
+
+ var TABS = [['accueil', '🏠 Accueil'], ['idees', '💡 Idées & questions'], ['achats', '🎟️ Mes achats'], ['offert', '🎁 Offert par le CSE'], ['cv', '🏖️ Chèques vacances'], ['sorties', '🎭 Sorties'], ['materiel', '⛺ Matériel'], ['docs', '📄 Documents'], ['fiche', '👤 Ma fiche'], ['demandes', '📨 Mes demandes']];
+  function nav() {
+    var n = (D.demandes || []).filter(function (d) { return d.statut === 'en attente'; }).length;
+    var el = $('nav'); el.hidden = false;
+    el.innerHTML = TABS.map(function (t) { return '<button data-t="' + t[0] + '" class="' + (t[0] === TAB ? 'on' : '') + '">' + t[1] + (t[0] === 'demandes' && n ? '<span class="n">' + n + '</span>' : '') + '</button>'; }).join('');
+    el.querySelectorAll('button').forEach(function (b) { b.onclick = function () { go(b.dataset.t); }; });
+  }
+  function go(t) { TAB = t; nav(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  window.cseGo = go;
+
+  function yearsOf(list, key) {
+    var y = {}; y[String(new Date().getFullYear())] = 1;
+    list.forEach(function (x) { var v = String(x[key] || '').slice(0, 4); if (/^\d{4}$/.test(v)) y[v] = 1; });
+    return Object.keys(y).sort().reverse();
+  }
+  function yearBar(years) {
+    return '<div class="year">' + years.map(function (y) { return '<button class="btn s' + (y === YEAR ? ' p' : '') + '" onclick="cseYear(\'' + y + '\')">' + y + '</button>'; }).join('') + '</div>';
+  }
+  window.cseYear = function (y) { YEAR = y; render(); };
+
+  function render() {
+    var f = D.fiche, P = D.pub || {}, h = '';
+    var R = {
+      accueil: function () {
+        var offY = (f.offert || []).filter(function (o) { return String(o.date).slice(0, 4) === String(new Date().getFullYear()); }).reduce(function (s, o) { return s + (o.montant || 0); }, 0);
+        var due = (f.achats || []).filter(function (a) { return !a.regle; }).reduce(function (s, a) { return s + a.total; }, 0) + (f.sorties || []).reduce(function (s, x) { return s + (x.aRegler || 0); }, 0);
+        var cvDue = 0; (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut !== 'payé') cvDue += e.montant || 0; }); });
+        var open = (P.sorties || []).filter(function (o) { return !(f.sorties || []).some(function (x) { return x.outingId === o.id; }); });
+        h += '<div class="kpis">'
+          + '<div class="kpi" onclick="cseGo(\'offert\')"><span>Offert par le CSE en ' + new Date().getFullYear() + '</span><b>' + eur(offY) + '</b></div>'
+          + '<div class="kpi" onclick="cseGo(\'achats\')"><span>Reste à régler</span><b style="color:' + (due ? 'var(--bad)' : 'var(--ok)') + '">' + eur(due) + '</b></div>'
+          + '<div class="kpi" onclick="cseGo(\'cv\')"><span>Chèques vacances : à payer</span><b>' + eur(cvDue) + '</b></div>'
+          + '<div class="kpi" onclick="cseGo(\'sorties\')"><span>Sorties ouvertes</span><b>' + open.length + '</b></div></div>';
+        if (open.length) h += '<div class="card" style="margin-top:12px"><h2>🎭 Sorties où vous pouvez vous inscrire</h2>' + open.slice(0, 4).map(outingRow).join('') + '</div>';
+        if (P.cv && P.cv.ouvert) h += '<div class="card"><h2>🏖️ Chèques vacances</h2><p>' + E(P.cv.texte || 'Les inscriptions aux chèques vacances sont ouvertes.') + '</p><button class="btn p" onclick="cseCv()">S\'inscrire aux chèques vacances</button></div>';
+        h += '<div class="card"><h2>💡 Une idée, une question pour la réunion ?</h2><p class="mute">Boîte à idées, idée de sortie, question à poser à la prochaine réunion du CSE : avec votre nom ou en anonyme.</p><button class="btn p" onclick="cseGo(\'idees\')">Donner mon idée</button></div>';
+        h += '<div class="card"><h2>💬 Une question ?</h2><p class="mute">Écrivez au CSE directement d\'ici, ou par e-mail.</p><button class="btn" onclick="cseMsg()">Écrire au CSE</button> '
+          + (P.cse && P.cse.email ? '<a class="btn" href="mailto:' + E(P.cse.email) + '">✉️ ' + E(P.cse.email) + '</a>' : '') + '</div>';
+      },
+      achats: function () {
+        var L = f.achats || [], ys = yearsOf(L, 'date'), Y = L.filter(function (a) { return String(a.date).slice(0, 4) === YEAR; });
+        h += '<div class="card"><h2>🎟️ Mes achats</h2>' + yearBar(ys);
+        h += Y.length ? Y.map(function (a) { return '<div class="row"><div class="l"><b>' + E(a.desc) + '</b><div class="mute">' + fd(a.date) + (a.mode ? ' · ' + E(a.mode) : '') + '</div></div><div class="r">' + eur(a.total) + '<br>' + (a.regle ? '<span class="tag ok">Réglé</span>' : '<span class="tag bad">À régler</span>') + '</div></div>'; }).join('')
+          + '<div class="row"><div class="l"><b>Total ' + YEAR + '</b></div><div class="r">' + eur(Y.reduce(function (s, a) { return s + a.total; }, 0)) + '</div></div>' : '<p class="empty">Aucun achat en ' + YEAR + '.</p>';
+        h += '</div>';
+        var P2 = f.prets || [];
+        if (P2.length) h += '<div class="card"><h2>⛺ Mes emprunts de matériel</h2>' + P2.map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div><div class="r"><span class="tag ' + (p.statut === 'Rendu' ? 'ok' : p.statut === 'Emprunté' ? 'warn' : 'info') + '">' + E(p.statut) + '</span></div></div>'; }).join('') + '</div>';
+      },
+      offert: function () {
+        var L = f.offert || [], ys = yearsOf(L, 'date'), Y = L.filter(function (a) { return String(a.date).slice(0, 4) === YEAR; });
+        var tot = Y.reduce(function (s, o) { return s + (o.montant || 0); }, 0);
+        h += '<div class="card"><h2>🎁 Ce que le CSE vous a offert</h2>' + yearBar(ys)
+          + '<div class="kpi" style="cursor:default;margin-bottom:8px"><span>Total ' + YEAR + '</span><b style="color:var(--ok)">' + eur(tot) + '</b></div>'
+          + (Y.length ? Y.map(function (o) { return '<div class="row"><div class="l"><b>' + E(o.label) + '</b><div class="mute">' + fd(o.date) + ' · ' + E(o.type) + '</div></div><div class="r" style="color:var(--ok)">' + eur(o.montant) + '</div></div>'; }).join('') : '<p class="empty">Rien d\'enregistré pour ' + YEAR + '.</p>')
+          + '<p class="mute" style="margin-top:10px">Billets : différence entre le prix payé par le CSE et votre prix. Chèques vacances : part payée par le CSE.</p></div>';
+      },
+      cv: function () {
+        var L = f.cv || [];
+        h += '<div class="card"><h2>🏖️ Mes chèques vacances</h2>';
+        h += L.length ? L.map(function (c) {
+          return '<h3>Dossier ' + E(c.annee) + '</h3><div class="row"><div class="l">Montant des chèques<div class="mute">' + E(c.formats || '') + '</div></div><div class="r">' + eur(c.total) + '</div></div>'
+            + '<div class="row"><div class="l">Part du CSE</div><div class="r" style="color:var(--ok)">' + eur(c.cse) + '</div></div>'
+            + '<div class="row"><div class="l">Votre part</div><div class="r">' + eur(c.salarie) + '</div></div>'
+            + (c.echeances || []).map(function (e) { var cl = e.statut === 'payé' ? 'ok' : e.statut === 'en retard' ? 'bad' : e.statut === 'reçu' ? 'info' : 'warn'; return '<div class="row"><div class="l">Échéance du ' + fd(e.date) + '<div class="mute">' + E(e.mode || '') + '</div></div><div class="r">' + eur(e.montant) + '<br><span class="tag ' + cl + '">' + E(e.statut) + '</span></div></div>'; }).join('')
+            + (c.livraison ? '<p class="mute">' + E(c.livraison) + '</p>' : '');
+        }).join('') : '<p class="empty">Aucun dossier de chèques vacances.</p>';
+        h += '</div>';
+        if (P.cv && P.cv.ouvert) h += '<div class="card"><h2>S\'inscrire</h2><p>' + E(P.cv.texte || 'Les inscriptions sont ouvertes.') + '</p><button class="btn p" onclick="cseCv()">S\'inscrire aux chèques vacances</button></div>';
+        else h += '<p class="mute">Les inscriptions aux chèques vacances ne sont pas ouvertes en ce moment.</p>';
+      },
+      sorties: function () {
+        var mine = f.sorties || [], open = (P.sorties || []).filter(function (o) { return !mine.some(function (x) { return x.outingId === o.id; }); });
+        h += '<div class="card"><h2>✅ Mes inscriptions</h2>' + (mine.length ? mine.map(function (x) {
+          var o = (P.sorties || []).filter(function (s) { return s.id === x.outingId; })[0], fut = x.date >= today();
+          return '<div class="row"><div class="l"><b>' + E(x.nom) + '</b><div class="mute">' + fd(x.date) + (x.lieu ? ' · ' + E(x.lieu) : '') + '</div><div class="mute">Vous' + ((x.invites || []).length ? ' + ' + x.invites.map(function (g) { return E(g.name) + (g.isChild ? ' (enfant)' : ''); }).join(', ') : '') + '</div>'
+            + (fut && o ? '<div style="margin-top:6px"><button class="btn s" onclick="cseSortie(' + x.outingId + ',' + x.regId + ')">Modifier</button> <button class="btn s" onclick="cseAnnul(' + x.outingId + ',' + x.regId + ')">Annuler</button></div>' : '')
+            + '</div><div class="r">' + eur(x.montant) + '<br>' + (x.regle ? '<span class="tag ok">Réglé</span>' : '<span class="tag warn">À régler</span>') + '</div></div>';
+        }).join('') : '<p class="empty">Vous n\'êtes inscrit à aucune sortie.</p>') + '</div>';
+        if ((f.attente || []).length) h += '<div class="card"><h2>⏳ Liste d\'attente</h2>' + f.attente.map(function (a) { return '<div class="row"><div class="l"><b>' + E(a.nom) + '</b><div class="mute">' + fd(a.date) + '</div></div><div class="r"><span class="tag info">Position ' + a.pos + '</span></div></div>'; }).join('') + '</div>';
+        h += '<div class="card"><h2>🎭 Sorties ouvertes</h2>' + (open.length ? open.map(outingRow).join('') : '<p class="empty">Pas de sortie ouverte aux inscriptions pour le moment.</p>') + '</div>';
+      },
+      materiel: function () {
+        var M = P.materiel || [];
+        h += '<div class="card"><h2>⛺ Réserver du matériel</h2><p class="mute">Tables, bancs, chapiteaux… Choisissez vos dates : les quantités libres s\'affichent. Le CSE valide votre réservation.</p>'
+          + '<div class="grid2"><div><label>Du</label><input type="date" id="m-d" value="' + today() + '" min="' + today() + '"></div><div><label>Au</label><input type="date" id="m-f" value="' + today() + '" min="' + today() + '"></div></div>'
+          + '<div id="m-list" style="margin-top:8px"></div><label>Remarque (facultatif)</label><textarea id="m-note" placeholder="Pour quelle occasion, heure de retrait…"></textarea>'
+          + '<div style="margin-top:12px"><button class="btn p" id="m-go">Envoyer ma demande</button></div><div id="m-msg"></div></div>';
+        if (P.materielInfo) h += '<p class="mute">' + E(P.materielInfo) + '</p>';
+        setTimeout(function () {
+          function upd() {
+            var d = $('m-d').value, fi = $('m-f').value; if (fi < d) { $('m-f').value = d; fi = d; }
+            $('m-list').innerHTML = M.length ? M.map(function (m) {
+              var used = 0; (m.occupe || []).forEach(function (o) { if (!(o.f < d || o.d > fi)) used += o.q; });
+              var free = Math.max(0, m.qte - used);
+              return '<div class="row"><div class="l"><b>' + E(m.nom) + '</b><div class="mute">' + free + ' libre(s) sur ' + m.qte + '</div></div><div class="r"><input type="number" min="0" max="' + free + '" value="0" data-id="' + m.id + '" data-nom="' + E(m.nom) + '" data-max="' + free + '" style="width:80px" ' + (free ? '' : 'disabled') + '></div></div>';
+            }).join('') : '<p class="empty">Aucun matériel proposé.</p>';
+          }
+          $('m-d').onchange = upd; $('m-f').onchange = upd; upd();
+          $('m-go').onclick = function () {
+            var items = []; document.querySelectorAll('#m-list input').forEach(function (i) { var q = parseInt(i.value, 10) || 0; if (q > 0) items.push({ id: Number(i.dataset.id), nom: i.dataset.nom, qte: Math.min(q, Number(i.dataset.max)) }); });
+            if (!items.length) return say('m-msg', 'Indiquez au moins une quantité.', 'bad');
+            send('materiel', { items: items, debut: $('m-d').value, fin: $('m-f').value, note: $('m-note').value.trim() },
+              items.map(function (i) { return i.qte + ' x ' + i.nom; }).join(', ') + ' du ' + fd($('m-d').value) + ' au ' + fd($('m-f').value), 'm-msg', 'm-go');
+          };
+        }, 0);
+      },
+      docs: function () {
+        var L = P.docs || [];
+        h += '<div class="card"><h2>📄 Documents du CSE</h2>' + (L.length ? L.map(function (d) { return '<div class="row"><div class="l"><b>' + E(d.titre) + '</b>' + (d.date ? '<div class="mute">' + fd(d.date) + '</div>' : '') + '</div><div class="r"><a class="btn s" href="' + E(d.url) + '" target="_blank" rel="noopener">Ouvrir</a></div></div>'; }).join('') : '<p class="empty">Aucun document pour le moment.</p>') + '</div>';
+      },
+      fiche: function () {
+        h += '<div class="card"><h2>👤 Ma fiche</h2><p class="mute">Vérifiez vos informations. Pour corriger, modifiez puis envoyez : le CSE valide le changement.</p>'
+          + '<div class="row"><div class="l">Nom</div><div class="r">' + E(f.nom) + '</div></div>' + (f.service ? '<div class="row"><div class="l">Service</div><div class="r">' + E(f.service) + '</div></div>' : '')
+          + '<label>Adresse</label><textarea id="f-adr">' + E(f.address) + '</textarea>'
+          + '<div class="grid2"><div><label>Téléphone portable</label><input id="f-tel" type="tel" value="' + E(f.phone) + '"></div><div><label>E-mail</label><input id="f-mail" type="email" value="' + E(f.email) + '"></div></div>'
+          + '<div class="grid2"><div><label>Conjoint(e) : nom et prénom</label><input id="f-cj" value="' + E(f.spouse && f.spouse.name) + '"></div><div><label>Date de naissance du conjoint</label><input id="f-cjd" type="date" value="' + E(f.spouse && f.spouse.birthdate) + '"></div></div>'
+          + '<label>Enfants</label><div id="f-kids"></div><button class="btn s" type="button" id="f-addk" style="margin-top:6px">+ Ajouter un enfant</button>'
+          + '<label>Autre chose à corriger ?</label><textarea id="f-note" placeholder="Expliquez ici"></textarea>'
+          + '<div style="margin-top:12px"><button class="btn p" id="f-go">Envoyer la modification</button></div><div id="f-msg"></div></div>';
+        setTimeout(function () {
+          var kids = JSON.parse(JSON.stringify(f.children || []));
+          function draw() {
+            $('f-kids').innerHTML = kids.map(function (k, i) { return '<div class="guest" style="grid-template-columns:1fr 150px auto"><input placeholder="Prénom Nom" value="' + E(k.name) + '" data-i="' + i + '" data-k="name"><input type="date" value="' + E(k.birthdate) + '" data-i="' + i + '" data-k="birthdate"><button class="btn s" data-del="' + i + '">✕</button></div>'; }).join('') || '<p class="empty">Aucun enfant enregistré.</p>';
+            $('f-kids').querySelectorAll('input').forEach(function (inp) { inp.oninput = function () { kids[inp.dataset.i][inp.dataset.k] = inp.value; }; });
+            $('f-kids').querySelectorAll('[data-del]').forEach(function (b) { b.onclick = function () { kids.splice(Number(b.dataset.del), 1); draw(); }; });
+          }
+          draw(); $('f-addk').onclick = function () { kids.push({ name: '', birthdate: '' }); draw(); };
+          $('f-go').onclick = function () {
+            var ch = {}, v;
+            if ((v = $('f-adr').value.trim()) !== (f.address || '')) ch.address = v;
+            if ((v = $('f-tel').value.trim()) !== (f.phone || '')) ch.phone = v;
+            if ((v = $('f-mail').value.trim()) !== (f.email || '')) ch.email = v;
+            var cj = $('f-cj').value.trim(), cjd = $('f-cjd').value;
+            if (cj !== ((f.spouse && f.spouse.name) || '') || cjd !== ((f.spouse && f.spouse.birthdate) || '')) ch.spouse = { name: cj, birthdate: cjd };
+            var k2 = kids.filter(function (k) { return String(k.name || '').trim(); }).map(function (k) { return { name: k.name.trim(), birthdate: k.birthdate || '' }; });
+            if (JSON.stringify(k2) !== JSON.stringify((f.children || []).map(function (k) { return { name: k.name, birthdate: k.birthdate || '' }; }))) ch.children = k2;
+            var note = $('f-note').value.trim();
+            if (!Object.keys(ch).length && !note) return say('f-msg', 'Rien n\'a changé.', 'bad');
+            var labels = { address: 'adresse', phone: 'téléphone', email: 'e-mail', spouse: 'conjoint', children: 'enfants' };
+            send('fiche', { changes: ch, note: note }, 'Modifier : ' + (Object.keys(ch).map(function (k) { return labels[k]; }).join(', ') || 'voir le message'), 'f-msg', 'f-go');
+          };
+        }, 0);
+      },
+      idees: function () { h += ideaBox(true); },
+      demandes: function () {
+        var L = (D.demandes || []).slice().reverse();
+        h += '<div class="card"><h2>📨 Mes demandes</h2>' + (L.length ? L.map(function (d) {
+          var cl = d.statut === 'acceptée' ? 'ok' : d.statut === 'refusée' ? 'bad' : 'warn';
+          return '<div class="row"><div class="l"><b>' + E(d.resume) + '</b><div class="mute">Envoyée le ' + fd(String(d.at).slice(0, 10)) + '</div>' + (d.reponse ? '<div style="margin-top:4px">💬 ' + E(d.reponse) + '</div>' : '') + '</div><div class="r"><span class="tag ' + cl + '">' + E(d.statut) + '</span></div></div>';
+        }).join('') : '<p class="empty">Aucune demande envoyée.</p>') + '</div><button class="btn" onclick="cseMsg()">Écrire au CSE</button>';
+      }
+    };
+    (R[TAB] || R.accueil)(); $('app').innerHTML = h;
+  }
+
+  var ITYPES = { idee: '💡 Idée', sortie: '🎭 Idée de sortie', question: '❓ Question pour la prochaine réunion du CSE', message: '✉️ Message aux membres du CSE' };
+  function ideaBox(full) {
+    var f = (D && D.fiche) || {}, P = (D && D.pub) || {}, h = '';
+    h += '<div class="card"><h2>💡 Boîte à idées et questions</h2><p class="mute">Une idée, une envie de sortie, une question à poser en réunion, un message pour le CSE.</p>'
+      + '<label for="i-type">C\'est…</label><select id="i-type">' + Object.keys(ITYPES).map(function (k) { return '<option value="' + k + '">' + ITYPES[k] + '</option>'; }).join('') + '</select>'
+      + '<label for="i-txt">Votre message</label><textarea id="i-txt" style="min-height:120px" maxlength="3000"></textarea>'
+      + (PUBLIC ? '<p class="mute">🔒 Message anonyme : le CSE ne sait pas qui l\'a écrit.</p>'
+        : '<label style="display:flex;gap:8px;align-items:flex-start;font-weight:600"><input type="checkbox" id="i-anon" style="width:auto;margin-top:3px"> <span>Envoyer anonymement<br><span class="mute" style="font-weight:400">Votre nom n\'est pas transmis ni gardé. Le CSE ne pourra pas vous répondre personnellement, mais il peut publier sa réponse pour tous ci-dessous.</span></span></label>')
+      + '<div style="margin-top:12px"><button class="btn p" id="i-go">Envoyer</button></div><div id="i-msg"></div></div>';
+    if (full && (f.idees || []).length) h += '<div class="card"><h2>📝 Mes idées et questions</h2>' + f.idees.map(function (x) { return '<div class="row"><div class="l"><div class="mute">' + E(ITYPES[x.type] || '') + ' · ' + fd(x.date) + '</div><div>' + E(x.texte) + '</div>' + (x.reponse ? '<div style="margin-top:4px">💬 <b>CSE :</b> ' + E(x.reponse) + '</div>' : '') + '</div><div class="r"><span class="tag ' + (/retenu|trait/i.test(x.statut) ? 'ok' : 'info') + '">' + E(x.statut) + '</span></div></div>'; }).join('') + '</div>';
+    if (full && (P.reponses || []).length) h += '<div class="card"><h2>📣 Le CSE vous répond</h2>' + P.reponses.map(function (x) { return '<div class="row"><div class="l"><div class="mute">' + E(ITYPES[x.type] || '') + ' · ' + fd(x.date) + '</div><div><b>' + E(x.texte) + '</b></div><div style="margin-top:4px">💬 ' + E(x.reponse) + '</div></div></div>'; }).join('') + '</div>';
+    setTimeout(function () {
+      var b = $('i-go'); if (!b) return;
+      b.onclick = async function () {
+        var t = $('i-txt').value.trim(), an = PUBLIC || !!($('i-anon') && $('i-anon').checked);
+        if (t.length < 3) return say('i-msg', 'Écrivez votre message.', 'bad');
+        b.disabled = true; say('i-msg', 'Envoi…', 'info');
+        try {
+          await api('POST', { action: 'idee', type: $('i-type').value, texte: t, anonyme: an });
+          $('i-txt').value = '';
+          say('i-msg', (DEMO ? '(Exemple) ' : '') + '✔ Merci ! Votre message est transmis au CSE' + (an ? ' de façon anonyme.' : '. Vous verrez sa réponse ici.'), 'ok');
+          if (!PUBLIC && !DEMO) { try { D = await api('GET'); } catch (e) { } }
+          if (DEMO && !an) setTimeout(render, 1500);
+        } catch (e) { say('i-msg', e.message, 'bad'); }
+        b.disabled = false;
+      };
+    }, 0);
+    return h;
+  }
+  window.cseIdeaPublic = function () { $('h-nom').textContent = 'Boîte à idées du CSE'; $('app').innerHTML = ideaBox(false); $('foot').textContent = 'Message anonyme : aucune information sur vous n\'est transmise.'; };
+
+  function outingRow(o) {
+    var full = o.places != null && o.restantes <= 0, late = o.limite && o.limite < today();
+    return '<div class="row"><div class="l"><b>' + E(o.nom) + '</b><div class="mute">' + fd(o.date) + (o.lieu ? ' · ' + E(o.lieu) : '') + '</div>'
+      + '<div class="mute">Vous : ' + eur(o.prix.salarie) + ' · invité adulte : ' + eur(o.prix.adulte) + ' · enfant : ' + eur(o.prix.enfant) + '</div>'
+      + (o.limite ? '<div class="mute">Inscriptions jusqu\'au ' + fd(o.limite) + '</div>' : '') + (o.notes ? '<div class="mute">' + E(o.notes) + '</div>' : '') + '</div>'
+      + '<div class="r">' + (o.places != null ? '<span class="tag ' + (full ? 'bad' : 'info') + '">' + (full ? 'Complet' : o.restantes + ' place(s)') + '</span><br>' : '')
+      + (late ? '<span class="tag warn">Clôturé</span>' : '<button class="btn s p" style="margin-top:6px" onclick="cseSortie(' + o.id + ')">' + (full ? 'Liste d\'attente' : 'S\'inscrire') + '</button>') + '</div></div>';
+  }
+
+  // --- Fenêtre de saisie ---
+  function sheet(html) { $('sheet').innerHTML = html; $('overlay').classList.add('on'); }
+  function closeSheet() { $('overlay').classList.remove('on'); }
+  $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeSheet(); });
+  window.cseClose = closeSheet;
+  function head(t, sub) { return '<div class="top"><div><h2>' + E(t) + '</h2>' + (sub ? '<div class="mute">' + sub + '</div>' : '') + '</div><button class="x" onclick="cseClose()" aria-label="Fermer">×</button></div>'; }
+  function say(id, m, cl) { var el = $(id); if (el) el.innerHTML = '<div class="msg ' + (cl || 'info') + '">' + E(m) + '</div>'; }
+
+  async function send(type, data, resume, msgId, btnId) {
+    var b = $(btnId); if (b) b.disabled = true; say(msgId, 'Envoi…', 'info');
+    try {
+      await api('POST', { type: type, data: data, resume: resume });
+      say(msgId, (DEMO ? '(Exemple) ' : '') + '✔ Demande envoyée au CSE. Vous recevrez la réponse par e-mail et dans « Mes demandes ».', 'ok');
+      var j = await api('GET'); D = j; nav();
+      setTimeout(function () { closeSheet(); }, 2200);
+    } catch (e) { say(msgId, e.message, 'bad'); if (b) b.disabled = false; }
+  }
+
+  window.cseSortie = function (outingId, regId) {
+    var o = (D.pub.sorties || []).filter(function (s) { return s.id === outingId; })[0]; if (!o) return;
+    var mine = regId ? (D.fiche.sorties || []).filter(function (x) { return x.regId === regId; })[0] : null;
+    var guests = mine ? JSON.parse(JSON.stringify(mine.invites || [])) : [];
+    sheet(head(regId ? 'Modifier mon inscription' : 'M\'inscrire : ' + o.nom, fd(o.date) + (o.lieu ? ' · ' + E(o.lieu) : ''))
+      + '<p>Inscription au nom de <b>' + E(D.fiche.nom) + '</b>.</p><label>Personnes qui viennent avec vous</label><div id="g-list"></div>'
+      + '<button class="btn s" id="g-add" style="margin-top:6px">+ Ajouter une personne</button>'
+      + '<div id="g-tot" class="row" style="margin-top:10px"></div><label>Remarque (facultatif)</label><textarea id="g-note"></textarea>'
+      + '<div style="margin-top:12px"><button class="btn p" id="g-go">' + (regId ? 'Envoyer la modification' : 'Envoyer mon inscription') + '</button></div><div id="g-msg"></div>');
+    function tot() { return o.prix.salarie + guests.reduce(function (s, g) { return s + (g.isChild ? o.prix.enfant : o.prix.adulte); }, 0); }
+    function draw() {
+      $('g-list').innerHTML = guests.map(function (g, i) { return '<div class="guest"><input placeholder="Prénom Nom" value="' + E(g.name) + '" data-i="' + i + '"><label><input type="checkbox" data-c="' + i + '"' + (g.isChild ? ' checked' : '') + '> enfant</label><button class="btn s" data-d="' + i + '">✕</button></div>'; }).join('') || '<p class="empty">Personne d\'autre.</p>';
+      $('g-list').querySelectorAll('[data-i]').forEach(function (inp) { inp.oninput = function () { guests[inp.dataset.i].name = inp.value; }; });
+      $('g-list').querySelectorAll('[data-c]').forEach(function (inp) { inp.onchange = function () { guests[inp.dataset.c].isChild = inp.checked; $('g-tot').innerHTML = '<div class="l">Total à régler au CSE</div><div class="r">' + eur(tot()) + '</div>'; }; });
+      $('g-list').querySelectorAll('[data-d]').forEach(function (b) { b.onclick = function () { guests.splice(Number(b.dataset.d), 1); draw(); }; });
+      $('g-tot').innerHTML = '<div class="l">Total à régler au CSE</div><div class="r">' + eur(tot()) + '</div>';
+    }
+    draw();
+    $('g-add').onclick = function () { guests.push({ name: '', isChild: false }); draw(); };
+    $('g-go').onclick = function () {
+      if (guests.some(function (g) { return !String(g.name || '').trim(); })) return say('g-msg', 'Indiquez le nom de chaque personne (ou retirez-la).', 'bad');
+      var G = guests.map(function (g) { return { name: g.name.trim(), isChild: !!g.isChild }; });
+      send(regId ? 'sortie-modif' : 'sortie', { outingId: outingId, regId: regId || null, sortie: o.nom, invites: G, note: $('g-note').value.trim(), total: tot() },
+        (regId ? 'Modifier mon inscription : ' : 'Inscription : ') + o.nom + ' (' + fd(o.date) + ') : moi' + (G.length ? ' + ' + G.length + ' personne(s)' : ''), 'g-msg', 'g-go');
+    };
+  };
+  window.cseAnnul = function (outingId, regId) {
+    var x = (D.fiche.sorties || []).filter(function (s) { return s.regId === regId; })[0]; if (!x) return;
+    sheet(head('Annuler mon inscription', E(x.nom) + ' · ' + fd(x.date)) + '<p>Vous demandez l\'annulation de votre inscription. Le CSE vous confirmera, notamment pour un éventuel remboursement.</p><label>Raison (facultatif)</label><textarea id="a-note"></textarea><div style="margin-top:12px"><button class="btn p" id="a-go">Demander l\'annulation</button></div><div id="a-msg"></div>');
+    $('a-go').onclick = function () { send('sortie-annul', { outingId: outingId, regId: regId, sortie: x.nom, note: $('a-note').value.trim() }, 'Annuler mon inscription : ' + x.nom + ' (' + fd(x.date) + ')', 'a-msg', 'a-go'); };
+  };
+  window.cseCv = function () {
+    var C = D.pub.cv || {};
+    sheet(head('S\'inscrire aux chèques vacances') + (C.texte ? '<p>' + E(C.texte) + '</p>' : '')
+      + '<label>Montant de chèques souhaité (€)</label><input id="c-m" type="number" min="0" step="10" placeholder="ex. 400">'
+      + '<label>Format</label><select id="c-f"><option>Papier</option><option>Connect (sur le téléphone)</option><option>Swile</option></select>'
+      + '<label>Comment souhaitez-vous payer votre part ?</label><select id="c-p"><option>En une fois</option><option>En plusieurs fois</option><option>À voir avec le CSE</option></select>'
+      + '<label>Remarque (facultatif)</label><textarea id="c-n"></textarea><p class="mute">Le CSE valide votre inscription et vous indique votre part et les échéances. Les paiements sont enregistrés uniquement par le CSE.</p>'
+      + '<div style="margin-top:12px"><button class="btn p" id="c-go">Envoyer mon inscription</button></div><div id="c-msg"></div>');
+    $('c-go').onclick = function () {
+      var m = parseFloat($('c-m').value) || 0; if (m <= 0) return say('c-msg', 'Indiquez un montant.', 'bad');
+      send('cv', { montant: m, format: $('c-f').value, paiement: $('c-p').value, note: $('c-n').value.trim() }, 'Chèques vacances : ' + eur(m) + ' (' + $('c-f').value + ')', 'c-msg', 'c-go');
+    };
+  };
+  window.cseMsg = function () {
+    sheet(head('Écrire au CSE') + '<label>Votre message</label><textarea id="w-t" style="min-height:120px"></textarea><div style="margin-top:12px"><button class="btn p" id="w-go">Envoyer</button></div><div id="w-msg"></div>');
+    $('w-go').onclick = function () { var t = $('w-t').value.trim(); if (!t) return say('w-msg', 'Écrivez votre message.', 'bad'); send('message', { texte: t }, 'Message : ' + t.slice(0, 80), 'w-msg', 'w-go'); };
+  };
+
+  if (PUBLIC) cseIdeaPublic(); else load();
+})();
+</script>
+</body>
+</html>
