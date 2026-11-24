@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Krc2zyYy4+GRK8H6hYlcug==","iv":"gNCQSUnarpAYsfop","rev":"boot","lastModified":"2026-11-24T18:04:22.157Z","by":"Michaël GROSJEAN","data":"o9dOvWXxbZ+oxvLZnWoq89iy+AVxY+e0u5g77P66vZSatFxfgGeNeviC8tQ4iHEju+3xnpOP2yKFsOMSb1SPRg=="},"at":"2026-11-24T18:04:22.203Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"z8cb4zg2i1NwKdQ9/KzQ2w==","iv":"qbdCnOvS2Kt97W1J","rev":"boot","lastModified":"2026-11-24T18:09:02.957Z","by":"Michaël GROSJEAN","data":"wahvIImN/KdoBvhXMWXkoAjgUgg9+4h2QvZNF9WdVACQaMrYu3WSZBJiMtSfLKWRkJfckYsgBXSdBztduA6r1A=="},"at":"2026-11-24T18:09:02.995Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21728,7 +21728,8 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
                 "🕒 Délégation : en posant des heures, l'appli affiche ce que donnera le mois (crédit, report, maximum 33 h) et demande confirmation avant de dépasser le maximum. L'élu reçoit déjà une notification quand le responsable a vu sa feuille.",
                 "📅 Récap mensuel des délégations pour les RH (PDF envoyé depuis la boîte du CSE le 1er du mois, copie sur le Drive) : réglage dans l'onglet Heures de délégation, désactivé par défaut. Aperçu et envoi à la main possibles.",
                 "📲 Nouvelle sortie ou nouveau colis : l'appli propose de prévenir les salariés concernés par une notification (comme pour les nouveaux billets, désormais proposé par défaut). Réglage dans Communication › Notifications.",
-                "🏛️ Réunions : « Envoyer la convocation et l'ordre du jour » et « Envoyer le compte rendu » partent en PDF depuis la boîte du CSE à tous les élus, rangés dans Mon Drive › CSE › CSE - Réunions. Les élus les retrouvent dans leur espace (onglet Délégation)."
+                "🏛️ Réunions : « Envoyer la convocation et l'ordre du jour » et « Envoyer le compte rendu » partent en PDF depuis la boîte du CSE à tous les élus, rangés dans Mon Drive › CSE › CSE - Réunions. Les élus les retrouvent dans leur espace (onglet Délégation).",
+                "🟡 Liste des salariés : un point de couleur à côté du nom. Jaune = notifications activées sur son téléphone, vert = espace salarié ouvert ces 30 derniers jours, gris = lien créé mais jamais ouvert (ou pas depuis 30 jours). Survolez le point pour le détail."
             ] },
             { v: 'V.9.1', date: '2026-11-24', items: [
                 "🌙 Délégation de nuit : « 21:00 à 05:00 » compte 8 h, la fin est mise au lendemain tout seul (feuille, e-mail et compteur).",
@@ -45293,6 +45294,41 @@ var qrcode = function() {
       say('✔ Envoyé à ' + to.length + ' élu(s), PDF rangé sur le Drive.', 'success');
     } catch (e) { say('Envoi impossible : ' + (/inconnue|ancienne version/i.test(e.message) ? 'installez la version 78 du script Google (script-google-cse-v78.txt).' : e.message), 'error'); }
   };
+
+  // ---------- Liste des salariés : point de couleur selon l'espace salarié ----------
+  // jaune = notifications activées sur son téléphone, vert = espace ouvert ces 30 derniers jours,
+  // gris = lien envoyé mais espace jamais ouvert (ou pas depuis 30 jours). Rien = pas encore de lien.
+  var EV = { at: 0, v: {}, ab: {}, busy: false };
+  async function evLoad() {
+    if (EV.busy || Date.now() - EV.at < 10 * 60000 || !(window.cseEspaceOn && cseEspaceOn())) return;
+    EV.busy = true; EV.at = Date.now();
+    try { var j = await cseEspacePost('visites', {}); EV.v = j.visites || {}; EV.ab = j.abonnes || {}; evDeco(); } catch (e) { } finally { EV.busy = false; }
+  }
+  function evEtat(e) {
+    var t = e && e.espaceToken; if (!t) return null;
+    if (EV.ab[t]) return ['#eab308', 'Notifications activées sur son téléphone (' + EV.ab[t] + ' appareil' + (EV.ab[t] > 1 ? 's' : '') + ')'];
+    var v = EV.v[t], d = v && v.dernier ? Math.floor((Date.now() - Date.parse(v.dernier)) / 864e5) : null;
+    if (d != null && d <= 30) return ['#10b981', 'Espace salarié ouvert il y a ' + (d ? d + ' jour' + (d > 1 ? 's' : '') : 'moins d\'un jour') + ' (notifications pas activées)'];
+    return ['#cbd5e1', v ? 'Espace salarié pas ouvert depuis ' + d + ' jours' : 'Lien de l\'espace salarié créé, jamais ouvert'];
+  }
+  function evDeco() {
+    var tb = document.getElementById('employees-table-body'); if (!tb) return;
+    tb.querySelectorAll('tr > td:first-child button[onclick^="openEmployeeProfile("]').forEach(function (b) {
+      var id = (/openEmployeeProfile\((\d+)\)/.exec(b.getAttribute('onclick')) || [])[1], e = (db.employees || []).filter(function (x) { return String(x.id) === id; })[0];
+      var old = b.parentNode.querySelector('.v92-dot'); if (old) old.remove();
+      var st = evEtat(e); if (!st) return;
+      var d = document.createElement('span'); d.className = 'v92-dot'; d.title = st[1]; d.setAttribute('aria-label', st[1]);
+      d.style.cssText = 'display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:7px;vertical-align:middle;background:' + st[0] + (st[0] === '#eab308' ? ';box-shadow:0 0 0 2px #fef3c7' : '');
+      b.insertAdjacentElement('afterend', d);
+    });
+    var th = tb.closest('table') && tb.closest('table').querySelector('thead th');
+    if (th && !th.querySelector('.v92-leg')) th.insertAdjacentHTML('beforeend', '<div class="v92-leg" style="font-size:10px;font-weight:500;color:#64748b;margin-top:2px;text-transform:none;letter-spacing:0"><span style="color:#eab308">●</span> notifications · <span style="color:#10b981">●</span> espace ouvert (30 j) · <span style="color:#94a3b8">●</span> jamais / ancien</div>');
+  }
+  if (typeof window.renderEmployeesTable === 'function') {
+    var _ret = window.renderEmployeesTable;
+    window.renderEmployeesTable = function () { var r = _ret.apply(this, arguments); try { evDeco(); evLoad(); } catch (e) { } return r; };
+  }
+  window.cseEspaceVisitesMaj = function () { EV.at = 0; return evLoad(); };
   // Espace des élus : les réunions à venir et les dernières passées, avec l'ordre du jour et le compte rendu
   function reunionsPub() {
     var T = today(), L = (db.meetings || []).slice().sort(function (a, b) { return (String(a.date) + (a.time || '')).localeCompare(String(b.date) + (b.time || '')); });
