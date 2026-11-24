@@ -547,10 +547,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // --- V.9.4 : mes documents (reçus, documents signés…) : PDF rangés par le CSE, ouverts en lecture
   function docsCard() {
-    var L = (D.fiche || {}).documents || []; if (!L.length) return '';
-    var n = SGP.tous ? L.length : 5;
-    return '<div class="card"><h2>📄 Mes documents</h2>' + L.slice(0, n).map(function (d) { return '<div class="row"><div class="l"><b>' + E(d.titre) + '</b><div class="mute">' + fd(d.date) + '</div></div><div class="r"><a class="btn s" target="_blank" rel="noopener" href="' + E(d.url) + '">Ouvrir le PDF</a></div></div>'; }).join('')
-      + (L.length > 5 && !SGP.tous ? '<button class="btn" style="margin-top:8px" onclick="cseDocsTous()">Voir les ' + L.length + ' documents</button>' : '') + '</div>';
+    var L = (D.fiche || {}).documents || [];
+    if (!L.length) return '<div class="card"><h2>🗂️ Mes documents</h2><p class="empty">Vos reçus, attestations et documents signés apparaîtront ici.</p></div>';
+    var n = SGP.tous ? L.length : 10;
+    return '<div class="card"><h2>🗂️ Mes documents</h2>' + L.slice(0, n).map(function (d) { return '<div class="row"><div class="l"><b>' + E(d.titre) + '</b><div class="mute">' + fd(d.date) + '</div></div><div class="r"><a class="btn s" target="_blank" rel="noopener" href="' + E(d.url) + '">Ouvrir le PDF</a></div></div>'; }).join('')
+      + (L.length > 10 && !SGP.tous ? '<button class="btn" style="margin-top:8px" onclick="cseDocsTous()">Voir les ' + L.length + ' documents</button>' : '') + '</div>';
   }
   window.cseDocsTous = function () { SGP.tous = true; render(); };
   // --- V.9.4 : documents à signer au doigt (reçu de billetterie, remise de colis, prêt de matériel) ---
@@ -694,7 +695,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         if (open.length) h += '<div class="card" style="margin-top:12px"><h2>🎭 Sorties où vous pouvez vous inscrire</h2>' + open.slice(0, 4).map(outingRow).join('') + '</div>';
         h += cvCard('🏖️ Chèques vacances');
         h += '<div class="card"><h2>💡 Une idée, une question pour la réunion ?</h2><p class="mute">Boîte à idées, idée de sortie, question à poser à la prochaine réunion du CSE.</p><button class="btn p" onclick="cseGo(\'idees\')">Donner mon idée</button></div>';
-        h += docsCard();
         h += swileCard();
         h += installCard();
         h += '<div class="card"><h2>💬 Une question ?</h2><p class="mute">Écrivez au CSE directement d\'ici, ou par e-mail.</p><button class="btn" onclick="cseMsg()">Écrire au CSE</button> '
@@ -803,6 +803,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       },
       docs: function () {
         var L = P.docs || [];
+        h += docsCard(true);
         h += '<div class="card"><h2>📄 Documents du CSE</h2>' + (L.length ? L.map(function (d) { return '<div class="row"><div class="l"><b>' + E(d.titre) + '</b>' + (d.date ? '<div class="mute">' + fd(d.date) + '</div>' : '') + '</div><div class="r"><a class="btn s" href="' + E(d.url) + '" target="_blank" rel="noopener">Ouvrir</a></div></div>'; }).join('') : '<p class="empty">Aucun document pour le moment.</p>') + '</div>';
       },
       fiche: function () {
