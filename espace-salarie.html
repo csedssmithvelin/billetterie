@@ -151,7 +151,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var ELU = /elu/i.test(location.hash || '');
     return { ok: true, le: new Date().toISOString(),
       deleg: ELU ? { profil: { mail: 'camille.exemple@exemple.fr', rh: 'rh@exemple.fr', resp: 'chef@exemple.fr', respNom: 'M. Exemple', sig: '' }, liste: [{ id: 'd1', at: plus(-6) + 'T09:00:00Z', le: plus(-6), du: plus(-5), au: plus(-5), de: '08:00', a: '12:00', heures: 4, motif: 'Réunion CSE', statut: 'envoyée', vu: { at: plus(-4) + 'T10:00:00Z' } }, { id: 'd2', at: plus(-2) + 'T09:00:00Z', le: plus(-2), du: plus(-1), au: plus(-1), de: '13:30', a: '15:00', heures: 1.5, motif: '', statut: 'envoyée', vu: null }] } : null,
-      fiche: { colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 15, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 15, mois: 7.5, reste: 7.5, an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 15, mois: 4, reste: 11, an: 22 }, { nom: 'Lou PETIT', credit: 10, mois: 12, reste: -2, an: 40 }] }, membreCse: /elu/i.test(location.hash || ''), phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
+      fiche: { colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 22, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 22, mois: 9.5, reste: 12.5, plafond: 33, reste33: 23.5, etat: 'ok', an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 22, mois: 26, reste: -4, plafond: 33, reste33: 7, etat: 'report', an: 60 }, { nom: 'Lou PETIT', credit: 22, mois: 35, reste: -13, plafond: 33, reste33: -2, etat: 'trop', an: 80 }] }, membreCse: /elu/i.test(location.hash || ''), phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
         children: [{ name: 'Léa Exemple', birthdate: '2015-04-12' }, { name: 'Hugo Exemple', birthdate: '2019-09-30' }], spouse: { name: 'Alex Exemple', birthdate: '1988-02-03' },
         achats: [{ date: d(10, 18), desc: '4 x Cinéma', total: 24, regle: true, mode: 'Carte Bancaire' }, { date: d(7, 2), desc: '2 x Parc Astérix', total: 70, regle: true, mode: 'Chèque' }, { date: d(11, 20), desc: '2 x Fraispertuis', total: 30, regle: false, mode: '' }, { date: d(12, 5, y - 1), desc: '3 x Cinéma', total: 18, regle: true, mode: 'Espèces' }],
         offert: [{ date: d(10, 18), label: 'Billets : 4 x Cinéma', montant: 12, type: 'Billetterie' }, { date: d(7, 2), label: 'Billets : 2 x Parc Astérix', montant: 40, type: 'Billetterie' }, { date: d(11, 20), label: 'Billets : 2 x Fraispertuis', montant: 18, type: 'Billetterie' }, { date: d(3, 15), label: 'Chèques vacances (part du CSE)', montant: 200, type: 'Chèques vacances' }, { date: d(12, 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }, { date: d(6, 10), label: 'Rentrée scolaire (Léa Exemple)', montant: 40, type: 'Œuvres sociales' }, { date: d(12, 10, y - 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }],
@@ -462,7 +462,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function dgListe() {
     var G = D.deleg || {}, F = (D.fiche.deleg || {}).entries || [], vus = {}, out = [];
     F.forEach(function (x) { if (x.sheetId) vus[x.sheetId] = 1; out.push(x); });
-    (G.liste || []).forEach(function (d) { if (vus[d.id] || d.statut === 'annulée') return; out.push({ id: d.id, sheetId: d.id, du: d.du, au: d.au, de: d.de, a: d.a, heures: d.heures, motif: d.motif, type: d.par === 'ancienne' ? 'ancienne' : 'feuille', vu: d.vu ? String(d.vu.at).slice(0, 10) : '', at: d.at }); });
+    (G.liste || []).forEach(function (d) { if (vus[d.id] || d.statut === 'annulée') return; out.push({ id: d.id, sheetId: d.id, du: d.du, au: d.au, de: d.de, a: d.a, plages: d.plages, heures: d.heures, motif: d.motif, type: d.par === 'ancienne' ? 'ancienne' : 'feuille', vu: d.vu ? String(d.vu.at).slice(0, 10) : '', at: d.at }); });
     return out;
   }
   function dgCompteur() {
@@ -471,11 +471,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var used = function (a, b) { return L.filter(function (x) { return x.type !== 'recu' && x.type !== 'cede' && x.du >= a && x.du <= b; }).reduce(function (s, x) { return s + (Number(x.heures) || 0); }, 0); };
     var io = function (a, b) { return L.filter(function (x) { return (x.type === 'recu' || x.type === 'cede') && x.du >= a && x.du <= b; }).reduce(function (s, x) { return s + (x.type === 'recu' ? 1 : -1) * (Number(x.heures) || 0); }, 0); };
     var d = new Date(), nb = (d.getFullYear() * 12 + d.getMonth() + 1) - (S.y * 12 + 7) + 1;
-    var mo = used(mois + '-01', mois + '-31'), an = used(S.debut, S.fin), resteM = cr + io(mois + '-01', mois + '-31') - mo, creditAn = cr * nb + io(S.debut, S.fin);
+    var mo = used(mois + '-01', mois + '-31'), an = used(S.debut, S.fin), ioM = io(mois + '-01', mois + '-31'), base = cr + ioM, resteM = base - mo, creditAn = cr * nb + io(S.debut, S.fin);
+    // Report : heures non utilisées des mois d'avant (depuis le 1er juillet) ; maximum du mois = 1,5 × le crédit (ex. 33 h pour 22 h)
+    var report = Math.max(0, cr * (nb - 1) + L.filter(function (x) { return x.du >= S.debut && x.du < mois + '-01'; }).reduce(function (s, x) { return s + (x.type === 'recu' ? 1 : -1) * (Number(x.heures) || 0); }, 0));
+    var plafond = Math.min(cr * 1.5 + Math.max(0, ioM), base + report), reste33 = plafond - mo, etat = mo <= base + 1e-9 ? 'ok' : mo <= plafond + 1e-9 ? 'report' : 'trop';
+    var colU = etat === 'ok' ? 'var(--ok)' : etat === 'report' ? '#ea580c' : 'var(--bad)';
     return { mo: mo, an: an, credit: cr, S: S,
       html: '<div class="kpis">'
-        + (cr ? '<div class="kpi" style="cursor:default"><span>Reste ce mois-ci</span><b style="color:' + (resteM < 0 ? 'var(--bad)' : 'var(--ok)') + '">' + hFr(resteM) + '</b><span class="mute">crédit ' + hFr(cr) + ' par mois</span></div>' : '')
-        + '<div class="kpi" style="cursor:default"><span>Utilisées ce mois-ci</span><b>' + hFr(mo) + '</b></div>'
+        + (cr ? '<div class="kpi" style="cursor:default"><span>Reste sur votre crédit</span><b style="color:' + (resteM < 0 ? '#ea580c' : 'var(--ok)') + '">' + hFr(resteM) + '</b><span class="mute">crédit ' + hFr(base) + ' ce mois</span></div>'
+          + '<div class="kpi" style="cursor:default"><span>Reste avec le report</span><b style="color:' + (reste33 < 0 ? 'var(--bad)' : '#7c3aed') + '">' + hFr(reste33) + '</b><span class="mute">maximum ' + hFr(plafond) + ' ce mois' + (report ? ' · report ' + hFr(report) : '') + '</span></div>' : '')
+        + '<div class="kpi" style="cursor:default"><span>Utilisées ce mois-ci</span><b style="color:' + colU + '">' + hFr(mo) + '</b>' + (etat === 'report' ? '<span class="mute" style="color:#ea580c">crédit dépassé : pris sur le report</span>' : etat === 'trop' ? '<span class="mute" style="color:var(--bad)">au-delà du maximum</span>' : '') + '</div>'
         + '<div class="kpi" style="cursor:default"><span>Depuis le 1er juillet ' + S.y + '</span><b>' + hFr(an) + '</b><span class="mute">' + (cr ? 'sur ' + hFr(creditAn) + ' · ' : '') + 'remis à zéro le 1er juillet</span></div></div>' };
   }
   function dgCard() { if (!D.deleg) return ''; var c = dgCompteur(); return '<div class="card" style="border-left:4px solid var(--brand)"><h2>🕒 Mes heures de délégation</h2>' + c.html + '<button class="btn p" style="margin-top:10px" onclick="cseGo(\'deleg\')">Poser des heures</button></div>'; }
@@ -483,20 +488,30 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Heures : « 8:15 », « 8h15 », « 45min » ou « 8,25 » sont acceptés
   function dgParseH(v) { v = String(v || '').trim().toLowerCase().replace(/\s+/g, ''); var m = /^(\d{1,3})(?:[:h](\d{0,2}))?(?:min)?$/.exec(v); if (m && (m[2] !== undefined || /[:h]/.test(v))) return Number(m[1]) + (Number(m[2]) || 0) / 60; m = /^(\d{1,3})min$/.exec(v); if (m) return Number(m[1]) / 60; var n = Number(v.replace(',', '.')); return isNaN(n) ? 0 : n; }
   function dgFmtH(mins) { mins = Math.round(mins); return Math.floor(mins / 60) + ':' + String(mins % 60).padStart(2, '0'); }
+  // Plages horaires : jusqu'à 3 dans la même journée ; « 21:00 → 05:00 » = de nuit, fini le lendemain
+  function dgPlagesForm() { var L = []; [['dg-de', 'dg-a'], ['dg-de2', 'dg-a2'], ['dg-de3', 'dg-a3']].forEach(function (k, i) { var row = i ? $('dg-pl' + (i + 1)) : 1; if (!row || (i && row.style.display === 'none')) return; var de = $(k[0]).value, a = $(k[1]).value; if (de && a && de !== a) L.push({ de: de, a: a }); }); return L; }
+  function dgPlMin(x) { var d = dgMins(x.de), a = dgMins(x.a); return a > d ? a - d : a + 1440 - d; }
+  function dgPlTxt(d) { var L = d.plages && d.plages.length ? d.plages : (d.de ? [{ de: d.de, a: d.a }] : []); return L.map(function (x) { return E(x.de) + ' – ' + E(x.a) + (x.a <= x.de ? ' (lendemain)' : ''); }).join(' et '); }
+  window.cseDgPlage = function (k) { if (k) { var r = $('dg-pl' + k); r.style.display = 'none'; $('dg-de' + k).value = ''; $('dg-a' + k).value = ''; } else { var r2 = $('dg-pl2'), r3 = $('dg-pl3'); if (r2.style.display === 'none') r2.style.display = ''; else r3.style.display = ''; } $('dg-plus').style.display = ($('dg-pl2').style.display === 'none' || $('dg-pl3').style.display === 'none') ? '' : 'none'; $('dg-h').dataset.edit = ''; cseDgCalc(true); };
   window.cseDgCalc = function (force) {
-    var de = dgMins($('dg-de').value), a = dgMins($('dg-a').value), du = $('dg-du').value, au = $('dg-au').value || du, hEl = $('dg-h');
+    var PL = dgPlagesForm(), du = $('dg-du').value, hEl = $('dg-h');
+    var nuit = PL.some(function (x) { return dgMins(x.a) <= dgMins(x.de); });
+    if (nuit && du && (!$('dg-au').value || $('dg-au').value === du)) { var dd = new Date(du + 'T12:00'); dd.setDate(dd.getDate() + 1); $('dg-au').value = dd.toISOString().slice(0, 10); $('dg-au').dataset.auto = 1; }
+    else if (!nuit && $('dg-au').dataset.auto) { $('dg-au').value = ''; delete $('dg-au').dataset.auto; }
     if ($('dg-au').value && $('dg-au').value < du) $('dg-au').value = du;
+    var au = $('dg-au').value || du, unJour = !au || au === du || $('dg-au').dataset.auto;
     try { $('dg-jour').textContent = du ? '📅 ' + new Date(du + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + (au && au !== du ? ' → ' + new Date(au + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '') : ''; } catch (e) { }
-    if ((force || !hEl.dataset.edit) && de != null && a != null && a > de && (!au || au === du)) hEl.value = dgFmtH(a - de);
+    if ((force || !hEl.dataset.edit) && PL.length && unJour) hEl.value = dgFmtH(PL.reduce(function (s, x) { return s + dgPlMin(x); }, 0));
     var G = D.deleg || {}, p = G.profil || {}, dest = [p.rh, p.resp].filter(Boolean);
     var cc = [p.mail, p.resp2].filter(Boolean);
     $('dg-resume').innerHTML = dest.length ? '📧 Sera envoyé depuis la boîte du CSE à : <b>' + E(dest.join(', ')) + '</b>' + (cc.length ? ', en copie : ' + E(cc.join(', ')) : '') + '. La feuille PDF est aussi rangée dans votre dossier sur le Drive du CSE.' : '⚠️ Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages » ci-dessous.';
   };
   window.cseDgPoser = async function (mode) {
     var G = D.deleg || {}, p = G.profil || {}, sans = mode === 'sans';
-    var x = { du: $('dg-du').value, au: $('dg-au').value || $('dg-du').value, de: $('dg-de').value, a: $('dg-a').value, heures: Math.round(dgParseH($('dg-h').value) * 10000) / 10000, motif: $('dg-motif').value.trim() };
+    var PL = dgPlagesForm(); var x = { du: $('dg-du').value, au: $('dg-au').value || $('dg-du').value, de: PL.length ? PL[0].de : '', a: PL.length ? PL[PL.length - 1].a : '', heures: Math.round(dgParseH($('dg-h').value) * 10000) / 10000, motif: $('dg-motif').value.trim() };
     if (!x.du) return say('dg-msg', 'Choisissez la date.', 'bad');
     if (!x.de || !x.a) return say('dg-msg', 'Indiquez l\'horaire (de … à …).', 'bad');
+    if (PL.length > 1) x.plages = PL;
     if (!(x.heures > 0)) return say('dg-msg', 'Indiquez le nombre d\'heures.', 'bad');
     if (!sans && !p.sig) return say('dg-msg', 'Ajoutez d\'abord votre signature dans « Mes réglages » ci-dessous.', 'bad');
     if (!sans && !p.rh && !p.resp) return say('dg-msg', 'Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages ».', 'bad');
@@ -540,8 +555,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   window.cseSigRefaire = function () { D.deleg.profil.sigRefaire = true; dgRender(); };
   // Ré-affiche la page sans perdre ce qui est en cours de saisie dans « Poser des heures »
   function dgRender() {
-    var ids = ['dg-du', 'dg-au', 'dg-de', 'dg-a', 'dg-h', 'dg-motif'], v = {}, ed = $('dg-h') && $('dg-h').dataset.edit;
+    var ids = ['dg-du', 'dg-au', 'dg-de', 'dg-a', 'dg-de2', 'dg-a2', 'dg-de3', 'dg-a3', 'dg-h', 'dg-motif'], v = {}, ed = $('dg-h') && $('dg-h').dataset.edit, vis = {};
+    ['dg-pl2', 'dg-pl3', 'dg-plus'].forEach(function (i) { if ($(i)) vis[i] = $(i).style.display; }); var aa = $('dg-au') && $('dg-au').dataset.auto;
     ids.forEach(function (i) { if ($(i)) v[i] = $(i).value; }); render();
+    for (var k in vis) if ($(k)) $(k).style.display = vis[k]; if (aa && $('dg-au')) $('dg-au').dataset.auto = aa;
     ids.forEach(function (i) { if ($(i) && i in v) $(i).value = v[i]; }); if (ed && $('dg-h')) $('dg-h').dataset.edit = ed; try { cseDgCalc(); } catch (e) { }
   }
   function dgPage() {
@@ -551,6 +568,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       + '<div class="grid2"><div><label>Le (date)</label><input type="date" id="dg-du" value="' + t + '" onchange="cseDgCalc()"></div><div><label>Jusqu\'au (si plusieurs jours)</label><input type="date" id="dg-au" onchange="cseDgCalc()"></div></div>'
       + '<p class="mute" id="dg-jour" style="margin:4px 0"></p>'
       + '<div class="grid2"><div><label>Horaire : de</label><input type="time" id="dg-de" value="08:00" onchange="cseDgCalc()"></div><div><label>à</label><input type="time" id="dg-a" value="12:00" onchange="cseDgCalc()"></div></div>'
+      + [2, 3].map(function (k) { return '<div class="grid2" id="dg-pl' + k + '" style="display:none"><div><label>puis de</label><input type="time" id="dg-de' + k + '" onchange="cseDgCalc()"></div><div><label>à <a href="#" onclick="cseDgPlage(' + k + ');return false" style="float:right">✕ retirer</a></label><input type="time" id="dg-a' + k + '" onchange="cseDgCalc()"></div></div>'; }).join('')
+      + '<p style="margin:4px 0 8px"><button class="btn" id="dg-plus" type="button" onclick="cseDgPlage()">➕ une autre plage le même jour</button></p><p class="mute" style="margin:0 0 8px">De nuit (ex. 21:00 à 05:00) : la fin est comptée le lendemain automatiquement.</p>'
       + '<div class="grid2"><div><label>Heures de délégation (ex. 8:15)</label><input id="dg-h" placeholder="h:mm" oninput="this.dataset.edit=1"></div><div><label>Motif (facultatif)</label><input id="dg-motif" maxlength="200" placeholder="Réunion CSE, CSSCT…"></div></div>'
       + '<div class="msg info" id="dg-resume" style="margin:10px 0"></div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" id="dg-go" onclick="cseDgPoser()">✍️ Signer et envoyer</button><button class="btn" id="dg-old" onclick="cseDgPoser(\'sans\')">➕ Déjà prise : ajouter sans feuille</button></div><p class="mute" style="margin-top:6px">« Déjà prise » : pour ajouter à votre compteur une délégation de ce mois (ou d\'avant) dont la feuille est déjà faite. Rien n\'est envoyé.</p><div id="dg-msg"></div></div>';
@@ -558,11 +577,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var TG = { feuille: ['info', 'Feuille envoyée'], ancienne: ['', 'Déjà prise'], saisie: ['', 'Saisie par le CSE'], recu: ['ok', 'Heures reçues'], cede: ['warn', 'Heures cédées'] };
     h += '<div class="card"><h2>📋 Mes délégations depuis le 1er juillet</h2>' + (L.length ? L.map(function (d) {
       var t = TG[d.type] || TG.saisie, st = d.vu ? '<span class="tag ok">Vue le ' + fd(d.vu) + '</span>' : '<span class="tag ' + t[0] + '">' + t[1] + '</span>';
-      return '<div class="row"><div class="l"><b>' + (d.au && d.au !== d.du ? 'Du ' + fd(d.du) + ' au ' + fd(d.au) : fd(d.du)) + (d.de ? ' · ' + E(d.de) + ' – ' + E(d.a) : '') + '</b><div class="mute">' + E(d.motif || '') + '</div></div><div class="r">' + (d.type === 'cede' ? '−' : d.type === 'recu' ? '+' : '') + hFr(d.heures) + '<br>' + st + '</div></div>';
+      return '<div class="row"><div class="l"><b>' + (d.au && d.au !== d.du ? 'Du ' + fd(d.du) + ' au ' + fd(d.au) : fd(d.du)) + (d.de ? ' · ' + dgPlTxt(d) : '') + '</b><div class="mute">' + E(d.motif || '') + '</div></div><div class="r">' + (d.type === 'cede' ? '−' : d.type === 'recu' ? '+' : '') + hFr(d.heures) + '<br>' + st + '</div></div>';
     }).join('') : '<p class="empty">Aucune délégation pour le moment.</p>') + '</div>';
     var TO = (D.fiche.deleg || {}).tous || [];
     if (TO.length) h += '<div class="card"><h2>👥 Compteurs des élus</h2><p class="mute">Pour information : chacun ne pose que ses propres heures.</p>' + TO.map(function (x) {
-      return '<div class="row"' + (x.moi ? ' style="background:#eef2ff;border-radius:10px;padding-left:6px"' : '') + '><div class="l"><b>' + E(x.nom) + (x.moi ? ' (vous)' : '') + '</b><div class="mute">Ce mois : ' + hFr(x.mois) + (x.credit ? ' sur ' + hFr(x.credit) : '') + ' · depuis le 1er juillet : ' + hFr(x.an) + '</div></div><div class="r">' + (x.credit ? '<span class="tag ' + (x.reste < 0 ? 'bad' : 'ok') + '">reste ' + hFr(x.reste) + '</span>' : '') + '</div></div>';
+      return '<div class="row"' + (x.moi ? ' style="background:#eef2ff;border-radius:10px;padding-left:6px"' : '') + '><div class="l"><b>' + E(x.nom) + (x.moi ? ' (vous)' : '') + '</b><div class="mute">Ce mois : <b style="color:' + (x.etat === 'trop' ? 'var(--bad)' : x.etat === 'report' ? '#ea580c' : 'inherit') + '">' + hFr(x.mois) + '</b>' + (x.credit ? ' sur ' + hFr(x.credit) : '') + ' · depuis le 1er juillet : ' + hFr(x.an) + '</div></div><div class="r">' + (x.credit ? '<span class="tag ' + (x.reste < 0 ? 'warn' : 'ok') + '">reste ' + hFr(x.reste) + '</span>' + (x.plafond != null ? '<br><span class="tag" style="background:#ede9fe;color:#6d28d9;margin-top:4px">avec report ' + hFr(x.reste33) + '</span>' : '') : '') + '</div></div>';
     }).join('') + '</div>';
     var showPad = !p.sig || p.sigRefaire;
     h += '<div class="card"><h2>⚙️ Mes réglages</h2>'

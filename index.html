@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"rw7bxH/syHmPzzY9522+mg==","iv":"asoOBgdpClUvU7mo","rev":"boot","lastModified":"2026-11-24T17:20:03.652Z","by":"Michaël GROSJEAN","data":"QR0kFpHsPuy6gC3yqHmQ3zUCtx2JosLitYvOlyR1TeiLkJeIkje8IirtTgUdqzmNDNYQl1S7L1uSZM4yYLa7fQ=="},"at":"2026-11-24T17:20:03.693Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"xfoNhMvCHHH8iqmKlTUKpg==","iv":"n9gA6nQ3xy1YLX56","rev":"boot","lastModified":"2026-11-24T17:37:24.045Z","by":"Michaël GROSJEAN","data":"AY5LFAdMG4e2TNHlzjlQzAO200QPXkKQ8Mp9Zk6glhO+D0/0GUlGnBoKUrG3zV6WxN3WBZhoJP7FYmy4WTpeJQ=="},"at":"2026-11-24T17:37:24.087Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6939,7 +6939,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.9.0";
+        const APP_VERSION = "V.9.1";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21722,6 +21722,10 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.9.1', date: '2026-11-24', items: [
+                "🌙 Délégation de nuit : « 21:00 à 05:00 » compte 8 h, la fin est mise au lendemain tout seul (feuille, e-mail et compteur).",
+                "➕ Plusieurs plages le même jour (ex. 13:00–13:30 puis 18:00–21:00 = 3 h30) : bouton « + une autre plage le même jour », dans l'appli et dans l'espace salarié."
+            ] },
             { v: 'V.9.0', date: '2026-11-24', items: [
                 "📲 L'appli et l'espace salarié proposent tout seuls « Installer l'appli ? » à l'ouverture : un appui sur « Installer », puis valider (Android, PC). Sur iPhone, la fenêtre explique le geste Partager › Sur l'écran d'accueil (Apple ne permet pas plus). « Plus tard » la cache 7 jours.",
                 "🕒 Onglet « Heures de délégation » complet (aussi bouton « Délégations » à côté de « Planning des élus ») : tout le monde voit les compteurs de tous les élus (mois et depuis le 1er juillet, remis à zéro chaque 1er juillet), chacun ne saisit, n'envoie et ne supprime que pour lui-même ; « Ajouter sans feuille » pour les délégations déjà prises ; les élus reliés à un rôle du CSE sont ajoutés tout seuls.",
@@ -44636,6 +44640,15 @@ var qrcode = function() {
     var io = E2.filter(function (x) { return x.type === 'transfer'; }).reduce(function (a, x) { return a + (x.toId === el.id ? 1 : x.eluId === el.id ? -1 : 0) * (Number(x.hours) || 0); }, 0);
     return { used: used, credit: (Number(el.credit) || 0) * S.mois + io, S: S };
   }
+  // Le mois M : crédit (ex. 22 h), report des heures non utilisées depuis le 1er juillet, plafond = 1,5 × crédit (ex. 33 h) sans dépasser crédit + report
+  function dgMois(el, M) {
+    var S = dgSaison(M + '-15'), deb = M + '-01', fin = M + '-31', E2 = dgD().entries, cr = Number(el.credit) || 0;
+    var u = function (a, b) { return E2.filter(function (x) { return x.type !== 'transfer' && x.eluId === el.id && x.date >= a && x.date <= b; }).reduce(function (s, x) { return s + (Number(x.hours) || 0); }, 0); };
+    var io = function (a, b) { return E2.filter(function (x) { return x.type === 'transfer' && x.date >= a && x.date <= b; }).reduce(function (s, x) { return s + (x.toId === el.id ? 1 : x.eluId === el.id ? -1 : 0) * (Number(x.hours) || 0); }, 0); };
+    var avant = S.mois - 1, report = Math.max(0, cr * avant + io(S.debut, addD(deb, -1)) - u(S.debut, addD(deb, -1)));
+    var used = u(deb, fin), ioM = io(deb, fin), base = cr + ioM, plafond = Math.min(cr * 1.5 + Math.max(0, ioM), base + report);
+    return { credit: cr, used: used, report: report, base: base, plafond: plafond, reste: base - used, reste33: plafond - used, etat: used <= base + 1e-9 ? 'ok' : used <= plafond + 1e-9 ? 'report' : 'trop' };
+  }
   function hh(n) { n = Math.round((Number(n) || 0) * 60); var s = n < 0 ? '−' : ''; n = Math.abs(n); var h = Math.floor(n / 60), m = n % 60; return s + h + ' h' + (m ? String(m).padStart(2, '0') : ''); }
   async function dgSync(force) {
     if (!(window.cseEspaceOn && cseEspaceOn())) return false;
@@ -44648,7 +44661,7 @@ var qrcode = function() {
       var id = 'fs-' + d.id, cur = D.entries.filter(function (x) { return x.id === id; })[0];
       if (d.statut === 'annulée') { if (cur) { D.entries = D.entries.filter(function (x) { return x.id !== id; }); ch = true; } return; }
       var e = (db.employees || []).filter(function (x) { return (x.espaceToken && x.espaceToken === d.t) || String(x.id) === String(d.empId); })[0], el = eluOfEmp(e); if (!el) return;
-      var o = { id: id, eluId: el.id, date: d.du, au: d.au || d.du, de: d.de, a: d.a, hours: Number(d.heures) || 0, motif: d.motif || '', note: '', source: d.par === 'ancienne' ? 'ancienne' : 'feuille', sheetId: d.id, vu: d.vu ? String(d.vu.at).slice(0, 10) : '', pdfUrl: d.pdfUrl || '' };
+      var o = { id: id, eluId: el.id, date: d.du, au: d.au || d.du, de: d.de, a: d.a, plages: d.plages || null, hours: Number(d.heures) || 0, motif: d.motif || '', note: '', source: d.par === 'ancienne' ? 'ancienne' : 'feuille', sheetId: d.id, vu: d.vu ? String(d.vu.at).slice(0, 10) : '', pdfUrl: d.pdfUrl || '' };
       if (!cur) { D.entries.push(o); ch = true; } else if (cur.vu !== o.vu || cur.pdfUrl !== o.pdfUrl) { cur.vu = o.vu; cur.pdfUrl = o.pdfUrl; ch = true; }
     });
     if (ch) { try { saveDB(); } catch (e) { } }
@@ -44664,29 +44677,31 @@ var qrcode = function() {
     var sel = D.elus.filter(function (x) { return x.id === DG.sel; })[0], sEmp = empOfElu(sel), pr = (sEmp && sEmp.espaceToken && DG.profils[sEmp.espaceToken]) || {};
     var inp = 'p-2 bg-slate-50 border rounded-lg text-sm w-full', lab = 'text-[11px] text-slate-600';
     var rows = D.elus.slice().sort(function (a, b) { return (me && a.id === me.id ? -1 : me && b.id === me.id ? 1 : 0) || a.name.localeCompare(b.name); }).map(function (el) {
-      var b = dgBalance(el, M), an = dgAn(el), mine = me && el.id === me.id;
+      var b = dgBalance(el, M), an = dgAn(el), mine = me && el.id === me.id, mm = dgMois(el, M), col = mm.etat === 'ok' ? 'text-emerald-700' : mm.etat === 'report' ? 'text-orange-600' : 'text-rose-700';
       return '<tr class="border-t border-slate-100' + (mine ? ' bg-indigo-50/60' : '') + '"><td class="p-2 font-semibold">' + E(el.name) + (mine ? ' <span class="text-indigo-700 font-normal">(vous)</span>' : '') + ' <span class="text-[11px] text-slate-500 font-normal">' + E(el.role || '') + '</span></td>'
         + '<td class="p-2 text-right">' + (adm ? '<input type="number" min="0" step="0.5" value="' + (el.credit || 0) + '" onchange="cseDgCredit(\'' + el.id + '\',this.value)" class="w-16 p-1 border rounded text-right"> h' : hh(b.credit)) + '</td>'
-        + '<td class="p-2 text-right">' + (b.inH ? '+' + hh(b.inH) : '—') + (b.outH ? ' / −' + hh(b.outH) : '') + '</td><td class="p-2 text-right">' + hh(b.used) + '</td>'
-        + '<td class="p-2 text-right font-bold ' + (b.left < 0 ? 'text-rose-700' : 'text-emerald-700') + '">' + hh(b.left) + '</td>'
+        + '<td class="p-2 text-right">' + (b.inH ? '+' + hh(b.inH) : '—') + (b.outH ? ' / −' + hh(b.outH) : '') + '</td><td class="p-2 text-right font-bold ' + col + '">' + hh(mm.used) + '</td>'
+        + '<td class="p-2 text-right font-bold ' + (mm.reste < 0 ? 'text-orange-600' : 'text-emerald-700') + '">' + (mm.credit ? hh(mm.reste) + ' <span class="font-normal text-slate-400">/ ' + hh(mm.base) + '</span>' : '—') + '</td>'
+        + '<td class="p-2 text-right font-bold" style="color:' + (mm.reste33 < 0 ? '#be123c' : '#7c3aed') + '">' + (mm.credit ? hh(mm.reste33) + ' <span class="font-normal text-slate-400">/ ' + hh(mm.plafond) + '</span>' + (mm.report ? '<div class="font-normal text-[10px] text-slate-500">report ' + hh(mm.report) + '</div>' : '') : '—') + '</td>'
         + '<td class="p-2 text-right">' + hh(an.used) + ' <span class="text-slate-400">/ ' + hh(an.credit) + '</span></td>'
-        + '<td class="p-2">' + (b.over && b.credit ? instPill('Au-delà de 1,5 × le crédit', 'pill-late') : !b.credit && adm ? '<span class="text-[11px] text-amber-700">crédit à régler</span>' : '') + '</td>'
+        + '<td class="p-2">' + (!mm.credit ? (adm ? '<span class="text-[11px] text-amber-700">crédit à régler</span>' : '') : mm.etat === 'trop' ? instPill(mm.used > mm.credit * 1.5 ? 'Au-delà de 1,5 × le crédit' : 'Plus que le report disponible', 'pill-late') : mm.etat === 'report' ? '<span class="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[11px] font-semibold">crédit dépassé : pris sur le report</span>' : '') + '</td>'
         + '<td class="p-2 text-right">' + (adm ? '<button type="button" onclick="dgRemoveElu(\'' + el.id + '\')" class="text-slate-400 hover:text-rose-600" aria-label="Retirer l\'élu" title="Retirer l\'élu"><i class="fa-solid fa-trash-can"></i></button>' : '') + '</td></tr>';
     }).join('');
     var h = '<div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">'
       + '<div class="flex flex-wrap items-end justify-between gap-2"><label class="' + lab + '">Mois<input type="month" value="' + M + '" onchange="dgMonth=this.value;dgRender()" class="block mt-1 p-2 bg-slate-50 border rounded-lg text-sm"></label>'
       + '<div class="flex gap-2"><button type="button" onclick="cseDgSync()" class="btn-secondary"><i class="fa-solid fa-rotate"></i> Actualiser</button><button type="button" onclick="dgExport()" class="btn-secondary"><i class="fa-solid fa-file-excel"></i> Exporter le mois</button></div></div>'
       + (DG.err ? '<p class="text-xs text-amber-700 font-semibold">' + E(DG.err) + '</p>' : '')
-      + '<div class="overflow-x-auto"><table class="w-full text-xs"><thead><tr class="text-slate-500"><th class="p-2 text-left">Élu</th><th class="p-2 text-right">Crédit / mois</th><th class="p-2 text-right">Reçues / cédées</th><th class="p-2 text-right">Utilisées ' + E(M === cur ? 'ce mois' : 'en ' + M) + '</th><th class="p-2 text-right">Reste du mois</th><th class="p-2 text-right">Depuis le 1er juillet</th><th></th><th></th></tr></thead><tbody>'
-      + (rows || '<tr><td colspan="8" class="p-2 text-slate-500">Aucun élu : ' + (adm ? 'ajoutez-les ci-dessous (ou reliez-les à un rôle du CSE dans Paramètres › Utilisateurs).' : 'l\'administrateur doit les ajouter.') + '</td></tr>') + '</tbody></table></div>'
-      + '<p class="text-[11px] text-slate-500">« Depuis le 1er juillet » : heures utilisées sur le crédit cumulé de l\'année (remis à zéro le 1er juillet). Tout le monde voit les compteurs ; chacun ne saisit que pour lui-même.</p>';
+      + '<div class="overflow-x-auto"><table class="w-full text-xs"><thead><tr class="text-slate-500"><th class="p-2 text-left">Élu</th><th class="p-2 text-right">Crédit / mois</th><th class="p-2 text-right">Reçues / cédées</th><th class="p-2 text-right">Utilisées ' + E(M === cur ? 'ce mois' : 'en ' + M) + '</th><th class="p-2 text-right text-emerald-700">Reste sur le crédit</th><th class="p-2 text-right" style="color:#7c3aed">Reste avec report (max 1,5 ×)</th><th class="p-2 text-right">Depuis le 1er juillet</th><th></th><th></th></tr></thead><tbody>'
+      + (rows || '<tr><td colspan="9" class="p-2 text-slate-500">Aucun élu : ' + (adm ? 'ajoutez-les ci-dessous (ou reliez-les à un rôle du CSE dans Paramètres › Utilisateurs).' : 'l\'administrateur doit les ajouter.') + '</td></tr>') + '</tbody></table></div>'
+      + '<p class="text-[11px] text-slate-500"><b class="text-emerald-700">Vert</b> : dans le crédit du mois. <b class="text-orange-600">Orange</b> : crédit dépassé, pris sur les heures non utilisées des mois d\'avant (report). <b class="text-rose-700">Rouge</b> : au-delà de 1,5 × le crédit (ex. 33 h pour 22 h) ou du report disponible. « Depuis le 1er juillet » : heures utilisées sur le crédit cumulé de l\'année (remis à zéro le 1er juillet). Tout le monde voit les compteurs ; chacun ne saisit que pour lui-même.</p>';
     if (!sel) h += '<p class="text-sm text-slate-600 rounded-xl border border-slate-200 p-3">' + (moiEmp() ? 'Vous n\'êtes pas dans la liste des élus : vous voyez les compteurs, sans pouvoir saisir.' : 'Identifiez-vous (« Qui êtes-vous ? ») pour poser vos heures.') + '</p>';
     else {
       var ok = sEmp && sEmp.espaceToken, dest = [pr.rh, pr.resp].filter(Boolean);
       h += '<div class="grid md:grid-cols-2 gap-4"><div class="rounded-xl border border-indigo-200 p-3 space-y-2"><div class="flex flex-wrap items-center gap-2"><p class="text-xs font-bold text-slate-700">✍️ Poser des heures</p>'
         + (adm && D.elus.length > 1 ? '<select class="p-1 border rounded text-xs" onchange="cseDgSel(this.value)">' + D.elus.map(function (x) { return '<option value="' + x.id + '"' + (x.id === sel.id ? ' selected' : '') + '>' + E(x.name) + (me && x.id === me.id ? ' (vous)' : '') + '</option>'; }).join('') + '</select>' : '<b class="text-xs text-indigo-700">' + E(sel.name) + '</b>') + '</div>'
         + '<div class="grid grid-cols-2 gap-2"><label class="' + lab + '">Le<input type="date" id="dg2-du" value="' + today() + '" class="' + inp + '" onchange="cseDgCalc()"></label><label class="' + lab + '">Jusqu\'au (plusieurs jours)<input type="date" id="dg2-au" class="' + inp + '" onchange="cseDgCalc()"></label>'
-        + '<label class="' + lab + '">Horaire : de<input type="time" id="dg2-de" value="08:00" class="' + inp + '" onchange="cseDgCalc()"></label><label class="' + lab + '">à<input type="time" id="dg2-a" value="12:00" class="' + inp + '" onchange="cseDgCalc()"></label>'
+        + '<label class="' + lab + '">Horaire : de<input type="time" id="dg2-de" value="08:00" class="' + inp + '" onchange="cseDgCalc()"></label><label class="' + lab + '">à<input type="time" id="dg2-a" value="12:00" class="' + inp + '" onchange="cseDgCalc()"></label>' + [2, 3].map(function (k) { return '<div id="dg2-pl' + k + '" class="col-span-2 grid grid-cols-2 gap-2" style="display:none"><label class="' + lab + '">' + k + 'e plage : de<input type="time" id="dg2-de' + k + '" class="' + inp + '" onchange="cseDgCalc()"></label><label class="' + lab + '">à <button type="button" class="float-right text-slate-400 hover:text-rose-600" onclick="cseDgPlage(-' + k + ')" title="Retirer cette plage">✕</button><input type="time" id="dg2-a' + k + '" class="' + inp + '" onchange="cseDgCalc()"></label></div>'; }).join('')
+        + '<div class="col-span-2 -mt-1"><button type="button" id="dg2-plus" class="text-[11px] text-indigo-700 underline" onclick="cseDgPlage(1)">+ une autre plage le même jour (ex. 13:00–13:30 et 18:00–21:00)</button> <span class="text-[11px] text-slate-500">· de nuit (21:00 à 05:00) : compté jusqu\'au lendemain</span></div>'
         + '<label class="' + lab + '">Heures (ex. 8:15)<input id="dg2-h" placeholder="h:mm" class="' + inp + '" oninput="this.dataset.edit=1"></label><label class="' + lab + '">Motif<select id="dg2-motif" class="' + inp + '">' + DG_MOTIFS.map(function (m) { return '<option>' + m + '</option>'; }).join('') + '</select></label>'
         + '<label class="' + lab + ' col-span-2">Remarque (facultatif)<input id="dg2-note" class="' + inp + '" maxlength="150"></label></div>'
         + '<p class="text-[11px] text-slate-500" id="dg2-jour"></p>'
@@ -44711,7 +44726,7 @@ var qrcode = function() {
     h += '<div class="overflow-x-auto"><table class="w-full text-xs"><thead><tr class="text-slate-500"><th class="p-2 text-left">Date</th><th class="p-2 text-left">Élu</th><th class="p-2 text-left">Horaire</th><th class="p-2 text-left">Motif</th><th class="p-2 text-left">Suivi</th><th class="p-2 text-right">Heures</th><th></th></tr></thead><tbody>'
       + (L.map(function (x) {
         var can = dgPeut(x.eluId), sr = x.type === 'transfer' ? ['Cession', 'bg-amber-50 text-amber-700'] : SRC[x.source || 'saisie'] || SRC.saisie;
-        return '<tr class="border-t border-slate-100' + (me && x.eluId === me.id ? ' bg-indigo-50/40' : '') + '"><td class="p-2">' + fd(x.date) + (x.au && x.au !== x.date ? ' → ' + fd(x.au) : '') + '</td><td class="p-2">' + E(nmE(x.eluId)) + (x.type === 'transfer' ? ' → ' + E(nmE(x.toId)) : '') + '</td><td class="p-2">' + (x.de ? E(x.de) + ' – ' + E(x.a) : '') + '</td>'
+        return '<tr class="border-t border-slate-100' + (me && x.eluId === me.id ? ' bg-indigo-50/40' : '') + '"><td class="p-2">' + fd(x.date) + (x.au && x.au !== x.date ? ' → ' + fd(x.au) : '') + '</td><td class="p-2">' + E(nmE(x.eluId)) + (x.type === 'transfer' ? ' → ' + E(nmE(x.toId)) : '') + '</td><td class="p-2">' + (x.plages && x.plages.length ? x.plages.map(function (p) { return E(p.de) + ' – ' + E(p.a); }).join('<br>') : x.de ? E(x.de) + ' – ' + E(x.a) : '') + '</td>'
           + '<td class="p-2">' + E(x.type === 'transfer' ? 'Cession d\'heures' : (x.motif || '')) + (x.note ? ' · ' + E(x.note) : '') + '</td>'
           + '<td class="p-2"><span class="px-2 py-0.5 rounded-full ' + sr[1] + '">' + sr[0] + '</span>' + (x.vu ? ' <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">vue le ' + fd(x.vu) + '</span>' : '') + (can && x.pdfUrl ? ' <a class="text-indigo-700 underline" target="_blank" rel="noopener" href="' + E(x.pdfUrl) + '">PDF</a>' : '') + '</td>'
           + '<td class="p-2 text-right font-semibold">' + hh(x.hours) + '</td><td class="p-2 text-right">' + (can ? '<button type="button" onclick="dgDelete(\'' + E(x.id) + '\')" class="text-slate-400 hover:text-rose-600" aria-label="Supprimer" title="Supprimer"><i class="fa-solid fa-trash-can"></i></button>' : '') + '</td></tr>';
@@ -44727,11 +44742,23 @@ var qrcode = function() {
   function dgFmtH(mins) { mins = Math.round(mins); return Math.floor(mins / 60) + ':' + String(mins % 60).padStart(2, '0'); }
   function gv(i) { var el = document.getElementById(i); return el ? String(el.value || '').trim() : ''; }
   function mn(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ''); return m ? m[1] * 60 + Number(m[2]) : null; }
+  // Plages horaires : 1 à 3 dans la journée ; une plage de nuit (fin avant le début) finit le lendemain
+  function dgPlagesForm() { var L = []; [1, 2, 3].forEach(function (k) { var sfx = k === 1 ? '' : String(k), box = k === 1 ? null : document.getElementById('dg2-pl' + k); if (box && box.style.display === 'none') return; var d = gv('dg2-de' + sfx), a = gv('dg2-a' + sfx); if (d && a) L.push({ de: d, a: a }); }); return L; }
+  function dgPlMin(p) { var d = mn(p.de), a = mn(p.a); if (d == null || a == null) return 0; return a > d ? a - d : a + 1440 - d; }
+  window.cseDgPlage = function (k) {
+    if (k > 0) { var n = [2, 3].filter(function (j) { return document.getElementById('dg2-pl' + j).style.display === 'none'; })[0]; if (n) document.getElementById('dg2-pl' + n).style.display = ''; }
+    else { var b = document.getElementById('dg2-pl' + (-k)); b.style.display = 'none'; document.getElementById('dg2-de' + (-k)).value = ''; document.getElementById('dg2-a' + (-k)).value = ''; }
+    var pl = document.getElementById('dg2-plus'); if (pl) pl.style.display = [2, 3].every(function (j) { return document.getElementById('dg2-pl' + j).style.display !== 'none'; }) ? 'none' : '';
+    cseDgCalc();
+  };
   window.cseDgCalc = function () {
     var du = gv('dg2-du'), au = gv('dg2-au'), hEl = document.getElementById('dg2-h'); if (!hEl) return;
     if (au && au < du) { document.getElementById('dg2-au').value = du; au = du; }
-    var a = mn(gv('dg2-a')), d = mn(gv('dg2-de'));
-    if (!hEl.dataset.edit && a != null && d != null && a > d && (!au || au === du)) hEl.value = dgFmtH(a - d);
+    var PL = dgPlagesForm(), nuit = PL.some(function (p) { return mn(p.a) <= mn(p.de); });
+    var auEl = document.getElementById('dg2-au');
+    if (nuit && du && (!au || au === du)) { au = addD(du, 1); auEl.value = au; auEl.dataset.auto = 1; }
+    else if (!nuit && auEl.dataset.auto) { au = ''; auEl.value = ''; delete auEl.dataset.auto; }
+    if (!hEl.dataset.edit && PL.length && (!au || au === du || (nuit && au === addD(du, 1)))) hEl.value = dgFmtH(PL.reduce(function (s, p) { return s + dgPlMin(p); }, 0));
     var j = document.getElementById('dg2-jour'); try { if (j) j.textContent = du ? '📅 ' + new Date(du + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + (au && au !== du ? ' → ' + new Date(au + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '') : ''; } catch (e) { }
   };
   window.cseDgSel = function (id) { DG.sel = id; DG.sig = false; dgRender(); };
@@ -44741,20 +44768,21 @@ var qrcode = function() {
   function selOk() { var el = dgD().elus.filter(function (x) { return x.id === DG.sel; })[0]; if (!el || !dgPeut(el.id)) { say('Vous ne pouvez saisir que vos propres heures.', 'warning'); return null; } return el; }
   window.cseDgPose = async function (mode) {
     var el = selOk(); if (!el) return; var e = empOfElu(el);
-    var x = { du: gv('dg2-du'), au: gv('dg2-au') || gv('dg2-du'), de: gv('dg2-de'), a: gv('dg2-a'), heures: Math.round(dgParseH(gv('dg2-h')) * 10000) / 10000, motif: gv('dg2-motif'), note: gv('dg2-note') };
+    var PL = dgPlagesForm();
+    var x = { du: gv('dg2-du'), au: gv('dg2-au') || gv('dg2-du'), de: (PL[0] || {}).de || gv('dg2-de'), a: (PL[PL.length - 1] || {}).a || gv('dg2-a'), plages: PL.length > 1 ? PL : null, heures: Math.round(dgParseH(gv('dg2-h')) * 10000) / 10000, motif: gv('dg2-motif'), note: gv('dg2-note') };
     if (!x.du || !(x.heures > 0)) { say('Indiquez la date et le nombre d\'heures.', 'warning'); return; }
     var D = dgD();
     if (mode === 'sans') {
-      D.entries.push({ id: String(generateUniqueId()), eluId: el.id, date: x.du, au: x.au, de: x.de, a: x.a, hours: x.heures, motif: x.motif, note: x.note, source: 'ancienne', by: (moiEmp() || {}).id || '' });
+      D.entries.push({ id: String(generateUniqueId()), eluId: el.id, date: x.du, au: x.au, de: x.de, a: x.a, plages: x.plages, hours: x.heures, motif: x.motif, note: x.note, source: 'ancienne', by: (moiEmp() || {}).id || '' });
       try { logAction('Création', 'delegation', 'Délégation (déjà prise) : ' + el.name + ' ' + fd(x.du) + ' (' + hh(x.heures) + ')'); saveDB(); } catch (er) { }
       dgMonth = x.du.slice(0, 7); dgRender(); try { cseEspacePublish(true); } catch (er) { }
-      var b = dgBalance(el, x.du.slice(0, 7)); say(b.over ? el.name + ' : plus d\'une fois et demie le crédit du mois.' : '✔ Ajoutée au compteur (aucune feuille envoyée).', b.over ? 'warning' : 'success'); return;
+      var mm = dgMois(el, x.du.slice(0, 7)); say(mm.etat === 'trop' ? el.name + ' : au-delà du maximum du mois (' + hh(mm.plafond) + ').' : mm.etat === 'report' ? '✔ Ajoutée. Crédit du mois dépassé : pris sur le report (reste ' + hh(mm.reste33) + ' jusqu\'au maximum).' : '✔ Ajoutée au compteur (aucune feuille envoyée).', mm.etat === 'ok' ? 'success' : 'warning'); return;
     }
     if (!e || !e.espaceToken) return;
     var pr = DG.profils[e.espaceToken] || {};
-    if (!(await uiConfirm('Envoyer la feuille de délégation de ' + el.name + ' ?\n\n' + fd(x.du) + (x.au !== x.du ? ' au ' + fd(x.au) : '') + ', de ' + x.de + ' à ' + x.a + ' : ' + hh(x.heures) + '\n\nÀ : ' + [pr.rh, pr.resp].filter(Boolean).join(', ') + ([pr.mail, pr.resp2].filter(Boolean).length ? '\nCopie : ' + [pr.mail, pr.resp2].filter(Boolean).join(', ') : ''), { okLabel: 'Signer et envoyer' }))) return;
+    if (!(await uiConfirm('Envoyer la feuille de délégation de ' + el.name + ' ?\n\n' + fd(x.du) + (x.au !== x.du ? ' au ' + fd(x.au) : '') + ', ' + (x.plages || [{ de: x.de, a: x.a }]).map(function (p) { return 'de ' + p.de + ' à ' + p.a; }).join(' et ') + ' : ' + hh(x.heures) + '\n\nÀ : ' + [pr.rh, pr.resp].filter(Boolean).join(', ') + ([pr.mail, pr.resp2].filter(Boolean).length ? '\nCopie : ' + [pr.mail, pr.resp2].filter(Boolean).join(', ') : ''), { okLabel: 'Signer et envoyer' }))) return;
     try {
-      var j = await cseEspacePost('deleg-appli', { t: e.espaceToken, data: { du: x.du, au: x.au, de: x.de, a: x.a, heures: x.heures, motif: x.motif + (x.note ? ' · ' + x.note : '') } });
+      var j = await cseEspacePost('deleg-appli', { t: e.espaceToken, data: { du: x.du, au: x.au, de: x.de, a: x.a, plages: x.plages, heures: x.heures, motif: x.motif + (x.note ? ' · ' + x.note : '') } });
       DG.at = 0; await dgSync(true); dgMonth = x.du.slice(0, 7); dgRender();
       try { logAction('Création', 'delegation', 'Feuille de délégation envoyée : ' + el.name + ' ' + fd(x.du) + ' (' + hh(x.heures) + ')'); } catch (er) { }
       say('✔ Feuille signée, envoyée et rangée sur le Drive.', 'success');
@@ -44806,10 +44834,10 @@ var qrcode = function() {
     if (prev) prev(f, e); if (!f.membreCse) return;
     try {
       var D = dgD(); dgLink(); var el = eluOfEmp(e), S = dgSaison(), mo = today().slice(0, 7); f.nomFamille = e.lastname || '';
-      var tous = D.elus.map(function (x) { var b = dgBalance(x, mo), an = dgAn(x); return { nom: x.name, credit: b.credit, mois: b.used, reste: b.left, an: an.used, anCredit: an.credit, moi: el && x.id === el.id }; });
+      var tous = D.elus.map(function (x) { var mm = dgMois(x, mo), an = dgAn(x); return { nom: x.name, credit: mm.credit, mois: mm.used, reste: mm.reste, base: mm.base, reste33: mm.reste33, plafond: mm.plafond, report: mm.report, etat: mm.etat, an: an.used, anCredit: an.credit, moi: el && x.id === el.id }; });
       f.deleg = { credit: el ? Number(el.credit) || 0 : 0, mandat: el ? el.role || '' : '', tous: tous,
-        entries: el ? D.entries.filter(function (x) { return x.date >= S.debut && x.date <= S.fin && (x.eluId === el.id || x.toId === el.id); }).map(function (x) { return { id: x.id, sheetId: x.sheetId || '', du: x.date, au: x.au || x.date, de: x.de || '', a: x.a || '', heures: x.hours, motif: x.type === 'transfer' ? (x.toId === el.id ? 'Heures reçues' : 'Heures cédées') : (x.motif || ''), type: x.type === 'transfer' ? (x.toId === el.id ? 'recu' : 'cede') : x.source || 'saisie', vu: x.vu || '' }; }) : [],
-        an: el ? dgAn(el) : null, mois: el ? dgBalance(el, mo) : null };
+        entries: el ? D.entries.filter(function (x) { return x.date >= S.debut && x.date <= S.fin && (x.eluId === el.id || x.toId === el.id); }).map(function (x) { return { id: x.id, sheetId: x.sheetId || '', du: x.date, au: x.au || x.date, de: x.de || '', a: x.a || '', plages: x.plages || null, heures: x.hours, motif: x.type === 'transfer' ? (x.toId === el.id ? 'Heures reçues' : 'Heures cédées') : (x.motif || ''), type: x.type === 'transfer' ? (x.toId === el.id ? 'recu' : 'cede') : x.source || 'saisie', vu: x.vu || '' }; }) : [],
+        an: el ? dgAn(el) : null, mois: el ? dgMois(el, mo) : null };
     } catch (er) { console.warn(er); }
   }; })();
 
