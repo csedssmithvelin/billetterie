@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Mu5/TBDGQFshAqZQEfijIw==","iv":"eeS2Vu0i3BWBfgjt","rev":"boot","lastModified":"2026-11-24T19:49:57.843Z","by":"Michaël GROSJEAN","data":"U9ic/fx4TGNsd6doy04UIGll91ALRRHKbg8aKpsHcN8EQwNC/gcvVxu7tq0HDcbPTlZ07u2oIIhp64UJWGMvJQ=="},"at":"2026-11-24T19:49:57.874Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"gSOQNaor6wD0d3LnCYndhw==","iv":"lX7Xh++ne7jFwAxz","rev":"boot","lastModified":"2026-11-24T20:01:22.598Z","by":"Michaël GROSJEAN","data":"wweozFyKJvHdYKUpoPsv+PN0ay/mSNNWq6o0dVdUQI2Cw2+568ZCGRURenBAdIFDF4+dFQ2msUkHV1yg9AAJoQ=="},"at":"2026-11-24T20:01:22.630Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21723,7 +21723,8 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         // =====================================================================
         const CHANGELOG = [
             { v: 'V.9.3', date: '2026-11-24', items: [
-                "📄 Documents (reçu, reçu de billetterie, attestation, état de caisse, remboursement, inscription, fiche de prêt…) : le bouton « Envoyer / ranger sur le Drive » envoie le document au salarié depuis la boîte du CSE avec le PDF joint tout seul, et le range dans Mon Drive › CSE › CSE - Documents › année › catégorie (ex. 2026 › 1 - Paiements et caisse › Reçus de paiement ; une sortie = un dossier). Plus rien à copier ni à joindre. Script v79 nécessaire.",
+                "📄 Documents (reçu, reçu de billetterie, attestation, état de caisse, remboursement, inscription, fiche de prêt…) : le bouton « Envoyer / ranger sur le Drive » envoie le document au salarié depuis la boîte du CSE avec le PDF joint tout seul, et le range dans Mon Drive › CSE › CSE - Documents › année › catégorie (ex. 2026 › 1 - Paiements et caisse › Reçus de paiement ; une sortie = un dossier). Plus rien à copier ni à joindre. Script v80 nécessaire.",
+                "✉️ Les e-mails envoyés depuis la boîte du CSE sont mis en forme : le logo du CSE (Paramètres › logo de l'appli) apparaît à gauche du nom dans la signature, comme dans Outlook.",
                 "⚙️ Pour chaque type de document : « demander à chaque fois », « à l'impression : envoyer + ranger automatiquement » ou « à l'impression : ranger sur le Drive seulement ».",
                 "🗂️ La fiche du salarié liste ses documents envoyés et rangés, avec le lien vers le PDF. Les signatures enregistrées (trésorier, élus) restent mises automatiquement sur les documents."
             ] },
@@ -43180,7 +43181,7 @@ var qrcode = function() {
     for (var i = 0; i < files.length; i++) { size += files[i].size; if (size > 15e6) { msg.style.color = '#b91c1c'; msg.textContent = 'Pièces jointes trop lourdes (15 Mo maximum).'; return; } att.push({ name: files[i].name, type: files[i].type || 'application/octet-stream', data: await b64(files[i]) }); }
     bt.disabled = true; msg.style.color = '#475569'; msg.textContent = 'Envoi en cours…';
     try {
-      var j = await post('mail', { to: to, cc: MAIL.m.cc, bcc: MAIL.m.bcc, subject: sub, body: body, attachments: att });
+      var j = await post('mail', Object.assign({ to: to, cc: MAIL.m.cc, bcc: MAIL.m.bcc, subject: sub, body: body, attachments: att }, window.cseSigLogo ? cseSigLogo() : {}));
       close('modal-v69-mail');
       try { logAction('Envoi', 'mail', 'E-mail « ' + sub + ' » envoyé depuis la boîte du CSE' + (to ? ' à ' + to : '') + (MAIL.m.bcc ? ' (+ copie cachée)' : '')); saveDB(); } catch (e) { }
       say('✔ E-mail envoyé depuis la boîte du CSE' + (j.quota != null ? ' (envois restants aujourd\'hui : ' + j.quota + ')' : '') + '.', 'success');
@@ -45423,6 +45424,9 @@ var qrcode = function() {
   var BTN = 'px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-lg';
   var BTNP = 'px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs';
 
+  // ---------- E-mails mis en forme : logo du CSE à côté de la signature (script v80) ----------
+  window.cseSigLogo = function () { var o = {}; try { o.sig = mailSignatureText(); } catch (e) { } var l = cfg().logoDataUrl; if (l && /^data:image\//.test(l) && l.length < 400000) o.logo = l; return o; };
+  if (typeof window.cseScriptPost === 'function') { var sp0 = window.cseScriptPost; window.cseScriptPost = function (a, p) { if (/^(document|pdf-mail)$/.test(a) && p && !p.sig) p = Object.assign({}, p, cseSigLogo()); return sp0(a, p); }; }
   // ---------- Où ranger chaque document ----------
   var PAY = '1 - Paiements et caisse', SOR = '2 - Sorties', PRE = '3 - Prêts de matériel', CV = '4 - Chèques vacances', SAL = '5 - Salariés', BIL = '6 - Bilans et budget';
   var RANG = { receipt: [PAY, 'Reçus de paiement'], ticket: [PAY, 'Reçus de billetterie'], attest: [PAY, 'Attestations de paiement'], cashreport: [PAY, 'États de caisse'], refund: [PAY, 'Remboursements'], payOrder: [PAY, 'Ordres de paiement'],
@@ -45504,7 +45508,7 @@ var qrcode = function() {
       msg(ok, 'ok'); if (auto) say(ok, 'success');
       var lk = $('v93-link'); if (lk && j.url) { lk.href = j.url; lk.hidden = false; }
     } catch (e) {
-      var t = /inconnue|ancienne version/i.test(e.message) ? 'installez la version 79 du script Google (script-google-cse-v79.txt).' : e.message;
+      var t = /inconnue|ancienne version/i.test(e.message) ? 'installez la version 80 du script Google (script-google-cse-v80.txt).' : e.message;
       msg('Impossible : ' + t, 'bad'); if (auto) say('Document non rangé : ' + t, 'error');
     } finally { BUSY = false; if (go) go.disabled = false; }
   };
