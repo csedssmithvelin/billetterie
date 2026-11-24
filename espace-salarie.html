@@ -151,7 +151,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var ELU = /elu/i.test(location.hash || '');
     return { ok: true, le: new Date().toISOString(),
       deleg: ELU ? { profil: { mail: 'camille.exemple@exemple.fr', rh: 'rh@exemple.fr', resp: 'chef@exemple.fr', respNom: 'M. Exemple', sig: '' }, liste: [{ id: 'd1', at: plus(-6) + 'T09:00:00Z', le: plus(-6), du: plus(-5), au: plus(-5), de: '08:00', a: '12:00', heures: 4, motif: 'Réunion CSE', statut: 'envoyée', vu: { at: plus(-4) + 'T10:00:00Z' } }, { id: 'd2', at: plus(-2) + 'T09:00:00Z', le: plus(-2), du: plus(-1), au: plus(-1), de: '13:30', a: '15:00', heures: 1.5, motif: '', statut: 'envoyée', vu: null }] } : null,
-      fiche: { colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 15, periode: 'mois' }, membreCse: /elu/i.test(location.hash || ''), phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
+      fiche: { colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 15, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 15, mois: 7.5, reste: 7.5, an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 15, mois: 4, reste: 11, an: 22 }, { nom: 'Lou PETIT', credit: 10, mois: 12, reste: -2, an: 40 }] }, membreCse: /elu/i.test(location.hash || ''), phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
         children: [{ name: 'Léa Exemple', birthdate: '2015-04-12' }, { name: 'Hugo Exemple', birthdate: '2019-09-30' }], spouse: { name: 'Alex Exemple', birthdate: '1988-02-03' },
         achats: [{ date: d(10, 18), desc: '4 x Cinéma', total: 24, regle: true, mode: 'Carte Bancaire' }, { date: d(7, 2), desc: '2 x Parc Astérix', total: 70, regle: true, mode: 'Chèque' }, { date: d(11, 20), desc: '2 x Fraispertuis', total: 30, regle: false, mode: '' }, { date: d(12, 5, y - 1), desc: '3 x Cinéma', total: 18, regle: true, mode: 'Espèces' }],
         offert: [{ date: d(10, 18), label: 'Billets : 4 x Cinéma', montant: 12, type: 'Billetterie' }, { date: d(7, 2), label: 'Billets : 2 x Parc Astérix', montant: 40, type: 'Billetterie' }, { date: d(11, 20), label: 'Billets : 2 x Fraispertuis', montant: 18, type: 'Billetterie' }, { date: d(3, 15), label: 'Chèques vacances (part du CSE)', montant: 200, type: 'Chèques vacances' }, { date: d(12, 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }, { date: d(6, 10), label: 'Rentrée scolaire (Léa Exemple)', montant: 40, type: 'Œuvres sociales' }, { date: d(12, 10, y - 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }],
@@ -190,7 +190,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (!D) D = demoData();
       if (method === 'POST' && body.action === 'idee') { await new Promise(function (r) { setTimeout(r, 500); }); if (!body.anonyme) D.fiche.idees.unshift({ date: today(), type: body.type, texte: body.texte, statut: 'Reçue', reponse: '' }); return { ok: true }; }
       if (method === 'POST' && body.action === 'deleg-profil') { await new Promise(function (r) { setTimeout(r, 300); }); return { ok: true }; }
-      if (method === 'POST' && body.action === 'deleg') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true, deleg: Object.assign({ id: 'n' + Date.now(), at: new Date().toISOString(), le: today(), statut: 'envoyée', vu: null }, body.data) }; }
+      if (method === 'POST' && body.action === 'deleg') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true, deleg: Object.assign({ id: 'n' + Date.now(), at: new Date().toISOString(), le: today(), statut: 'envoyée', vu: null, par: body.data && body.data.sansEnvoi ? 'ancienne' : 'espace' }, body.data) }; }
       if (method === 'POST' && body.action === 'avis') { await new Promise(function (r) { setTimeout(r, 400); }); D.avis = D.avis || {}; D.avis[body.o] = body.n; return { ok: true }; }
       if (method === 'POST') { await new Promise(function (r) { setTimeout(r, 500); }); D.demandes.push({ id: 'n' + Date.now(), at: new Date().toISOString(), type: body.type, resume: body.resume, statut: 'en attente', reponse: '' }); return { ok: true }; }
       return D;
@@ -458,15 +458,25 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function dgSaison() { var d = new Date(), y = d.getMonth() >= 6 ? d.getFullYear() : d.getFullYear() - 1; return { debut: y + '-07-01', fin: (y + 1) + '-06-30', y: y }; }
   function dgHeures(L, from, to) { return (L || []).filter(function (d) { return d.statut !== 'annulée' && d.du >= from && d.du <= to; }).reduce(function (s, d) { return s + (Number(d.heures) || 0); }, 0); }
   function hFr(n) { n = Math.round((Number(n) || 0) * 60); var h = Math.floor(n / 60), m = n % 60; return h + ' h' + (m ? String(m).padStart(2, '0') : ''); }
+  // Toutes mes heures de l'année : celles connues de l'appli du CSE + celles envoyées d'ici (pas encore reprises par l'appli)
+  function dgListe() {
+    var G = D.deleg || {}, F = (D.fiche.deleg || {}).entries || [], vus = {}, out = [];
+    F.forEach(function (x) { if (x.sheetId) vus[x.sheetId] = 1; out.push(x); });
+    (G.liste || []).forEach(function (d) { if (vus[d.id] || d.statut === 'annulée') return; out.push({ id: d.id, sheetId: d.id, du: d.du, au: d.au, de: d.de, a: d.a, heures: d.heures, motif: d.motif, type: d.par === 'ancienne' ? 'ancienne' : 'feuille', vu: d.vu ? String(d.vu.at).slice(0, 10) : '', at: d.at }); });
+    return out;
+  }
   function dgCompteur() {
-    var G = D.deleg || {}, L = G.liste || [], S = dgSaison(), cr = (D.fiche.deleg || {}), mois = today().slice(0, 7);
-    var an = dgHeures(L, S.debut, S.fin), mo = dgHeures(L, mois + '-01', mois + '-31'), credit = Number(cr.credit) || 0, parMois = cr.periode !== 'an';
-    var used = parMois ? mo : an, reste = credit - used;
-    return { an: an, mo: mo, credit: credit, parMois: parMois, reste: reste, S: S,
+    var L = dgListe(), S = dgSaison(), mois = today().slice(0, 7), cr = Number((D.fiche.deleg || {}).credit) || 0;
+    var sum = function (f) { return L.filter(f).reduce(function (s, x) { return s + (x.type === 'recu' ? -1 : 1) * (Number(x.heures) || 0); }, 0); };
+    var used = function (a, b) { return L.filter(function (x) { return x.type !== 'recu' && x.type !== 'cede' && x.du >= a && x.du <= b; }).reduce(function (s, x) { return s + (Number(x.heures) || 0); }, 0); };
+    var io = function (a, b) { return L.filter(function (x) { return (x.type === 'recu' || x.type === 'cede') && x.du >= a && x.du <= b; }).reduce(function (s, x) { return s + (x.type === 'recu' ? 1 : -1) * (Number(x.heures) || 0); }, 0); };
+    var d = new Date(), nb = (d.getFullYear() * 12 + d.getMonth() + 1) - (S.y * 12 + 7) + 1;
+    var mo = used(mois + '-01', mois + '-31'), an = used(S.debut, S.fin), resteM = cr + io(mois + '-01', mois + '-31') - mo, creditAn = cr * nb + io(S.debut, S.fin);
+    return { mo: mo, an: an, credit: cr, S: S,
       html: '<div class="kpis">'
-        + (credit ? '<div class="kpi" style="cursor:default"><span>' + (parMois ? 'Reste ce mois-ci' : 'Reste jusqu\'au 30 juin') + '</span><b style="color:' + (reste < 0 ? 'var(--bad)' : 'var(--ok)') + '">' + hFr(reste) + '</b><span class="mute">sur ' + hFr(credit) + (parMois ? ' par mois' : ' par an') + '</span></div>' : '')
-        + '<div class="kpi" style="cursor:default"><span>Ce mois-ci</span><b>' + hFr(mo) + '</b></div>'
-        + '<div class="kpi" style="cursor:default"><span>Depuis le 1er juillet ' + S.y + '</span><b>' + hFr(an) + '</b><span class="mute">remis à zéro le 1er juillet</span></div></div>' };
+        + (cr ? '<div class="kpi" style="cursor:default"><span>Reste ce mois-ci</span><b style="color:' + (resteM < 0 ? 'var(--bad)' : 'var(--ok)') + '">' + hFr(resteM) + '</b><span class="mute">crédit ' + hFr(cr) + ' par mois</span></div>' : '')
+        + '<div class="kpi" style="cursor:default"><span>Utilisées ce mois-ci</span><b>' + hFr(mo) + '</b></div>'
+        + '<div class="kpi" style="cursor:default"><span>Depuis le 1er juillet ' + S.y + '</span><b>' + hFr(an) + '</b><span class="mute">' + (cr ? 'sur ' + hFr(creditAn) + ' · ' : '') + 'remis à zéro le 1er juillet</span></div></div>' };
   }
   function dgCard() { if (!D.deleg) return ''; var c = dgCompteur(); return '<div class="card" style="border-left:4px solid var(--brand)"><h2>🕒 Mes heures de délégation</h2>' + c.html + '<button class="btn p" style="margin-top:10px" onclick="cseGo(\'deleg\')">Poser des heures</button></div>'; }
   function dgMins(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ''); return m ? Number(m[1]) * 60 + Number(m[2]) : null; }
@@ -478,19 +488,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var G = D.deleg || {}, p = G.profil || {}, dest = [p.rh, p.resp].filter(Boolean);
     $('dg-resume').innerHTML = dest.length ? '📧 Sera envoyé depuis la boîte du CSE à : <b>' + E(dest.join(', ')) + '</b>' + (p.mail ? ', avec vous en copie (' + E(p.mail) + ')' : '') + '. La feuille PDF est aussi rangée dans votre dossier sur le Drive du CSE.' : '⚠️ Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages » ci-dessous.';
   };
-  window.cseDgPoser = async function () {
-    var G = D.deleg || {}, p = G.profil || {};
+  window.cseDgPoser = async function (mode) {
+    var G = D.deleg || {}, p = G.profil || {}, sans = mode === 'sans';
     var x = { du: $('dg-du').value, au: $('dg-au').value || $('dg-du').value, de: $('dg-de').value, a: $('dg-a').value, heures: Number(String($('dg-h').value).replace(',', '.')), motif: $('dg-motif').value.trim() };
     if (!x.du) return say('dg-msg', 'Choisissez la date.', 'bad');
     if (!x.de || !x.a) return say('dg-msg', 'Indiquez l\'horaire (de … à …).', 'bad');
     if (!(x.heures > 0)) return say('dg-msg', 'Indiquez le nombre d\'heures.', 'bad');
-    if (!p.sig) return say('dg-msg', 'Ajoutez d\'abord votre signature dans « Mes réglages » ci-dessous.', 'bad');
-    if (!p.rh && !p.resp) return say('dg-msg', 'Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages ».', 'bad');
-    var b = $('dg-go'); b.disabled = true; say('dg-msg', 'Envoi de la feuille…', 'info');
+    if (!sans && !p.sig) return say('dg-msg', 'Ajoutez d\'abord votre signature dans « Mes réglages » ci-dessous.', 'bad');
+    if (!sans && !p.rh && !p.resp) return say('dg-msg', 'Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages ».', 'bad');
+    if (sans) x.sansEnvoi = true;
+    var b = $(sans ? 'dg-old' : 'dg-go'); b.disabled = true; say('dg-msg', sans ? 'Enregistrement…' : 'Envoi de la feuille…', 'info');
     try {
       var r = await api('POST', { action: 'deleg', data: x });
-      G.liste = [r.deleg || Object.assign({ id: 'n' + Date.now(), at: new Date().toISOString(), le: today(), statut: 'envoyée', envoye: [p.rh, p.resp].filter(Boolean) }, x)].concat(G.liste || []);
-      render(); say('dg-msg', (DEMO ? '(Exemple) ' : '') + '✔ Feuille signée et envoyée à ' + [p.rh, p.resp].filter(Boolean).join(' et ') + '. Vous la recevez en copie.', 'ok');
+      G.liste = [r.deleg || Object.assign({ id: 'n' + Date.now(), at: new Date().toISOString(), le: today(), statut: sans ? 'enregistrée' : 'envoyée', par: sans ? 'ancienne' : 'espace', envoye: [p.rh, p.resp].filter(Boolean) }, x)].concat(G.liste || []);
+      render(); say('dg-msg', (DEMO ? '(Exemple) ' : '') + (sans ? '✔ Ajoutée à votre compteur. Aucune feuille n\'est envoyée.' : '✔ Feuille signée et envoyée à ' + [p.rh, p.resp].filter(Boolean).join(' et ') + '. Vous la recevez en copie.'), 'ok');
     } catch (e) { b.disabled = false; say('dg-msg', e.message, 'bad'); }
   };
   window.cseDgProfil = async function () {
@@ -537,12 +548,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       + '<div class="grid2"><div><label>Horaire : de</label><input type="time" id="dg-de" value="08:00" onchange="cseDgCalc()"></div><div><label>à</label><input type="time" id="dg-a" value="12:00" onchange="cseDgCalc()"></div></div>'
       + '<div class="grid2"><div><label>Heures de délégation</label><input id="dg-h" inputmode="decimal" oninput="this.dataset.edit=1"></div><div><label>Motif (facultatif)</label><input id="dg-motif" maxlength="200" placeholder="Réunion CSE, CSSCT…"></div></div>'
       + '<div class="msg info" id="dg-resume" style="margin:10px 0"></div>'
-      + '<button class="btn p" id="dg-go" onclick="cseDgPoser()">✍️ Signer et envoyer</button><div id="dg-msg"></div></div>';
-    var L = (G.liste || []).slice().sort(function (a, b) { return String(b.du).localeCompare(String(a.du)) || String(b.at).localeCompare(String(a.at)); });
-    h += '<div class="card"><h2>📋 Mes délégations</h2>' + (L.length ? L.map(function (d) {
-      var st = d.statut === 'annulée' ? '<span class="tag bad">Annulée</span>' : d.vu ? '<span class="tag ok">Vue le ' + fd(String(d.vu.at).slice(0, 10)) + '</span>' : '<span class="tag info">Envoyée</span>';
-      return '<div class="row"><div class="l"><b>' + (d.au && d.au !== d.du ? 'Du ' + fd(d.du) + ' au ' + fd(d.au) : fd(d.du)) + ' · ' + E(d.de) + ' – ' + E(d.a) + '</b><div class="mute">' + (d.motif ? E(d.motif) + ' · ' : '') + 'envoyée le ' + fd(String(d.at).slice(0, 10)) + '</div></div><div class="r">' + hFr(d.heures) + '<br>' + st + '</div></div>';
-    }).join('') : '<p class="empty">Aucune délégation posée pour le moment.</p>') + '</div>';
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" id="dg-go" onclick="cseDgPoser()">✍️ Signer et envoyer</button><button class="btn" id="dg-old" onclick="cseDgPoser(\'sans\')">➕ Déjà prise : ajouter sans feuille</button></div><p class="mute" style="margin-top:6px">« Déjà prise » : pour ajouter à votre compteur une délégation de ce mois (ou d\'avant) dont la feuille est déjà faite. Rien n\'est envoyé.</p><div id="dg-msg"></div></div>';
+    var L = dgListe().sort(function (a, b) { return String(b.du).localeCompare(String(a.du)); });
+    var TG = { feuille: ['info', 'Feuille envoyée'], ancienne: ['', 'Déjà prise'], saisie: ['', 'Saisie par le CSE'], recu: ['ok', 'Heures reçues'], cede: ['warn', 'Heures cédées'] };
+    h += '<div class="card"><h2>📋 Mes délégations depuis le 1er juillet</h2>' + (L.length ? L.map(function (d) {
+      var t = TG[d.type] || TG.saisie, st = d.vu ? '<span class="tag ok">Vue le ' + fd(d.vu) + '</span>' : '<span class="tag ' + t[0] + '">' + t[1] + '</span>';
+      return '<div class="row"><div class="l"><b>' + (d.au && d.au !== d.du ? 'Du ' + fd(d.du) + ' au ' + fd(d.au) : fd(d.du)) + (d.de ? ' · ' + E(d.de) + ' – ' + E(d.a) : '') + '</b><div class="mute">' + E(d.motif || '') + '</div></div><div class="r">' + (d.type === 'cede' ? '−' : d.type === 'recu' ? '+' : '') + hFr(d.heures) + '<br>' + st + '</div></div>';
+    }).join('') : '<p class="empty">Aucune délégation pour le moment.</p>') + '</div>';
+    var TO = (D.fiche.deleg || {}).tous || [];
+    if (TO.length) h += '<div class="card"><h2>👥 Compteurs des élus</h2><p class="mute">Pour information : chacun ne pose que ses propres heures.</p>' + TO.map(function (x) {
+      return '<div class="row"' + (x.moi ? ' style="background:#eef2ff;border-radius:10px;padding-left:6px"' : '') + '><div class="l"><b>' + E(x.nom) + (x.moi ? ' (vous)' : '') + '</b><div class="mute">Ce mois : ' + hFr(x.mois) + (x.credit ? ' sur ' + hFr(x.credit) : '') + ' · depuis le 1er juillet : ' + hFr(x.an) + '</div></div><div class="r">' + (x.credit ? '<span class="tag ' + (x.reste < 0 ? 'bad' : 'ok') + '">reste ' + hFr(x.reste) + '</span>' : '') + '</div></div>';
+    }).join('') + '</div>';
     var showPad = !p.sig || p.sigRefaire;
     h += '<div class="card"><h2>⚙️ Mes réglages</h2>'
       + '<h3>Ma signature</h3>' + (showPad ? '<p class="mute">Signez avec le doigt dans le cadre. Elle est gardée et mise sur chaque feuille.</p><canvas id="dg-sig" style="width:100%;max-width:420px;aspect-ratio:5/2;border:2px dashed #cbd5e1;border-radius:12px;background:#fff;touch-action:none;display:block"></canvas><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" onclick="cseSigEfface()">Effacer</button><button class="btn p" onclick="cseSigGarde()">Enregistrer ma signature</button></div>'
