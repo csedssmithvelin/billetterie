@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"emoTwWNA7C4GNjV9WvVAQA==","iv":"IsqPaZvVZylibmO5","rev":"boot","lastModified":"2026-11-24T21:07:41.959Z","by":"Michaël GROSJEAN","data":"cw2wvoNdEcOmnjj/JVCL32zfUgkJPLCdEQXoPKGnVI1tYM7ZgCbzuGkLbnYVwsuT4p0u2yKTodpJT/U3+mVH8w=="},"at":"2026-11-24T21:07:41.990Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"wn8U4Tw2tM0nExHNx45TqA==","iv":"OrqU/pDxa2iMo6Jc","rev":"boot","lastModified":"2026-11-24T21:17:48.990Z","by":"Michaël GROSJEAN","data":"CsaBogKEwD20z9PYMeZDbH6pQFQr/gPXdhLLRr0FHdQMZ/xtk3yoFDUzqldyTMNxCIv9hFY1idu5pwQx0CLZlg=="},"at":"2026-11-24T21:17:49.021Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21728,7 +21728,9 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
                 "💶 Relances des impayés (Paramètres › Paiement en ligne, désactivées par défaut) : billets « Non réglé », sorties non payées, échéances de chèques vacances. Rappel J+3 puis J+10 par e-mail (montant, liens de paiement, signature) et notification. Chaque relance est notée dans la fiche du salarié.",
                 "✍️ Signature au doigt : depuis la fiche du salarié, « Signer » un reçu de billetterie, une remise de colis ou un prêt de matériel, sur le téléphone du CSE ou envoyé sur son propre téléphone (Mon espace). Le PDF signé est rangé tout seul dans le Drive (CSE - Documents) avec une copie par e-mail.",
                 "📊 Export mensuel pour l'expert-comptable (Paramètres › Clôture d'exercice, désactivé par défaut) : Excel du mois (recettes, dépenses avec le lien de chaque justificatif ou « MANQUANT », factures, synthèse) envoyé avec les justificatifs, et rangé sur le Drive.",
-                "🧩 Nécessite le script Google v81 pour la signature sur téléphone et l'export comptable."
+                "💶 Prêt de matériel : chèque de caution (100 € par défaut, pas pour les élus) et signature obligatoire du salarié à la sortie ; au retour, restitution signée et chèque rendu en main propre ou détruit à sa demande. Plus de 7 jours de retard sans motif : lettre de mise en demeure (PDF signé par le trésorier, e-mail et/ou courrier), puis « Encaisser la caution » 8 jours après (recette ASC). Réglages : Paramètres › Caution des prêts.",
+                "🗂️ Mon espace › Documents : le salarié retrouve ses reçus, attestations et documents signés (PDF ouverts en lecture par lien).",
+                "🧩 Nécessite le script Google v83 (signature sur téléphone, export comptable, documents dans Mon espace)."
             ] },
             { v: 'V.9.3', date: '2026-11-24', items: [
                 "📄 Documents (reçu, reçu de billetterie, attestation, état de caisse, remboursement, inscription, fiche de prêt…) : le bouton « Envoyer / ranger sur le Drive » envoie le document au salarié depuis la boîte du CSE avec le PDF joint tout seul, et le range dans Mon Drive › CSE › CSE - Documents › année › catégorie (ex. 2026 › 1 - Paiements et caisse › Reçus de paiement ; une sortie = un dossier). Plus rien à copier ni à joindre. Script v80 nécessaire.",
@@ -45822,7 +45824,7 @@ var qrcode = function() {
   // 4) SIGNATURE AU DOIGT DU SALARIÉ (ici, sur le téléphone du CSE, ou sur son propre téléphone)
   // =====================================================================
   function SG() { db.signatures = Array.isArray(db.signatures) ? db.signatures : []; return db.signatures; }
-  var KIND = { ticket: ['Reçu de billetterie', '1 - Paiements et caisse', 'Reçus de billetterie signés'], colis: ['Remise de colis', '5 - Salariés', 'Remises de colis signées'], pret: ['Prêt de matériel', '3 - Prêts de matériel', 'Prêts signés'] };
+  var KIND = { ticket: ['Reçu de billetterie', '1 - Paiements et caisse', 'Reçus de billetterie signés'], colis: ['Remise de colis', '5 - Salariés', 'Remises de colis signées'], pret: ['Prêt de matériel', '3 - Prêts de matériel', 'Prêts signés'], retour: ['Restitution de matériel', '3 - Prêts de matériel', 'Restitutions signées'] };
   // Ce qui est signé : lignes, montant, phrase d'engagement
   function sujet(kind, refId, empId) {
     var e = emp(empId), n = nom(e);
@@ -45844,7 +45846,8 @@ var qrcode = function() {
       var l = (db.loans || []).filter(function (x) { return String(x.id) === String(refId); })[0]; if (!l) return null; e = emp(l.employeeId); n = nom(e);
       return { kind: kind, refId: l.id, empId: l.employeeId, titre: 'Prêt de matériel du ' + fd(l.startDate) + ' au ' + fd(l.endDate), date: l.startDate || today(), montant: 0,
         lignes: (l.items || []).map(function (i) { return [(i.qty || 1) + ' × ' + (i.equipmentName || 'Matériel'), '']; }),
-        texte: 'Je soussigné(e) ' + n + ' reconnais avoir emprunté le matériel ci-dessus au CSE, du ' + fd(l.startDate) + ' au ' + fd(l.endDate) + ', et m\'engage à le rendre complet et en bon état à la date prévue.' };
+        texte: 'Je soussigné(e) ' + n + ' reconnais avoir emprunté le matériel ci-dessus au CSE, du ' + fd(l.startDate) + ' au ' + fd(l.endDate) + ', et m\'engage à le rendre complet et en bon état à la date prévue.'
+          + (l.caution && l.caution.montant && !l.caution.exempt ? ' Je remets au CSE un chèque de caution de ' + chqTxt(l.caution) + ', qui me sera rendu au retour du matériel. En cas de retard de plus de ' + ccfg().jours + ' jours sans motif, après une mise en demeure restée sans effet ' + ccfg().delai + ' jours, le CSE pourra encaisser ce chèque.' : '') };
     }
     return null;
   }
@@ -46153,8 +46156,10 @@ var qrcode = function() {
     else lp.push(nx ? 'Prochaine : <b>' + E(new Date(nx.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })) + '</b> ' + E(nx.start || '') : 'Aucune permanence planifiée.');
     if (colis) lp.push('<b>' + colis + '</b> colis à remettre');
     var sorP = (db.loans || []).filter(function (l) { return !l.pickedUp && !l.returned && String(l.startDate) <= t; }).length, retP = (db.loans || []).filter(function (l) { return l.pickedUp && !l.returned && String(l.endDate) <= t; }).length;
+    var cz = (db.loans || []).map(function (l) { return cautionEtat(l); }), czL = cz.filter(function (x) { return x === 'lettre'; }).length, czE = cz.filter(function (x) { return x === 'encaisser'; }).length;
+    if (czL) lp.push('<b class="text-rose-700">' + czL + '</b> prêt(s) en retard : mise en demeure à envoyer'); if (czE) lp.push('<b class="text-rose-700">' + czE + '</b> caution(s) à encaisser');
     if (sorP) lp.push('<b>' + sorP + '</b> prêt(s) à sortir'); if (retP) lp.push('<b>' + retP + '</b> retour(s) de matériel attendu(s)');
-    G.push({ ic: '🧑‍💼', t: 'Permanence', l: lp, go: 'permanence', b: 'Mode permanence', warn: pj.length > 0 });
+    G.push({ ic: '🧑‍💼', t: 'Permanence', l: lp, go: czL || czE ? 'loans' : 'permanence', b: czL || czE ? 'Prêts' : 'Mode permanence', warn: pj.length > 0 || czL > 0 || czE > 0 });
     // Impayés
     var D = dus(), late = D.filter(function (x) { return x.due < t; }), tot = late.reduce(function (s, x) { return s + x.montant; }, 0), rel = rcfg().on ? aRelancer(false).length : 0;
     var li = [];
@@ -46202,11 +46207,229 @@ var qrcode = function() {
   } catch (er) { } }; })();
   function prtTick() { try { if (window.__dbLoaded && !document.hidden && isCse() && Date.now() - PRT.at > 2 * 60000) csePartagerDocs(); } catch (e) { } }
 
+  // =====================================================================
+  // 7) PRÊT DE MATÉRIEL : CHÈQUE DE CAUTION, SIGNATURE OBLIGATOIRE, MISE EN DEMEURE, ENCAISSEMENT
+  // Sortie : le salarié laisse un chèque de caution (pas les élus) et signe la fiche de prêt.
+  // Retour : il signe la restitution ; le chèque est rendu en main propre ou détruit à sa demande.
+  // Retard de plus de 7 jours sans motif : lettre de mise en demeure (PDF, e-mail et/ou courrier),
+  // signée par le trésorier ; 8 jours après la lettre, la caution peut être encaissée.
+  // =====================================================================
+  function ccfg() { var c = cfg(); return { on: c.cautionOn !== false, montant: Number(c.cautionMontant) > 0 ? Number(c.cautionMontant) : 100, jours: Number(c.cautionJours) > 0 ? Number(c.cautionJours) : 7, delai: Number(c.cautionDelai) > 0 ? Number(c.cautionDelai) : 8 }; }
+  function loanOf(id) { return (db.loans || []).filter(function (l) { return String(l.id) === String(id); })[0] || null; }
+  function estElu(e) { try { return !!(e && window.cseEmpIsCse && cseEmpIsCse(e)); } catch (er) { return false; } }
+  function chqTxt(c) { return eur(c.montant) + (c.banque ? ', ' + c.banque : '') + (c.numero ? ' n° ' + c.numero : '') + (c.titulaire ? ', au nom de ' + c.titulaire : ''); }
+  // État d'un prêt pour la caution : rien | retard | lettre (à envoyer) | attente (après la lettre) | encaisser
+  function cautionEtat(l) {
+    var c = l && l.caution; if (!c || c.exempt || c.statut !== 'detenu' || l.returned || !l.pickedUp || !l.endDate) return '';
+    var t = today(), R = ccfg(); if (String(l.endDate) >= t) return '';
+    if (c.motifRetard) return 'motif';
+    if (addD(String(l.endDate).slice(0, 10), R.jours) >= t) return 'retard';
+    if (!c.lettreLe) return 'lettre';
+    return addD(String(c.lettreLe).slice(0, 10), R.delai) <= t ? 'encaisser' : 'attente';
+  }
+  window.cseCautionEtat = function (id) { return cautionEtat(loanOf(id)); };
+  function boxOpen(h) { var m = modal(); $('v94-sig-box').innerHTML = h; m.classList.remove('hidden'); }
+  function head(t, s) { return '<div class="flex items-start justify-between gap-2"><div><h3 class="font-extrabold text-slate-800 text-base">' + t + '</h3>' + (s ? '<p class="text-xs text-slate-500">' + s + '</p>' : '') + '</div><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="cseSigFermer()" aria-label="Fermer">×</button></div>'; }
+  var PADH = '<canvas id="v94-pad" style="width:100%;aspect-ratio:5/2;border:2px dashed #94a3b8;border-radius:12px;background:#fff;touch-action:none"></canvas><div><button type="button" class="' + BTN + '" onclick="cseSigEffacer()">Effacer</button></div>';
+  function itemsTxt(l) { return (l.items || []).map(function (i) { return (i.qty || 1) + ' × ' + (i.equipmentName || 'Matériel'); }).join(', '); }
+
+  // --- Sortie du matériel ---
+  var o1 = window.toggleLoanPickup, o2 = window.toggleLoanReturn;
+  if (typeof o1 === 'function') window.toggleLoanPickup = function (id) {
+    var l = loanOf(id); if (!l || l.pickedUp || !ccfg().on) return o1.apply(this, arguments);
+    cseCautionSortie(id);
+  };
+  window.cseCautionSortie = function (id) {
+    var l = loanOf(id), e = l && emp(l.employeeId); if (!l) return; var R = ccfg(), elu = estElu(e);
+    var deja = SG().filter(function (x) { return x.kind === 'pret' && String(x.refId) === String(l.id) && x.statut === 'signe'; })[0];
+    PAD.x = null;
+    boxOpen(head('📦 Sortie du matériel', E(nom(e)) + ' · ' + E(itemsTxt(l)) + ' · du ' + fd(l.startDate) + ' au ' + fd(l.endDate))
+      + (elu ? '<p class="text-xs text-indigo-700 bg-indigo-50 rounded-lg p-2">Membre du CSE : pas de chèque de caution.</p>'
+        : '<div class="border border-amber-300 bg-amber-50 rounded-xl p-3 space-y-2"><p class="text-xs font-bold text-amber-900">Chèque de caution de ' + eur(R.montant) + ' (obligatoire)</p>'
+        + '<div class="grid grid-cols-1 sm:grid-cols-3 gap-2"><label class="text-[11px] text-slate-600">Banque<input id="v94-c-banque" class="' + INP + '"></label><label class="text-[11px] text-slate-600">N° du chèque<input id="v94-c-num" class="' + INP + '"></label><label class="text-[11px] text-slate-600">Titulaire<input id="v94-c-tit" class="' + INP + '" value="' + E(nom(e)) + '"></label></div>'
+        + '<p class="text-[11px] text-amber-800">Rendu au retour du matériel. En cas de retard de plus de ' + R.jours + ' jours sans motif, le CSE envoie une mise en demeure puis peut encaisser le chèque ' + R.delai + ' jours après.</p></div>')
+      + (deja ? '<p class="text-xs text-emerald-700">✔ Fiche de prêt déjà signée le ' + E(new Date(deja.signeLe).toLocaleDateString('fr-FR')) + '.</p>'
+        : '<p class="text-xs font-bold text-slate-700">Le salarié signe la fiche de prêt (obligatoire) :</p>' + PADH
+        + (e && e.email ? '<label class="flex items-center gap-1.5 text-xs text-slate-700"><input type="checkbox" id="v94-copie" checked> Copie par e-mail à ' + E(e.email) + '</label>' : ''))
+      + '<div class="flex flex-wrap gap-2"><button type="button" id="v94-sig-ok" class="' + BTNP + '" onclick="cseCautionSortieOk(\'' + E(l.id) + '\',' + (deja ? 1 : 0) + ')"><i class="fa-solid fa-check"></i> Valider la sortie</button></div><p id="v94-sig-msg" class="text-xs"></p>');
+    if (!deja) padInit();
+  };
+  window.cseCautionSortieOk = async function (id, deja) {
+    var l = loanOf(id), e = l && emp(l.employeeId); if (!l) return; var R = ccfg(), elu = estElu(e);
+    var c = elu ? { exempt: true } : { montant: R.montant, banque: ($('v94-c-banque').value || '').trim(), numero: ($('v94-c-num').value || '').trim(), titulaire: ($('v94-c-tit').value || '').trim(), recuLe: today(), statut: 'detenu', par: qui() };
+    if (!elu && !c.numero) return msg('Notez le numéro du chèque de caution.', 'text-rose-700');
+    var sig = null;
+    if (!deja) { if (PAD.vide) return msg('La signature du salarié est obligatoire.', 'text-rose-700'); sig = recadre($('v94-pad')); if (!sig) return msg('Signature vide : recommencez.', 'text-rose-700'); }
+    var b = $('v94-sig-ok'); if (b) b.disabled = true;
+    l.caution = c; o1.call(window, l.id);
+    try { logAction('Modification', 'loan', 'Prêt ' + nom(e) + ' : ' + (elu ? 'sortie (élu, sans caution)' : 'chèque de caution reçu (' + chqTxt(c) + ')')); } catch (er) { }
+    save();
+    if (sig) {
+      if (!scriptOk()) { msg('Sortie enregistrée. Le script Google n\'est pas relié : la fiche signée n\'a pas pu être rangée.', 'text-amber-700'); return; }
+      msg('Sortie enregistrée. Fabrication de la fiche signée…');
+      var x = Object.assign({ id: uid().slice(-9), demandeLe: new Date().toISOString() }, sujet('pret', l.id)); SG().push(x);
+      try { await classerSigne(x, sig, new Date().toISOString(), 'sur l\'appareil du CSE', !!($('v94-copie') && $('v94-copie').checked)); msg('✔ Sortie enregistrée, fiche de prêt signée et rangée sur le Drive.', 'text-emerald-700'); setTimeout(cseSigFermer, 1200); }
+      catch (er) { x.statut = 'attente'; save(); msg('Sortie enregistrée, mais la fiche signée n\'a pas pu être rangée : ' + er.message, 'text-rose-700'); }
+    } else { msg('✔ Sortie enregistrée.', 'text-emerald-700'); setTimeout(cseSigFermer, 900); }
+    rerender(); try { renderLoansTrackingTable(); } catch (er) { }
+  };
+
+  // --- Retour du matériel ---
+  if (typeof o2 === 'function') window.toggleLoanReturn = function (id) {
+    var l = loanOf(id); if (!l || !l.pickedUp || l.returned || !ccfg().on) return o2.apply(this, arguments);
+    cseCautionRetour(id);
+  };
+  window.cseCautionRetour = function (id) {
+    var l = loanOf(id), e = l && emp(l.employeeId); if (!l) return; var c = l.caution || {};
+    var chq = c.statut === 'detenu';
+    PAD.x = null;
+    boxOpen(head('↩️ Retour du matériel', E(nom(e)) + ' · ' + E(itemsTxt(l)) + ' · prévu le ' + fd(l.endDate))
+      + (chq ? '<div class="border border-emerald-300 bg-emerald-50 rounded-xl p-3 space-y-1"><p class="text-xs font-bold text-emerald-900">Chèque de caution : ' + E(chqTxt(c)) + '</p>'
+        + '<label class="flex items-center gap-2 text-xs"><input type="radio" name="v94-c-fin" value="rendu" checked> Rendu au salarié en main propre</label>'
+        + '<label class="flex items-center gap-2 text-xs"><input type="radio" name="v94-c-fin" value="detruit"> Détruit à la demande du salarié</label></div>'
+        : c.statut === 'encaisse' ? '<p class="text-xs text-rose-700">La caution a été encaissée le ' + fd(c.encaisseLe) + '.</p>' : '')
+      + '<p class="text-xs font-bold text-slate-700">Le salarié signe la restitution :</p>' + PADH
+      + (e && e.email ? '<label class="flex items-center gap-1.5 text-xs text-slate-700"><input type="checkbox" id="v94-copie" checked> Copie par e-mail à ' + E(e.email) + '</label>' : '')
+      + '<div class="flex flex-wrap gap-2"><button type="button" id="v94-sig-ok" class="' + BTNP + '" onclick="cseCautionRetourOk(\'' + E(l.id) + '\')"><i class="fa-solid fa-check"></i> Valider le retour</button></div><p id="v94-sig-msg" class="text-xs"></p>');
+    padInit();
+  };
+  window.cseCautionRetourOk = async function (id) {
+    var l = loanOf(id), e = l && emp(l.employeeId); if (!l) return; var c = l.caution || {};
+    if (PAD.vide) return msg('La signature du salarié est obligatoire.', 'text-rose-700');
+    var sig = recadre($('v94-pad')); if (!sig) return msg('Signature vide : recommencez.', 'text-rose-700');
+    var fin = (document.querySelector('input[name="v94-c-fin"]:checked') || {}).value || '';
+    var b = $('v94-sig-ok'); if (b) b.disabled = true;
+    o2.call(window, l.id);
+    if (c.statut === 'detenu') { c.statut = fin === 'detruit' ? 'detruit' : 'rendu'; c.renduLe = today(); c.renduPar = qui(); l.caution = c; }
+    try { logAction('Modification', 'loan', 'Prêt ' + nom(e) + ' : matériel rendu' + (fin ? ', chèque de caution ' + (fin === 'detruit' ? 'détruit à sa demande' : 'rendu en main propre') : '')); } catch (er) { }
+    save();
+    var x = { id: uid().slice(-9), kind: 'retour', refId: l.id, empId: l.employeeId, titre: 'Restitution du matériel prêté du ' + fd(l.startDate) + ' au ' + fd(l.endDate), date: today(), montant: 0, demandeLe: new Date().toISOString(),
+      lignes: (l.items || []).map(function (i) { return [(i.qty || 1) + ' × ' + (i.equipmentName || 'Matériel'), 'rendu le ' + fd(today())]; }),
+      texte: 'Je soussigné(e) ' + nom(e) + ' rends au CSE le matériel ci-dessus.' + (fin === 'rendu' ? ' Le chèque de caution (' + chqTxt(c) + ') m\'a été rendu en main propre.' : fin === 'detruit' ? ' Le chèque de caution (' + chqTxt(c) + ') a été détruit à ma demande.' : '') };
+    SG().push(x);
+    if (!scriptOk()) { msg('Retour enregistré. Le script Google n\'est pas relié : le bon signé n\'a pas pu être rangé.', 'text-amber-700'); return; }
+    msg('Retour enregistré. Fabrication du bon de restitution signé…');
+    try { await classerSigne(x, sig, new Date().toISOString(), 'sur l\'appareil du CSE', !!($('v94-copie') && $('v94-copie').checked)); msg('✔ Retour enregistré, bon de restitution signé et rangé sur le Drive.', 'text-emerald-700'); setTimeout(cseSigFermer, 1200); }
+    catch (er) { x.statut = 'attente'; save(); msg('Retour enregistré, mais le bon signé n\'a pas pu être rangé : ' + er.message, 'text-rose-700'); }
+    rerender(); try { renderLoansTrackingTable(); } catch (er) { }
+  };
+
+  // --- Retard : motif, mise en demeure, encaissement ---
+  window.cseCautionMotif = function (id) {
+    var l = loanOf(id), e = l && emp(l.employeeId); if (!l) return; var c = l.caution || {};
+    boxOpen(head('Motif du retard', E(nom(e)) + ' · ' + E(itemsTxt(l)))
+      + '<p class="text-xs text-slate-600">Avec un motif noté, la caution n\'est pas encaissée (pas de mise en demeure).</p><textarea id="v94-c-motif" rows="3" class="' + INP + '">' + E(c.motifRetard || '') + '</textarea>'
+      + '<div class="flex gap-2"><button type="button" class="' + BTNP + '" onclick="cseCautionMotifOk(\'' + E(l.id) + '\')">Enregistrer</button></div>');
+  };
+  window.cseCautionMotifOk = function (id) { var l = loanOf(id); if (!l || !l.caution) return; l.caution.motifRetard = ($('v94-c-motif').value || '').trim(); l.caution.motifLe = l.caution.motifRetard ? today() : ''; save(); cseSigFermer(); try { renderLoansTrackingTable(); } catch (e) { } rerender(); };
+  function lettreHtml(l, sigImg, signataire) {
+    var c = cfg(), e = emp(l.employeeId) || {}, ca = l.caution || {}, R = ccfg(), logo = c.logoDataUrl && /^data:image\//.test(c.logoDataUrl) ? c.logoDataUrl : '';
+    var lim = addD(today(), R.delai), ville = (String(c.cseAdresse || '').split('\n').pop().replace(/^\d{5}\s*/, '') || '').trim();
+    var p = function (t) { return '<p style="margin:0 0 10px;text-align:justify">' + t + '</p>'; };
+    return '<div style="font-family:Arial,Helvetica,sans-serif;color:#0f172a;padding:34px 40px;width:700px;box-sizing:border-box;background:#fff;font-size:12.5px;line-height:1.5">'
+      + '<div style="display:flex;justify-content:space-between;gap:20px"><div>' + (logo ? '<img src="' + logo + '" style="height:54px;display:block;margin-bottom:6px">' : '') + '<b>' + E(c.cseName || 'CSE') + '</b><br>' + E(c.cseAdresse || '').replace(/\n/g, '<br>') + '</div>'
+      + '<div style="margin-top:70px;min-width:250px"><b>' + E(nom(e)) + '</b><br>' + E(e.address || '').replace(/,\s*/g, '<br>') + '</div></div>'
+      + '<p style="text-align:right;margin:26px 0 18px">' + (ville ? E(ville) + ', ' : '') + 'le ' + E(new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })) + '</p>'
+      + '<p style="margin:0 0 16px"><b>Objet : mise en demeure de restituer le matériel prêté par le CSE</b>' + (e.email ? '<br><span style="color:#475569">Envoyée par e-mail à ' + E(e.email) + ' et par courrier</span>' : '') + '</p>'
+      + p((e.gender === 'F' || e.sexe === 'F' ? 'Madame' : 'Madame, Monsieur') + ',')
+      + p('Le ' + fd(l.startDate) + ', le CSE vous a prêté le matériel suivant : <b>' + E(itemsTxt(l)) + '</b>, à rendre au plus tard le <b>' + fd(l.endDate) + '</b>. À ce jour, malgré ce délai, ce matériel ne nous a pas été rendu et aucun motif ne nous a été indiqué.')
+      + p('Lors du prêt, vous avez remis au CSE un chèque de caution de <b>' + E(chqTxt(ca)) + '</b>, en acceptant les conditions du prêt signées ce jour-là.')
+      + p('Nous vous mettons donc en demeure de rapporter ce matériel complet et en bon état à la permanence du CSE <b>avant le ' + fd(lim) + '</b>. Sans retour à cette date, le chèque de caution sera <b>encaissé</b> par le CSE, sans autre avis.')
+      + p('Si vous avez rencontré une difficulté, contactez-nous rapidement : nous en tiendrons compte.')
+      + p('Veuillez agréer, ' + (e.gender === 'F' || e.sexe === 'F' ? 'Madame' : 'Madame, Monsieur') + ', l\'expression de nos salutations distinguées.')
+      + '<div style="margin:22px 0 0 auto;width:260px;text-align:center">Pour le CSE,<br><b>' + E(signataire) + '</b>' + (sigImg ? '<img src="' + sigImg + '" style="max-width:240px;max-height:90px;display:block;margin:6px auto 0">' : '<div style="height:70px"></div>') + '</div></div>';
+  }
+  var LT = { sig: null };
+  window.cseCautionLettre = function (id) {
+    var l = loanOf(id), e = l && emp(l.employeeId); if (!l || !l.caution) return; var me = qui(), saved = '';
+    try { saved = typeof getVisaSignature === 'function' ? getVisaSignature(me) : ''; } catch (er) { }
+    LT.sig = saved || null;
+    boxOpen(head('✉️ Mise en demeure', E(nom(e)) + ' · ' + E(itemsTxt(l)) + ' · prévu le ' + fd(l.endDate))
+      + (e && !e.address ? '<p class="text-xs text-amber-700">⚠ Pas d\'adresse postale dans la fiche du salarié : complétez-la pour l\'envoi par courrier.</p>' : '')
+      + (cfg().cseAdresse ? '' : '<p class="text-xs text-amber-700">⚠ Adresse du CSE non renseignée (Paramètres › Caution des prêts).</p>')
+      + '<div id="v94-lt-prev" style="border:1px solid #e2e8f0;border-radius:10px;max-height:260px;overflow:auto;zoom:.62"></div>'
+      + '<p class="text-xs font-bold text-slate-700">Signature du trésorier ' + (saved ? '(votre signature enregistrée est utilisée ; vous pouvez signer à nouveau ci-dessous) :' : '(au doigt ou à la souris) :') + '</p>' + PADH
+      + '<label class="flex items-center gap-1.5 text-xs text-slate-700"><input type="checkbox" id="v94-lt-mail"' + (e && e.email ? ' checked' : ' disabled') + '> Envoyer par e-mail' + (e && e.email ? ' à ' + E(e.email) : ' (pas d\'e-mail)') + '</label>'
+      + '<label class="flex items-center gap-1.5 text-xs text-slate-700"><input type="checkbox" id="v94-lt-print" checked> Imprimer pour l\'envoi par courrier</label>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" id="v94-sig-ok" class="' + BTNP + '" onclick="cseCautionLettreOk(\'' + E(l.id) + '\')"><i class="fa-solid fa-paper-plane"></i> Valider la lettre</button></div><p id="v94-sig-msg" class="text-xs"></p>');
+    $('v94-lt-prev').innerHTML = lettreHtml(l, LT.sig, me || 'Le trésorier'); padInit();
+  };
+  window.cseCautionLettreOk = async function (id) {
+    var l = loanOf(id), e = l && emp(l.employeeId); if (!l) return; var me = qui() || 'Le trésorier';
+    var sig = PAD.vide ? LT.sig : recadre($('v94-pad')); if (!sig) return msg('Signez la lettre (au doigt ou à la souris).', 'text-rose-700');
+    var mail = !!($('v94-lt-mail') && $('v94-lt-mail').checked), print = !!($('v94-lt-print') && $('v94-lt-print').checked);
+    var html = lettreHtml(l, sig, me), b = $('v94-sig-ok'); if (b) b.disabled = true;
+    if (print) { var w = window.open('', '_blank'); if (w) { w.document.write('<!doctype html><meta charset="utf-8"><title>Mise en demeure</title><style>@page{size:A4;margin:12mm}body{margin:0}</style>' + html + '<script>setTimeout(function(){print()},400)<\/script>'); w.document.close(); } }
+    if (!scriptOk()) { l.caution.lettreLe = today(); save(); msg('Lettre imprimée. Le script Google n\'est pas relié : ni e-mail ni rangement sur le Drive.', 'text-amber-700'); return; }
+    msg('Fabrication du PDF…');
+    var payload = { fichier: 'Mise en demeure - ' + nom(e) + ' - ' + fd(today()).replace(/\//g, '-'), chemin: [today().slice(0, 4), '3 - Prêts de matériel', 'Mises en demeure'], drive: true, mail: mail && !!(e && e.email) };
+    if (payload.mail) { payload.to = e.email; payload.subject = 'Mise en demeure : matériel prêté par le CSE à rendre'; payload.body = 'Bonjour ' + (e.firstname || '') + ',\n\nVous trouverez ci-joint une lettre du CSE concernant le matériel prêté le ' + fd(l.startDate) + ' (' + itemsTxt(l) + '), qui devait être rendu le ' + fd(l.endDate) + '.\n\nMerci de le rapporter à la permanence du CSE avant le ' + fd(addD(today(), ccfg().delai)) + '.\n\n' + (typeof mailClosing === 'function' ? mailClosing() : 'Cordialement,'); }
+    try { payload.pdf = await pdfDe(html); } catch (er) { payload.html = html; }
+    try {
+      var j = await cseScriptPost('document', payload);
+      l.caution.lettreLe = today(); l.caution.lettreUrl = j.url || ''; l.caution.lettrePar = me; l.caution.lettreMail = payload.mail ? e.email : '';
+      db.docLog = Array.isArray(db.docLog) ? db.docLog : []; db.docLog.push({ id: uid(), at: new Date().toISOString(), doc: 'mise-en-demeure', titre: 'Mise en demeure : matériel prêté', fichier: payload.fichier, emp: l.employeeId, to: l.caution.lettreMail, url: l.caution.lettreUrl, dossier: payload.chemin.join(' › '), par: me });
+      try { logAction('Modification', 'loan', 'Prêt ' + nom(e) + ' : mise en demeure envoyée'); } catch (er) { }
+      save(); msg('✔ Lettre ' + (payload.mail ? 'envoyée par e-mail, ' : '') + 'rangée sur le Drive' + (print ? ' et prête à imprimer' : '') + '. La caution pourra être encaissée à partir du ' + fd(addD(today(), ccfg().delai)) + '.', 'text-emerald-700');
+    } catch (er) { msg('Erreur : ' + er.message, 'text-rose-700'); if (b) b.disabled = false; }
+    try { renderLoansTrackingTable(); } catch (er) { } rerender();
+  };
+  window.cseCautionEncaisser = async function (id) {
+    var l = loanOf(id), e = l && emp(l.employeeId); if (!l || !l.caution || l.caution.statut !== 'detenu') return; var c = l.caution;
+    if (!(await uiConfirm('Encaisser le chèque de caution de ' + nom(e) + ' (' + chqTxt(c) + ') ?\n\nUne recette de ' + eur(c.montant) + ' est ajoutée au budget ASC. Pensez à déposer le chèque en banque.', { title: 'Encaisser la caution', okLabel: 'Encaisser', tone: 'danger' }))) return;
+    db.budgetEntries = db.budgetEntries || []; db.budgetCategories = db.budgetCategories || []; if (db.budgetCategories.indexOf('Cautions encaissées') < 0) db.budgetCategories.push('Cautions encaissées');
+    var be = { id: generateUniqueId(), date: today(), label: 'Caution encaissée - prêt ' + nom(e) + ' (' + itemsTxt(l) + ')', category: 'Cautions encaissées', envelope: 'ASC', account: 'courant', type: 'income', status: 'reel', amount: c.montant, recurring: false, recurringFrequency: null, loanId: l.id };
+    db.budgetEntries.push(be);
+    c.statut = 'encaisse'; c.encaisseLe = today(); c.encaissePar = qui(); c.budgetEntryId = be.id;
+    try { logAction('Modification', 'loan', 'Prêt ' + nom(e) + ' : chèque de caution encaissé (' + eur(c.montant) + ')'); } catch (er) { }
+    save(); say('Caution encaissée : recette de ' + eur(c.montant) + ' ajoutée au budget ASC.', 'success'); try { renderLoansTrackingTable(); } catch (er) { } rerender();
+  };
+  // Tableau des prêts : la caution et les actions sous le statut
+  if (typeof window.renderLoansTrackingTable === 'function') {
+    var rlt = window.renderLoansTrackingTable;
+    window.renderLoansTrackingTable = function () {
+      var r = rlt.apply(this, arguments);
+      try {
+        var tb = $('loans-tracking-tbody'); if (!tb) return r;
+        [].slice.call(tb.querySelectorAll(':scope>tr')).forEach(function (tr) {
+          var m = /toggleLoanPickup\((\d+)\)/.exec(tr.innerHTML), l = m && loanOf(m[1]), td = tr.cells[5]; if (!l || !td || td.querySelector('.v94-c')) return;
+          var c = l.caution, et = cautionEtat(l), h = '';
+          if (c && c.exempt) h = '<span class="text-[10px] text-indigo-700">Élu : sans caution</span>';
+          else if (c) h = '<span class="text-[10px] ' + (c.statut === 'detenu' ? 'text-amber-700' : c.statut === 'encaisse' ? 'text-rose-700' : 'text-emerald-700') + '">💶 Caution ' + eur(c.montant) + ' : ' + ({ detenu: 'chèque au CSE', rendu: 'rendue le ' + fd(c.renduLe), detruit: 'détruite le ' + fd(c.renduLe), encaisse: 'encaissée le ' + fd(c.encaisseLe) })[c.statut] + '</span>';
+          var bt = function (f, t, cl) { return '<button type="button" onclick="' + f + '(' + l.id + ')" class="mt-1 px-2 py-0.5 rounded-lg text-[10px] font-bold border ' + (cl || 'border-slate-300 text-slate-700 bg-white') + '">' + t + '</button>'; };
+          if (et === 'motif') h += '<div class="text-[10px] text-slate-500">Motif : ' + E(c.motifRetard) + '</div>' + bt('cseCautionMotif', 'Modifier le motif');
+          if (et === 'lettre') h += '<div>' + bt('cseCautionLettre', '✉️ Mise en demeure', 'border-rose-300 text-rose-700 bg-rose-50') + ' ' + bt('cseCautionMotif', 'Motif') + '</div>';
+          if (et === 'attente') h += '<div class="text-[10px] text-slate-500">Lettre du ' + fd(c.lettreLe) + (c.lettreUrl ? ' · <a class="underline" target="_blank" rel="noopener" href="' + E(c.lettreUrl) + '">PDF</a>' : '') + ' · encaissable le ' + fd(addD(c.lettreLe, ccfg().delai)) + '</div>' + bt('cseCautionMotif', 'Motif');
+          if (et === 'encaisser') h += '<div>' + bt('cseCautionEncaisser', '💶 Encaisser la caution', 'border-rose-400 text-white bg-rose-600') + ' ' + bt('cseCautionMotif', 'Motif') + '</div>';
+          if (et === 'retard') h += '<div class="text-[10px] text-slate-500">Mise en demeure possible après ' + ccfg().jours + ' jours de retard</div>' + bt('cseCautionMotif', 'Motif');
+          if (h) td.insertAdjacentHTML('beforeend', '<div class="v94-c mt-1 space-y-0.5">' + h + '</div>');
+        });
+      } catch (e) { console.warn(e); }
+      return r;
+    };
+  }
+  // Réglages : montant, délais, adresse du CSE (pour les lettres)
+  window.cseCautionSet = function (k, v) { var c = cfg(); if (k === 'on') c.cautionOn = !!v; else if (k === 'montant') c.cautionMontant = Math.max(1, parseFloat(String(v).replace(',', '.')) || 100); else if (k === 'jours') c.cautionJours = Math.max(1, parseInt(v, 10) || 7); else if (k === 'delai') c.cautionDelai = Math.max(1, parseInt(v, 10) || 8); else if (k === 'adresse') c.cseAdresse = String(v || '').trim(); save(); cautionCard(); };
+  function cautionCard() {
+    var cd = card('v94-caution-card', 'etab', function () { return $('v94-rel-card'); }); if (!cd) return;
+    var R = ccfg(), L = (db.loans || []).filter(function (l) { return l.caution && l.caution.statut === 'detenu'; });
+    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-money-check text-amber-600"></i> Caution des prêts de matériel</h3>'
+      + '<p class="text-xs text-slate-500">À la sortie du matériel, le salarié laisse un chèque de caution (pas les membres du CSE) et signe la fiche de prêt (obligatoire). Au retour, il signe la restitution et le chèque est rendu en main propre ou détruit à sa demande. Après le délai de retard sans motif, l\'appli prépare une lettre de mise en demeure (PDF signé, e-mail et/ou courrier), puis propose d\'encaisser le chèque.</p>'
+      + '<label class="flex items-center gap-2 text-sm font-bold ' + (R.on ? 'text-emerald-700' : 'text-slate-700') + '"><input type="checkbox"' + (R.on ? ' checked' : '') + ' onchange="cseCautionSet(\'on\',this.checked)"> Caution et signature à la sortie ' + (R.on ? 'activées' : 'désactivées') + '</label>'
+      + '<div class="grid grid-cols-1 sm:grid-cols-3 gap-2"><label class="text-xs text-slate-600">Montant de la caution (€)<input type="number" min="1" class="' + INP + '" value="' + R.montant + '" onchange="cseCautionSet(\'montant\',this.value)"></label>'
+      + '<label class="text-xs text-slate-600">Mise en demeure après (jours de retard)<input type="number" min="1" class="' + INP + '" value="' + R.jours + '" onchange="cseCautionSet(\'jours\',this.value)"></label>'
+      + '<label class="text-xs text-slate-600">Encaissement possible (jours après la lettre)<input type="number" min="1" class="' + INP + '" value="' + R.delai + '" onchange="cseCautionSet(\'delai\',this.value)"></label></div>'
+      + '<label class="text-xs text-slate-600 block">Adresse du CSE (en-tête des lettres)<textarea rows="3" class="' + INP + '" onchange="cseCautionSet(\'adresse\',this.value)" placeholder="CSE DS Smith Velin&#10;Rue…&#10;88… Ville">' + E(cfg().cseAdresse || '') + '</textarea></label>'
+      + '<p class="text-[11px] text-slate-500">' + L.length + ' chèque(s) de caution actuellement au CSE · ' + eur(L.reduce(function (s, l) { return s + (l.caution.montant || 0); }, 0)) + '</p>';
+    if (cd.dataset.h !== h) { cd.innerHTML = h; cd.dataset.h = h; }
+  }
+
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
   setInterval(function () {
     try { if ($('v66-deploy-card')) pubCard(); } catch (e) { }
     try { if ($('pl-mgr')) relCard(); } catch (e) { }
+    try { if ($('v94-rel-card')) cautionCard(); } catch (e) { }
     try { if (document.querySelector('#tab-settings [data-sg="cloture"]')) expCard(); } catch (e) { }
     try { if ($('todo-pane-today') && !$('v94-today')) todayCard(); } catch (e) { }
   }, 1500);
