@@ -486,7 +486,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try { $('dg-jour').textContent = du ? '📅 ' + new Date(du + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + (au && au !== du ? ' → ' + new Date(au + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '') : ''; } catch (e) { }
     if ((force || !hEl.dataset.edit) && de != null && a != null && a > de && (!au || au === du)) hEl.value = String(Math.round((a - de) / 60 * 100) / 100);
     var G = D.deleg || {}, p = G.profil || {}, dest = [p.rh, p.resp].filter(Boolean);
-    $('dg-resume').innerHTML = dest.length ? '📧 Sera envoyé depuis la boîte du CSE à : <b>' + E(dest.join(', ')) + '</b>' + (p.mail ? ', avec vous en copie (' + E(p.mail) + ')' : '') + '. La feuille PDF est aussi rangée dans votre dossier sur le Drive du CSE.' : '⚠️ Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages » ci-dessous.';
+    var cc = [p.mail, p.resp2].filter(Boolean);
+    $('dg-resume').innerHTML = dest.length ? '📧 Sera envoyé depuis la boîte du CSE à : <b>' + E(dest.join(', ')) + '</b>' + (cc.length ? ', en copie : ' + E(cc.join(', ')) : '') + '. La feuille PDF est aussi rangée dans votre dossier sur le Drive du CSE.' : '⚠️ Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages » ci-dessous.';
   };
   window.cseDgPoser = async function (mode) {
     var G = D.deleg || {}, p = G.profil || {}, sans = mode === 'sans';
@@ -506,7 +507,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   };
   window.cseDgProfil = async function () {
     var o = { mail: $('dg-mail').value.trim(), rh: $('dg-rh').value.trim(), respNom: $('dg-respnom').value.trim(), resp: $('dg-resp').value.trim() };
-    var bad = ['mail', 'rh', 'resp'].filter(function (k) { return o[k] && !/^[^@\s<>,;]+@[^@\s<>,;]+\.[a-z]{2,}$/i.test(o[k]); });
+    o.resp2Nom = $('dg-resp2nom').value.trim(); o.resp2 = $('dg-resp2').value.trim();
+    var bad = ['mail', 'rh', 'resp', 'resp2'].filter(function (k) { return o[k] && !/^[^@\s<>,;]+@[^@\s<>,;]+\.[a-z]{2,}$/i.test(o[k]); });
     if (bad.length) return say('dg-pmsg', 'Adresse e-mail incorrecte : ' + o[bad[0]], 'bad');
     say('dg-pmsg', 'Enregistrement…', 'info');
     try { await api('POST', { action: 'deleg-profil', profil: o }); Object.assign(D.deleg.profil, o); dgRender(); say('dg-pmsg', '✔ Réglages enregistrés.', 'ok'); } catch (e) { say('dg-pmsg', e.message, 'bad'); }
@@ -567,6 +569,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       + '<label>Mon adresse e-mail personnelle (copie et réponses)</label><input id="dg-mail" type="email" value="' + E(p.mail || '') + '">'
       + '<label>E-mail des RH</label><input id="dg-rh" type="email" value="' + E(p.rh || '') + '">'
       + '<div class="grid2"><div><label>Mon responsable de service ou contremaître</label><input id="dg-respnom" value="' + E(p.respNom || '') + '" placeholder="Nom"></div><div><label>Son e-mail</label><input id="dg-resp" type="email" value="' + E(p.resp || '') + '"></div></div>'
+      + '<div class="grid2"><div><label>2e responsable / contremaître (en copie, facultatif)</label><input id="dg-resp2nom" value="' + E(p.resp2Nom || '') + '" placeholder="Nom"></div><div><label>Son e-mail</label><input id="dg-resp2" type="email" value="' + E(p.resp2 || '') + '"></div></div>'
       + '<button class="btn" style="margin-top:10px" onclick="cseDgProfil()">Enregistrer mes réglages</button><div id="dg-pmsg"></div>'
       + '<p class="mute" style="margin-top:8px">L\'e-mail part de la boîte du CSE à votre nom ; quand les RH ou votre responsable répondent, la réponse arrive sur votre adresse personnelle. Votre responsable peut cliquer « vu » dans l\'e-mail.</p></div>';
     return h;
