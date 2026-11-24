@@ -163,7 +163,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         sorties: [{ id: 901, nom: 'Marché de Noël de Strasbourg', date: plus(12), lieu: 'Strasbourg', notes: 'Départ en car à 8 h du parking de l\'usine.', limite: plus(5), prix: { salarie: 15, adulte: 20, enfant: 10 }, places: 50, restantes: 12 },
           { id: 902, nom: 'Karting en famille', date: plus(26), lieu: 'Épinal', notes: '', limite: plus(18), prix: { salarie: 10, adulte: 25, enfant: 15 }, places: 30, restantes: 8 },
           { id: 903, nom: 'Concert au Zénith', date: plus(40), lieu: 'Nancy', notes: '', limite: plus(30), prix: { salarie: 20, adulte: 35, enfant: 35 }, places: 20, restantes: 0 }],
-        permanence: 'Le vendredi de 11h à 13h30',
+        permanence: 'Le vendredi de 11h à 13h30', payLinks: [{ label: 'chèques vacances', url: 'https://pay.sumup.com/b2c/exemple1', kinds: ['cv'] }, { label: 'Marché de Noël', url: 'https://pay.sumup.com/b2c/exemple2', kinds: ['registrations'] }, { label: 'Billetterie', url: 'https://pay.sumup.com/b2c/exemple3', kinds: ['sales'] }],
         annonces: [{ id: 'a1', titre: 'Nouveaux billets Europa Park disponibles !', texte: 'Les billets 2027 sont arrivés : 30 € au lieu de 62 €. À prendre à la permanence ou sur Swile.', important: true, date: plus(-1) }],
         agenda: [{ date: plus(4), heure: '11h - 13h30', titre: 'Permanence', type: 'permanence' }, { date: plus(9), heure: '14:00', titre: 'Réunion du CSE', type: 'reunion' }, { date: plus(12), heure: '', titre: 'Marché de Noël de Strasbourg', type: 'sortie', texte: 'Strasbourg' }, { date: plus(32), heure: '', titre: 'Pas de permanence (fêtes)', type: 'fermeture' }],
         sondages: [{ id: 's1', question: 'Quelle sortie pour le printemps ?', choix: ['Europa Park', 'Karting', 'Bowling + restaurant'], multi: false, anonyme: true, fin: plus(14), res: { total: 23, n: [12, 7, 4] } }],
@@ -257,6 +257,60 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   window.cseYear = function (y) { YEAR = y; render(); };
 
   function permCard() { var t = D && D.pub && D.pub.permanence; return t ? '<div class="perm" style="flex-wrap:wrap"><span style="font-size:20px">🕚</span><div style="flex:1"><b>Permanence du CSE</b><div>' + E(t) + '</div></div>' + (PUBLIC ? '' : '<button class="btn s" onclick="cseQr()">🪪 Ma carte CSE</button>') + '</div>' : ''; }
+  // --- Paiement en ligne avec les liens du CSE (V.8.9) ---
+  function norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' '); }
+  function links() { return ((D.pub || {}).payLinks || []).filter(function (l) { return /^https:\/\//.test(l.url || ''); }); }
+  // Le bon lien pour une ligne « À régler » : pour une sortie, le lien qui porte son nom (« karting », « journée pêche »…),
+  // pour les chèques vacances le lien « chèques vacances », sinon le lien prévu pour ce type d'achat.
+  function payLinkFor(x) {
+    var L = links(); if (!L.length) return null;
+    var kind = { cv: 'cv', sorties: 'registrations', achats: 'sales' }[x.t] || 'all', kOf = function (l) { return l.kinds && l.kinds.length ? l.kinds : ['all']; };
+    if (x.t === 'sorties') {
+      var mots = norm(x.l.replace(/^Sortie : /, '')).split(/\s+/).filter(function (w) { return w.length >= 4; });
+      var m = L.filter(function (l) { var n = norm(l.label); return mots.some(function (w) { return n.indexOf(w) >= 0; }); })[0]; if (m) return m;
+    }
+    if (x.t === 'cv') { var c = L.filter(function (l) { return /cheques? vacances/.test(norm(l.label)); })[0]; if (c) return c; }
+    if (x.t === 'achats') { var bl = L.filter(function (l) { return /billet/.test(norm(l.label)); })[0]; if (bl) return bl; }
+    // Lien réservé à ce type (pas « toutes les relances ») ; un lien unique « pour tout » sert de secours.
+    return L.filter(function (l) { return kOf(l).indexOf(kind) >= 0; })[0] || (L.length === 1 && kOf(L[0]).indexOf('all') >= 0 ? L[0] : null);
+  }
+  function payLinksFor(PAY) { return (PAY || []).map(payLinkFor).filter(Boolean); }
+  function payButtons(PAY) {
+    if (!payLinksFor(PAY).length) return '';
+    return '<p class="mute" style="margin-top:8px">💳 « Payer en ligne » : le CSE reçoit votre paiement et le valide, il passe alors en « payé » ici. <a href="#" onclick="csePaye();return false">Prévenir le CSE que j\'ai payé</a></p>';
+  }
+  window.csePaye = function () {
+    sheet(head('J\'ai payé en ligne') + '<label>Pour quoi ?</label><input id="pp-q" placeholder="ex. chèques vacances, échéance de janvier"><label>Montant (€)</label><input id="pp-m" type="number" min="0" step="0.01"><div style="margin-top:12px"><button class="btn p" id="pp-go">Prévenir le CSE</button></div><div id="pp-msg"></div>');
+    $('pp-go').onclick = function () { var q = $('pp-q').value.trim(), m = parseFloat($('pp-m').value) || 0; if (!q || m <= 0) return say('pp-msg', 'Indiquez pour quoi et le montant.', 'bad'); send('paiement', { quoi: q, montant: m }, 'Paiement en ligne : ' + eur(m) + ' (' + q + ')', 'pp-msg', 'pp-go'); };
+  };
+  // --- Réserver des billets (V.8.9) ---
+  window.cseBillet = function (id) {
+    var P = D.pub || {}, f = D.fiche || {}, b = (P.billets || []).filter(function (x) { return String(x.id) === String(id); })[0]; if (!b) return;
+    var Q = P.quotas || { std: 2, stdFoyer: true, cine: 10 }, foyer = f.foyer || 1, pris = (f.pris || {})[b.id] || 0;
+    var reste = b.cinema ? Math.max(0, Q.cine * (Q.cineFoyer ? foyer : 1) - (f.cinePris || 0)) : Math.max(0, Q.std * (Q.stdFoyer ? foyer : 1) - pris);
+    var max = Math.min(reste, b.stock || 0, 20);
+    if (max <= 0) { sheet(head(b.titre) + '<p>' + (b.stock > 0 ? 'Votre quota pour ce billet est atteint cette année.' : 'Ce billet est épuisé.') + '</p><button class="btn" onclick="cseClose()">OK</button>'); return; }
+    var opts = ''; for (var i = 1; i <= max; i++) opts += '<option value="' + i + '">' + i + '</option>';
+    sheet(head('Réserver : ' + b.titre, eur(b.prix) + ' le billet') + '<label>Nombre de billets</label><select id="bq">' + opts + '</select><div id="btot" class="mute" style="font-weight:700;margin-top:6px">Total : ' + eur(b.prix) + '</div>'
+      + '<label>Remarque (facultatif)</label><textarea id="bn" placeholder="ex. je passe vendredi"></textarea><p class="mute">Le CSE prépare vos billets : vous les récupérez et les payez à la permanence (ou en ligne si le CSE le propose).</p>'
+      + '<div style="margin-top:12px"><button class="btn p" id="bgo">Réserver</button></div><div id="bmsg"></div>');
+    $('bq').onchange = function () { $('btot').textContent = 'Total : ' + eur(b.prix * Number($('bq').value)); };
+    $('bgo').onclick = function () { var q = Number($('bq').value) || 1; send('billets', { ticketId: b.id, titre: b.titre, qte: q, prix: b.prix, total: Math.round(b.prix * q * 100) / 100, note: $('bn').value.trim() }, 'Réserver : ' + q + ' x ' + b.titre + ' (' + eur(b.prix * q) + ')', 'bmsg', 'bgo'); };
+  };
+  // --- Fiche incomplète (V.8.9) ---
+  function ficheManque() {
+    var f = D.fiche || {}, m = [];
+    if (!String(f.address || '').trim()) m.push('votre adresse');
+    if (!String(f.phone || '').trim()) m.push('votre téléphone');
+    if ((f.children || []).some(function (k) { return k && k.name && !k.birthdate; })) m.push('la date de naissance de vos enfants');
+    if (f.spouse && f.spouse.name && !f.spouse.birthdate) m.push('la date de naissance de votre conjoint(e)');
+    return m;
+  }
+  function ficheCard() {
+    if (PUBLIC) return ''; var m = ficheManque(); if (!m.length) return '';
+    if ((D.demandes || []).some(function (d) { return d.type === 'fiche' && d.statut === 'en attente'; })) return '';
+    return '<div class="card" style="border-left:4px solid var(--warn)"><h2>📝 Complétez votre fiche</h2><p>Il manque ' + m.join(', ').replace(/, ([^,]*)$/, ' et $1') + '. C\'est utile pour les colis de Noël, les œuvres sociales et pour vous joindre.</p><button class="btn p s" onclick="cseGo(\'fiche\')">Compléter ma fiche</button></div>';
+  }
   // --- Carte CSE : QR code personnel, scanné à la permanence pour ouvrir la fiche (V.8.9) ---
   // Le QR code est un lien vers l'appli du CSE : scanné avec l'appareil photo d'un téléphone d'un membre du CSE,
   // il ouvre l'appli directement sur ce salarié (mode permanence). Sans l'appli et son mot de passe, il ne donne accès à rien.
@@ -406,6 +460,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         h += annCards();
         h += colisCards();
         h += avisCards();
+        h += ficheCard();
         var NV = newReplies();
         if (NV.length) h += '<div class="card" style="border-left:4px solid var(--ok)"><h2>🔔 Le CSE a répondu</h2>' + NV.map(function (d) { var ok = d.statut === 'acceptée'; return '<div class="row"><div class="l"><b>' + E(d.resume) + '</b>' + (d.reponse ? '<div class="mute">💬 ' + E(d.reponse) + '</div>' : '') + '</div><div class="r"><span class="tag ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✅ acceptée' : '❌ ' + E(d.statut)) + '</span></div></div>'; }).join('') + '<button class="btn s" onclick="cseGo(\'demandes\')">Voir mes demandes</button></div>';
         var PAY = [];
@@ -413,8 +468,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         (f.sorties || []).forEach(function (x) { if (x.aRegler > 0) PAY.push({ d: x.date, l: 'Sortie : ' + x.nom, m: x.aRegler, late: x.date < today(), t: 'sorties' }); });
         (f.achats || []).forEach(function (a) { if (!a.regle) PAY.push({ d: a.date, l: 'Billets : ' + a.desc, m: a.total || 0, late: true, t: 'achats' }); });
         PAY.sort(function (a, b) { return String(a.d).localeCompare(String(b.d)); });
-        if (PAY.length) h += '<div class="card" style="border-left:4px solid var(--warn)"><h2>💶 À régler</h2>' + PAY.map(function (x) { return '<div class="row" style="cursor:pointer" onclick="cseGo(\'' + x.t + '\')"><div class="l"><b>' + E(x.l) + '</b><div class="mute">' + (x.d ? (x.t === 'achats' ? 'Achat du ' : x.t === 'sorties' ? 'Sortie le ' : 'Avant le ') + fd(x.d) : 'Date à voir avec le CSE') + '</div></div><div class="r">' + eur(x.m) + '<br>' + (x.late ? '<span class="tag bad">' + (x.t === 'cv' ? 'en retard' : 'à régler') + '</span>' : '<span class="tag warn">à venir</span>') + '</div></div>'; }).join('')
-          + '<div class="row"><div class="l"><b>Total</b><div class="mute">Billets, sorties et chèques vacances · à régler à la permanence du CSE</div></div><div class="r">' + eur(PAY.reduce(function (a, x) { return a + x.m; }, 0)) + '</div></div></div>';
+        if (PAY.length) h += '<div class="card" style="border-left:4px solid var(--warn)"><h2>💶 À régler</h2>' + PAY.map(function (x) { return '<div class="row" style="cursor:pointer" onclick="cseGo(\'' + x.t + '\')"><div class="l"><b>' + E(x.l) + '</b><div class="mute">' + (x.d ? (x.t === 'achats' ? 'Achat du ' : x.t === 'sorties' ? 'Sortie le ' : 'Avant le ') + fd(x.d) : 'Date à voir avec le CSE') + '</div></div><div class="r">' + eur(x.m) + '<br>' + (x.late ? '<span class="tag bad">' + (x.t === 'cv' ? 'en retard' : 'à régler') + '</span>' : '<span class="tag warn">à venir</span>') + (payLinkFor(x) ? '<br><a class="btn s p" style="margin-top:6px" href="' + E(payLinkFor(x).url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">💳 Payer en ligne</a>' : '') + '</div></div>'; }).join('')
+          + '<div class="row"><div class="l"><b>Total</b><div class="mute">Billets, sorties et chèques vacances · à régler à la permanence du CSE' + (payLinksFor(PAY).length ? ' ou en ligne' : '') + '</div></div><div class="r">' + eur(PAY.reduce(function (a, x) { return a + x.m; }, 0)) + '</div></div>' + payButtons(PAY) + '</div>';
         h += sondCards();
         h += pushCard();
         h += permCard();
@@ -594,9 +649,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           var deja = pris[b.id] || 0, reste = b.cinema ? resteCine : Math.max(0, limStd - deja);
           return '<div class="row"><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + (b.prixPublic ? '<s>' + eur(b.prixPublic) + '</s> ' : '') + '<b style="color:var(--ink)">' + eur(b.prix) + '</b>' + (b.expire ? ' · valable jusqu\'au ' + fd(b.expire) : '') + '</div>'
             + '<div class="mute">Votre quota : ' + (deja ? deja + ' pris · ' : '') + '<b>' + reste + ' restant(s)</b>' + (b.cinema ? ' (cinéma)' : '') + '</div></div>'
-            + '<div class="r">' + (b.stock > 0 ? '<span class="tag ' + (b.stock <= 5 ? 'warn' : 'ok') + '">' + (b.stock <= 5 ? 'Plus que ' + b.stock : b.stock + ' en stock') + '</span>' : '<span class="tag bad">Épuisé</span>') + '</div></div>';
+            + '<div class="r">' + (b.stock > 0 ? '<span class="tag ' + (b.stock <= 5 ? 'warn' : 'ok') + '">' + (b.stock <= 5 ? 'Plus que ' + b.stock : b.stock + ' en stock') + '</span>' : '<span class="tag bad">Épuisé</span>')
+            + (b.stock > 0 && reste > 0 && !PUBLIC ? '<br><button class="btn s p" style="margin-top:6px" onclick="cseBillet(\'' + E(String(b.id)) + '\')">Réserver</button>' : '') + '</div></div>';
         }).join('') : (vieux ? '<p class="empty">La liste des billets apparaîtra dès la prochaine mise à jour des informations par le CSE.</p>' : '<p class="empty">Aucun billet disponible en ce moment.</p>'))
-          + '<p class="mute" style="margin-top:8px">Les billets s\'achètent à la permanence du CSE.</p></div>';
+          + '<p class="mute" style="margin-top:8px">Réservez ici, puis récupérez et payez vos billets à la permanence du CSE.</p></div>';
         h += swileCard(true);
       },
       agenda: function () {
@@ -652,7 +708,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Sur iPhone, le lien https ouvre l'appli tout seul quand elle est installée (lien universel).
   function swileHref(u) {
     if (!/android/i.test(navigator.userAgent) || !/^https:\/\//.test(u)) return u;
-    return 'intent://' + u.replace(/^https:\/\//, '') + '#Intent;scheme=https;package=com.lunchr.android;S.browser_fallback_url=' + encodeURIComponent(u) + ';end';
+    return 'intent://' + u.replace(/^https:\/\//, '') + '#Intent;scheme=https;package=hr.lunc.client;S.browser_fallback_url=' + encodeURIComponent(u) + ';end';
   }
   function swileCard(memeTarif) {
     var W = D && D.pub && D.pub.swile; if (!W) return '';
@@ -747,8 +803,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function chqResume(L) {
     var C = L.filter(function (e) { return /ch[eè]que/i.test(e.mode || ''); }); if (!C.length) return '';
     var ok = C.filter(function (e) { return e.statut === 'reçu' || e.statut === 'payé'; }), manque = C.length - ok.length;
-    return '<div class="row"><div class="l"><b>Vos chèques</b><div class="mute">' + ok.length + ' sur ' + C.length + ' remis au CSE' + (manque ? ' · ' + manque + ' à remettre à la permanence (' + eur(C.filter(function (e) { return e.statut !== 'reçu' && e.statut !== 'payé'; }).reduce(function (a, e) { return a + (e.montant || 0); }, 0)) + ')' : '') + '</div></div><div class="r"><span class="tag ' + (manque ? 'warn' : 'ok') + '">' + (manque ? 'Chèques manquants' : 'Tous remis') + '</span></div></div>';
+    return '<div class="row"><div class="l"><b>Vos chèques</b><div class="mute">' + ok.length + ' sur ' + C.length + ' remis au CSE' + (manque ? ' · ' + manque + ' à remettre à la permanence (' + eur(C.filter(function (e) { return e.statut !== 'reçu' && e.statut !== 'payé'; }).reduce(function (a, e) { return a + (e.montant || 0); }, 0)) + ')' : '') + '</div></div><div class="r"><span class="tag ' + (manque ? 'warn' : 'ok') + '">' + (manque ? 'Chèques manquants' : 'Tous remis') + '</span></div></div>'
+      + '<div class="msg info" style="margin:8px 0 4px">ℹ️ Vos chèques remis sont <b>gardés par le CSE</b> et encaissés <b>au fur et à mesure des mois</b>, un par échéance. Quand le CSE l\'encaisse, l\'échéance passe ici de « reçu » à « payé »' + (C.filter(function (e) { return e.statut === 'payé'; }).length ? ' (déjà encaissés : ' + C.filter(function (e) { return e.statut === 'payé'; }).length + ' sur ' + C.length + ')' : '') + '.</div>';
   }
+  // Paiement de la part du salarié : mensuel, à partir de janvier (12 fois max), jusqu'en décembre.
+  function cvMois() { var d = new Date(), m = d.getMonth(); if (m >= 10) return { debut: 'janvier ' + (d.getFullYear() + 1), max: 12 }; var N = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre']; return { debut: N[m] + ' ' + d.getFullYear(), max: 12 - m }; }
   function cvAnnee() { return String((D.pub.cv && D.pub.cv.annee) || new Date().getFullYear()); }
   function cvBloque() {
     var a = cvAnnee();
@@ -766,14 +825,25 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var C = D.pub.cv || {};
     if (cvBloque()) { alertBox(cvBloque()); return; }
     sheet(head('S\'inscrire aux chèques vacances') + (C.texte ? '<p>' + E(C.texte) + '</p>' : '')
-      + '<label>Montant de chèques souhaité (€)</label><input id="c-m" type="number" min="0" step="10" placeholder="ex. 400">'
-      + '<label>Format</label><select id="c-f"><option>Papier</option><option>Connect (sur le téléphone)</option><option>Swile</option></select>'
-      + '<label>Comment souhaitez-vous payer votre part ?</label><select id="c-p"><option>En une fois</option><option>En plusieurs fois</option><option>À voir avec le CSE</option></select>'
-      + '<label>Remarque (facultatif)</label><textarea id="c-n"></textarea><p class="mute">Le CSE valide votre inscription et vous indique votre part et les échéances. Les paiements sont enregistrés uniquement par le CSE.</p>'
+      + '<label>Montant de chèques souhaité, par format (€)</label><div class="grid2" style="grid-template-columns:repeat(3,1fr)">'
+      + '<div><label style="margin-top:0">📄 Papier</label><input id="c-pa" type="number" min="0" step="10" placeholder="0"></div>'
+      + '<div><label style="margin-top:0">📱 Connect</label><input id="c-co" type="number" min="0" step="10" placeholder="0"></div>'
+      + '<div><label style="margin-top:0">🟣 Swile</label><input id="c-sw" type="number" min="0" step="10" placeholder="0"></div></div>'
+      + '<p class="mute">Papier : carnet de chèques. Connect : sur le téléphone (appli ANCV Connect). Swile : sur votre carte/appli Swile. Vous pouvez mélanger.</p><div id="c-tot" class="mute" style="font-weight:700"></div>'
+      + '<div class="grid2"><div><label>Payer ma part en</label><select id="c-nb">' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].filter(function (n) { return n <= cvMois().max; }).map(function (n) { return '<option value="' + n + '">' + (n === 1 ? '1 fois' : n + ' fois') + '</option>'; }).join('') + '</select></div>'
+      + '<div><label>Moyen de paiement</label><select id="c-mo"><option>Chèque</option><option>Carte Bancaire</option><option>Virement</option><option>Espèces</option><option>À voir avec le CSE</option></select></div></div>'
+      + '<p class="mute">Paiement mensuel à partir de <b>' + cvMois().debut + '</b>, jusqu\'en décembre (12 fois maximum en commençant en janvier). Par chèque : vous remettez tous vos chèques au CSE, qui les garde et les encaisse au fur et à mesure des mois.</p>'
+      + '<label>Remarque (facultatif)</label><textarea id="c-n"></textarea><p class="mute">Le CSE valide votre inscription et vous indique votre part et les dates des échéances. Les paiements sont enregistrés uniquement par le CSE.</p>'
       + '<div style="margin-top:12px"><button class="btn p" id="c-go">Envoyer mon inscription</button></div><div id="c-msg"></div>');
+    var val = function (id) { return Math.max(0, parseFloat($(id).value) || 0); };
+    var tot = function () { var t = val('c-pa') + val('c-co') + val('c-sw'); $('c-tot').textContent = t ? 'Total : ' + eur(t) : ''; return t; };
+    ['c-pa', 'c-co', 'c-sw'].forEach(function (id) { $(id).oninput = tot; });
     $('c-go').onclick = function () {
-      var m = parseFloat($('c-m').value) || 0; if (m <= 0) return say('c-msg', 'Indiquez un montant.', 'bad');
-      send('cv', { annee: cvAnnee(), montant: m, format: $('c-f').value, paiement: $('c-p').value, note: $('c-n').value.trim() }, 'Chèques vacances : ' + eur(m) + ' (' + $('c-f').value + ')', 'c-msg', 'c-go');
+      var m = tot(); if (m <= 0) return say('c-msg', 'Indiquez un montant dans au moins un format.', 'bad');
+      var fm = { paper: val('c-pa'), connect: val('c-co'), swile: val('c-sw') }, nb = Number($('c-nb').value) || 1, mo = $('c-mo').value;
+      var fs = [fm.paper ? 'Papier ' + eur(fm.paper) : '', fm.connect ? 'Connect ' + eur(fm.connect) : '', fm.swile ? 'Swile ' + eur(fm.swile) : ''].filter(Boolean).join(' + ');
+      var pay = (nb === 1 ? 'en 1 fois' : 'en ' + nb + ' fois') + ' · ' + mo;
+      send('cv', { annee: cvAnnee(), montant: m, formats: fm, format: fs, nb: nb, mode: mo, paiement: pay, note: $('c-n').value.trim() }, 'Chèques vacances : ' + eur(m) + ' (' + fs + ', ' + pay + ')', 'c-msg', 'c-go');
     };
   };
   window.cseMsg = function () {
