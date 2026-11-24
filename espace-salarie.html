@@ -576,7 +576,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function dgPage() {
     var G = D.deleg || { profil: {}, liste: [] }, p = G.profil || {}, c = dgCompteur(), h = '', t = today();
     h += '<div class="card"><h2>🕒 Mes heures de délégation</h2>' + c.html + '</div>';
-    h += '<div class="card"><h2>✍️ Poser des heures</h2><p class="mute">La feuille « Heure de Délégation » est remplie avec votre nom, signée et envoyée aux RH et à votre responsable.</p>'
+    h += '<div class="card"><h2>✍️ Poser des heures</h2><p class="mute">La feuille « Heures de Délégation » est remplie avec votre nom, signée et envoyée aux RH et à votre responsable.</p>'
       + '<div class="grid2"><div><label>Le (date)</label><input type="date" id="dg-du" value="' + t + '" onchange="cseDgCalc()"></div><div><label>Jusqu\'au (si plusieurs jours)</label><input type="date" id="dg-au" onchange="cseDgCalc()"></div></div>'
       + '<p class="mute" id="dg-jour" style="margin:4px 0"></p>'
       + '<div class="grid2"><div><label>Horaire : de</label><input type="time" id="dg-de" value="08:00" onchange="cseDgCalc()"></div><div><label>à</label><input type="time" id="dg-a" value="12:00" onchange="cseDgCalc()"></div></div>'

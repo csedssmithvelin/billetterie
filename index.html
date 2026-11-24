@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"gSOQNaor6wD0d3LnCYndhw==","iv":"lX7Xh++ne7jFwAxz","rev":"boot","lastModified":"2026-11-24T20:01:22.598Z","by":"Michaël GROSJEAN","data":"wweozFyKJvHdYKUpoPsv+PN0ay/mSNNWq6o0dVdUQI2Cw2+568ZCGRURenBAdIFDF4+dFQ2msUkHV1yg9AAJoQ=="},"at":"2026-11-24T20:01:22.630Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"v5sfFGU0urEBmfLv9Y0HtQ==","iv":"s3dARrcIubU8z2Uf","rev":"boot","lastModified":"2026-11-24T20:09:37.854Z","by":"Michaël GROSJEAN","data":"9YlaflqFpiraCPDuRTFGC31NSkNhHBCVSKDrFZN26zr8WTHQuDBDMdq3zvi4TwXLTm+XyFWLHHBT3QCc00d1gQ=="},"at":"2026-11-24T20:09:37.887Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21724,6 +21724,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         const CHANGELOG = [
             { v: 'V.9.3', date: '2026-11-24', items: [
                 "📄 Documents (reçu, reçu de billetterie, attestation, état de caisse, remboursement, inscription, fiche de prêt…) : le bouton « Envoyer / ranger sur le Drive » envoie le document au salarié depuis la boîte du CSE avec le PDF joint tout seul, et le range dans Mon Drive › CSE › CSE - Documents › année › catégorie (ex. 2026 › 1 - Paiements et caisse › Reçus de paiement ; une sortie = un dossier). Plus rien à copier ni à joindre. Script v80 nécessaire.",
+                "✍️ Délégation : titre de la feuille corrigé (« Heures de Délégation »). Quand un élu pose ses propres heures avec son compte de l'appli, l'e-mail se termine par sa signature avec le logo du CSE (gardée aussi pour les envois depuis son espace).",
                 "✉️ Les e-mails envoyés depuis la boîte du CSE sont mis en forme : le logo du CSE (Paramètres › logo de l'appli) apparaît à gauche du nom dans la signature, comme dans Outlook.",
                 "⚙️ Pour chaque type de document : « demander à chaque fois », « à l'impression : envoyer + ranger automatiquement » ou « à l'impression : ranger sur le Drive seulement ».",
                 "🗂️ La fiche du salarié liste ses documents envoyés et rangés, avec le lien vers le PDF. Les signatures enregistrées (trésorier, élus) restent mises automatiquement sur les documents."
@@ -21745,7 +21746,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             { v: 'V.9.0', date: '2026-11-24', items: [
                 "📲 L'appli et l'espace salarié proposent tout seuls « Installer l'appli ? » à l'ouverture : un appui sur « Installer », puis valider (Android, PC). Sur iPhone, la fenêtre explique le geste Partager › Sur l'écran d'accueil (Apple ne permet pas plus). « Plus tard » la cache 7 jours.",
                 "🕒 Onglet « Heures de délégation » complet (aussi bouton « Délégations » à côté de « Planning des élus ») : tout le monde voit les compteurs de tous les élus (mois et depuis le 1er juillet, remis à zéro chaque 1er juillet), chacun ne saisit, n'envoie et ne supprime que pour lui-même ; « Ajouter sans feuille » pour les délégations déjà prises ; les élus reliés à un rôle du CSE sont ajoutés tout seuls.",
-                "✍️ L'élu pose ses heures depuis son espace (onglet « Délégation ») ou le CSE le fait pour lui : la feuille « Heure de Délégation » DS Smith Velin est remplie et signée (signature gardée dans son profil), rangée sur le Drive du CSE dans son dossier, et envoyée depuis la boîte du CSE aux RH et à son responsable, avec l'élu en copie (réponses sur son adresse personnelle). Le responsable peut cliquer « vu ». Script Google version 77."
+                "✍️ L'élu pose ses heures depuis son espace (onglet « Délégation ») ou le CSE le fait pour lui : la feuille « Heures de Délégation » DS Smith Velin est remplie et signée (signature gardée dans son profil), rangée sur le Drive du CSE dans son dossier, et envoyée depuis la boîte du CSE aux RH et à son responsable, avec l'élu en copie (réponses sur son adresse personnelle). Le responsable peut cliquer « vu ». Script Google version 77."
             ] },
             { v: 'V.8.9', date: '2026-11-24', items: [
                 "💳 Espace salarié : bouton « Payer en ligne » sur chaque ligne « À régler », avec le bon lien de paiement (Paramètres › liens de paiement : le lien d'une sortie est trouvé d'après son nom, « chèques vacances » pour les chèques vacances). « Prévenir le CSE que j'ai payé » envoie une demande ; le CSE valide le paiement à réception.",
@@ -44801,7 +44802,7 @@ var qrcode = function() {
     var pr = DG.profils[e.espaceToken] || {};
     if (!(await uiConfirm('Envoyer la feuille de délégation de ' + el.name + ' ?\n\n' + fd(x.du) + (x.au !== x.du ? ' au ' + fd(x.au) : '') + ', ' + (x.plages || [{ de: x.de, a: x.a }]).map(function (p) { return 'de ' + p.de + ' à ' + p.a; }).join(' et ') + ' : ' + hh(x.heures) + '\n\nÀ : ' + [pr.rh, pr.resp].filter(Boolean).join(', ') + ([pr.mail, pr.resp2].filter(Boolean).length ? '\nCopie : ' + [pr.mail, pr.resp2].filter(Boolean).join(', ') : ''), { okLabel: 'Signer et envoyer' }))) return;
     try {
-      var j = await cseEspacePost('deleg-appli', { t: e.espaceToken, data: { du: x.du, au: x.au, de: x.de, a: x.a, plages: x.plages, heures: x.heures, motif: x.motif + (x.note ? ' · ' + x.note : '') } });
+      var moi0 = moiEmp(), j = await cseEspacePost('deleg-appli', Object.assign({ t: e.espaceToken, data: { du: x.du, au: x.au, de: x.de, a: x.a, plages: x.plages, heures: x.heures, motif: x.motif + (x.note ? ' · ' + x.note : '') } }, moi0 && String(moi0.id) === String(e.id) && window.cseSigLogo ? cseSigLogo() : {}));
       DG.at = 0; await dgSync(true); dgMonth = x.du.slice(0, 7); dgRender();
       try { logAction('Création', 'delegation', 'Feuille de délégation envoyée : ' + el.name + ' ' + fd(x.du) + ' (' + hh(x.heures) + ')'); } catch (er) { }
       say('✔ Feuille signée, envoyée et rangée sur le Drive.', 'success');
