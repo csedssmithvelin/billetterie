@@ -13,6 +13,7 @@
 <meta name="apple-mobile-web-app-title" content="Mon CSE">
 <title>Mon espace CSE</title>
 <style>
+[hidden]{display:none!important}
 :root{--bg:#f3f5fa;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e8ecf3;--brand:#1d4ed8;--brand-d:#1e3a8a;--brand2:#e0e9ff;--ok:#047857;--okb:#d1fae5;--warn:#b45309;--warnb:#fef3c7;--bad:#b91c1c;--badb:#fee2e2;--sh:0 1px 2px #0f172a0a,0 10px 28px -14px #0f172a26}
 @supports (color:color-mix(in srgb,red,blue)){:root{--brand-d:color-mix(in srgb,var(--brand) 78%,#020617);--brand2:color-mix(in srgb,var(--brand) 11%,#fff)}}
 *{box-sizing:border-box}
@@ -116,7 +117,7 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
 </style>
 </head>
 <body>
-<header><div class="in"><div class="who"><div class="logo"><img id="h-logo" src="icon-192.png" alt="Logo du CSE" onerror="this.parentNode.style.display='none'"></div><div><small id="h-cse">CSE</small><h1 id="h-nom">Mon espace CSE</h1><div class="sub" id="h-sub"></div></div></div><button id="h-inst" class="btn s" hidden style="background:#ffffff22;border-color:#ffffff55;color:#fff;flex:0 0 auto;backdrop-filter:blur(4px)">📲 Installer l'appli</button></div></header>
+<header><div class="in"><div class="who"><div class="logo"><img id="h-logo" src="icon-192.png" alt="Logo du CSE" onerror="this.parentNode.style.display='none'"></div><div><small id="h-cse">CSE</small><h1 id="h-nom">Mon espace CSE</h1><div class="sub" id="h-sub"></div></div></div></div></header>
 <main>
   <nav id="nav" hidden></nav>
   <div id="app"><div class="card loading">Chargement de votre espace…</div></div>
@@ -971,7 +972,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '9.4.4', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '9.4.5', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
