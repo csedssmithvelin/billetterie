@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"KcsbT5edOFVxaiUH2oUwTQ==","iv":"ll0d5F9Vt+2/lHx1","rev":"boot","lastModified":"2026-11-24T17:06:14.796Z","by":"Michaël GROSJEAN","data":"5Wf9KV7Q+FYctsCMprD1QfXJgEHtao6woDB8VKSIzQbgLoeqOMQ+OMWidmjm83yeBXod5ilfTGOYoajxmL9uPg=="},"at":"2026-11-24T17:06:14.844Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"rw7bxH/syHmPzzY9522+mg==","iv":"asoOBgdpClUvU7mo","rev":"boot","lastModified":"2026-11-24T17:20:03.652Z","by":"Michaël GROSJEAN","data":"QR0kFpHsPuy6gC3yqHmQ3zUCtx2JosLitYvOlyR1TeiLkJeIkje8IirtTgUdqzmNDNYQl1S7L1uSZM4yYLa7fQ=="},"at":"2026-11-24T17:20:03.693Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -44687,7 +44687,7 @@ var qrcode = function() {
         + (adm && D.elus.length > 1 ? '<select class="p-1 border rounded text-xs" onchange="cseDgSel(this.value)">' + D.elus.map(function (x) { return '<option value="' + x.id + '"' + (x.id === sel.id ? ' selected' : '') + '>' + E(x.name) + (me && x.id === me.id ? ' (vous)' : '') + '</option>'; }).join('') + '</select>' : '<b class="text-xs text-indigo-700">' + E(sel.name) + '</b>') + '</div>'
         + '<div class="grid grid-cols-2 gap-2"><label class="' + lab + '">Le<input type="date" id="dg2-du" value="' + today() + '" class="' + inp + '" onchange="cseDgCalc()"></label><label class="' + lab + '">Jusqu\'au (plusieurs jours)<input type="date" id="dg2-au" class="' + inp + '" onchange="cseDgCalc()"></label>'
         + '<label class="' + lab + '">Horaire : de<input type="time" id="dg2-de" value="08:00" class="' + inp + '" onchange="cseDgCalc()"></label><label class="' + lab + '">à<input type="time" id="dg2-a" value="12:00" class="' + inp + '" onchange="cseDgCalc()"></label>'
-        + '<label class="' + lab + '">Heures<input id="dg2-h" inputmode="decimal" class="' + inp + '" oninput="this.dataset.edit=1"></label><label class="' + lab + '">Motif<select id="dg2-motif" class="' + inp + '">' + DG_MOTIFS.map(function (m) { return '<option>' + m + '</option>'; }).join('') + '</select></label>'
+        + '<label class="' + lab + '">Heures (ex. 8:15)<input id="dg2-h" placeholder="h:mm" class="' + inp + '" oninput="this.dataset.edit=1"></label><label class="' + lab + '">Motif<select id="dg2-motif" class="' + inp + '">' + DG_MOTIFS.map(function (m) { return '<option>' + m + '</option>'; }).join('') + '</select></label>'
         + '<label class="' + lab + ' col-span-2">Remarque (facultatif)<input id="dg2-note" class="' + inp + '" maxlength="150"></label></div>'
         + '<p class="text-[11px] text-slate-500" id="dg2-jour"></p>'
         + '<div class="flex flex-wrap gap-2"><button type="button" class="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs rounded-lg disabled:opacity-50"' + (ok && pr.sig && dest.length ? '' : ' disabled') + ' onclick="cseDgPose(\'feuille\')"><i class="fa-solid fa-paper-plane"></i> Signer et envoyer la feuille</button>'
@@ -44722,13 +44722,16 @@ var qrcode = function() {
     Object.keys(keep).forEach(function (i) { var el = document.getElementById(i); if (el) el.value = keep[i]; }); if (edH && document.getElementById('dg2-h')) document.getElementById('dg2-h').dataset.edit = edH;
     try { cseDgCalc(); dgSigInit(); } catch (e) { }
   };
+  // Heures : « 8:15 », « 8h15 », « 45min » ou « 8,25 » sont acceptés
+  function dgParseH(v) { v = String(v || '').trim().toLowerCase().replace(/\s+/g, ''); var m = /^(\d{1,3})(?:[:h](\d{0,2}))?(?:min)?$/.exec(v); if (m && (m[2] !== undefined || /[:h]/.test(v))) return Number(m[1]) + (Number(m[2]) || 0) / 60; m = /^(\d{1,3})min$/.exec(v); if (m) return Number(m[1]) / 60; var n = Number(v.replace(',', '.')); return isNaN(n) ? 0 : n; }
+  function dgFmtH(mins) { mins = Math.round(mins); return Math.floor(mins / 60) + ':' + String(mins % 60).padStart(2, '0'); }
   function gv(i) { var el = document.getElementById(i); return el ? String(el.value || '').trim() : ''; }
   function mn(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ''); return m ? m[1] * 60 + Number(m[2]) : null; }
   window.cseDgCalc = function () {
     var du = gv('dg2-du'), au = gv('dg2-au'), hEl = document.getElementById('dg2-h'); if (!hEl) return;
     if (au && au < du) { document.getElementById('dg2-au').value = du; au = du; }
     var a = mn(gv('dg2-a')), d = mn(gv('dg2-de'));
-    if (!hEl.dataset.edit && a != null && d != null && a > d && (!au || au === du)) hEl.value = String(Math.round((a - d) / 60 * 100) / 100).replace('.', ',');
+    if (!hEl.dataset.edit && a != null && d != null && a > d && (!au || au === du)) hEl.value = dgFmtH(a - d);
     var j = document.getElementById('dg2-jour'); try { if (j) j.textContent = du ? '📅 ' + new Date(du + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + (au && au !== du ? ' → ' + new Date(au + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '') : ''; } catch (e) { }
   };
   window.cseDgSel = function (id) { DG.sel = id; DG.sig = false; dgRender(); };
@@ -44738,7 +44741,7 @@ var qrcode = function() {
   function selOk() { var el = dgD().elus.filter(function (x) { return x.id === DG.sel; })[0]; if (!el || !dgPeut(el.id)) { say('Vous ne pouvez saisir que vos propres heures.', 'warning'); return null; } return el; }
   window.cseDgPose = async function (mode) {
     var el = selOk(); if (!el) return; var e = empOfElu(el);
-    var x = { du: gv('dg2-du'), au: gv('dg2-au') || gv('dg2-du'), de: gv('dg2-de'), a: gv('dg2-a'), heures: Number(gv('dg2-h').replace(',', '.')), motif: gv('dg2-motif'), note: gv('dg2-note') };
+    var x = { du: gv('dg2-du'), au: gv('dg2-au') || gv('dg2-du'), de: gv('dg2-de'), a: gv('dg2-a'), heures: Math.round(dgParseH(gv('dg2-h')) * 10000) / 10000, motif: gv('dg2-motif'), note: gv('dg2-note') };
     if (!x.du || !(x.heures > 0)) { say('Indiquez la date et le nombre d\'heures.', 'warning'); return; }
     var D = dgD();
     if (mode === 'sans') {

@@ -480,18 +480,21 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function dgCard() { if (!D.deleg) return ''; var c = dgCompteur(); return '<div class="card" style="border-left:4px solid var(--brand)"><h2>🕒 Mes heures de délégation</h2>' + c.html + '<button class="btn p" style="margin-top:10px" onclick="cseGo(\'deleg\')">Poser des heures</button></div>'; }
   function dgMins(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ''); return m ? Number(m[1]) * 60 + Number(m[2]) : null; }
+  // Heures : « 8:15 », « 8h15 », « 45min » ou « 8,25 » sont acceptés
+  function dgParseH(v) { v = String(v || '').trim().toLowerCase().replace(/\s+/g, ''); var m = /^(\d{1,3})(?:[:h](\d{0,2}))?(?:min)?$/.exec(v); if (m && (m[2] !== undefined || /[:h]/.test(v))) return Number(m[1]) + (Number(m[2]) || 0) / 60; m = /^(\d{1,3})min$/.exec(v); if (m) return Number(m[1]) / 60; var n = Number(v.replace(',', '.')); return isNaN(n) ? 0 : n; }
+  function dgFmtH(mins) { mins = Math.round(mins); return Math.floor(mins / 60) + ':' + String(mins % 60).padStart(2, '0'); }
   window.cseDgCalc = function (force) {
     var de = dgMins($('dg-de').value), a = dgMins($('dg-a').value), du = $('dg-du').value, au = $('dg-au').value || du, hEl = $('dg-h');
     if ($('dg-au').value && $('dg-au').value < du) $('dg-au').value = du;
     try { $('dg-jour').textContent = du ? '📅 ' + new Date(du + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + (au && au !== du ? ' → ' + new Date(au + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '') : ''; } catch (e) { }
-    if ((force || !hEl.dataset.edit) && de != null && a != null && a > de && (!au || au === du)) hEl.value = String(Math.round((a - de) / 60 * 100) / 100);
+    if ((force || !hEl.dataset.edit) && de != null && a != null && a > de && (!au || au === du)) hEl.value = dgFmtH(a - de);
     var G = D.deleg || {}, p = G.profil || {}, dest = [p.rh, p.resp].filter(Boolean);
     var cc = [p.mail, p.resp2].filter(Boolean);
     $('dg-resume').innerHTML = dest.length ? '📧 Sera envoyé depuis la boîte du CSE à : <b>' + E(dest.join(', ')) + '</b>' + (cc.length ? ', en copie : ' + E(cc.join(', ')) : '') + '. La feuille PDF est aussi rangée dans votre dossier sur le Drive du CSE.' : '⚠️ Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages » ci-dessous.';
   };
   window.cseDgPoser = async function (mode) {
     var G = D.deleg || {}, p = G.profil || {}, sans = mode === 'sans';
-    var x = { du: $('dg-du').value, au: $('dg-au').value || $('dg-du').value, de: $('dg-de').value, a: $('dg-a').value, heures: Number(String($('dg-h').value).replace(',', '.')), motif: $('dg-motif').value.trim() };
+    var x = { du: $('dg-du').value, au: $('dg-au').value || $('dg-du').value, de: $('dg-de').value, a: $('dg-a').value, heures: Math.round(dgParseH($('dg-h').value) * 10000) / 10000, motif: $('dg-motif').value.trim() };
     if (!x.du) return say('dg-msg', 'Choisissez la date.', 'bad');
     if (!x.de || !x.a) return say('dg-msg', 'Indiquez l\'horaire (de … à …).', 'bad');
     if (!(x.heures > 0)) return say('dg-msg', 'Indiquez le nombre d\'heures.', 'bad');
@@ -548,7 +551,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       + '<div class="grid2"><div><label>Le (date)</label><input type="date" id="dg-du" value="' + t + '" onchange="cseDgCalc()"></div><div><label>Jusqu\'au (si plusieurs jours)</label><input type="date" id="dg-au" onchange="cseDgCalc()"></div></div>'
       + '<p class="mute" id="dg-jour" style="margin:4px 0"></p>'
       + '<div class="grid2"><div><label>Horaire : de</label><input type="time" id="dg-de" value="08:00" onchange="cseDgCalc()"></div><div><label>à</label><input type="time" id="dg-a" value="12:00" onchange="cseDgCalc()"></div></div>'
-      + '<div class="grid2"><div><label>Heures de délégation</label><input id="dg-h" inputmode="decimal" oninput="this.dataset.edit=1"></div><div><label>Motif (facultatif)</label><input id="dg-motif" maxlength="200" placeholder="Réunion CSE, CSSCT…"></div></div>'
+      + '<div class="grid2"><div><label>Heures de délégation (ex. 8:15)</label><input id="dg-h" placeholder="h:mm" oninput="this.dataset.edit=1"></div><div><label>Motif (facultatif)</label><input id="dg-motif" maxlength="200" placeholder="Réunion CSE, CSSCT…"></div></div>'
       + '<div class="msg info" id="dg-resume" style="margin:10px 0"></div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" id="dg-go" onclick="cseDgPoser()">✍️ Signer et envoyer</button><button class="btn" id="dg-old" onclick="cseDgPoser(\'sans\')">➕ Déjà prise : ajouter sans feuille</button></div><p class="mute" style="margin-top:6px">« Déjà prise » : pour ajouter à votre compteur une délégation de ce mois (ou d\'avant) dont la feuille est déjà faite. Rien n\'est envoyé.</p><div id="dg-msg"></div></div>';
     var L = dgListe().sort(function (a, b) { return String(b.du).localeCompare(String(a.du)); });
