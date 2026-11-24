@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"eXnAf0KbXe5JPmlg09pNaA==","iv":"/IzB+X4u/MEPkqb9","rev":"boot","lastModified":"2026-11-23T19:53:12.468Z","by":"Michaël GROSJEAN","data":"U2BV4do0NwCnENYL2+ofS2yhAET/7ktl39uaVyouuJkFtRIRrbnmhp530TPl6ATeexH+zms3UdwMSsiY3Fy5yg=="},"at":"2026-11-23T19:53:12.506Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"yweTc1+s9BVgNTPmmQU1sQ==","iv":"SulGyEwSARbz+GUt","rev":"boot","lastModified":"2026-11-24T02:27:18.693Z","by":"Michaël GROSJEAN","data":"glSXFLXIPC7WqHgEVSU8ZEmfmDRfqzNpeZBUpnGlVsQp2TR0WrMF8heL0FbRAwr1E3Eh6V6nXGyClWlotNpKgQ=="},"at":"2026-11-24T02:27:18.731Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6939,7 +6939,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.8.2";
+        const APP_VERSION = "V.8.6";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21722,6 +21722,23 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.8.6', date: '2026-11-24', items: [
+                "🎁 Espace salarié : les colis à récupérer (distributions en cours, comme le colis de Noël) s'affichent sur l'accueil, pour le salarié et chacun de ses enfants, avec « À récupérer » ou « Remis le … ».",
+                "📊 Communication › Consultations : combien de salariés ont ouvert leur espace (cette semaine, ce mois), qui ne l'a jamais ouvert, avec lien et QR code pour relancer. Nécessite le script Google V.8.6 (script-google-cse-v73.txt)."
+            ] },
+            { v: 'V.8.5', date: '2026-11-23', items: [
+                "📣 Nouveau bouton « Communication » (Tableau de bord, à côté de la Boîte à idées) : annonces pour tous les salariés ou message personnel à un salarié (affichés dans leur espace, envoi par e-mail en option), agenda du CSE (réunions, permanences, fermetures, événements ; les sorties et réunions s'ajoutent toutes seules) et sondages (anonymes ou non, résultats en direct).",
+                "⏳ Demande d'inscription à une sortie complète : en l'acceptant, l'appli propose de mettre la personne en liste d'attente, et le salarié en est informé.",
+                "🧩 Script Google V.8.5 (script-google-cse-v72.txt) : nécessaire pour les votes des sondages."
+            ] },
+            { v: 'V.8.4', date: '2026-11-23', items: [
+                "📅 Espace salarié › Matériel : calendrier des réservations (jours où le matériel est déjà pris, quantités libres en touchant un jour), sans aucun nom.",
+                "🕚 Horaires de la permanence affichés dans l'espace salarié (par défaut « Le vendredi de 11h à 13h30 »), modifiables dans les réglages de l'espace salarié.",
+                "🔔 Espace salarié : badge « nouveau » sur « Mes demandes » et bandeau sur l'accueil quand le CSE a répondu ; encadré « À régler » (échéances CV, sorties, billets non payés) avec les dates."
+            ] },
+            { v: 'V.8.3', date: '2026-11-23', items: [
+                "🎨 Espace salarié plus joli : logo du CSE dans l'en-tête et couleurs de l'appli (celles du logo ou celle choisie dans Paramètres)."
+            ] },
             { v: 'V.8.2', date: '2026-11-23', items: [
                 "🏖️ Espace salarié, chèques vacances : les chèques de l'année N+1 se prennent pendant l'année N : un dossier créé en 2026 est affiché « chèques vacances 2027 », et dès janvier 2027 la campagne passe toute seule à 2028. Réglable dans Espace salarié › Année des chèques vacances."
             ] },
@@ -43375,6 +43392,19 @@ var qrcode = function() {
   function cvAutoYear() { return new Date().getFullYear() + 1; }
   function cvCampYear() { var n = Number(cfg().espaceCvYear), a = cvAutoYear(); return n && n >= a ? n : a; }
   window.cseCvCampYear = cvCampYear;
+  // Logo du CSE réduit (128 px) pour l'espace salarié, recalculé seulement quand le logo change.
+  var espLogo = '', espLogoKey = '';
+  function espLogoMake() {
+    var src = (db.config && db.config.logoDataUrl) || '', key = src.length + ':' + src.slice(-60);
+    if (!src) { espLogo = ''; espLogoKey = key; return Promise.resolve(); }
+    if (key === espLogoKey) return Promise.resolve();
+    return new Promise(function (res) {
+      var img = new Image();
+      img.onload = function () { try { var m = 128, r = Math.min(1, m / Math.max(img.width, img.height)), cv = document.createElement('canvas'); cv.width = Math.round(img.width * r); cv.height = Math.round(img.height * r); cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); espLogo = cv.toDataURL('image/png'); if (espLogo.length > 60000) espLogo = cv.toDataURL('image/jpeg', 0.85); } catch (e) { espLogo = src.length < 60000 ? src : ''; } espLogoKey = key; res(); };
+      img.onerror = function () { espLogo = ''; espLogoKey = key; res(); };
+      img.src = src;
+    });
+  }
   function matMap(q, T) {
     return { id: q.id, nom: q.name, qte: q.quantity || 0, occupe: (db.loans || []).filter(function (l) { return !l.returned && String(l.endDate || '') >= T; }).reduce(function (a, l) { (l.items || []).forEach(function (i) { if (i.equipmentId === q.id) a.push({ d: l.startDate, f: l.endDate, q: i.qty || 0 }); }); return a; }, []) };
   }
@@ -43388,15 +43418,20 @@ var qrcode = function() {
     }).sort(function (a, b) { return a.date.localeCompare(b.date); });
     var materiel = (db.equipment || []).filter(function (q) { return !q.espaceHidden; }).map(function (q) { return matMap(q, T); });
     var c = cfg();
-    return { cse: { nom: c.cseName || 'CSE', email: typeof CSE_SENDER_EMAIL !== 'undefined' ? CSE_SENDER_EMAIL : '' }, appUrl: /^https:/.test(location.protocol) ? location.origin + location.pathname : '',
-      sorties: sorties, materiel: materiel, materielInfo: c.espaceMatInfo || '', docs: docsChosen().map(function (d) { return { titre: d.titre, date: d.date, url: d.url }; }),
+    return { logo: espLogo, couleur: (function () { try { return brandRgbToHex(brandScale(brandState.hex)[600]); } catch (e) { return (typeof brandState !== 'undefined' && brandState && brandState.hex) || ''; } })(), cse: { nom: c.cseName || 'CSE', email: typeof CSE_SENDER_EMAIL !== 'undefined' ? CSE_SENDER_EMAIL : '' }, appUrl: /^https:/.test(location.protocol) ? location.origin + location.pathname : '',
+      sorties: sorties, materiel: materiel, materielInfo: c.espaceMatInfo || '', permanence: c.espacePermanence == null ? 'Le vendredi de 11h à 13h30' : c.espacePermanence, docs: docsChosen().map(function (d) { return { titre: d.titre, date: d.date, url: d.url }; }),
       billets: (db.tickets || []).filter(function (t) { return t && !t.archived && !t.espaceHidden && (!t.expiryDate || iso(t.expiryDate) >= T); }).map(function (t) { return { id: t.id, titre: t.title, prix: t.price, prixPublic: t.publicPrice != null && t.publicPrice > t.price ? t.publicPrice : null, stock: Math.max(0, t.stock || 0), expire: iso(t.expiryDate), cinema: /cin[ée]ma/i.test(t.title || '') }; }).sort(function (a, b) { return String(a.titre).localeCompare(String(b.titre)); }),
       quotas: { std: c.quotaStandardPerYear || 2, stdFoyer: c.quotaStdPerFoyer !== false, cine: c.quotaCinemaPerYear || 10, cineFoyer: !!c.quotaCinePerFoyer },
       swile: c.espaceSwileOn ? { url: c.espaceSwileUrl || '', texte: c.espaceSwileText || '' } : null,
       cv: { ouvert: !!c.espaceCvOpen, texte: c.espaceCvText || '', annee: cvCampYear() },
       reponses: (db.ideas || []).filter(function (x) { return x.publier && x.reponse && !x.deleted; }).sort(function (a, b) { return String(b.repAt || b.at).localeCompare(String(a.repAt || a.at)); }).slice(0, 40).map(function (x) { return { date: String(x.repAt || x.at).slice(0, 10), type: x.type, texte: x.texte, reponse: x.reponse }; }) };
   }
-  function build() { var F = {}; actives().forEach(function (e) { F[token(e)] = fiche(e); }); return { fiches: F, pub: pub() }; }
+  function build() {
+    var F = {}; actives().forEach(function (e) { var f = fiche(e); try { if (window.cseEspaceFicheExtra) window.cseEspaceFicheExtra(f, e); } catch (er) { } F[token(e)] = f; });
+    var P = pub(); try { if (window.cseEspacePubExtra) window.cseEspacePubExtra(P); } catch (er) { }
+    return { fiches: F, pub: P };
+  }
+  window.cseEspacePost = post; window.cseEspaceOn = function () { return on() && scriptOk(); };
   window.cseEspaceBuild = build;
 
   // ------------------------------------------------------------------
@@ -43409,6 +43444,7 @@ var qrcode = function() {
     if (busy) return; busy = true;
     try {
       var before = actives().filter(function (e) { return !e.espaceToken; }).length;
+      try { await espLogoMake(); } catch (eL) { }
       var B = build(), s = JSON.stringify(B), h = hash(s);
       if (before) { try { await saveDB(); } catch (e) { } }
       if (!force && localStorage.getItem('cse_espace_hash') === h) { if (!silent) say('Espace salarié déjà à jour.', 'success'); return; }
@@ -43461,6 +43497,7 @@ var qrcode = function() {
   function done(d) {
     var e = empById(d.empId), x = d.data || {};
     if (!e) return '';
+    if (d.type === 'sortie') { var ow = (db.outings || []).filter(function (o) { return o.id === x.outingId; })[0], wi = ow ? (ow.waitlist || []).map(function (w) { return w.employeeId; }).indexOf(e.id) : -1; if (wi >= 0 && !(db.registrations || []).some(function (r) { return r.outingId === x.outingId && r.employeeId === e.id && !r.cancelled; })) return '⏳ En liste d\'attente (position ' + (wi + 1) + ')'; }
     if (d.type === 'sortie' || d.type === 'sortie-modif') { var r = (db.registrations || []).filter(function (r) { return r.outingId === x.outingId && r.employeeId === e.id && !r.cancelled; })[0]; return r ? (d.type === 'sortie' || (r.guests || []).length === (x.invites || []).length ? '✔ Inscription enregistrée dans l\'appli' : '') : ''; }
     if (d.type === 'sortie-annul') return (db.registrations || []).some(function (r) { return r.id === x.regId && !r.cancelled; }) ? '' : '✔ Inscription supprimée dans l\'appli';
     if (d.type === 'materiel') return (db.loans || []).some(function (l) { return l.employeeId === e.id && l.startDate === x.debut && l.endDate === x.fin; }) ? '✔ Prêt enregistré dans l\'appli' : '';
@@ -43578,6 +43615,18 @@ var qrcode = function() {
       var guests = (x.invites || []).map(function (g) { var prev = reg && (reg.guests || []).filter(function (z) { return normalizeName(z.name) === normalizeName(g.name); })[0]; return { name: g.name, isChild: !!g.isChild, price: prev && typeof prev.price === 'number' ? prev.price : (g.isChild ? p.childGuest : p.adultGuest) }; });
       var need = 1 + guests.length, used = outingPlacesUsed(o, reg ? reg.id : null);
       var full = o.capacity && used + need > o.capacity ? '\n\n⚠️ Sortie complète : ' + used + ' / ' + o.capacity + ' places déjà prises, il en faut ' + need + '.' : '';
+      window.__v8Wait = 0;
+      if (full && !reg && d.type === 'sortie') {
+        if (await uiConfirm('« ' + o.name + ' » est complète (' + used + ' / ' + o.capacity + ' places).\n\nMettre ' + who + ' en liste d\'attente (position ' + ((o.waitlist || []).length + 1) + ') ?\nL\'appli vous préviendra dès qu\'une place se libère.')) {
+          if (!o.waitlist) o.waitlist = [];
+          if (!o.waitlist.some(function (w) { return w.employeeId === e.id; })) o.waitlist.push({ id: generateUniqueId(), employeeId: e.id, guests: guests.map(function (g) { return { name: g.name, isChild: g.isChild }; }), note: 'Demande depuis son espace' + (x.note ? ' : ' + x.note : ''), addedAt: new Date().toISOString() });
+          window.__v8Wait = o.waitlist.map(function (w) { return w.employeeId; }).indexOf(e.id) + 1;
+          try { logAction('Création', 'registration', who + ' - ' + o.name + ' : liste d\'attente (demande en ligne)'); } catch (er) { }
+          await saveDB(); say('⏳ ' + who + ' est en liste d\'attente pour « ' + o.name + ' » (position ' + window.__v8Wait + ').', 'success'); return true;
+        }
+        if (!(await uiConfirm('Inscrire quand même ' + who + ' en dépassant la capacité ?'))) return false;
+        ask = false;
+      }
       if (ask && !(await uiConfirm((reg ? 'Accepter et modifier l\'inscription de ' : 'Accepter et inscrire ') + who + ' à « ' + o.name + ' » ?\n\n' + who + (guests.length ? ' + ' + guests.map(function (g) { return g.name + (g.isChild ? ' (enfant)' : ''); }).join(', ') : '') + full))) return false;
       if (reg) { reg.guests = guests; if (x.note) reg.note = (reg.note ? reg.note + ' · ' : '') + x.note; }
       else {
@@ -43624,6 +43673,7 @@ var qrcode = function() {
     if (statut === 'acceptée' && /^(sortie|materiel)/.test(d.type) && !done(d)) { if (!(await autoApply(d, true))) return; }
     if (statut === 'acceptée' && d.type === 'cv' && !done(d) && !(await uiConfirm('Le dossier de chèques vacances n\'est pas encore créé (il faut la part du CSE et les échéances).\n\nAccepter quand même et le créer ensuite avec « Créer le dossier (prérempli) » ?'))) return;
     try {
+      if (statut === 'acceptée' && window.__v8Wait && !msg.trim()) msg = 'Sortie complète : vous êtes en liste d\'attente (position ' + window.__v8Wait + '). Le CSE vous inscrira dès qu\'une place se libère.'; window.__v8Wait = 0;
       var j = await post('decision', { id: id, statut: statut, reponse: msg.trim(), prevenir: pv });
       d.statut = statut; d.reponse = msg.trim();
       try { logAction('Modification', 'employee', 'Demande en ligne ' + statut + ' : ' + d.nom + ' — ' + d.resume + (typeof getCurrentUserName === 'function' && getCurrentUserName() ? ' (par ' + getCurrentUserName() + ')' : '')); } catch (er) { }
@@ -43695,6 +43745,7 @@ var qrcode = function() {
       + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">🏖️ Chèques vacances</div><label class="flex items-center gap-2"><input type="checkbox" id="v70s-cv"' + (c.espaceCvOpen ? ' checked' : '') + '> Inscriptions ouvertes (bouton « S\'inscrire » dans l\'espace)</label><label class="flex items-center gap-2">Année des chèques vacances : <input id="v70s-cvy" type="number" min="2024" max="2100" class="w-24 p-1.5 bg-slate-50 border rounded-lg text-xs" value="' + E(cvCampYear()) + '"></label><p class="text-slate-500">Un salarié qui a déjà un dossier cette année-là (ou une demande en cours) ne peut pas en redemander.</p><textarea id="v70s-cvt" rows="2" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Texte affiché (ex. : inscriptions jusqu\'au 15 mars, montant de 100 à 600 €, participation du CSE selon le quotient familial…)">' + E(c.espaceCvText || '') + '</textarea></div>'
       + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">🛍️ Boutique / billetterie Swile</div><label class="flex items-center gap-2"><input type="checkbox" id="v70s-sw"' + (c.espaceSwileOn ? ' checked' : '') + '> Afficher le lien Swile dans l\'espace salarié (avec les boutons pour installer l\'appli Swile)</label><input id="v70s-swu" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Lien de la boutique Swile du CSE (copiez-le depuis Swile), facultatif" value="' + E(c.espaceSwileUrl || '') + '"><input id="v70s-swt" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Texte affiché (ex. : billets de cinéma, parcs, spectacles à prix CSE)" value="' + E(c.espaceSwileText || '') + '"></div>'
       + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">⛺ Matériel que les salariés peuvent réserver</div><p class="text-slate-500">Décochez le matériel réservé au CSE (micro, TPE, frigo…) : il n\'apparaît plus dans l\'espace salarié.</p><div class="flex flex-wrap gap-x-4 gap-y-1">' + (db.equipment || []).map(function (q) { return '<label class="flex items-center gap-1"><input type="checkbox" data-eq="' + q.id + '"' + (q.espaceHidden ? '' : ' checked') + '> ' + E(q.name) + '</label>'; }).join('') + '</div><input id="v70s-mat" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Info affichée (ex. : retrait le vendredi à la permanence)" value="' + E(c.espaceMatInfo || '') + '"></div>'
+      + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">🕚 Horaires de la permanence</div><input id="v70s-perm" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Le vendredi de 11h à 13h30" value="' + E(c.espacePermanence == null ? 'Le vendredi de 11h à 13h30' : c.espacePermanence) + '"><p class="text-slate-500">Affichés en haut de l\'espace salarié (accueil, billetterie, matériel). Laissez vide pour ne rien afficher.</p></div>'
       + '<div class="rounded-xl border p-3 space-y-2"><div class="font-bold">📄 Documents visibles par les salariés</div><p class="text-slate-500">Le fichier Drive doit être partagé « Tous les utilisateurs disposant du lien » pour s\'ouvrir chez le salarié.</p><input id="v70s-q" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Filtrer…"><div id="v70s-docs" class="max-h-56 overflow-y-auto divide-y border rounded-lg">'
       + (D.length ? D.map(function (d) { return '<label class="flex items-center gap-2 p-1.5" data-q="' + E(String(d.titre).toLowerCase()) + '"><input type="checkbox" data-d="' + E(d.id) + '"' + (ch.indexOf(d.id) >= 0 ? ' checked' : '') + '> <span>' + E(d.titre) + (d.date ? ' <span class="text-slate-400">' + E(fd(d.date)) + '</span>' : '') + '</span></label>'; }).join('') : '<p class="p-2 text-slate-500">Aucun document avec un lien.</p>') + '</div></div>'
       + '<details class="rounded-xl border p-3"><summary class="font-bold cursor-pointer">Adresse de la page des salariés</summary><input id="v70s-url" class="mt-2 w-full p-2 bg-slate-50 border rounded-lg text-xs" value="' + E(c.espaceUrl || '') + '" placeholder="' + E(pageUrl()) + '"><p class="text-slate-500 mt-1">Par défaut : le fichier « espace-salarie.html » mis sur GitHub à côté de l\'appli.</p></details>'
@@ -43704,7 +43755,7 @@ var qrcode = function() {
     document.getElementById('v70s-save').onclick = async function () {
       var was = !!c.espaceOn;
       c.espaceOn = document.getElementById('v70s-on').checked; c.espaceCvOpen = document.getElementById('v70s-cv').checked; c.espaceCvText = document.getElementById('v70s-cvt').value.trim();
-      c.espaceMatInfo = document.getElementById('v70s-mat').value.trim(); c.espaceUrl = document.getElementById('v70s-url').value.trim();
+      c.espaceMatInfo = document.getElementById('v70s-mat').value.trim(); var pe = document.getElementById('v70s-perm'); if (pe) c.espacePermanence = pe.value.trim(); c.espaceUrl = document.getElementById('v70s-url').value.trim();
       var vy = Number(document.getElementById('v70s-cvy').value) || 0; c.espaceCvYear = vy && vy !== cvAutoYear() ? vy : 0;
       c.espaceSwileOn = document.getElementById('v70s-sw').checked; c.espaceSwileUrl = document.getElementById('v70s-swu').value.trim(); c.espaceSwileText = document.getElementById('v70s-swt').value.trim();
       if (c.espaceSwileUrl && !/^https:\/\//.test(c.espaceSwileUrl)) { say('Le lien Swile doit commencer par https://', 'warning'); c.espaceSwileUrl = ''; }
@@ -43893,6 +43944,216 @@ var qrcode = function() {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', entry); else entry();
   setTimeout(entry, 4000); setTimeout(function () { if (!(typeof cseIsCseMember === 'function' && cseIsCseMember() && cfg().espaceOn)) return; cseIdeesFetch(true); }, 25000);
   try { if (new URLSearchParams(location.search).has('idees')) setTimeout(function () { cseIdees(); }, 5000); } catch (e) { }
+})();
+</script>
+
+<script id="v85-communication">
+/* V.8.5 — Communication avec les salariés (espace salarié) :
+   annonces (pour tous ou message personnel), agenda du CSE, sondages.
+   Données : db.comm = { annonces: [], agenda: [], sondages: [] }. Les votes sont gardés par le script Google. */
+(function () {
+  function E(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function say(m, t) { try { toast(m, t || 'info', { ms: 7000 }); } catch (e) { } }
+  function fd(d) { try { return formatDateDisplay(d); } catch (e) { return d; } }
+  function today() { return todayLocalISO(); }
+  function cfg() { db.config = db.config || {}; return db.config; }
+  function canSee() { return typeof cseIsCseMember === 'function' ? cseIsCseMember() : true; }
+  function C() { db.comm = db.comm || {}; ['annonces', 'agenda', 'sondages'].forEach(function (k) { if (!Array.isArray(db.comm[k])) db.comm[k] = []; }); return db.comm; }
+  function uid() { try { return String(generateUniqueId()); } catch (e) { return String(Date.now()); } }
+  function emp(id) { return (db.employees || []).filter(function (e) { return String(e.id) === String(id); })[0]; }
+  function nm(e) { try { return empName(e); } catch (er) { return ((e.firstname || '') + ' ' + (e.lastname || '')).trim(); } }
+  function iso(d) { try { var p = parseDateParts(d); return p ? p.y + '-' + String(p.m).padStart(2, '0') + '-' + String(p.d).padStart(2, '0') : ''; } catch (e) { return String(d || '').slice(0, 10); } }
+  async function save() { try { await saveDB(); } catch (e) { } try { if (window.cseEspaceOn && cseEspaceOn()) cseEspacePublish(true, true); } catch (e) { } }
+  var AG_TYPES = { reunion: ['🏛️', 'Réunion du CSE'], permanence: ['🕚', 'Permanence'], fermeture: ['🚫', 'Fermeture / pas de permanence'], evenement: ['🎉', 'Événement'] };
+
+  // ---------- Publication vers l'espace salarié ----------
+  window.cseEspacePubExtra = function (P) {
+    var c = C(), T = today();
+    P.annonces = c.annonces.filter(function (a) { return a.pour === 'tous' && (!a.fin || a.fin >= T); }).sort(function (a, b) { return (b.important ? 1 : 0) - (a.important ? 1 : 0) || String(b.at).localeCompare(String(a.at)); }).slice(0, 8)
+      .map(function (a) { return { id: a.id, titre: a.titre, texte: a.texte, lien: a.lien || '', important: !!a.important, date: String(a.at || '').slice(0, 10) }; });
+    var ag = c.agenda.filter(function (x) { return x.date >= T; }).map(function (x) { return { date: x.date, heure: x.heure || '', titre: x.titre, type: x.type || 'evenement', texte: x.texte || '' }; });
+    (db.outings || []).forEach(function (o) { var d = iso(o.date); if (!o.archived && d && d >= T && !o.espaceHidden) ag.push({ date: d, heure: '', titre: o.name, type: 'sortie', texte: o.location || '' }); });
+    if (cfg().commAgendaReunions !== false) (db.meetings || []).forEach(function (m) { if (m && m.date >= T) ag.push({ date: m.date, heure: m.time || '', titre: 'Réunion du CSE' + (m.type && m.type !== 'ordinaire' ? ' (' + m.type + ')' : ''), type: 'reunion', texte: '' }); });
+    P.agenda = ag.sort(function (a, b) { return (a.date + a.heure).localeCompare(b.date + b.heure); }).slice(0, 60);
+    P.sondages = c.sondages.filter(function (s) { return !s.closed && (!s.fin || s.fin >= T); }).map(function (s) {
+      var o = { id: s.id, question: s.question, choix: s.choix, multi: !!s.multi, anonyme: !!s.anonyme, fin: s.fin || '' };
+      if (s.montrer && s.res) o.res = { total: s.res.total, n: s.choix.map(function (_, i) { return s.res.n[i] || 0; }) };
+      return o;
+    });
+  };
+  function colisOf(e) {
+    var out = [];
+    (db.distributions || []).filter(function (d) { return !d.archived; }).forEach(function (d) {
+      var r; try { r = dsEligible(d).filter(function (x) { return String(x.emp.id) === String(e.id); })[0]; } catch (er) { r = null; }
+      if (!r) return; var m = d.marks || {}, at = function (k) { return m[k] ? String(m[k].at || '').slice(0, 10) : ''; };
+      out.push({ nom: d.name || 'Colis', date: d.date || '', moi: { remis: !!m[r.key], le: at(r.key) }, enfants: r.kids.map(function (k) { return { nom: k.c.name, age: k.age, remis: !!m[k.key], le: at(k.key) }; }) });
+    });
+    return out;
+  }
+  window.cseEspaceFicheExtra = function (f, e) {
+    try { var co = colisOf(e); if (co.length) f.colis = co; } catch (er) { }
+    var T = today(), L = C().annonces.filter(function (a) { return String(a.pour) === String(e.id) && (!a.fin || a.fin >= T); });
+    if (L.length) f.messages = L.map(function (a) { return { id: a.id, titre: a.titre, texte: a.texte, lien: a.lien || '', date: String(a.at || '').slice(0, 10) }; });
+  };
+
+  // ---------- Écran Communication ----------
+  var TAB = 'annonces';
+  window.cseComm = function (tab) {
+    if (!canSee()) { say('Réservé aux membres du CSE.', 'warning'); return; }
+    if (tab) TAB = tab;
+    var b = v59Modal('modal-v85-comm', 'Communication avec les salariés', 'fa-bullhorn');
+    b.innerHTML = '<div class="flex flex-wrap gap-2">' + [['annonces', 'fa-bullhorn', 'Annonces & messages'], ['agenda', 'fa-calendar-days', 'Agenda'], ['sondages', 'fa-square-poll-vertical', 'Sondages'], ['stats', 'fa-chart-simple', 'Consultations']].map(function (t) {
+      return '<button type="button" data-v85t="' + t[0] + '" class="px-3 py-2 rounded-xl text-xs font-bold border ' + (TAB === t[0] ? 'bg-brand-600 text-white border-brand-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50') + '"><i class="fa-solid ' + t[1] + ' mr-1"></i>' + t[2] + '</button>'; }).join('')
+      + (!(window.cseEspaceOn && cseEspaceOn()) ? '<span class="text-xs text-amber-700 font-semibold self-center">⚠️ Activez l\'espace salarié pour que les salariés le voient.</span>' : '') + '</div><div id="v85-body" class="space-y-3 mt-3"></div>';
+    b.querySelectorAll('[data-v85t]').forEach(function (x) { x.onclick = function () { cseComm(x.dataset.v85t); }; });
+    ({ annonces: rAnn, agenda: rAg, sondages: rSond, stats: rStats })[TAB]();
+  };
+  function inp(id, ph, v, type) { return '<input id="' + id + '" type="' + (type || 'text') + '" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="' + E(ph || '') + '" value="' + E(v || '') + '">'; }
+  var CARD = 'rounded-xl border border-slate-200 bg-white p-3';
+
+  function rAnn() {
+    var c = C(), T = today(), emps = (db.employees || []).filter(function (e) { return !e.exitDate || iso(e.exitDate) >= T; }).sort(function (a, b) { return nm(a).localeCompare(nm(b)); });
+    var h = '<div class="' + CARD + ' space-y-2"><div class="font-bold text-sm">Nouvelle annonce ou message</div>'
+      + '<select id="v85-pour" class="w-full p-2 bg-slate-50 border rounded-lg text-xs"><option value="tous">📣 Pour tous les salariés (en haut de leur accueil)</option>' + emps.map(function (e) { return '<option value="' + e.id + '">✉️ Message personnel pour ' + E(nm(e)) + '</option>'; }).join('') + '</select>'
+      + inp('v85-titre', 'Titre (ex. : Nouveaux billets Europa Park disponibles !)')
+      + '<textarea id="v85-texte" rows="3" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Votre message"></textarea>'
+      + '<div class="grid sm:grid-cols-2 gap-2">' + inp('v85-lien', 'Lien (facultatif) https://…') + '<label class="flex items-center gap-2 text-xs">Afficher jusqu\'au ' + inp('v85-fin', '', '', 'date') + '</label></div>'
+      + '<div class="flex flex-wrap gap-3 text-xs"><label class="flex items-center gap-1"><input type="checkbox" id="v85-imp"> ⭐ Important (mis en avant)</label><label class="flex items-center gap-1"><input type="checkbox" id="v85-mail"> Envoyer aussi par e-mail</label></div>'
+      + '<button type="button" class="' + V59_BTN + '" onclick="cseCommAnnSave()"><i class="fa-solid fa-paper-plane"></i> Publier</button></div>';
+    var L = c.annonces.slice().sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
+    h += L.length ? L.map(function (a) {
+      var exp = a.fin && a.fin < T, e = a.pour !== 'tous' && emp(a.pour);
+      return '<div class="' + CARD + (exp ? ' opacity-60' : '') + '"><div class="flex justify-between gap-2"><div><div class="font-bold text-sm">' + (a.important ? '⭐ ' : '') + E(a.titre || '(sans titre)') + '</div><div class="text-[11px] text-slate-500">' + (a.pour === 'tous' ? '📣 Tous les salariés' : '✉️ ' + E(e ? nm(e) : 'salarié') ) + ' · publié le ' + fd(String(a.at).slice(0, 10)) + (a.fin ? ' · jusqu\'au ' + fd(a.fin) + (exp ? ' (terminé)' : '') : '') + (a.mailAt ? ' · e-mail envoyé' : '') + '</div></div>'
+        + '<button type="button" class="text-rose-600 text-xs font-bold" onclick="cseCommDel(\'annonces\',\'' + a.id + '\')"><i class="fa-solid fa-trash"></i></button></div><div class="text-xs text-slate-700 whitespace-pre-line mt-1">' + E(a.texte) + '</div>' + (a.lien ? '<a class="text-xs text-brand-600 underline" href="' + E(a.lien) + '" target="_blank" rel="noopener">' + E(a.lien) + '</a>' : '') + '</div>';
+    }).join('') : '<p class="text-xs text-slate-500">Aucune annonce pour l\'instant.</p>';
+    document.getElementById('v85-body').innerHTML = h;
+  }
+  window.cseCommAnnSave = async function () {
+    var g = function (id) { return document.getElementById(id); };
+    var a = { id: uid(), pour: g('v85-pour').value, titre: g('v85-titre').value.trim(), texte: g('v85-texte').value.trim(), lien: g('v85-lien').value.trim(), fin: g('v85-fin').value, important: g('v85-imp').checked, at: new Date().toISOString() };
+    if (!a.titre && !a.texte) { say('Écrivez au moins un titre ou un message.', 'warning'); return; }
+    if (a.lien && !/^https?:\/\//i.test(a.lien)) a.lien = 'https://' + a.lien;
+    C().annonces.push(a); await save(); say(a.pour === 'tous' ? '📣 Annonce publiée dans l\'espace de tous les salariés.' : '✉️ Message publié dans l\'espace de ' + nm(emp(a.pour)) + '.', 'success');
+    if (g('v85-mail').checked) await mailAnn(a);
+    rAnn();
+  };
+  async function mailAnn(a) {
+    var dest = a.pour === 'tous' ? (db.employees || []).filter(function (e) { return e.email && (!e.exitDate || iso(e.exitDate) >= today()); }) : [emp(a.pour)].filter(function (e) { return e && e.email; });
+    if (!dest.length) { say('Aucune adresse e-mail pour ce message.', 'warning'); return; }
+    var link = ''; try { link = cseEspacePageUrl(); } catch (e) { }
+    var body = (a.texte || '') + (a.lien ? '\n\n' + a.lien : '') + '\n\nRetrouvez toutes les infos du CSE dans votre espace personnel (lien reçu par e-mail).\n\n' + (cfg().cseName || 'Le CSE');
+    var subj = a.titre || 'Message du CSE';
+    if (!(await uiConfirm('Envoyer cet e-mail depuis la boîte du CSE à ' + dest.length + ' personne(s) (en copie cachée) ?\n\nObjet : ' + subj + '\n\n' + body.slice(0, 600)))) return;
+    var addrs = dest.map(function (e) { return e.email; }), sent = 0;
+    try {
+      for (var i = 0; i < addrs.length; i += 80) { await cseEspacePost('mail', { bcc: addrs.slice(i, i + 80).join(','), subject: subj, body: body }); sent += Math.min(80, addrs.length - i); }
+      a.mailAt = new Date().toISOString(); await save(); say('E-mail envoyé à ' + sent + ' personne(s).', 'success');
+    } catch (e) { say('E-mail envoyé à ' + sent + ' personne(s) seulement : ' + e.message, 'error'); }
+  }
+  window.cseCommDel = async function (k, id) {
+    if (!(await uiConfirm('Supprimer cet élément ? Il disparaît aussi de l\'espace des salariés.'))) return;
+    C()[k] = C()[k].filter(function (x) { return String(x.id) !== String(id); }); await save(); cseComm();
+  };
+
+  function rAg() {
+    var c = C(), T = today();
+    var h = '<div class="' + CARD + ' space-y-2"><div class="font-bold text-sm">Ajouter à l\'agenda des salariés</div><p class="text-[11px] text-slate-500">Les sorties' + (cfg().commAgendaReunions !== false ? ' et les réunions du CSE' : '') + ' y sont ajoutées automatiquement.</p>'
+      + '<div class="grid sm:grid-cols-3 gap-2"><select id="v85-agt" class="p-2 bg-slate-50 border rounded-lg text-xs">' + Object.keys(AG_TYPES).map(function (k) { return '<option value="' + k + '">' + AG_TYPES[k][0] + ' ' + AG_TYPES[k][1] + '</option>'; }).join('') + '</select>' + inp('v85-agd', '', T, 'date') + inp('v85-agh', 'Heure (ex. 11h-13h30)') + '</div>'
+      + inp('v85-agti', 'Titre (ex. : Pas de permanence, Arbre de Noël…)') + inp('v85-agx', 'Détail (facultatif)')
+      + '<div class="flex flex-wrap gap-3 items-center"><button type="button" class="' + V59_BTN + '" onclick="cseCommAgSave()"><i class="fa-solid fa-plus"></i> Ajouter</button><label class="flex items-center gap-1 text-xs"><input type="checkbox" id="v85-agr"' + (cfg().commAgendaReunions !== false ? ' checked' : '') + ' onchange="db.config.commAgendaReunions=this.checked;cseCommSave()"> Montrer les dates des réunions du CSE</label></div></div>';
+    var L = c.agenda.slice().sort(function (a, b) { return (a.date + (a.heure || '')).localeCompare(b.date + (b.heure || '')); });
+    h += L.length ? L.map(function (x) { var t = AG_TYPES[x.type] || AG_TYPES.evenement; return '<div class="' + CARD + (x.date < T ? ' opacity-60' : '') + ' flex justify-between gap-2"><div><div class="font-bold text-sm">' + t[0] + ' ' + E(x.titre || t[1]) + '</div><div class="text-[11px] text-slate-500">' + fd(x.date) + (x.heure ? ' · ' + E(x.heure) : '') + ' · ' + t[1] + (x.texte ? ' · ' + E(x.texte) : '') + '</div></div><button type="button" class="text-rose-600 text-xs font-bold" onclick="cseCommDel(\'agenda\',\'' + x.id + '\')"><i class="fa-solid fa-trash"></i></button></div>'; }).join('') : '<p class="text-xs text-slate-500">Rien d\'ajouté à la main pour l\'instant.</p>';
+    document.getElementById('v85-body').innerHTML = h;
+  }
+  window.cseCommSave = function () { save(); };
+  window.cseCommAgSave = async function () {
+    var g = function (id) { return document.getElementById(id).value.trim(); }, ty = g('v85-agt');
+    var x = { id: uid(), type: ty, date: g('v85-agd'), heure: g('v85-agh'), titre: g('v85-agti') || AG_TYPES[ty][1], texte: g('v85-agx') };
+    if (!x.date) { say('Choisissez une date.', 'warning'); return; }
+    C().agenda.push(x); await save(); say('Ajouté à l\'agenda des salariés.', 'success'); rAg();
+  };
+
+  function rSond() {
+    var c = C(), T = today();
+    var h = '<div class="' + CARD + ' space-y-2"><div class="font-bold text-sm">Nouveau sondage</div>' + inp('v85-sq', 'Question (ex. : Quelle sortie pour le printemps ?)')
+      + '<textarea id="v85-sc" rows="4" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Un choix par ligne&#10;Europa Park&#10;Karting&#10;Bowling"></textarea>'
+      + '<div class="flex flex-wrap gap-3 items-center text-xs"><label class="flex items-center gap-1">Jusqu\'au ' + inp('v85-sf', '', '', 'date') + '</label><label class="flex items-center gap-1"><input type="checkbox" id="v85-sa" checked> 🔒 Anonyme</label><label class="flex items-center gap-1"><input type="checkbox" id="v85-sm"> Plusieurs choix possibles</label><label class="flex items-center gap-1"><input type="checkbox" id="v85-sr"> Montrer les résultats aux salariés</label></div>'
+      + '<button type="button" class="' + V59_BTN + '" onclick="cseCommSondSave()"><i class="fa-solid fa-square-poll-vertical"></i> Publier le sondage</button>'
+      + ' <button type="button" class="' + V59_BTN + '" onclick="cseCommRes()"><i class="fa-solid fa-rotate"></i> Actualiser les résultats</button></div>';
+    var L = c.sondages.slice().sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
+    h += L.length ? L.map(function (s) {
+      var open = !s.closed && (!s.fin || s.fin >= T), r = s.res || { total: 0, n: [], noms: [] }, tot = r.total || 0;
+      return '<div class="' + CARD + '"><div class="flex justify-between gap-2"><div><div class="font-bold text-sm">' + E(s.question) + '</div><div class="text-[11px] text-slate-500">' + (open ? '🟢 Ouvert' : '⚪ Terminé') + (s.fin ? ' · jusqu\'au ' + fd(s.fin) : '') + ' · ' + (s.anonyme ? '🔒 anonyme' : 'avec les noms') + (s.multi ? ' · plusieurs choix' : '') + ' · ' + tot + ' vote(s)' + (s.resAt ? ' (au ' + new Date(s.resAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) + ')' : '') + '</div></div>'
+        + '<div class="flex gap-2 text-xs font-bold">' + (open ? '<button type="button" class="text-slate-600" onclick="cseCommClose(\'' + s.id + '\')">Clore</button>' : '') + '<button type="button" class="text-rose-600" onclick="cseCommDel(\'sondages\',\'' + s.id + '\')"><i class="fa-solid fa-trash"></i></button></div></div>'
+        + '<div class="space-y-1 mt-2">' + s.choix.map(function (ch, i) { var n = r.n[i] || 0, pc = tot ? Math.round(n * 100 / tot) : 0; return '<div class="text-xs"><div class="flex justify-between"><span>' + E(ch) + '</span><b>' + n + ' · ' + pc + ' %</b></div><div class="h-2 bg-slate-100 rounded"><div class="h-2 bg-brand-600 rounded" style="width:' + pc + '%"></div></div></div>'; }).join('') + '</div>'
+        + (!s.anonyme && (r.noms || []).length ? '<details class="mt-2 text-xs"><summary class="cursor-pointer text-slate-600 font-semibold">Qui a voté quoi</summary>' + r.noms.map(function (v) { return '<div>' + E(v.nom) + ' : ' + v.c.map(function (i) { return E(s.choix[i]); }).join(', ') + '</div>'; }).join('') + '</details>' : '') + '</div>';
+    }).join('') : '<p class="text-xs text-slate-500">Aucun sondage pour l\'instant.</p>';
+    document.getElementById('v85-body').innerHTML = h;
+  }
+  window.cseCommSondSave = async function () {
+    var g = function (id) { return document.getElementById(id); };
+    var ch = g('v85-sc').value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 12);
+    var s = { id: uid(), question: g('v85-sq').value.trim(), choix: ch, fin: g('v85-sf').value, anonyme: g('v85-sa').checked, multi: g('v85-sm').checked, montrer: g('v85-sr').checked, at: new Date().toISOString() };
+    if (!s.question || ch.length < 2) { say('Écrivez la question et au moins 2 choix (un par ligne).', 'warning'); return; }
+    C().sondages.push(s); await save(); say('Sondage publié dans l\'espace des salariés. Pensez à mettre à jour le script Google (V.8.5) pour recevoir les votes.', 'success'); rSond();
+  };
+  window.cseCommClose = async function (id) { var s = C().sondages.filter(function (x) { return String(x.id) === String(id); })[0]; if (!s) return; s.closed = true; await save(); rSond(); };
+  window.cseCommRes = async function (silent) {
+    try {
+      var j = await cseEspacePost('sondages', {}); var R = j.resultats || {}, ch = false;
+      C().sondages.forEach(function (s) { var r = R[String(s.id)]; if (!r) return; var n = s.choix.map(function () { return 0; }); (r.choix || []).forEach(function (c) { (c || []).forEach(function (i) { if (n[i] != null) n[i]++; }); }); s.res = { total: r.total || 0, n: n, noms: s.anonyme ? [] : (r.noms || []) }; s.resAt = new Date().toISOString(); ch = true; });
+      if (ch) await save(); if (!silent) say('Résultats à jour.', 'success');
+      if (document.getElementById('v85-body') && TAB === 'sondages') rSond();
+    } catch (e) { if (!silent) say(/inconnue/i.test(e.message) ? 'Le script Google n\'a pas encore la mise à jour V.8.5 (sondages) : recopiez-le puis redéployez.' : 'Résultats indisponibles : ' + e.message, 'warning'); }
+  };
+
+  // ---------- Statistiques de consultation ----------
+  var VIS = null, VF = 'jamais';
+  function rStats() {
+    var body = document.getElementById('v85-body');
+    if (!VIS) { body.innerHTML = '<p class="text-xs text-slate-500">Chargement des consultations…</p>'; cseCommVis(); return; }
+    if (VIS.error) { body.innerHTML = '<p class="text-xs text-amber-700 font-semibold">' + E(VIS.error) + '</p><button type="button" class="' + V59_BTN + '" onclick="cseCommVis()"><i class="fa-solid fa-rotate"></i> Réessayer</button>'; return; }
+    var T = today(), now = Date.now(), L = (db.employees || []).filter(function (e) { return e.active !== false && (!e.exitDate || iso(e.exitDate) >= T); }).sort(function (a, b) { return nm(a).localeCompare(nm(b)); });
+    var rows = L.map(function (e) { var v = e.espaceToken && VIS.v[e.espaceToken]; return { e: e, v: v, j: v ? Math.floor((now - Date.parse(v.dernier)) / 864e5) : null }; });
+    var open = rows.filter(function (r) { return r.v; }), wk = rows.filter(function (r) { return r.v && r.j < 7; }), mo = rows.filter(function (r) { return r.v && r.j < 30; }), never = rows.filter(function (r) { return !r.v; }), tot = open.reduce(function (a, r) { return a + (r.v.n || 0); }, 0);
+    var pc = rows.length ? Math.round(open.length * 100 / rows.length) : 0;
+    var tile = function (t, v, sub, col) { return '<div class="rounded-xl border bg-white p-3"><div class="text-[11px] font-bold uppercase text-slate-500">' + t + '</div><div class="text-2xl font-extrabold" style="color:' + (col || '#0f172a') + '">' + v + '</div><div class="text-[11px] text-slate-500">' + sub + '</div></div>'; };
+    var h = '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">' + tile('Ont déjà ouvert', open.length + ' / ' + rows.length, pc + ' % des salariés', '#047857') + tile('Cette semaine', wk.length, 'ouvert depuis 7 jours') + tile('Ce mois-ci', mo.length, 'ouvert depuis 30 jours') + tile('Jamais ouvert', never.length, 'à relancer', never.length ? '#b91c1c' : '#047857') + '</div>'
+      + '<div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div class="h-3 bg-emerald-500" style="width:' + pc + '%"></div></div>'
+      + '<p class="text-[11px] text-slate-500">' + tot + ' ouverture(s) au total (une ouverture = une visite, comptée au plus une fois par demi-heure). Les comptes démarrent avec la mise à jour V.8.6 du script Google : les visites d\'avant ne sont pas connues.</p>'
+      + '<div class="flex flex-wrap gap-2 items-center">' + [['jamais', 'Jamais ouvert (' + never.length + ')'], ['ouvert', 'Ont ouvert (' + open.length + ')'], ['tous', 'Tous']].map(function (f) { return '<button type="button" data-vf="' + f[0] + '" class="px-3 py-1.5 rounded-lg text-xs font-bold border ' + (VF === f[0] ? 'bg-slate-800 text-white' : 'bg-white text-slate-600') + '">' + f[1] + '</button>'; }).join('')
+      + '<button type="button" class="' + V59_BTN + '" onclick="cseCommVis()"><i class="fa-solid fa-rotate"></i></button>' + (never.length ? '<button type="button" class="' + V59_BTN + '" onclick="cseEspaceLinks()"><i class="fa-solid fa-paper-plane"></i> Renvoyer les liens</button>' : '') + '</div>';
+    var show = rows.filter(function (r) { return VF === 'tous' || (VF === 'jamais' ? !r.v : !!r.v); }).sort(function (a, b) { return VF === 'ouvert' ? (a.j - b.j) : 0; });
+    h += '<div class="border rounded-xl divide-y max-h-[45vh] overflow-y-auto bg-white">' + (show.length ? show.map(function (r) {
+      var st = r.v ? (r.j === 0 ? 'aujourd\'hui' : r.j === 1 ? 'hier' : 'il y a ' + r.j + ' jours') : '';
+      return '<div class="flex items-center gap-2 p-2 text-xs"><div class="flex-1"><b>' + E(nm(r.e)) + '</b><div class="text-slate-500">' + (r.v ? 'Dernière visite ' + st + ' · ' + r.v.n + ' visite(s) · 1re le ' + fd(String(r.v.premier).slice(0, 10)) : (r.e.espaceSentAt ? 'Lien envoyé le ' + fd(String(r.e.espaceSentAt).slice(0, 10)) + ', jamais ouvert' : (r.e.email ? 'Lien pas encore envoyé' : 'Pas d\'e-mail : donnez-lui le lien ou le QR code'))) + '</div></div>'
+        + '<span class="px-2 py-0.5 rounded-full font-bold ' + (r.v ? (r.j < 30 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700') : 'bg-rose-100 text-rose-700') + '">' + (r.v ? (r.j < 30 ? 'Actif' : 'Ancien') : 'Jamais') + '</span>'
+        + (r.v ? '' : '<button type="button" class="' + V59_BTN + '" title="Copier son lien" onclick="cseEspaceCopy(' + r.e.id + ')"><i class="fa-solid fa-copy"></i></button><button type="button" class="' + V59_BTN + '" title="QR code" onclick="cseEspaceQr(' + r.e.id + ')"><i class="fa-solid fa-qrcode"></i></button>') + '</div>';
+    }).join('') : '<p class="p-3 text-xs text-slate-500">Personne dans cette liste.</p>') + '</div>';
+    body.innerHTML = h;
+    body.querySelectorAll('[data-vf]').forEach(function (x) { x.onclick = function () { VF = x.dataset.vf; rStats(); }; });
+  }
+  window.cseCommVis = async function () {
+    try { var j = await cseEspacePost('visites', {}); VIS = { v: j.visites || {} }; }
+    catch (e) { VIS = { error: /inconnue/i.test(e.message) ? 'Le script Google n\'a pas encore la mise à jour V.8.6 (consultations) : recopiez script-google-cse-v73.txt puis redéployez.' : 'Consultations indisponibles : ' + e.message }; }
+    if (document.getElementById('v85-body') && TAB === 'stats') rStats();
+  };
+
+  // ---------- Bouton d'accès ----------
+  function entry() {
+    if (!cfg().espaceOn || !canSee()) return;
+    var anchor = document.getElementById('v71-btn') || document.getElementById('v70-dem-btn');
+    if (anchor && !document.getElementById('v85-btn')) {
+      var bt = document.createElement('button'); bt.type = 'button'; bt.id = 'v85-btn'; bt.className = V59_BTN; bt.style.marginBottom = '8px'; bt.style.marginLeft = '6px';
+      bt.innerHTML = '<i class="fa-solid fa-bullhorn"></i> Communication'; bt.onclick = function () { cseComm(); };
+      anchor.insertAdjacentElement('afterend', bt);
+    }
+  }
+  if (typeof window.switchTab === 'function' && !window.switchTab.__v85) { var os = window.switchTab; window.switchTab = function () { var r = os.apply(this, arguments); try { entry(); } catch (e) { } return r; }; for (var k in os) window.switchTab[k] = os[k]; window.switchTab.__v85 = 1; }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', entry); else entry();
+  setTimeout(entry, 4500);
+  setTimeout(function () { try { if (canSee() && cfg().espaceOn && (db.comm && (db.comm.sondages || []).some(function (s) { return !s.closed; }))) cseCommRes(true); } catch (e) { } }, 30000);
+  try { if (new URLSearchParams(location.search).has('communication')) setTimeout(function () { cseComm(); }, 5000); } catch (e) { }
 })();
 </script>
 
