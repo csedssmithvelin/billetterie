@@ -267,7 +267,13 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
   }
   // ---------- Notifications sur le téléphone (Firebase) ----------
   var FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
-  function pushCfg() { return D && D.pub && D.pub.push && D.pub.push.cfg && D.pub.push.vapid ? D.pub.push : null; }
+  // Nettoie la configuration (un copier-coller peut ajouter des caractères invisibles qui bloquent Firebase).
+  function clean(v) { return String(v == null ? '' : v).replace(/[^A-Za-z0-9:._\/-]/g, ''); }
+  function pushCfg() {
+    var P = D && D.pub && D.pub.push; if (!(P && P.cfg && P.vapid)) return null;
+    var c = {}; Object.keys(P.cfg).forEach(function (k) { if (/^(apiKey|authDomain|projectId|storageBucket|messagingSenderId|appId)$/.test(k)) c[k] = clean(P.cfg[k]); });
+    return { cfg: c, vapid: String(P.vapid).replace(/[^A-Za-z0-9_-]/g, '') };
+  }
   function pushOk() { return 'Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window; }
   function pushKey() { return 'cse_push_' + String(T || 'demo').slice(0, 8); }
   function loadJs(u) { return new Promise(function (res, rej) { var x = document.createElement('script'); x.src = u; x.onload = res; x.onerror = function () { rej(new Error('Chargement impossible')); }; document.head.appendChild(x); }); }
@@ -343,7 +349,7 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
         (f.sorties || []).forEach(function (x) { if (x.aRegler > 0) PAY.push({ d: x.date, l: 'Sortie : ' + x.nom, m: x.aRegler, late: x.date < today(), t: 'sorties' }); });
         (f.achats || []).forEach(function (a) { if (!a.regle) PAY.push({ d: a.date, l: 'Billets : ' + a.desc, m: a.total || 0, late: true, t: 'achats' }); });
         PAY.sort(function (a, b) { return String(a.d).localeCompare(String(b.d)); });
-        if (PAY.length) h += '<div class="card" style="border-left:4px solid var(--warn)"><h2>💶 À régler</h2>' + PAY.map(function (x) { return '<div class="row" style="cursor:pointer" onclick="cseGo(\'' + x.t + '\')"><div class="l"><b>' + E(x.l) + '</b><div class="mute">' + (x.t === 'achats' ? 'Achat du ' : x.t === 'sorties' ? 'Sortie le ' : 'Avant le ') + fd(x.d) + '</div></div><div class="r">' + eur(x.m) + '<br>' + (x.late ? '<span class="tag bad">' + (x.t === 'cv' ? 'en retard' : 'à régler') + '</span>' : '<span class="tag warn">à venir</span>') + '</div></div>'; }).join('')
+        if (PAY.length) h += '<div class="card" style="border-left:4px solid var(--warn)"><h2>💶 À régler</h2>' + PAY.map(function (x) { return '<div class="row" style="cursor:pointer" onclick="cseGo(\'' + x.t + '\')"><div class="l"><b>' + E(x.l) + '</b><div class="mute">' + (x.d ? (x.t === 'achats' ? 'Achat du ' : x.t === 'sorties' ? 'Sortie le ' : 'Avant le ') + fd(x.d) : 'Date à voir avec le CSE') + '</div></div><div class="r">' + eur(x.m) + '<br>' + (x.late ? '<span class="tag bad">' + (x.t === 'cv' ? 'en retard' : 'à régler') + '</span>' : '<span class="tag warn">à venir</span>') + '</div></div>'; }).join('')
           + '<div class="row"><div class="l"><b>Total</b><div class="mute">Billets, sorties et chèques vacances · à régler à la permanence du CSE</div></div><div class="r">' + eur(PAY.reduce(function (a, x) { return a + x.m; }, 0)) + '</div></div></div>';
         h += sondCards();
         h += pushCard();
@@ -619,7 +625,7 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
   };
   (function () { var b = $('h-inst'); if (!b || STANDALONE || PUBLIC) return; b.hidden = false; b.onclick = function () { if (PROMPT) cseInstall('android'); else cseInstall(IOS ? 'ios' : (/android/i.test(navigator.userAgent) ? 'android' : 'choix')); }; })();
   // Service worker propre à l'espace (copie hors ligne + notifications Firebase).
-  function swUrl() { var c = D && D.pub && D.pub.push && D.pub.push.cfg; return 'espace-sw.js' + (c ? '?cfg=' + encodeURIComponent(JSON.stringify(c)) : ''); }
+  function swUrl() { var c = pushCfg() && pushCfg().cfg; return 'espace-sw.js' + (c ? '?cfg=' + encodeURIComponent(JSON.stringify(c)) : ''); }
   function swReg() { return navigator.serviceWorker.register(swUrl(), { scope: 'espace-salarie.html' }); }
   // (enregistré après le chargement de l'espace, avec la configuration des notifications)
 

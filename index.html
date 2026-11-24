@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"pphsjvQwoBZdv8MzXAkh4g==","iv":"o77py1mWsAe2eDcJ","rev":"boot","lastModified":"2026-11-24T02:40:17.429Z","by":"Michaël GROSJEAN","data":"pGz2opjsn24rZcaz+PS8jHATT52kJqMS/qqgEgXClm9LuHLc0iYE2otG8RYZIQ6Q6d6G1vvfpbqG4rEYFdY/hQ=="},"at":"2026-11-24T02:40:17.475Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"1GmP7sgJPIBD4tzuY9jmMw==","iv":"Ffo4dp92QVlvgL5T","rev":"boot","lastModified":"2026-11-24T02:59:17.258Z","by":"Michaël GROSJEAN","data":"S2zSYNQbfePTKfdq7noPFiCb1JiqbQZ9px5QpHSjdlbt647pJrSSEkO7u30+fhp73Q4mhR3S99NSdnlgmQhojw=="},"at":"2026-11-24T02:59:17.306Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6939,7 +6939,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.8.7";
+        const APP_VERSION = "V.8.8";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21722,6 +21722,9 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.8.8', date: '2026-11-24', items: [
+                "🔧 Notifications : la configuration Firebase est nettoyée des caractères invisibles ajoutés par un copier-coller (erreur « non ISO-8859-1 code point »)."
+            ] },
             { v: 'V.8.7', date: '2026-11-24', items: [
                 "📲 Notifications sur le téléphone (Firebase) : les salariés les activent depuis leur espace. Ils sont prévenus quand le CSE répond à leur demande, d'un message personnel, des annonces et des sondages ; les membres du CSE, des nouvelles demandes et idées. Réglage : Communication › Notifications. Nécessite le script Google V.8.7 (script-google-cse-v74.txt) et le fichier espace-sw.js sur GitHub."
             ] },
@@ -43973,7 +43976,7 @@ var qrcode = function() {
   window.cseEspacePubExtra = function (P) {
     var c = C(), T = today();
     try { P.pageUrl = cseEspacePageUrl(); } catch (e) { }
-    var pc = cfg().pushCfg; if (pc && pc.apiKey && pc.messagingSenderId && cfg().pushVapid) P.push = { cfg: pc, vapid: cfg().pushVapid };
+    var pc = cfg().pushCfg; if (pc && pc.apiKey && pc.messagingSenderId && cfg().pushVapid) { var pcc = {}; Object.keys(pc).forEach(function (k) { pcc[k] = String(pc[k] || '').replace(/[^A-Za-z0-9:._\/-]/g, ''); }); P.push = { cfg: pcc, vapid: String(cfg().pushVapid).replace(/[^A-Za-z0-9_-]/g, '') }; }
     P.annonces = c.annonces.filter(function (a) { return a.pour === 'tous' && (!a.fin || a.fin >= T); }).sort(function (a, b) { return (b.important ? 1 : 0) - (a.important ? 1 : 0) || String(b.at).localeCompare(String(a.at)); }).slice(0, 8)
       .map(function (a) { return { id: a.id, titre: a.titre, texte: a.texte, lien: a.lien || '', important: !!a.important, date: String(a.at || '').slice(0, 10) }; });
     var ag = c.agenda.filter(function (x) { return x.date >= T; }).map(function (x) { return { date: x.date, heure: x.heure || '', titre: x.titre, type: x.type || 'evenement', texte: x.texte || '' }; });
@@ -44153,7 +44156,7 @@ var qrcode = function() {
     try { var j = await cseEspacePost('push', { cibles: cibles, titre: titre, texte: texte || '' }); say('📲 Notification envoyée sur ' + (j.envoyes || 0) + ' téléphone(s).', 'success'); }
     catch (e) { say('Notification non envoyée : ' + (/inconnue/i.test(e.message) ? 'le script Google n\'a pas la mise à jour V.8.7.' : e.message), 'warning'); }
   }
-  function parseFb(txt) { var o = {}, re = /(apiKey|authDomain|projectId|storageBucket|messagingSenderId|appId)\s*["']?\s*:\s*["']([^"']+)["']/g, m; while ((m = re.exec(String(txt || '')))) o[m[1]] = m[2]; return o; }
+  function parseFb(txt) { var o = {}, t = String(txt || '').replace(/[\u200B-\u200F\u2028-\u202F\u2060\uFEFF\u00A0]/g, ' ').replace(/[\u201C\u201D\u00AB\u00BB]/g, '"').replace(/[\u2018\u2019]/g, "'"), re = /(apiKey|authDomain|projectId|storageBucket|messagingSenderId|appId)\s*["']?\s*:\s*["']([^"']+)["']/g, m; while ((m = re.exec(t))) o[m[1]] = m[2].replace(/[^A-Za-z0-9:._\/-]/g, ''); return o; }
   function rPush() {
     var c = cfg(), pc = c.pushCfg || {};
     var h = '<div class="' + CARD + ' space-y-2"><div class="font-bold text-sm">📲 Notifications sur les téléphones (Firebase)</div>'
@@ -44167,7 +44170,7 @@ var qrcode = function() {
     document.getElementById('v85-body').innerHTML = h;
   }
   window.cseCommPushSave = async function () {
-    var o = parseFb(document.getElementById('v85-fbc').value), v = document.getElementById('v85-fbv').value.trim().replace(/\s+/g, '');
+    var o = parseFb(document.getElementById('v85-fbc').value), v = document.getElementById('v85-fbv').value.replace(/[^A-Za-z0-9_-]/g, '');
     if (document.getElementById('v85-fbc').value.trim() && !(o.apiKey && o.messagingSenderId && o.appId && o.projectId)) { say('Bloc firebaseConfig incomplet : copiez-le en entier (apiKey, projectId, messagingSenderId, appId).', 'warning'); return; }
     if (v && !/^[A-Za-z0-9_-]{60,120}$/.test(v)) { say('La clé Web Push ne ressemble pas à la bonne (longue suite de lettres commençant souvent par B).', 'warning'); return; }
     if (o.apiKey) cfg().pushCfg = o; else delete cfg().pushCfg; if (v) cfg().pushVapid = v; else delete cfg().pushVapid;
