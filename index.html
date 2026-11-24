@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"2E3R0pWV15bRzovIUn1adw==","iv":"ZkgWZzn7JMqMcoUD","rev":"boot","lastModified":"2026-11-24T21:36:55.841Z","by":"Michaël GROSJEAN","data":"WEASZkwLPL41P2JWtZQEO/0gRa1JiOCP4Ao/E0cFEHX5gQ8UfHWT0HD5B2caVrlpVfmpyGRJF2VrWH/zlyFLkw=="},"at":"2026-11-24T21:36:55.878Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"I1h3osY8HeB9BxbXpEx3Bg==","iv":"wYrYh66/o0XVcOCb","rev":"boot","lastModified":"2026-11-24T21:49:33.439Z","by":"Michaël GROSJEAN","data":"jia+lf8K9dI0QB+SNOmT88mlwANNXGQoBvYbo74MSyc5RxQ60ylpPD63oWQq2oJ1gP4Nnl+biOO7LCHB1M0XsA=="},"at":"2026-11-24T21:49:33.472Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -46410,6 +46410,8 @@ var qrcode = function() {
       return r;
     };
   }
+  // Mon espace : le salarié est prévenu (chèque de caution à apporter à la permanence, signature au retrait)
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) { if (prev) { try { prev(P); } catch (er) { } } try { var R = ccfg(); P.caution = R.on ? { montant: R.montant, jours: R.jours } : null; } catch (er) { } }; })();
   // Réglages : montant, délais, adresse du CSE (pour les lettres)
   window.cseCautionSet = function (k, v) { var c = cfg(); if (k === 'on') c.cautionOn = !!v; else if (k === 'montant') c.cautionMontant = Math.max(1, parseFloat(String(v).replace(',', '.')) || 100); else if (k === 'jours') c.cautionJours = Math.max(1, parseInt(v, 10) || 7); else if (k === 'delai') c.cautionDelai = Math.max(1, parseInt(v, 10) || 8); else if (k === 'adresse') c.cseAdresse = String(v || '').trim(); save(); cautionCard(); };
   function cautionCard() {

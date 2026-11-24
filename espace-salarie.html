@@ -161,7 +161,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         foyer: 4, pris: { 11: 4, 12: 2 }, cinePris: 4,
         idees: [{ date: plus(-20), type: 'sortie', texte: 'Pourquoi pas une sortie au parc Walygator l\'été prochain ?', statut: 'Retenue', reponse: 'Bonne idée, on la met au programme 2027 !' }],
         prets: [{ debut: plus(5), fin: plus(7), items: '4 x Tables pliantes, 8 x Bancs', statut: 'Réservé' }, { debut: d(8, 20), fin: d(8, 22), items: '1 x Chapiteau 3x6', statut: 'Rendu' }] },
-      pub: { cse: { nom: 'CSE (exemple)', email: '' }, swile: { url: '', texte: 'Cinéma, parcs, spectacles : vos billets à prix CSE, avec la subvention déjà déduite.' }, cv: { ouvert: true, texte: 'Inscriptions ouvertes jusqu\'au 15 mars. Montant de 100 € à 600 €, participation du CSE selon le quotient familial.' },
+      pub: { caution: { montant: 100, jours: 7 }, cse: { nom: 'CSE (exemple)', email: '' }, swile: { url: '', texte: 'Cinéma, parcs, spectacles : vos billets à prix CSE, avec la subvention déjà déduite.' }, cv: { ouvert: true, texte: 'Inscriptions ouvertes jusqu\'au 15 mars. Montant de 100 € à 600 €, participation du CSE selon le quotient familial.' },
         sorties: [{ id: 901, nom: 'Marché de Noël de Strasbourg', date: plus(12), lieu: 'Strasbourg', notes: 'Départ en car à 8 h du parking de l\'usine.', limite: plus(5), prix: { salarie: 15, adulte: 20, enfant: 10 }, places: 50, restantes: 12 },
           { id: 902, nom: 'Karting en famille', date: plus(26), lieu: 'Épinal', notes: '', limite: plus(18), prix: { salarie: 10, adulte: 25, enfant: 15 }, places: 30, restantes: 8 },
           { id: 903, nom: 'Concert au Zénith', date: plus(40), lieu: 'Nancy', notes: '', limite: plus(30), prix: { salarie: 20, adulte: 35, enfant: 35 }, places: 20, restantes: 0 }],
@@ -545,6 +545,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try { await api('POST', { action: 'deleg-profil', profil: o }); Object.assign(D.deleg.profil, o); dgRender(); say('dg-pmsg', '✔ Réglages enregistrés.', 'ok'); } catch (e) { say('dg-pmsg', e.message, 'bad'); }
   };
 
+  // --- V.9.4 : prêt de matériel : chèque de caution (sauf membres du CSE) et signature au retrait
+  function cautionTxt(court) {
+    var C = D && D.pub && D.pub.caution, f = (D && D.fiche) || {}, perm = (D.pub && D.pub.permanence) || 'à la permanence du CSE';
+    if (!C) return '';
+    if (f.membreCse) return court ? '' : '<p class="mute">Membre du CSE : pas de chèque de caution. Vous signerez la fiche de prêt au retrait.</p>';
+    return '<div class="msg warn" style="margin:8px 0"><b>💶 Chèque de caution de ' + eur(C.montant) + '</b> à apporter pour retirer le matériel, à la permanence du CSE (' + E(perm.charAt(0).toLowerCase() + perm.slice(1)) + '). '
+      + 'Au retrait, vous signerez la fiche de prêt (sur le téléphone ou l\'ordinateur du CSE). Le chèque vous est rendu quand vous rapportez le matériel'
+      + (court ? '.' : ' ; en cas de retard de plus de ' + (C.jours || 7) + ' jours sans prévenir le CSE, il peut être encaissé après une lettre de rappel.') + '</div>';
+  }
   // --- V.9.4 : mes documents (reçus, documents signés…) : PDF rangés par le CSE, ouverts en lecture
   function docsCard() {
     var L = (D.fiche || {}).documents || [];
@@ -670,6 +679,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         var cvDue = 0; (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut !== 'payé' && e.statut !== 'reçu') cvDue += e.montant || 0; }); });
         var open = (P.sorties || []).filter(function (o) { return !(f.sorties || []).some(function (x) { return x.outingId === o.id; }); });
         h += signCards();
+        if ((f.prets || []).some(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }) && cautionTxt(true)) h += '<div class="card"><h2>⛺ Matériel à retirer</h2>' + (f.prets || []).filter(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }).map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div></div>'; }).join('') + cautionTxt(true) + '</div>';
         h += annCards();
         h += colisCards();
         h += avisCards();
@@ -707,7 +717,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           + '<div class="row"><div class="l"><b>Total ' + YEAR + '</b></div><div class="r">' + eur(Y.reduce(function (s, a) { return s + a.total; }, 0)) + '</div></div>' : '<p class="empty">Aucun achat en ' + YEAR + '.</p>';
         h += '</div>';
         var P2 = f.prets || [];
-        if (P2.length) h += '<div class="card"><h2>⛺ Mes emprunts de matériel</h2>' + P2.map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div><div class="r"><span class="tag ' + (p.statut === 'Rendu' ? 'ok' : p.statut === 'Emprunté' ? 'warn' : 'info') + '">' + E(p.statut) + '</span></div></div>'; }).join('') + '</div>';
+        if (P2.length) h += '<div class="card"><h2>⛺ Mes emprunts de matériel</h2>' + (P2.some(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }) ? cautionTxt(true) : '') + P2.map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div><div class="r"><span class="tag ' + (p.statut === 'Rendu' ? 'ok' : p.statut === 'Emprunté' ? 'warn' : 'info') + '">' + E(p.statut) + '</span></div></div>'; }).join('') + '</div>';
       },
       offert: function () {
         var L = f.offert || [], ys = yearsOf(L, 'date'), Y = L.filter(function (a) { return String(a.date).slice(0, 4) === YEAR; });
@@ -751,7 +761,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         h += '<div class="card"><h2>⛺ Réserver du matériel</h2><p class="mute">Tables, bancs, chapiteaux… Choisissez vos dates : les quantités libres s\'affichent. Le CSE valide votre réservation.</p>'
           + '<div class="grid2"><div><label>Du</label><input type="date" id="m-d" value="' + today() + '" min="' + today() + '"></div><div><label>Au</label><input type="date" id="m-f" value="' + today() + '" min="' + today() + '"></div></div>'
           + '<div id="m-list" style="margin-top:8px"></div><label>Remarque (facultatif)</label><textarea id="m-note" placeholder="Pour quelle occasion, heure de retrait…"></textarea>'
-          + '<div style="margin-top:12px"><button class="btn p" id="m-go">Envoyer ma demande</button></div><div id="m-msg"></div></div>';
+          + cautionTxt(false) + '<div style="margin-top:12px"><button class="btn p" id="m-go">Envoyer ma demande</button></div><div id="m-msg"></div></div>';
         if (P.materielInfo) h += '<p class="mute">' + E(P.materielInfo) + '</p>';
         h += permCard();
         h += '<div class="card"><h2>📅 Calendrier des réservations</h2><p class="mute">Touchez un jour pour voir ce qui est déjà réservé et ce qui reste libre.</p><div class="calnav"><button class="btn s" id="c-prev">‹</button><b id="c-mois"></b><button class="btn s" id="c-next">›</button></div><div class="cal" id="c-grid"></div>'
