@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Gr8eXsM2yoFM/rV9szoKLg==","iv":"9E/nVmnhVGA39A2v","rev":"boot","lastModified":"2026-11-24T19:11:51.920Z","by":"Michaël GROSJEAN","data":"k2/wQa7E8n08wyb6+cAFEJeUZ3SYvHc/abak1322YrSvHzN525asqNstGmYL+S6Szq3hxpFhDCHLSQEnU0TRBw=="},"at":"2026-11-24T19:11:51.952Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Mu5/TBDGQFshAqZQEfijIw==","iv":"eeS2Vu0i3BWBfgjt","rev":"boot","lastModified":"2026-11-24T19:49:57.843Z","by":"Michaël GROSJEAN","data":"U9ic/fx4TGNsd6doy04UIGll91ALRRHKbg8aKpsHcN8EQwNC/gcvVxu7tq0HDcbPTlZ07u2oIIhp64UJWGMvJQ=="},"at":"2026-11-24T19:49:57.874Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6939,7 +6939,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.9.2";
+        const APP_VERSION = "V.9.3";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21722,6 +21722,11 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.9.3', date: '2026-11-24', items: [
+                "📄 Documents (reçu, reçu de billetterie, attestation, état de caisse, remboursement, inscription, fiche de prêt…) : le bouton « Envoyer / ranger sur le Drive » envoie le document au salarié depuis la boîte du CSE avec le PDF joint tout seul, et le range dans Mon Drive › CSE › CSE - Documents › année › catégorie (ex. 2026 › 1 - Paiements et caisse › Reçus de paiement ; une sortie = un dossier). Plus rien à copier ni à joindre. Script v79 nécessaire.",
+                "⚙️ Pour chaque type de document : « demander à chaque fois », « à l'impression : envoyer + ranger automatiquement » ou « à l'impression : ranger sur le Drive seulement ».",
+                "🗂️ La fiche du salarié liste ses documents envoyés et rangés, avec le lien vers le PDF. Les signatures enregistrées (trésorier, élus) restent mises automatiquement sur les documents."
+            ] },
             { v: 'V.9.2', date: '2026-11-24', items: [
                 "🆕 L'appli installée vérifie toute seule s'il y a une nouvelle version sur GitHub : un bandeau « Nouvelle version, mettre à jour ? » apparaît, un appui et c'est à jour (vos données sont gardées). Pareil pour Mon espace.",
                 "🗂️ Sauvegarde chiffrée chaque semaine dans Mon Drive › CSE › CSE - Sauvegardes (26 dernières), par le script Google : personne n'a besoin de se connecter à Google. « Revenir en arrière » liste les sauvegardes et remet l'appli comme à cette date (Paramètres › Sauvegardes). Script v78 nécessaire.",
@@ -45401,6 +45406,164 @@ var qrcode = function() {
     });
   }
   (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try { if (window.cseEmpIsCse && cseEmpIsCse(e)) f.reunions = reunionsPub(); } catch (er) { } }; })();
+})();
+</script>
+
+<script id="v93-documents">
+/* V.9.3 : documents de l'appli (reçus, attestations, états de caisse…) envoyés par e-mail depuis la boîte du CSE,
+   PDF joint tout seul, et rangés dans Mon Drive › CSE › CSE - Documents › année › catégorie. */
+(function () {
+  function E(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function cfg() { db.config = db.config || {}; return db.config; }
+  function $(id) { return document.getElementById(id); }
+  function today() { return todayLocalISO(); }
+  function scriptOk() { return typeof driveCfg === 'function' && !!driveCfg(); }
+  function qui() { try { return getCurrentUserName() || ''; } catch (e) { return ''; } }
+  function say(m, t) { try { toast(m, t || 'info', { ms: 7000 }); } catch (e) { } }
+  var BTN = 'px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-lg';
+  var BTNP = 'px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs';
+
+  // ---------- Où ranger chaque document ----------
+  var PAY = '1 - Paiements et caisse', SOR = '2 - Sorties', PRE = '3 - Prêts de matériel', CV = '4 - Chèques vacances', SAL = '5 - Salariés', BIL = '6 - Bilans et budget';
+  var RANG = { receipt: [PAY, 'Reçus de paiement'], ticket: [PAY, 'Reçus de billetterie'], attest: [PAY, 'Attestations de paiement'], cashreport: [PAY, 'États de caisse'], refund: [PAY, 'Remboursements'], payOrder: [PAY, 'Ordres de paiement'],
+    outingReg: [SOR], presence: [SOR], loanSheet: [PRE, 'Fiches de prêt'], loanReturn: [PRE, 'Bons de restitution'], cvRequest: [CV, 'Demandes'], empSummary: [SAL, 'Récapitulatifs'],
+    annual: [BIL, 'Rapports annuels'], stats: [BIL, 'Statistiques'], budgetState: [BIL, 'États budgétaires'] };
+  function sortieDe(v) {
+    var id = v.outing; try { if (!id && v.reg) { var r = (regsActive() || []).filter(function (x) { return String(x.id) === String(v.reg); })[0]; if (r) id = r.outingId; } } catch (e) { }
+    var o = (db.outings || []).filter(function (x) { return String(x.id) === String(id); })[0];
+    return o ? (String(o.date || '').slice(0, 10) + ' ' + (o.name || 'Sortie')).trim() : 'Sorties diverses';
+  }
+  function chemin(doc, v) {
+    var y = /^\d{4}$/.test(String(v.year || '')) ? String(v.year) : today().slice(0, 4);
+    var r = RANG[doc.id] || ['7 - Autres', doc.title];
+    r = r.slice(); if (r[0] === SOR) r.push(sortieDe(v));
+    return [y].concat(r);
+  }
+  function nomEmp(e) { return e ? (String(e.lastname || '').toUpperCase() + ' ' + (e.firstname || '')).trim() : ''; }
+  function fichier(doc, emp) {
+    var f = String(dg.file || '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim(), n = nomEmp(emp);
+    var t = today() + ' ' + doc.title + (n && f.toUpperCase().indexOf(n.split(' ')[0]) < 0 ? ' ' + n : '') + (f ? ' - ' + f : '');
+    return t.slice(0, 150);
+  }
+  function empDoc(doc) { try { return dgMailEmp(doc, dg.values); } catch (e) { return null; } }
+  function mode(doc) { return ((cfg().docAuto || {})[doc.id]) || 'demander'; }
+
+  // ---------- Le PDF : fabriqué dans l'appli (même rendu que l'aperçu) ; sinon converti par le script ----------
+  var H2P = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js', h2pP = null;
+  function loadH2P() {
+    if (window.html2pdf) return Promise.resolve();
+    if (h2pP) return h2pP;
+    h2pP = new Promise(function (res, rej) { var s = document.createElement('script'); s.src = H2P; s.onload = function () { res(); }; s.onerror = function () { h2pP = null; rej(new Error('Outil PDF non chargé')); }; document.head.appendChild(s); setTimeout(function () { if (!window.html2pdf) { h2pP = null; rej(new Error('Outil PDF trop long à charger')); } }, 20000); });
+    return h2pP;
+  }
+  async function makePdf() {
+    await loadH2P();
+    var src = $('dg-preview'); if (!src) throw new Error('Aperçu introuvable');
+    // Élément détaché : html2pdf le place lui-même dans sa page de rendu (sinon il est décalé et coupé)
+    var w = document.createElement('div'); w.className = 'ps-sheet no-dark'; w.style.cssText = 'width:700px;background:#fff;color:#0f172a;box-shadow:none'; w.innerHTML = src.innerHTML;
+    var uri = await html2pdf().set({ margin: [8, 8, 10, 8], image: { type: 'jpeg', quality: 0.9 }, html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css', 'legacy'] } }).from(w).outputPdf('datauristring');
+    return String(uri).split(',')[1];
+  }
+  var CSSC = null;
+  function psCss() {
+    if (CSSC != null) return CSSC; var out = [];
+    try { [].forEach.call(document.styleSheets, function (sh) { var R; try { R = sh.cssRules; } catch (e) { return; } [].forEach.call(R || [], function (r) { if (r.selectorText && /\.ps-/.test(r.selectorText) && !/html\.dark/.test(r.selectorText)) out.push(r.cssText); }); }); } catch (e) { }
+    return (CSSC = out.join('\n'));
+  }
+  function htmlDoc() { return '<html><head><meta charset="utf-8"><style>body{font-family:Arial,Helvetica,sans-serif;margin:20px;color:#0f172a}' + psCss() + '</style></head><body><div class="ps-sheet">' + ($('dg-preview') || {}).innerHTML + '</div></body></html>'; }
+
+  // ---------- Envoi / rangement ----------
+  function texteMail(doc, emp) {
+    var t = dgMailDefaultText(doc, emp);
+    return { subject: t.subject, body: String(t.body).replace(/Pensez à joindre[^\n]*\n\n/, '') };
+  }
+  function msg(t, k) { var m = $('v93-msg'); if (m) { m.textContent = t || ''; m.className = 'text-xs font-semibold ' + (k === 'bad' ? 'text-rose-700' : k === 'ok' ? 'text-emerald-700' : 'text-slate-600'); } }
+  var BUSY = false;
+  window.cseDocValider = async function (auto) {
+    var doc = dgDoc(); if (!doc || !dg.ready || BUSY) return;
+    if (!scriptOk()) { if (!auto) msg('Le script Google du CSE n\'est pas réglé (Budget › Banque › Liens Drive).', 'bad'); return; }
+    var emp = empDoc(doc), m = mode(doc), envoi, drive, to, sub, body;
+    if (auto) { envoi = m === 'toujours' && !!(emp && emp.email); drive = true; to = emp && emp.email || ''; var tx = texteMail(doc, emp); sub = tx.subject; body = tx.body; }
+    else { envoi = !!($('v93-mail') || {}).checked; drive = !!($('v93-drive') || {}).checked; to = String(($('dg-mail-to') || {}).value || '').trim().replace(/[;\s]+/g, ','); sub = $('dg-mail-subject').value; body = $('dg-mail-body').value; }
+    if (!envoi && !drive) { msg('Cochez au moins « Envoyer par e-mail » ou « Ranger sur le Drive ».', 'bad'); return; }
+    if (envoi && !/^[^@\s,]+@[^@\s,]+\.[a-z]{2,}(,[^@\s,]+@[^@\s,]+\.[a-z]{2,})*$/i.test(to)) { msg('Adresse e-mail à corriger.', 'bad'); return; }
+    var f = fichier(doc, emp), ch = chemin(doc, dg.values || {});
+    BUSY = true; var go = $('v93-go'); if (go) go.disabled = true;
+    msg('Préparation du PDF…'); if (auto) say('📄 ' + doc.title + ' : ' + (envoi ? 'envoi et ' : '') + 'rangement sur le Drive…', 'info');
+    try {
+      var payload = { fichier: f, chemin: ch, mail: envoi, drive: drive, to: envoi ? to : '', subject: sub, body: body };
+      try { payload.pdf = await makePdf(); } catch (e) { console.warn('PDF dans l\'appli impossible, conversion par le script', e); payload.html = htmlDoc(); }
+      msg(envoi ? 'Envoi depuis la boîte du CSE…' : 'Rangement sur le Drive…');
+      var j = await cseScriptPost('document', payload);
+      db.docLog = Array.isArray(db.docLog) ? db.docLog : [];
+      db.docLog.push({ id: String(Date.now()) + Math.random().toString(36).slice(2, 6), at: new Date().toISOString(), doc: doc.id, titre: doc.title, fichier: f, emp: emp ? emp.id : null, to: envoi ? to : '', url: j.url || '', dossier: ch.join(' › '), par: qui() });
+      if (db.docLog.length > 3000) db.docLog = db.docLog.slice(-3000);
+      try { logAction('Édition', 'document', doc.title + ' — ' + (envoi ? 'envoyé à ' + to + ' et ' : '') + (drive ? 'rangé sur le Drive (' + ch.join(' › ') + ')' : '')); } catch (e) { }
+      try { saveDB(); } catch (e) { }
+      var ok = (envoi ? '✔ Envoyé à ' + to + (drive ? ' et rangé' : '') : '✔ Rangé') + (drive ? ' dans CSE - Documents › ' + ch.join(' › ') : '') + '.';
+      msg(ok, 'ok'); if (auto) say(ok, 'success');
+      var lk = $('v93-link'); if (lk && j.url) { lk.href = j.url; lk.hidden = false; }
+    } catch (e) {
+      var t = /inconnue|ancienne version/i.test(e.message) ? 'installez la version 79 du script Google (script-google-cse-v79.txt).' : e.message;
+      msg('Impossible : ' + t, 'bad'); if (auto) say('Document non rangé : ' + t, 'error');
+    } finally { BUSY = false; if (go) go.disabled = false; }
+  };
+  window.cseDocMode = function (v) { var doc = dgDoc(); if (!doc) return; var c = cfg(); c.docAuto = c.docAuto || {}; if (v === 'demander') delete c.docAuto[doc.id]; else c.docAuto[doc.id] = v; try { saveDB(); } catch (e) { } msg(v === 'demander' ? 'Ce type de document : on vous demandera à chaque fois.' : v === 'toujours' ? 'Ce type de document : à chaque impression, il sera envoyé au salarié et rangé sur le Drive.' : 'Ce type de document : à chaque impression, il sera rangé sur le Drive.', 'ok'); };
+
+  // ---------- La fenêtre « Envoyer le document » devient « Envoyer / ranger » ----------
+  function boite() {
+    var host = document.querySelector('#modal-dg-mail .p-5'); if (!host) return null;
+    var box = $('v93-box'); if (box) return box;
+    var amber = host.firstElementChild; if (amber && /border-amber/.test(amber.className)) amber.style.display = 'none';
+    var row = $('dg-mail-send-btn') && $('dg-mail-send-btn').parentNode, exp = row && row.nextElementSibling;
+    var det = document.createElement('details'); det.className = 'text-xs text-slate-600'; det.innerHTML = '<summary class="cursor-pointer font-semibold">Autre façon : avec la messagerie de cet appareil (PDF à joindre à la main)</summary>';
+    if (row) { row.parentNode.insertBefore(det, row); det.appendChild(row); if (exp && exp.tagName === 'P' && !exp.id) det.appendChild(exp); }
+    box = document.createElement('div'); box.id = 'v93-box'; box.className = 'rounded-xl border border-emerald-300 bg-emerald-50/60 p-3 space-y-2';
+    host.insertBefore(box, host.firstChild);
+    var fb = $('dg-mail-feedback'); if (fb) host.appendChild(fb);
+    return box;
+  }
+  function remplir() {
+    var doc = dgDoc(), box = boite(); if (!doc || !box) return;
+    var emp = empDoc(doc), ch = chemin(doc, dg.values || {}), m = mode(doc), mailOk = !!(emp && emp.email);
+    box.innerHTML = '<label class="flex items-start gap-2 text-sm text-slate-800"><input type="checkbox" id="v93-mail" class="mt-1"' + (mailOk ? ' checked' : '') + '> <span><b>Envoyer par e-mail</b> depuis la boîte du CSE, <b>le PDF est joint tout seul</b>' + (mailOk ? '' : ' <span class="text-[11px] text-amber-700">(pas d\'adresse sur la fiche : saisissez-la ci-dessous)</span>') + '</span></label>'
+      + '<label class="flex items-start gap-2 text-sm text-slate-800"><input type="checkbox" id="v93-drive" class="mt-1" checked> <span><b>Ranger sur le Drive</b> : <span class="text-[12px] text-slate-600">CSE - Documents › ' + E(ch.join(' › ')) + '</span></span></label>'
+      + '<div class="flex flex-wrap items-center gap-2"><button type="button" id="v93-go" class="' + BTNP + '" onclick="cseDocValider(false)"><i class="fa-solid fa-check"></i> Valider</button>'
+      + '<a id="v93-link" class="text-xs underline text-emerald-800" target="_blank" rel="noopener" hidden>Ouvrir le PDF rangé</a></div>'
+      + '<p id="v93-msg" class="text-xs"></p>'
+      + '<label class="block text-[11px] text-slate-600">Pour les « ' + E(doc.title) + ' » : <select class="ml-1 p-1 border rounded text-[11px]" onchange="cseDocMode(this.value)">'
+      + [['demander', 'demander à chaque fois (ici)'], ['toujours', 'à l\'impression : envoyer + ranger automatiquement'], ['drive', 'à l\'impression : ranger sur le Drive seulement']].map(function (o) { return '<option value="' + o[0] + '"' + (m === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>';
+    var b = $('dg-mail-body'); if (b) b.value = String(b.value).replace(/Pensez à joindre[^\n]*\n\n/, '');
+    var t = $('dg-mail-title'); if (t) t.innerHTML = '<i class="fa-solid fa-paper-plane text-emerald-600"></i> Envoyer / ranger le document';
+  }
+  if (typeof window.dgOpenMail === 'function') {
+    var open0 = window.dgOpenMail;
+    window.dgOpenMail = function () { var r = open0.apply(this, arguments); try { if (scriptOk()) remplir(); } catch (e) { console.warn(e); } return r; };
+  }
+  if (typeof window.dgPrintNow === 'function') {
+    var print0 = window.dgPrintNow;
+    window.dgPrintNow = function () {
+      var doc = dgDoc(), r = print0.apply(this, arguments);
+      try { if (doc && dg.ready && scriptOk() && mode(doc) !== 'demander' && !(document.getElementById('modal-dg-mail') && !$('modal-dg-mail').classList.contains('hidden'))) setTimeout(function () { cseDocValider(true); }, 400); } catch (e) { }
+      return r;
+    };
+  }
+  function btnLabel() { var b = $('dg-mail-btn'); if (b && scriptOk() && !b.dataset.v93) { b.dataset.v93 = 1; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Envoyer / ranger sur le Drive'; } }
+  setInterval(function () { try { btnLabel(); } catch (e) { } }, 2000);
+
+  // ---------- Fiche du salarié : ses documents envoyés / rangés ----------
+  if (typeof window.renderEmployeeProfile === 'function') {
+    var prof0 = window.renderEmployeeProfile;
+    window.renderEmployeeProfile = function () {
+      var r = prof0.apply(this, arguments);
+      try {
+        var id = profileEmployeeId, L = (db.docLog || []).filter(function (x) { return String(x.emp) === String(id); }).slice(-40).reverse(), c = $('emp-profile-content');
+        if (c && L.length) c.insertAdjacentHTML('beforeend', '<div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2"><h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-folder-open text-emerald-600"></i> Documents envoyés et rangés</h4><div class="divide-y divide-slate-100">'
+          + L.map(function (x) { return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="text-slate-500 w-24">' + E(new Date(x.at).toLocaleDateString('fr-FR')) + '</span><span class="flex-1 min-w-[160px] font-semibold text-slate-700">' + E(x.titre) + '</span><span class="text-slate-500">' + (x.to ? '📧 ' + E(x.to) : 'Drive seulement') + '</span>' + (x.url ? '<a class="text-emerald-700 underline" target="_blank" rel="noopener" href="' + E(x.url) + '">PDF</a>' : '') + '</div>'; }).join('') + '</div></div>');
+      } catch (e) { }
+      return r;
+    };
+  }
 })();
 </script>
 
