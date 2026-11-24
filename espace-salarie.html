@@ -961,6 +961,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     $('maj-ok').onclick = async function () { this.disabled = true; this.textContent = 'Mise à jour…'; try { var rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(function (r) { return r.update().catch(function () { }); })); } catch (e) { } try { var ks = await caches.keys(); await Promise.all(ks.filter(function (k) { return k.indexOf('cse-espace-') === 0; }).map(function (k) { return caches.delete(k); })); } catch (e) { } location.reload(); };
   }
   setTimeout(majCheck, 5000); setInterval(majCheck, 10 * 60000);
+  // V.9.4 : en revenant sur l'espace (clic sur une notification…), les nouvelles infos (document à signer…) sont rechargées
+  var RLD = Date.now();
+  document.addEventListener('visibilitychange', async function () {
+    if (document.hidden || DEMO || !D || !T || Date.now() - RLD < 30000) return; RLD = Date.now();
+    var avant = ((D.fiche || {}).aSigner || []).length;
+    try { var j = await api('GET'); if (j && j.fiche) { D = j; if (((D.fiche || {}).aSigner || []).length > avant && window.cseGo) cseGo('accueil'); else render(); } } catch (e) { }
+  });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) majCheck(); });
   // --- Installer l'appli sur le téléphone ---
   var PROMPT = null, STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
