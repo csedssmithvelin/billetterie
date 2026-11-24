@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"U1fHw2Xyyk6w5nsviBRqxg==","iv":"TfV/309DyLW3YEc+","rev":"boot","lastModified":"2026-11-24T03:24:18.525Z","by":"Michaël GROSJEAN","data":"ALkuMDOKmxDOh5apSFjLfjHIpJQ/6yeIGXptzoyi2ELMPWuKA2fp1JqPJCPthIAjGqQ/1EaAJhTucOY2pJ4zzg=="},"at":"2026-11-24T03:24:18.556Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"ZCdq/lljRPSaZZdgEW5ooQ==","iv":"5Ol0a/Ad8V4S4Acx","rev":"boot","lastModified":"2026-11-24T03:32:21.606Z","by":"Michaël GROSJEAN","data":"K7Wi1uv+9UniT/fVau0xRzoLum6Rc4sGcQ/hgazqQTLzTtVoygAPm7rqgXXtJ+O+CP8HudSZI1L+oeZfUfugqA=="},"at":"2026-11-24T03:32:21.642Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21725,7 +21725,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             { v: 'V.8.9', date: '2026-11-24', items: [
                 "📲 Rappels en notification sur le téléphone (8 h) : colis à récupérer la veille de la permanence, chèques vacances 3 jours avant l'échéance, sortie la veille, « donnez votre avis » le lendemain. Réglage : Paramètres › Boîte mail, agenda et rappels (script Google version 75).",
                 "🎟️ Une place se libère dans une sortie : le premier de la liste d'attente est prévenu sur son téléphone. Nouveaux billets en stock : l'appli propose de prévenir tout le monde (Communication › Notifications).",
-                "🪪 Carte CSE : chaque salarié a un QR code personnel dans son espace. À la permanence, « Scanner une carte CSE » (caméra, douchette ou code tapé) ouvre sa fiche.",
+                "🪪 Carte CSE : chaque salarié a un QR code personnel dans son espace. Scanné avec l'appareil photo du téléphone (ou « Scanner une carte CSE » dans l'appli, une douchette, le code tapé), il ouvre l'appli en mode permanence sur ce salarié : vendre des billets, prêt, inscription, chèques vacances, encaisser.",
                 "⭐ Avis sur les sorties (1 à 5 étoiles + commentaire) après la sortie ; résultats dans Communication › Avis sorties.",
                 "📄 Espace salarié : récapitulatif de l'année à enregistrer en PDF (offert, achats, sorties, chèques vacances). Bouton Swile : ouvre directement l'appli Swile sur Android."
             ] },
@@ -44024,7 +44024,7 @@ var qrcode = function() {
   // ---------- Publication vers l'espace salarié ----------
   window.cseEspacePubExtra = function (P) {
     var c = C(), T = today();
-    try { P.pageUrl = cseEspacePageUrl(); } catch (e) { }
+    try { P.pageUrl = cseEspacePageUrl(); P.appUrl = String(P.pageUrl || '').replace(/espace-salarie\.html.*$/, ''); } catch (e) { }
     var pc = cfg().pushCfg; if (pc && pc.apiKey && pc.messagingSenderId && cfg().pushVapid) { var pcc = {}; Object.keys(pc).forEach(function (k) { pcc[k] = String(pc[k] || '').replace(/[^A-Za-z0-9:._\/-]/g, ''); }); P.push = { cfg: pcc, vapid: String(cfg().pushVapid).replace(/[^A-Za-z0-9_-]/g, '') }; }
     P.annonces = c.annonces.filter(function (a) { return a.pour === 'tous' && (!a.fin || a.fin >= T); }).sort(function (a, b) { return (b.important ? 1 : 0) - (a.important ? 1 : 0) || String(b.at).localeCompare(String(a.at)); }).slice(0, 8)
       .map(function (a) { return { id: a.id, titre: a.titre, texte: a.texte, lien: a.lien || '', important: !!a.important, date: String(a.at || '').slice(0, 10) }; });
@@ -44341,13 +44341,20 @@ var qrcode = function() {
 
   // ---------- 3) Carte CSE : scanner le QR code du salarié ----------
   function byCode(code) {
-    var m = /CSEV:([A-Za-z0-9_-]{8,})/i.exec(String(code || '').replace(/\s+/g, '')) || /^([A-Za-z0-9_-]{16})$/.exec(String(code || '').replace(/\s+/g, ''));
+    var m = /(?:CSEV:|carte=)([A-Za-z0-9_-]{8,})/i.exec(String(code || '').replace(/\s+/g, '')) || /^([A-Za-z0-9_-]{16})$/.exec(String(code || '').replace(/\s+/g, ''));
     if (!m) return null; var c = m[1];
     return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken.slice(0, c.length) === c; })[0] || null;
   }
   function openEmp(e) {
-    var onPerm = document.getElementById('tab-permanence') && !document.getElementById('tab-permanence').classList.contains('hidden');
-    try { if (onPerm && typeof permSelect === 'function') { permSelect(e.id); } else openEmployeeProfile(e.id); say('🪪 ' + nm(e), 'success'); } catch (er) { say('Fiche introuvable.', 'error'); }
+    // Ouvre le mode permanence sur ce salarié : vente de billets, prêts, inscriptions, chèques vacances, règlements…
+    try {
+      if (typeof permSelect === 'function' && document.getElementById('tab-permanence')) {
+        var onPerm = !document.getElementById('tab-permanence').classList.contains('hidden');
+        if (!onPerm) switchTab('permanence');
+        setTimeout(function () { try { permSelect(e.id); } catch (er) { openEmployeeProfile(e.id); } }, onPerm ? 0 : 250);
+      } else openEmployeeProfile(e.id);
+      say('🪪 ' + nm(e), 'success');
+    } catch (er) { say('Fiche introuvable.', 'error'); }
   }
   window.cseScanResolve = function (code) {
     var e = byCode(code); if (!e) { say('Carte non reconnue : demandez au salarié de rouvrir son espace (le lien a peut-être changé).', 'warning'); return false; }
@@ -44382,7 +44389,7 @@ var qrcode = function() {
           var txt = '';
           if (det) { var r = await det.detect(v); if (r && r[0]) txt = r[0].rawValue; }
           else if (window.jsQR) { var w = v.videoWidth, h = v.videoHeight, k = Math.min(1, 640 / Math.max(w, h)); cv.width = w * k; cv.height = h * k; var x = cv.getContext('2d', { willReadFrequently: true }); x.drawImage(v, 0, 0, cv.width, cv.height); var q = jsQR(x.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height, { inversionAttempts: 'dontInvert' }); if (q) txt = q.data; }
-          if (txt && /CSEV:/i.test(txt)) cseScanResolve(txt); else if (txt) st.textContent = 'Ce QR code n\'est pas une carte CSE.';
+          if (txt && /CSEV:|carte=/i.test(txt)) cseScanResolve(txt); else if (txt) st.textContent = 'Ce QR code n\'est pas une carte CSE.';
         } catch (e) { }
         busy = false;
       })();
@@ -44390,7 +44397,7 @@ var qrcode = function() {
   };
   // Douchette / saisie dans la recherche du mode permanence : « CSEV:… » ouvre la fiche
   if (typeof window.permOnSearch === 'function' && !window.permOnSearch.__v89) {
-    var ops = window.permOnSearch; window.permOnSearch = function () { var el = document.getElementById('perm-search'); if (el && /CSEV:[A-Za-z0-9_-]{16}/i.test(el.value)) { var e = byCode(el.value); if (e) { el.value = ''; try { permClearSearch(); } catch (er) { } openEmp(e); return; } } return ops.apply(this, arguments); }; window.permOnSearch.__v89 = 1;
+    var ops = window.permOnSearch; window.permOnSearch = function () { var el = document.getElementById('perm-search'); if (el && /(CSEV:|carte=)[A-Za-z0-9_-]{16}/i.test(el.value)) { var e = byCode(el.value); if (e) { el.value = ''; try { permClearSearch(); } catch (er) { } openEmp(e); return; } } return ops.apply(this, arguments); }; window.permOnSearch.__v89 = 1;
   }
   function entry() {
     if (!cfg().espaceOn || !canSee()) return;
@@ -44402,6 +44409,17 @@ var qrcode = function() {
   if (typeof window.switchTab === 'function' && !window.switchTab.__v89) { var os = window.switchTab; window.switchTab = function () { var r = os.apply(this, arguments); try { entry(); } catch (e) { } return r; }; for (var k in os) window.switchTab[k] = os[k]; window.switchTab.__v89 = 1; }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', entry); else entry();
   setTimeout(entry, 5000);
+  // QR code scanné avec l'appareil photo du téléphone : il ouvre l'appli avec #carte=… → mode permanence sur ce salarié
+  (function carteLien() {
+    var m = /[#&]carte=([A-Za-z0-9_-]{16})/.exec(location.hash || ''); if (!m) return;
+    var code = m[1], t0 = Date.now();
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { }
+    (function wait() {
+      var e = null; try { e = (typeof db !== 'undefined' && db && db.employees) ? byCode('carte=' + code) : null; } catch (er) { }
+      if (e && document.getElementById('tab-permanence')) { setTimeout(function () { openEmp(e); }, 600); return; }
+      if (Date.now() - t0 < 5 * 60000) setTimeout(wait, 1000);
+    })();
+  })();
   window.cseV89Check = function () { waitCheck(); return billetsCheck(); };
   setTimeout(function tick() { try { waitCheck(); } catch (e) { console.warn(e); } try { billetsCheck(); } catch (e) { console.warn(e); } setTimeout(tick, 60000); }, 20000);
 })();

@@ -258,13 +258,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   function permCard() { var t = D && D.pub && D.pub.permanence; return t ? '<div class="perm" style="flex-wrap:wrap"><span style="font-size:20px">🕚</span><div style="flex:1"><b>Permanence du CSE</b><div>' + E(t) + '</div></div>' + (PUBLIC ? '' : '<button class="btn s" onclick="cseQr()">🪪 Ma carte CSE</button>') + '</div>' : ''; }
   // --- Carte CSE : QR code personnel, scanné à la permanence pour ouvrir la fiche (V.8.9) ---
-  function qrCode() { return 'CSEV:' + (DEMO ? 'EXEMPLE0DEMO0000' : String(T || '').slice(0, 16)); }
+  // Le QR code est un lien vers l'appli du CSE : scanné avec l'appareil photo d'un téléphone d'un membre du CSE,
+  // il ouvre l'appli directement sur ce salarié (mode permanence). Sans l'appli et son mot de passe, il ne donne accès à rien.
+  function qrCode() { var c = DEMO ? 'EXEMPLE0DEMO0000' : String(T || '').slice(0, 16), a = D && D.pub && D.pub.appUrl; return /^https:\/\//.test(a || '') ? a + '#carte=' + c : 'CSEV:' + c; }
   window.cseQr = function () {
     var c = qrCode(), svg = '';
     try { var q = qrcode(0, 'M'); q.addData(c); q.make(); svg = q.createSvgTag({ cellSize: 6, margin: 2, scalable: true }); } catch (e) { }
     sheet(head('🪪 Ma carte CSE', E((D.fiche || {}).nom || '')) + '<div style="text-align:center"><div class="qrbox">' + svg + '</div>'
       + '<p class="mute">Montrez ce code à la permanence : le CSE ouvre votre fiche tout de suite (achats, colis, chèques vacances…).</p>'
-      + '<p style="font:700 15px ui-monospace,monospace;letter-spacing:.08em">' + E(c.slice(5).replace(/(.{4})/g, '$1 ').trim()) + '</p>'
+      + '<p style="font:700 15px ui-monospace,monospace;letter-spacing:.08em">' + E(c.replace(/^.*(?:CSEV:|carte=)/, '').replace(/(.{4})/g, '$1 ').trim()) + '</p>'
       + '<p class="mute">Ce code est personnel : ne le partagez pas.</p><button class="btn" onclick="cseClose()">Fermer</button></div>');
   };
   // --- Avis sur les sorties passées (V.8.9) ---
