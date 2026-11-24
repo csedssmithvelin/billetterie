@@ -22,5 +22,11 @@
     }
   ],
   "scope": "espace-salarie.html",
-  "start_url": "espace-salarie.html"
+  "start_url": "espace-salarie.html",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://csedssmithvelin.github.io/billetterie/espace-manifest.webmanifest"
+    }
+  ]
 }

@@ -971,7 +971,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '9.4', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '9.4.1', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
@@ -997,12 +997,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // --- Installer l'appli sur le téléphone ---
   var PROMPT = null, STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
   var IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  // Déjà installée sur cet appareil ? (ouverte une fois comme appli, ou installation faite ici) : plus de bouton « Installer »
+  function instDeja() { try { return localStorage.getItem('cse_espace_installe') === '1'; } catch (e) { return false; } }
+  function instMarque() { try { localStorage.setItem('cse_espace_installe', '1'); } catch (e) { } ['h-inst', 'inst-card', 'inst-ban'].forEach(function (id) { var x = $(id); if (x) { if (id === 'inst-ban') x.remove(); else x.hidden = true; } }); }
+  if (STANDALONE) instMarque();
+  try { if (navigator.getInstalledRelatedApps) navigator.getInstalledRelatedApps().then(function (L) { if (L && L.length) instMarque(); }).catch(function () { }); } catch (e) { }
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); PROMPT = e; var b = $('inst-btn'); if (b) b.hidden = false; });
-  window.addEventListener('appinstalled', function () { var b = $('inst-card'); if (b) b.hidden = true; var n = $('inst-ban'); if (n) n.remove(); });
+  window.addEventListener('appinstalled', function () { instMarque(); var b = $('inst-card'); if (b) b.hidden = true; var n = $('inst-ban'); if (n) n.remove(); });
   // Fenêtre « Installer l'appli ? » qui s'ouvre toute seule : un appui sur « Installer », puis valider.
   function instLater(k) { try { var t = Number(localStorage.getItem('cse_inst_plus_tard_' + k) || 0); return Date.now() < t; } catch (e) { return false; } }
   function instBanner(kind) {
-    if (STANDALONE || PUBLIC || $('inst-ban') || instLater(kind)) return;
+    if (STANDALONE || instDeja() || PUBLIC || $('inst-ban') || instLater(kind)) return;
     var d = document.createElement('div'); d.id = 'inst-ban';
     d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;max-width:520px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 40px -12px rgba(15,23,42,.45);padding:14px 16px;font:15px system-ui,sans-serif;color:var(--ink)';
     d.innerHTML = '<div style="display:flex;gap:12px;align-items:center"><img src="' + E($('h-logo').src) + '" alt="" style="width:44px;height:44px;border-radius:12px;object-fit:cover"><div style="flex:1"><b>Installer « Mon CSE » sur ce téléphone ?</b><div class="mute">' + (kind === 'ios' ? 'Sur iPhone : appuyez sur <b>Partager</b> ⬆︎ en bas de Safari, puis <b>« Sur l\'écran d\'accueil »</b> et <b>Ajouter</b>.' : 'Une icône sur l\'écran d\'accueil, comme une vraie appli. Rien à télécharger.') + '</div></div></div>'
@@ -1019,17 +1024,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   window.addEventListener('beforeinstallprompt', function () { setTimeout(function () { if (PROMPT) instBanner('android'); }, 2500); });
   if (IOS && !STANDALONE && !DEMO) setTimeout(function () { if (/safari/i.test(navigator.userAgent) && !/crios|fxios|gsa\//i.test(navigator.userAgent)) instBanner('ios'); }, 4000);
   function installCard() {
-    if (STANDALONE) return '';
+    if (STANDALONE || instDeja()) return '';
     return '<div class="card" id="inst-card"><h2>📲 Installer l\'appli sur mon téléphone</h2><p class="mute">Gardez votre espace CSE comme une appli, sur l\'écran d\'accueil, sans rien télécharger dans un magasin d\'applications.</p>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" onclick="cseInstall(\'android\')">🤖 Android</button><button class="btn p" onclick="cseInstall(\'ios\')">🍏 iPhone</button></div></div>';
   }
   window.cseInstall = async function (os) {
-    if (os === 'android' && PROMPT) { PROMPT.prompt(); try { await PROMPT.userChoice; } catch (e) { } PROMPT = null; return; }
+    if (os === 'android' && PROMPT) { PROMPT.prompt(); var rr = null; try { rr = await PROMPT.userChoice; } catch (e) { } PROMPT = null; if (rr && rr.outcome === 'accepted') instMarque(); return; }
     if (os === 'ios') sheet(head('Installer sur iPhone') + '<ol style="padding-left:20px;line-height:1.8"><li>Ouvrez ce lien avec <b>Safari</b> (pas dans l\'appli Gmail : appuyez sur ⋯ puis « Ouvrir dans Safari »).</li><li>Appuyez sur le bouton <b>Partager</b> <span style="font-size:18px">⬆︎</span> en bas de l\'écran.</li><li>Choisissez <b>« Sur l\'écran d\'accueil »</b>, puis <b>Ajouter</b>.</li></ol><p class="mute">L\'icône « Mon CSE » apparaît sur votre écran d\'accueil.</p><button class="btn" onclick="cseClose()">OK</button>');
     else if (os === 'choix') sheet(head('Installer l\'appli') + '<p>Ouvrez ce lien sur votre téléphone, puis choisissez :</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" onclick="cseInstall(\'android\')">🤖 Android</button><button class="btn p" onclick="cseInstall(\'ios\')">🍏 iPhone</button></div><p class="mute" style="margin-top:10px">Astuce : sur PC (Chrome ou Edge), l\'icône ⊕ dans la barre d\'adresse installe aussi l\'appli.</p>');
     else sheet(head('Installer sur Android') + '<ol style="padding-left:20px;line-height:1.8"><li>Ouvrez ce lien avec <b>Chrome</b> (dans Gmail : ⋮ puis « Ouvrir dans Chrome »).</li><li>Appuyez sur <b>⋮</b> en haut à droite.</li><li>Choisissez <b>« Installer l\'application »</b> ou <b>« Ajouter à l\'écran d\'accueil »</b>.</li></ol><p class="mute">L\'icône « Mon CSE » apparaît avec vos applications.</p><button class="btn" onclick="cseClose()">OK</button>');
   };
-  (function () { var b = $('h-inst'); if (!b || STANDALONE || PUBLIC) return; b.hidden = false; b.onclick = function () { if (PROMPT) cseInstall('android'); else cseInstall(IOS ? 'ios' : (/android/i.test(navigator.userAgent) ? 'android' : 'choix')); }; })();
+  (function () { var b = $('h-inst'); if (!b || STANDALONE || instDeja() || PUBLIC) return; b.hidden = false; b.onclick = function () { if (PROMPT) cseInstall('android'); else cseInstall(IOS ? 'ios' : (/android/i.test(navigator.userAgent) ? 'android' : 'choix')); }; })();
   // Service worker propre à l'espace (copie hors ligne + notifications Firebase).
   function swUrl() { var c = pushCfg() && pushCfg().cfg; return 'espace-sw.js' + (c ? '?cfg=' + encodeURIComponent(JSON.stringify(c)) : ''); }
   function swReg() { return navigator.serviceWorker.register(swUrl(), { scope: 'espace-salarie.html' }); }
