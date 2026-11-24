@@ -971,7 +971,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '9.4.2', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '9.4.3', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
@@ -1033,7 +1033,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     else if (os === 'choix') sheet(head('Installer l\'appli') + '<p>Ouvrez ce lien sur votre téléphone, puis choisissez :</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" onclick="cseInstall(\'android\')">🤖 Android</button><button class="btn p" onclick="cseInstall(\'ios\')">🍏 iPhone</button></div><p class="mute" style="margin-top:10px">Astuce : sur PC (Chrome ou Edge), l\'icône ⊕ dans la barre d\'adresse installe aussi l\'appli.</p>');
     else sheet(head('Installer sur Android') + '<ol style="padding-left:20px;line-height:1.8"><li>Ouvrez ce lien avec <b>Chrome</b> (dans Gmail : ⋮ puis « Ouvrir dans Chrome »).</li><li>Appuyez sur <b>⋮</b> en haut à droite.</li><li>Choisissez <b>« Installer l\'application »</b> ou <b>« Ajouter à l\'écran d\'accueil »</b>.</li></ol><p class="mute">L\'icône « Mon CSE » apparaît avec vos applications.</p><button class="btn" onclick="cseClose()">OK</button>');
   };
-  (function () { var b = $('h-inst'); if (!b || STANDALONE || instDeja() || PUBLIC) return; b.hidden = false; b.onclick = function () { if (PROMPT) cseInstall('android'); else cseInstall(IOS ? 'ios' : (/android/i.test(navigator.userAgent) ? 'android' : 'choix')); }; })();
+  (function () { var b = $('h-inst'); if (!b || true || STANDALONE || instDeja() || PUBLIC) return; /* bouton du bandeau retiré (demande du CSE) : l'encart « Installer l'appli » reste */ b.hidden = false; b.onclick = function () { if (PROMPT) cseInstall('android'); else cseInstall(IOS ? 'ios' : (/android/i.test(navigator.userAgent) ? 'android' : 'choix')); }; })();
   // Service worker propre à l'espace (copie hors ligne + notifications Firebase).
   function swUrl() { var c = pushCfg() && pushCfg().cfg; return 'espace-sw.js' + (c ? '?cfg=' + encodeURIComponent(JSON.stringify(c)) : ''); }
   function swReg() { return navigator.serviceWorker.register(swUrl(), { scope: 'espace-salarie.html' }); }
