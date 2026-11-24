@@ -209,6 +209,7 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
       if (DEMO) $('nav').insertAdjacentHTML('beforebegin', '<div class="msg warn" style="margin:0 0 10px">👀 Exemple avec un salarié fictif : rien n\'est envoyé au CSE.</div>');
       $('foot').innerHTML = '<div class="brandmark"><img src="' + E($('h-logo').src) + '" alt="">' + E((P.cse && P.cse.nom) || 'CSE') + '</div><div>Informations mises à jour le ' + E(fd(String(D.le || '').slice(0, 10))) + '. Cette page est personnelle : ne partagez pas son lien.</div>';
       nav(); render();
+      if (!window.__pushChk) { window.__pushChk = 1; try { if ('serviceWorker' in navigator && /^https:/.test(location.protocol) && !DEMO) swReg().catch(function () { }); } catch (e) { } setTimeout(pushRefresh, 800); }
     } catch (e) {
       $('app').innerHTML = '<div class="card"><h2>⚠️ Impossible d\'ouvrir votre espace</h2><p>' + E(e.message) + '</p><p class="mute">Si le problème continue, contactez le CSE.</p><button class="btn" onclick="location.reload()">Réessayer</button></div>';
     }
@@ -264,6 +265,49 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
         + (reste ? '<p class="mute" style="margin-top:6px">Quelqu\'un d\'autre peut le récupérer pour vous : prévenez le CSE.</p>' : '') + '</div>';
     }).join('');
   }
+  // ---------- Notifications sur le téléphone (Firebase) ----------
+  var FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
+  function pushCfg() { return D && D.pub && D.pub.push && D.pub.push.cfg && D.pub.push.vapid ? D.pub.push : null; }
+  function pushOk() { return 'Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window; }
+  function pushKey() { return 'cse_push_' + String(T || 'demo').slice(0, 8); }
+  function loadJs(u) { return new Promise(function (res, rej) { var x = document.createElement('script'); x.src = u; x.onload = res; x.onerror = function () { rej(new Error('Chargement impossible')); }; document.head.appendChild(x); }); }
+  async function fcmToken() {
+    var P = pushCfg(); if (!window.firebase || !firebase.messaging) { await loadJs(FB + 'firebase-app-compat.js'); await loadJs(FB + 'firebase-messaging-compat.js'); }
+    if (!firebase.apps.length) firebase.initializeApp(P.cfg);
+    var reg = await swReg(); await navigator.serviceWorker.ready;
+    var m = firebase.messaging();
+    try { m.onMessage(function (pl) { var n = (pl && pl.notification) || {}; try { reg.showNotification(n.title || 'CSE', { body: n.body || '', icon: 'icon-192.png', data: { url: (pl.data && pl.data.url) || location.href } }); } catch (e) { } try { load(); } catch (e) { } }); } catch (e) { }
+    return await m.getToken({ vapidKey: P.vapid, serviceWorkerRegistration: reg });
+  }
+  async function pushRefresh() {
+    try { if (DEMO || !pushCfg() || !pushOk() || Notification.permission !== 'granted') return; var t = await fcmToken(); if (t && localStorage.getItem(pushKey()) !== t) { await api('POST', { action: 'push-abo', jeton: t }); localStorage.setItem(pushKey(), t); } } catch (e) { }
+  }
+  window.csePushOn = async function () {
+    var m = $('push-msg');
+    if (DEMO) { say('push-msg', '(Exemple) Sur un vrai téléphone, celui-ci demanderait l\'autorisation puis afficherait « Notifications activées ».', 'info'); return; }
+    try {
+      say('push-msg', 'Autorisation…', 'info');
+      var perm = await Notification.requestPermission(); if (perm !== 'granted') { say('push-msg', 'Vous avez refusé les notifications. Vous pouvez les réautoriser dans les réglages du navigateur.', 'bad'); return; }
+      var t = await fcmToken(); if (!t) throw new Error('le téléphone n\'a pas donné de jeton');
+      await api('POST', { action: 'push-abo', jeton: t }); try { localStorage.setItem(pushKey(), t); } catch (e) { }
+      render(); 
+    } catch (e) { say('push-msg', 'Impossible d\'activer les notifications : ' + e.message, 'bad'); }
+  };
+  window.csePushOff = async function () {
+    try { var t = localStorage.getItem(pushKey()); if (t) await api('POST', { action: 'push-abo', jeton: t, retirer: true }); localStorage.removeItem(pushKey()); try { if (window.firebase && firebase.messaging) await firebase.messaging().deleteToken(); } catch (e) { } render(); } catch (e) { say('push-msg', e.message, 'bad'); }
+  };
+  function pushCard() {
+    if (!pushCfg() && !DEMO) return '';
+    var on = false; try { on = !!localStorage.getItem(pushKey()) && (!('Notification' in window) || Notification.permission === 'granted'); } catch (e) { }
+    if (on) return '<div class="perm" style="border-left-color:var(--ok)"><span style="font-size:20px">🔔</span><div style="flex:1"><b style="color:var(--ok)">Notifications activées</b><div class="mute">Vous êtes prévenu quand le CSE vous répond ou publie une info.</div></div><button class="btn s" onclick="csePushOff()">Couper</button></div>';
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent), standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    var h = '<div class="card" style="border-left:4px solid var(--brand)"><h2>🔔 Être prévenu sur mon téléphone</h2><p class="mute">Recevez une notification quand le CSE répond à vos demandes, publie une annonce ou un sondage. Rien d\'autre, et vous pouvez couper quand vous voulez.</p>';
+    if (!DEMO && ios && !standalone) h += '<div class="msg info">Sur iPhone : installez d\'abord l\'appli (bouton « Installer l\'appli » en haut), puis ouvrez-la depuis l\'écran d\'accueil et revenez ici.</div>';
+    else if (!DEMO && !pushOk()) h += '<div class="msg warn">Ce navigateur ne gère pas les notifications. Essayez avec Chrome (Android) ou l\'appli installée (iPhone).</div>';
+    else if (!DEMO && Notification.permission === 'denied') h += '<div class="msg warn">Les notifications sont bloquées pour cette page : autorisez-les dans les réglages du navigateur, puis rechargez.</div>';
+    else h += '<button class="btn p" onclick="csePushOn()">🔔 Activer les notifications</button>';
+    return h + '<div id="push-msg"></div></div>';
+  }
   function sondCards() {
     var P = D.pub || {}, V = D.votes || {};
     return (P.sondages || []).map(function (s) {
@@ -302,6 +346,7 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
         if (PAY.length) h += '<div class="card" style="border-left:4px solid var(--warn)"><h2>💶 À régler</h2>' + PAY.map(function (x) { return '<div class="row" style="cursor:pointer" onclick="cseGo(\'' + x.t + '\')"><div class="l"><b>' + E(x.l) + '</b><div class="mute">' + (x.t === 'achats' ? 'Achat du ' : x.t === 'sorties' ? 'Sortie le ' : 'Avant le ') + fd(x.d) + '</div></div><div class="r">' + eur(x.m) + '<br>' + (x.late ? '<span class="tag bad">' + (x.t === 'cv' ? 'en retard' : 'à régler') + '</span>' : '<span class="tag warn">à venir</span>') + '</div></div>'; }).join('')
           + '<div class="row"><div class="l"><b>Total</b><div class="mute">Billets, sorties et chèques vacances · à régler à la permanence du CSE</div></div><div class="r">' + eur(PAY.reduce(function (a, x) { return a + x.m; }, 0)) + '</div></div></div>';
         h += sondCards();
+        h += pushCard();
         h += permCard();
         h += '<div class="kpis">'
           + '<div class="kpi" onclick="cseGo(\'offert\')"><span>Offert par le CSE en ' + new Date().getFullYear() + '</span><b>' + eur(offY) + '</b></div>'
@@ -573,7 +618,10 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
     else sheet(head('Installer sur Android') + '<ol style="padding-left:20px;line-height:1.8"><li>Ouvrez ce lien avec <b>Chrome</b> (dans Gmail : ⋮ puis « Ouvrir dans Chrome »).</li><li>Appuyez sur <b>⋮</b> en haut à droite.</li><li>Choisissez <b>« Installer l\'application »</b> ou <b>« Ajouter à l\'écran d\'accueil »</b>.</li></ol><p class="mute">L\'icône « Mon CSE » apparaît avec vos applications.</p><button class="btn" onclick="cseClose()">OK</button>');
   };
   (function () { var b = $('h-inst'); if (!b || STANDALONE || PUBLIC) return; b.hidden = false; b.onclick = function () { if (PROMPT) cseInstall('android'); else cseInstall(IOS ? 'ios' : (/android/i.test(navigator.userAgent) ? 'android' : 'choix')); }; })();
-  try { if ('serviceWorker' in navigator && /^https:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function () { }); } catch (e) { }
+  // Service worker propre à l'espace (copie hors ligne + notifications Firebase).
+  function swUrl() { var c = D && D.pub && D.pub.push && D.pub.push.cfg; return 'espace-sw.js' + (c ? '?cfg=' + encodeURIComponent(JSON.stringify(c)) : ''); }
+  function swReg() { return navigator.serviceWorker.register(swUrl(), { scope: 'espace-salarie.html' }); }
+  // (enregistré après le chargement de l'espace, avec la configuration des notifications)
 
   function say(id, m, cl) { var el = $(id); if (el) el.innerHTML = '<div class="msg ' + (cl || 'info') + '">' + E(m) + '</div>'; }
 
