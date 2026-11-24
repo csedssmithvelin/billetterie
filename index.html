@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"z8cb4zg2i1NwKdQ9/KzQ2w==","iv":"qbdCnOvS2Kt97W1J","rev":"boot","lastModified":"2026-11-24T18:09:02.957Z","by":"Michaël GROSJEAN","data":"wahvIImN/KdoBvhXMWXkoAjgUgg9+4h2QvZNF9WdVACQaMrYu3WSZBJiMtSfLKWRkJfckYsgBXSdBztduA6r1A=="},"at":"2026-11-24T18:09:02.995Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Gr8eXsM2yoFM/rV9szoKLg==","iv":"9E/nVmnhVGA39A2v","rev":"boot","lastModified":"2026-11-24T19:11:51.920Z","by":"Michaël GROSJEAN","data":"k2/wQa7E8n08wyb6+cAFEJeUZ3SYvHc/abak1322YrSvHzN525asqNstGmYL+S6Szq3hxpFhDCHLSQEnU0TRBw=="},"at":"2026-11-24T19:11:51.952Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21729,7 +21729,8 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
                 "📅 Récap mensuel des délégations pour les RH (PDF envoyé depuis la boîte du CSE le 1er du mois, copie sur le Drive) : réglage dans l'onglet Heures de délégation, désactivé par défaut. Aperçu et envoi à la main possibles.",
                 "📲 Nouvelle sortie ou nouveau colis : l'appli propose de prévenir les salariés concernés par une notification (comme pour les nouveaux billets, désormais proposé par défaut). Réglage dans Communication › Notifications.",
                 "🏛️ Réunions : « Envoyer la convocation et l'ordre du jour » et « Envoyer le compte rendu » partent en PDF depuis la boîte du CSE à tous les élus, rangés dans Mon Drive › CSE › CSE - Réunions. Les élus les retrouvent dans leur espace (onglet Délégation).",
-                "🟡 Liste des salariés : un point de couleur à côté du nom. Jaune = notifications activées sur son téléphone, vert = espace salarié ouvert ces 30 derniers jours, gris = lien créé mais jamais ouvert (ou pas depuis 30 jours). Survolez le point pour le détail."
+                "🟡 Liste des salariés : un point de couleur à côté du nom. Jaune = notifications activées sur son téléphone, vert = espace salarié ouvert ces 30 derniers jours, gris = lien créé mais jamais ouvert (ou pas depuis 30 jours). Survolez le point pour le détail.",
+                "💾 Enregistrement automatique sur GitHub : les modifications partent toutes seules environ 5 secondes après, même si une fenêtre reste ouverte. Si l'appareil ne peut pas enregistrer (mot de passe des données ou jeton absent, enregistrement auto désactivé), un encadré orange le dit avec le bouton pour régler. En fermant l'appli avec des modifications pas encore envoyées : envoi immédiat et demande de confirmation."
             ] },
             { v: 'V.9.1', date: '2026-11-24', items: [
                 "🌙 Délégation de nuit : « 21:00 à 05:00 » compte 8 h, la fin est mise au lendemain tout seul (feuille, e-mail et compteur).",
@@ -45120,6 +45121,68 @@ var qrcode = function() {
   setInterval(function () { upCheck(false); }, 60000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - UP.at > 2 * 60000) upCheck(true); });
 
+
+  // ---------- Enregistrement automatique sur GitHub, même avec une fenêtre ouverte ; avertissement à la fermeture ----------
+  // L'envoi automatique attendait que l'écran soit « libre » (aucune fenêtre de saisie ouverte). Maintenant, si des
+  // modifications attendent depuis 5 s, elles partent quand même (seulement si personne d'autre n'a enregistré entre-temps,
+  // sinon la fusion habituelle se fait dès que l'écran est libre). En quittant l'appli : envoi immédiat, et le navigateur
+  // demande confirmation tant que ce n'est pas enregistré.
+  var PN = { busy: false, since: 0, last: 0 };
+  function hm() { return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
+  function sale() { try { return syncIsDirty(); } catch (e) { return false; } }
+  function liveOk() { try { return liveSyncReady(); } catch (e) { return false; } }
+  async function pushNow(ignoreScreen) {
+    if (PN.busy || !pret() || !sale() || !liveOk() || seed() || perime()) return;
+    try { if (__liveBusy) return; } catch (e) { return; }
+    if (!ignoreScreen && liveScreenFree()) return liveTick(true);
+    PN.busy = true; PN.last = Date.now(); __liveBusy = true;
+    try {
+      await syncSerial(async function () {
+        var tok = liveToken(), chk = await liveRemoteChanged(tok); __liveLastCheckAt = new Date();
+        if (chk.changed) return;                       // quelqu'un a enregistré : la fusion se fera dès que l'écran est libre
+        __liveEtag = chk.etag; liveSetStatus('Envoi automatique en cours…'); __liveLastPushAt = Date.now();
+        var res = await cloudPushInner(tok, { auto: true });
+        if (res === 'ok') { try { hideDataWarning(); } catch (e) { } liveSetStatus('À jour en direct (' + hm() + ')'); }
+      });
+    } catch (e) { console.warn('Envoi automatique', e); }
+    finally { __liveBusy = false; PN.busy = false; try { liveRenderSettings(); } catch (e) { } }
+  }
+  function raison() {
+    try {
+      if (!liveSyncEnabled()) return ['L\'enregistrement automatique est désactivé sur cet appareil.', 'Activer', function () { liveSyncToggle(true); }];
+      if (!dataPassword()) return ['Le mot de passe des données n\'est pas enregistré sur cet appareil : rien ne part sur GitHub.', 'Le saisir', mdpSaisir];
+      if (!liveToken()) return ['Cet appareil n\'a pas le jeton GitHub : rien ne part sur GitHub.', 'Réglages', function () { try { switchTab('settings'); } catch (e) { } }];
+    } catch (e) { }
+    return null;
+  }
+  async function mdpSaisir() {
+    var msg = 'Saisissez le mot de passe des données du CSE (donné par le trésorier ou le secrétaire). Il n\'est demandé qu\'une fois sur cet appareil.';
+    for (;;) {
+      var pw = await askDataPassword(msg); if (!pw) return;
+      var b = window.CSE_BOOT && window.CSE_BOOT.tok ? window.CSE_BOOT : null;
+      if (b) { var o = await tryDecrypt(b.tok, pw); if (!o || !o.t) { msg = 'Mot de passe incorrect. Réessayez.'; continue; } safeLsSet(TOKEN_STORAGE_KEY, o.t); }
+      safeLsSet(DATA_PW_KEY, pw); say('✔ Cet appareil enregistre maintenant tout seul sur GitHub.', 'success'); diag(); liveTick(true); return;
+    }
+  }
+  function diag() {
+    var r = sale() && Date.now() - PN.since > 30000 ? raison() : null, b = document.getElementById('v92-diag');
+    if (!r) { if (b) b.remove(); return; }
+    if (!b) { b = document.createElement('div'); b.id = 'v92-diag'; b.style.cssText = 'position:fixed;right:16px;top:16px;z-index:10000;max-width:min(420px,calc(100vw - 32px));background:#fffbeb;border:1px solid #f59e0b;color:#78350f;border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.18);padding:12px 14px;font-size:13px'; document.body.appendChild(b); }
+    b.innerHTML = '<b>⚠️ Modifications pas encore enregistrées sur GitHub</b><div style="margin:4px 0 8px">' + E(r[0]) + '</div><button type="button" id="v92-diag-go" style="background:#b45309;color:#fff;border:0;border-radius:9px;padding:6px 12px;font-weight:700;cursor:pointer">' + E(r[1]) + '</button>';
+    document.getElementById('v92-diag-go').onclick = r[2];
+  }
+  setInterval(function () {
+    if (!pret()) return;
+    if (!sale()) { PN.since = 0; diag(); return; }
+    if (!PN.since) PN.since = Date.now();
+    if (Date.now() - PN.since > 5000 && Date.now() - PN.last > 5000) pushNow(true);
+    diag();
+  }, 1000);
+  document.addEventListener('visibilitychange', function () { if (document.hidden && sale()) pushNow(true); });
+  window.addEventListener('beforeunload', function (e) {
+    try { if (pret() && sale() && !seed() && !perime()) { pushNow(true); e.preventDefault(); e.returnValue = 'Des modifications ne sont pas encore enregistrées sur GitHub.'; return e.returnValue; } } catch (er) { }
+  });
+  window.cseEnvoiMaintenant = pushNow;
   // ---------- 2) Sauvegarde chaque semaine dans le Drive du CSE (par le script Google) ----------
   var BKW = { busy: false, list: null, err: '', open: false };
   function bkLast() { return cfg().bkHebdoAt || ''; }
