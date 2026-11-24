@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"I1h3osY8HeB9BxbXpEx3Bg==","iv":"wYrYh66/o0XVcOCb","rev":"boot","lastModified":"2026-11-24T21:49:33.439Z","by":"Michaël GROSJEAN","data":"jia+lf8K9dI0QB+SNOmT88mlwANNXGQoBvYbo74MSyc5RxQ60ylpPD63oWQq2oJ1gP4Nnl+biOO7LCHB1M0XsA=="},"at":"2026-11-24T21:49:33.472Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"W13G2zM3N6NKtZM2a3jrFA==","iv":"4oorPkLtuVamxuaH","rev":"boot","lastModified":"2026-11-24T22:07:01.692Z","by":"Michaël GROSJEAN","data":"831qfBbx+cVS4lYBo54AFW8QvbMZf3ZSxTzqlS34ueQO6rMdw2+JWJeSxe7PcJsEQp+/MhkzucwyZNIDFrMz1g=="},"at":"2026-11-24T22:07:01.724Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.9.4";
+        const APP_VERSION = "V.9.5";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,11 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.9.5', date: '2026-11-24', items: [
+                'Paiements SumUp rapprochés tout seuls : quand un salarié paie par carte (en ligne ou au terminal) et qu\'un seul billet, sortie ou échéance non réglé(e) correspond au centime près, l\'appli relie le paiement, le marque « réglé par carte » et les relances s\'arrêtent. En cas de doute, rien n\'est fait. Annulable en un clic (Paramètres › Paiement en ligne, et fiche du salarié).',
+                'Double validation des grosses dépenses : à partir du montant choisi (500 € par défaut), une facture ou note de frais ne peut être payée qu\'après la signature au doigt du trésorier et d\'un deuxième élu (ici ou chacun sur son téléphone). PDF avec les deux signatures rangé sur le Drive.',
+                'Mon espace : le bouton « Installer l\'appli » disparaît quand l\'appli est déjà installée.'
+            ] },
             { v: 'V.9.4', date: '2026-11-24', items: [
                 "🚀 Paramètres › Sécurité : « Publier la nouvelle version » met en ligne les fichiers reçus (l'appli devient index.html, plus espace-salarie.html et espace-sw.js) directement sur GitHub, avec le jeton enregistré sur le PC. Plus besoin de passer par le site GitHub.",
                 "📋 Tableau de bord › À faire › Aujourd'hui : quatre blocs en haut (permanence du jour, colis et prêts ; impayés en retard ; documents à signer ; délégations pas encore vues par la direction ou au-dessus du crédit).",
@@ -45902,6 +45907,7 @@ var qrcode = function() {
   }
   window.cseSigFermer = function () { var m = $('v94-sig-modal'); if (m) m.classList.add('hidden'); PAD.x = null; };
   window.cseFaireSigner = function (kind, refId, empId) {
+    if (kind === 'depense') return cseDvOuvrir(refId);
     var x = sujet(kind, refId, empId); if (!x) { say('Document introuvable.', 'warning'); return; }
     var e = emp(x.empId), att = SG().filter(function (s) { return s.kind === kind && String(s.refId) === String(x.refId) && String(s.empId) === String(x.empId); }).slice(-1)[0];
     PAD.x = Object.assign(att && att.statut === 'attente' ? att : { id: uid().slice(-9) }, x);
@@ -45993,7 +45999,7 @@ var qrcode = function() {
         var r = R[i], x = att.filter(function (s) { return String(s.id) === String(r.id); })[0];
         if (!x) { if (!SG().some(function (s) { return String(s.id) === String(r.id); })) faits.push(r.id); continue; }
         var e = emp(x.empId); if (!e || e.espaceToken !== r.t) continue;
-        try { await classerSigne(x, r.sig, r.at, 'sur son téléphone', !!e.email); faits.push(r.id); n++; } catch (er) { console.warn('Signature', er); }
+        try { if (x.kind === 'depense') await dvRecu(x, r.sig, r.at); else await classerSigne(x, r.sig, r.at, 'sur son téléphone', !!e.email); faits.push(r.id); n++; } catch (er) { console.warn('Signature', er); }
       }
       if (faits.length) await cseScriptPost('signature-fait', { ids: faits });
       if (n) { try { cseEspacePublish && cseEspacePublish(true); } catch (e) { } say('✍️ ' + n + ' document(s) signé(s) sur téléphone : PDF rangé(s) sur le Drive.', 'success'); rerender(); }
@@ -46029,9 +46035,10 @@ var qrcode = function() {
     if (A.length) h += SEC + '<h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-signature text-indigo-600"></i> Documents à faire signer</h4><div class="divide-y divide-slate-100">'
       + A.map(function (o) { var s = st(o[0], o[1]); return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="flex-1 min-w-[180px] text-slate-700">' + E(o[2]) + '</span>'
         + (s && s.statut === 'attente' ? '<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">En attente sur son téléphone</span>' : '') + '<button type="button" class="' + BTN + '" style="padding:4px 10px" onclick="cseFaireSigner(\'' + o[0] + '\',\'' + E(o[1]) + '\',\'' + E(id) + '\')">✍️ Signer</button></div>'; }).join('') + '</div></section>';
+    h += smFiche(id);
     var R = RL().filter(function (x) { return String(x.empId) === String(id); }).slice(-30).reverse();
     if (R.length) h += SEC + '<h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-bell text-amber-600"></i> Relances envoyées</h4><div class="divide-y divide-slate-100">'
-      + R.map(function (x) { return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="text-slate-500 w-24">' + E(new Date(x.at).toLocaleDateString('fr-FR')) + '</span><span class="flex-1 min-w-[160px] text-slate-700">' + E(x.lib) + ' · ' + eur(x.montant) + ' · J+' + x.j + '</span><span class="' + (x.ok ? 'text-slate-500' : 'text-rose-700') + '">' + (x.ok ? (x.mail ? '📧 ' + E(x.mail) : '') + (x.push ? ' 📲' : '') : '⚠ ' + E(x.err || 'non envoyée')) + '</span></div>'; }).join('') + '</div></section>';
+      + R.map(function (x) { return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="text-slate-500 w-24">' + E(new Date(x.at).toLocaleDateString('fr-FR')) + '</span><span class="flex-1 min-w-[160px] text-slate-700">' + E(x.lib) + ' · ' + eur(x.montant) + ' · J+' + x.j + (x.regle ? ' <span class="text-emerald-700 font-semibold">· ✔ réglé par carte le ' + fd(x.regle) + ' (SumUp) : relances arrêtées</span>' : '') + '</span><span class="' + (x.ok ? 'text-slate-500' : 'text-rose-700') + '">' + (x.ok ? (x.mail ? '📧 ' + E(x.mail) : '') + (x.push ? ' 📲' : '') : '⚠ ' + E(x.err || 'non envoyée')) + '</span></div>'; }).join('') + '</div></section>';
     return h;
   }
   if (typeof window.renderEmployeeProfile === 'function') {
@@ -46428,18 +46435,297 @@ var qrcode = function() {
     if (cd.dataset.h !== h) { cd.innerHTML = h; cd.dataset.h = h; }
   }
 
+  // =====================================================================
+  // 8) PAIEMENTS SUMUP RAPPROCHÉS TOUT SEULS : le billet, la sortie ou l'échéance impayé(e) passe « réglé(e) »
+  //    (et ne sera donc plus relancé(e)). Seulement quand il n'y a aucun doute possible.
+  // =====================================================================
+  function SA() { db.sumupAuto = Array.isArray(db.sumupAuto) ? db.sumupAuto : []; return db.sumupAuto; }
+  function scfg() { var c = cfg(); return { on: c.sumupAutoOn !== false, merci: !!c.sumupAutoMerci }; }
+  // Clé de l'opération SumUp -> clé de la relance correspondante
+  function relKey(k) { var p = k.split(':'); if (p[0] === 'sale') return 'v:' + p[1]; if (p[0] === 'reg') return 'r:' + p[1]; if (p[0] === 'cv') return 'c:' + p[1] + ':' + p[2]; return ''; }
+  function recDe(k) {
+    var p = k.split(':'), f = function (L, id) { return (L || []).filter(function (x) { return String(x.id) === String(id); })[0]; };
+    if (p[0] === 'sale') return f(db.sales, p[1]);
+    if (p[0] === 'reg') return f(db.registrations, p[1]);
+    if (p[0] === 'ip') { var r = f(p[1] === 'sale' ? db.sales : db.registrations, p[2]); return r && r.installPlan && r.installPlan[Number(p[3])]; }
+    if (p[0] === 'cv') { var c = f(db.chequesVacances, p[1]); return c && c.installments && c.installments[Number(p[2])]; }
+    return null;
+  }
+  var CHAMPS = ['paymentMethod', 'settledDate', 'paid', 'chequeStatus', 'depositDate', 'paidDate', 'paidAt', 'method', 'status', 'receivedDate'];
+  function photo(o) { var r = {}; if (o) CHAMPS.forEach(function (k) { if (Object.prototype.hasOwnProperty.call(o, k)) r[k] = o[k]; }); return r; }
+  // Une transaction : un seul impayé possible, au centime près, sur la période, et pas un autre salarié reconnu par sa carte
+  function candidat(t, used, mem) {
+    if (t.type !== 'Vente' || sumupIsVoid(t) || t.validated || t.noLink || t.category || (t.links && t.links.length) || t.autoNon) return null;
+    if (!t.day || t.day < addD(today(), -90) || !(t.amount > 0)) return null;
+    var s = sumupSuggest(t, used, mem); if (!s || !s.sure || s.keys.length !== 1) return null;
+    var O = sumupOps(), op = O.byKey[s.keys[0]]; if (!op || op.paid || op.archived) return null;
+    var memes = O.list.filter(function (o) { return !used.has(o.key) && !o.paid && Math.abs(o.amount - t.amount) < 0.009 && sumupDaysBetween(t.day, o.date) <= 45; });
+    if (memes.length !== 1) return null;
+    var hint = sumupCardHint(t, mem); if (hint && String(hint.emp.id) !== String(op.empId)) return null;
+    return op;
+  }
+  var SAS = { busy: false, last: null };
+  window.cseSumupAuto = function (manuel) {
+    if (SAS.busy) return 0; if (!scfg().on && !manuel) return 0;
+    if (!window.__dbLoaded || seed() || typeof sumupSuggest !== 'function') return 0;
+    SAS.busy = true; var faits = [];
+    try {
+      sumupEnsure(); __sumupOps = null; __sumupRefunded = null;
+      var used = sumupUsedKeys(null), mem = sumupCardMemory();
+      db.sumupTx.slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); }).forEach(function (t) {
+        var op = candidat(t, used, mem); if (!op) return;
+        var rec = recDe(op.key), avant = photo(rec), qd = new Date().toISOString();
+        t.links = [op.key]; t.category = ''; t.empId = null; t.validated = true; t.validatedBy = 'Rapprochement automatique'; t.validatedAt = qd; t.auto = true;
+        used.add(op.key);
+        var n = sumupSettleOps([op], t); __sumupOps = null;
+        var rk = relKey(op.key), rl = rk ? RL().filter(function (x) { return x.key === rk && x.ok; }) : [];
+        rl.forEach(function (x) { x.regle = t.day; x.regleSumup = t.ref; });
+        var x = { id: uid(), at: qd, tx: t.id, ref: t.ref, day: t.day, montant: t.amount, canal: t.channel === 'ECOM' ? 'en ligne' : 'terminal', key: op.key, empId: op.empId, who: op.who, lib: op.label, regle: n > 0, avant: avant, relances: rl.length };
+        SA().push(x); faits.push(x);
+        try { logAction('Validation', 'sumup', 'Rapprochement automatique : paiement SumUp ' + t.ref + ' (' + eur(t.amount) + ') → ' + op.who + ' — ' + op.label + (n ? ' : marqué réglé par carte' : '')); } catch (e) { }
+      });
+      if (SA().length > 1000) db.sumupAuto = SA().slice(-1000);
+      if (faits.length) {
+        save(); SAS.last = { at: Date.now(), n: faits.length };
+        try { if (typeof sumupRender === 'function' && $('tab-sumup') && !$('tab-sumup').classList.contains('hidden')) sumupRender(true); } catch (e) { }
+        say('💳 ' + faits.length + ' paiement(s) SumUp rapproché(s) tout seul(s) : ' + faits.map(function (x) { return x.who + ' ' + eur(x.montant); }).join(', ') + '. Marqué(s) « réglé », relance(s) arrêtée(s).', 'success');
+        if (scfg().merci) faits.forEach(merci);
+        try { cseEspacePublish && cseEspacePublish(true); } catch (e) { }
+        rerender(); try { smCard(); } catch (e) { }
+      } else if (manuel) say('Aucun paiement SumUp à rapprocher sans doute possible. Les autres restent à relier à la main dans Paiements SumUp.', 'info');
+    } catch (e) { console.warn('[v94] rapprochement SumUp', e); }
+    SAS.busy = false; return faits.length;
+  };
+  async function merci(x) {
+    var e = emp(x.empId); if (!e || !e.espaceToken || !(cfg().pushCfg && cfg().pushVapid)) return;
+    try { await cseEspacePost('push', { cibles: [e.espaceToken], titre: '✔ Paiement reçu par le CSE', texte: eur(x.montant) + ' : ' + x.lib + '. Merci !' }); x.merci = true; save(); } catch (er) { }
+  }
+  // Annuler un rapprochement automatique (mauvaise personne) : on délie et on remet l'opération comme avant
+  window.cseSumupAutoAnnuler = async function (id) {
+    var x = SA().filter(function (y) { return y.id === id; })[0]; if (!x || x.annule) return;
+    if (!(await uiConfirm('Annuler ce rapprochement ?\n\n' + x.who + ' — ' + x.lib + ' — ' + eur(x.montant) + '\n\nLe paiement SumUp ' + x.ref + ' redevient « à relier » et l\'opération repasse « non réglée », comme avant.', { title: 'Annuler le rapprochement', okLabel: 'Annuler le rapprochement', tone: 'warning' }))) return;
+    var t = sumupFind(x.tx); if (t) { t.links = []; t.validated = false; delete t.validatedBy; delete t.validatedAt; delete t.auto; t.autoNon = true; }
+    var rec = recDe(x.key); if (rec && x.avant) { CHAMPS.forEach(function (k) { if (Object.prototype.hasOwnProperty.call(x.avant, k)) rec[k] = x.avant[k]; else delete rec[k]; }); }
+    RL().forEach(function (r) { if (r.regleSumup === x.ref) { delete r.regle; delete r.regleSumup; } });
+    x.annule = new Date().toISOString(); x.annulePar = qui();
+    try { logAction('Modification', 'sumup', 'Rapprochement automatique annulé : paiement SumUp ' + x.ref + ' (' + eur(x.montant) + ') — ' + x.who); } catch (e) { }
+    __sumupOps = null; save(); try { sumupRender(true); } catch (e) { } rerender(); smCard();
+    say('Rapprochement annulé : à relier à la main dans Paiements SumUp.', 'info');
+  };
+  window.cseSumupAutoSet = function (k, v) { var c = cfg(); if (k === 'on') c.sumupAutoOn = !!v; else if (k === 'merci') c.sumupAutoMerci = !!v; save(); smCard(); if (k === 'on' && v) cseSumupAuto(false); };
+  function smLignes(L, avecBtn) {
+    return '<div class="divide-y divide-slate-100">' + L.map(function (x) {
+      return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs' + (x.annule ? ' opacity-50 line-through' : '') + '"><span class="text-slate-500 w-20">' + fd(x.day) + '</span><span class="flex-1 min-w-[180px] text-slate-700"><b>' + E(x.who) + '</b> · ' + E(x.lib) + ' · <b>' + eur(x.montant) + '</b> <span class="text-slate-500">(' + E(x.canal) + ', réf. ' + E(x.ref) + ')' + (x.relances ? ' · relance arrêtée' : '') + '</span></span>'
+        + (avecBtn && !x.annule ? '<button type="button" class="' + BTN + '" style="padding:4px 10px" onclick="cseSumupAutoAnnuler(\'' + E(x.id) + '\')">Annuler</button>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  function smCard() {
+    var c = card('v94-sumup-card', 'etab', function () { return $('v94-rel-card'); }); if (!c) return;
+    var R = scfg(), L = SA().slice(-8).reverse(), mois = SA().filter(function (x) { return !x.annule && String(x.day).slice(0, 7) === today().slice(0, 7); });
+    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> Paiements SumUp rapprochés tout seuls</h3>'
+      + '<p class="text-xs text-slate-500">Quand un salarié paie par carte (en ligne ou au terminal), l\'appli cherche le billet, la sortie ou l\'échéance de chèques vacances <b>non réglé(e)</b> du même montant. S\'il n\'y en a qu\'un(e) possible sur la période (et que la carte n\'est pas connue pour un autre salarié), elle relie le paiement, le marque « réglé par carte » et les relances s\'arrêtent. S\'il y a le moindre doute, rien n\'est fait : le paiement reste à relier à la main dans Paiements SumUp. Vérifié après chaque import SumUp et toutes les 10 minutes.</p>'
+      + '<label class="flex items-center gap-2 text-sm font-bold ' + (R.on ? 'text-emerald-700' : 'text-slate-700') + '"><input type="checkbox"' + (R.on ? ' checked' : '') + ' onchange="cseSumupAutoSet(\'on\',this.checked)"> Rapprochement automatique ' + (R.on ? 'activé' : 'désactivé') + '</label>'
+      + '<label class="flex items-center gap-2 text-xs text-slate-700"><input type="checkbox"' + (R.merci ? ' checked' : '') + ' onchange="cseSumupAutoSet(\'merci\',this.checked)"> Prévenir le salarié par notification (« Paiement reçu par le CSE »)</label>'
+      + '<p class="text-xs text-slate-700"><b>' + mois.length + '</b> paiement(s) rapproché(s) tout seul(s) ce mois-ci · ' + eur(mois.reduce(function (s, x) { return s + x.montant; }, 0)) + '</p>'
+      + (L.length ? smLignes(L, true) : '<p class="text-xs text-slate-500">Aucun rapprochement automatique pour le moment.</p>')
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTN + '" onclick="cseSumupAuto(true)"><i class="fa-solid fa-rotate"></i> Rapprocher maintenant</button><button type="button" class="' + BTN + '" onclick="switchTab(\'sumup\')"><i class="fa-solid fa-credit-card"></i> Ouvrir Paiements SumUp</button></div>';
+    if (c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
+  }
+  // Après chaque import (fichier, PDF ou import automatique depuis SumUp)
+  ['sumupImport', 'sumupImportPdfFiles'].forEach(function (fn) {
+    var o = window[fn]; if (typeof o !== 'function') return;
+    window[fn] = async function () { var r = await o.apply(this, arguments); try { setTimeout(function () { cseSumupAuto(false); }, 300); } catch (e) { } return r; };
+  });
+  // Paiements en ligne : avec l'import automatique SumUp, on regarde aussi toutes les 3 heures en journée (pas seulement 1 fois par jour)
+  function smTick() {
+    try {
+      if (!window.__dbLoaded || document.hidden || seed() || !isCse() || !scfg().on) return;
+      cseSumupAuto(false);
+      var h = new Date().getHours(), k = 'cse_v94_sumup_at', at = 0; try { at = Number(localStorage.getItem(k)) || 0; } catch (e) { }
+      if (db.config && db.config.sumupApiOk && scriptOk() && h >= 8 && h < 21 && Date.now() - at > 3 * 3600000 && typeof cseSumupApiImport === 'function') { try { localStorage.setItem(k, String(Date.now())); } catch (e) { } cseSumupApiImport(true); }
+    } catch (e) { }
+  }
+  // Fiche du salarié : ses paiements rapprochés tout seuls
+  function smFiche(id) {
+    var L = SA().filter(function (x) { return String(x.empId) === String(id); }).slice(-10).reverse(); if (!L.length) return '';
+    return '<section class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2"><h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-credit-card text-indigo-600"></i> Paiements par carte rapprochés tout seuls</h4>' + smLignes(L, isAdmin()) + '</section>';
+  }
+
+  // =====================================================================
+  // 9) DOUBLE VALIDATION DES GROSSES DÉPENSES : à partir d'un montant fixé, le trésorier et un deuxième élu
+  //    signent au doigt avant que le paiement de la facture (ou de la note de frais) puisse être enregistré.
+  // =====================================================================
+  function dcfg() { var c = cfg(); return { on: c.dvOn !== false, seuil: Number(c.dvSeuil) > 0 ? Number(c.dvSeuil) : 500 }; }
+  function inv(id) { return (db.supplierInvoices || []).filter(function (i) { return String(i.id) === String(id); })[0] || null; }
+  function dvFaut(i) { var R = dcfg(); return !!(R.on && i && i.status === 'apayer' && (Number(i.amount) || 0) >= R.seuil); }
+  function dvSigs(i) { var d = i && i.dv; if (!d || Math.abs((Number(d.montant) || 0) - (Number(i.amount) || 0)) > 0.009) return {}; return d.sigs || {}; }
+  function dvOk(i) { var s = dvSigs(i); return !!(s.tresorier && s.elu); }
+  function dvN(i) { var s = dvSigs(i); return (s.tresorier ? 1 : 0) + (s.elu ? 1 : 0); }
+  function elusL() { var A = (db.employees || []).filter(function (e) { return e.active !== false; }), L = A.filter(function (e) { return typeof window.cseEmpIsCse === 'function' && cseEmpIsCse(e); }); return (L.length >= 2 ? L : A).slice().sort(function (a, b) { return nom(a).localeCompare(nom(b)); }); }
+  function tresorierId() { var u = ((db.rbac && db.rbac.users) || []).filter(function (x) { return x.role === 'tresorier' && x.employeeId != null; })[0]; return u ? String(u.employeeId) : ''; }
+  function partie(i) { try { return supPartyName(i); } catch (e) { return i.payee || 'Fournisseur'; } }
+  function dvSujet(i, role, empId) {
+    var e = emp(empId);
+    return { kind: 'depense', refId: i.id, empId: empId, role: role, titre: (i.supplierId ? 'Facture ' : 'Note de frais ') + (i.number || '') + ' — ' + partie(i) + ' — ' + eur(i.amount), date: today(), montant: Number(i.amount) || 0,
+      lignes: [['Bénéficiaire', partie(i)], [(i.supplierId ? 'Facture' : 'Note de frais') + ' n° ' + (i.number || '—') + (i.date ? ' du ' + fd(i.date) : ''), ''], ['Objet', i.label || '—'], ['Budget', (i.envelope || '') + (i.budgetCategory ? ' · ' + i.budgetCategory : '')]].concat(i.dueDate ? [['Échéance', fd(i.dueDate)]] : []),
+      texte: 'Je soussigné(e) ' + nom(e) + ', ' + (role === 'tresorier' ? 'trésorier(ère)' : 'élu(e)') + ' du CSE, valide cette dépense de ' + eur(i.amount) + ' et autorise son paiement.' };
+  }
+  KIND.depense = ['Validation de dépense', '1 - Paiements et caisse', 'Validations de dépenses'];
+  var DV = { id: null, pads: {}, msg: '' };
+  function dvMsg(t, cl) { DV.msg = t; var p = $('v94-dv-msg'); if (p) { p.textContent = t; p.className = 'text-xs ' + (cl || 'text-slate-600'); } }
+  function pad(id) {
+    var c = $(id); if (!c) return; var x = c.getContext('2d'); c.width = 700; c.height = 240; x.lineWidth = 4; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#0b2a6b';
+    var st = DV.pads[id] = { on: false, vide: true };
+    var pt = function (e) { var b = c.getBoundingClientRect(); return [(e.clientX - b.left) * c.width / b.width, (e.clientY - b.top) * c.height / b.height]; };
+    c.onpointerdown = function (e) { st.on = true; try { c.setPointerCapture(e.pointerId); } catch (er) { } var p = pt(e); x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(p[0] + .1, p[1] + .1); x.stroke(); st.vide = false; e.preventDefault(); };
+    c.onpointermove = function (e) { if (!st.on) return; var p = pt(e); x.lineTo(p[0], p[1]); x.stroke(); e.preventDefault(); };
+    c.onpointerup = c.onpointercancel = function () { st.on = false; };
+  }
+  window.cseDvEffacer = function (role) { var c = $('v94-dv-pad-' + role); if (c) { c.getContext('2d').clearRect(0, 0, c.width, c.height); DV.pads[c.id].vide = true; } };
+  function bloc(i, role) {
+    var s = dvSigs(i)[role], autre = dvSigs(i)[role === 'tresorier' ? 'elu' : 'tresorier'], L = elusL(), def = role === 'tresorier' ? tresorierId() : '';
+    var att = SG().filter(function (x) { return x.kind === 'depense' && String(x.refId) === String(i.id) && x.role === role && x.statut === 'attente'; })[0];
+    var t = role === 'tresorier' ? '1. Le trésorier (ou la trésorière)' : '2. Un deuxième élu';
+    if (s) return '<div class="border border-emerald-200 bg-emerald-50 rounded-xl p-3 text-xs"><b>' + t + '</b><div class="text-emerald-800 mt-1">✔ Signé par <b>' + E(s.nom) + '</b> le ' + E(new Date(s.at).toLocaleString('fr-FR')) + ' ' + E(s.ou || '') + '</div></div>';
+    var opts = L.filter(function (e) { return !autre || String(e.id) !== String(autre.empId); }).map(function (e) { return '<option value="' + E(e.id) + '"' + (String(e.id) === def ? ' selected' : '') + '>' + E(nom(e)) + (String(e.id) === tresorierId() ? ' (trésorier)' : '') + '</option>'; }).join('');
+    return '<div class="border border-slate-200 rounded-xl p-3 space-y-2"><div class="text-xs font-bold text-slate-700">' + t + '</div>'
+      + '<select id="v94-dv-qui-' + role + '" class="' + INP + '"><option value="">— Choisir l\'élu qui signe —</option>' + opts + '</select>'
+      + (att ? '<p class="text-[11px] text-amber-700">⏳ Envoyé sur le téléphone de ' + E(nom(emp(att.empId))) + ' le ' + E(new Date(att.demandeLe).toLocaleString('fr-FR')) + ' : en attente. Il peut aussi signer ici.</p>' : '')
+      + '<canvas id="v94-dv-pad-' + role + '" style="width:100%;aspect-ratio:35/12;border:2px dashed #94a3b8;border-radius:12px;background:#fff;touch-action:none"></canvas>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTN + '" onclick="cseDvEffacer(\'' + role + '\')">Effacer</button><button type="button" class="' + BTNP + '" onclick="cseDvSigner(\'' + role + '\')"><i class="fa-solid fa-check"></i> Valider cette signature</button>'
+      + '<button type="button" class="' + BTN + '" onclick="cseDvDistance(\'' + role + '\')"><i class="fa-solid fa-mobile-screen"></i> Plutôt sur son téléphone</button></div></div>';
+  }
+  window.cseDvOuvrir = function (id) {
+    var i = inv(id); if (!i) { say('Facture introuvable.', 'warning'); return; }
+    if (DV.id !== i.id) DV.msg = ''; DV.id = i.id;
+    var m = modal(), b = $('v94-sig-box'), x = dvSujet(i, 'tresorier', '');
+    var doc = false; try { doc = supHasDoc(i); } catch (e) { }
+    b.innerHTML = '<div class="flex items-start justify-between gap-2"><div><h3 class="font-extrabold text-slate-800 text-base">✍️ Double validation de la dépense</h3><p class="text-xs text-slate-500">À partir de ' + eur(dcfg().seuil) + ', deux élus signent avant le paiement : le trésorier et un deuxième élu.</p></div><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="cseSigFermer()" aria-label="Fermer">×</button></div>'
+      + '<div class="border border-slate-200 rounded-xl p-3 text-xs space-y-1 bg-slate-50">' + x.lignes.map(function (l) { return '<div class="flex justify-between gap-2"><span>' + E(l[0]) + '</span><b>' + E(l[1]) + '</b></div>'; }).join('') + '<div class="flex justify-between gap-2 border-t border-slate-200 pt-1"><span>Montant</span><b>' + eur(i.amount) + '</b></div>'
+      + '<div>' + (doc ? '☑ La facture est jointe' : '<span class="text-amber-700 font-semibold">⚠ Aucune facture jointe</span>') + '</div></div>'
+      + (dvOk(i) ? '<p class="text-sm font-bold text-emerald-700">✔ Dépense validée par les deux élus. Le paiement peut être enregistré.' + (i.dv && i.dv.url ? ' <a class="underline" target="_blank" rel="noopener" href="' + E(i.dv.url) + '">PDF</a>' : '') + '</p>' : '')
+      + bloc(i, 'tresorier') + bloc(i, 'elu')
+      + '<p id="v94-dv-msg" class="text-xs">' + E(DV.msg) + '</p>'
+      + (dvOk(i) ? '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" onclick="cseSigFermer();supOpenPay(\'' + E(i.id) + '\')"><i class="fa-solid fa-euro-sign"></i> Enregistrer le paiement</button>' + (i.dv && !i.dv.url ? '<button type="button" class="' + BTN + '" onclick="cseDvRanger(\'' + E(i.id) + '\')">Ranger le PDF sur le Drive</button>' : '') + '</div>' : '');
+    m.classList.remove('hidden'); pad('v94-dv-pad-tresorier'); pad('v94-dv-pad-elu');
+  };
+  function poser(i, role, e, png, at, ou) {
+    if (!i.dv || Math.abs((Number(i.dv.montant) || 0) - (Number(i.amount) || 0)) > 0.009) i.dv = { montant: Number(i.amount) || 0, sigs: {} };
+    i.dv.sigs[role] = { empId: e.id, nom: nom(e), at: at, ou: ou, png: png };
+    SG().forEach(function (x) { if (x.kind === 'depense' && String(x.refId) === String(i.id) && x.role === role && x.statut === 'attente') { if (String(x.empId) === String(e.id)) { x.statut = 'signe'; x.signeLe = at; x.ou = ou; } else x.statut = 'retire'; } });
+    db.signatures = SG().filter(function (x) { return x.statut !== 'retire'; });
+    try { logAction('Modification', 'supplierInvoice', 'Facture ' + (i.number || '') + ' — ' + partie(i) + ' (' + eur(i.amount) + ') : signée par ' + nom(e) + ' (' + (role === 'tresorier' ? 'trésorier' : '2e élu') + ')'); } catch (er) { }
+  }
+  window.cseDvSigner = async function (role) {
+    var i = inv(DV.id); if (!i) return; var sel = $('v94-dv-qui-' + role), e = sel && emp(sel.value), c = $('v94-dv-pad-' + role);
+    if (!e) return dvMsg('Choisissez l\'élu qui signe.', 'text-rose-700');
+    var autre = dvSigs(i)[role === 'tresorier' ? 'elu' : 'tresorier']; if (autre && String(autre.empId) === String(e.id)) return dvMsg('Les deux signatures doivent venir de deux élus différents.', 'text-rose-700');
+    if (!c || !DV.pads[c.id] || DV.pads[c.id].vide) return dvMsg('Signez d\'abord dans le cadre.', 'text-rose-700');
+    var png = recadre(c); if (!png) return dvMsg('Signature vide : recommencez.', 'text-rose-700');
+    poser(i, role, e, png, new Date().toISOString(), 'sur l\'appareil du CSE'); save();
+    DV.msg = '✔ Signature de ' + nom(e) + ' enregistrée.' + (dvOk(i) ? ' Les deux élus ont signé.' : ' Il manque encore l\'autre signature.');
+    if (dvOk(i)) await dvRanger(i);
+    cseDvOuvrir(i.id); rendreSup(); try { cseEspacePublish && cseEspacePublish(true); } catch (er) { }
+  };
+  // Sur le téléphone de l'élu (son espace « Mon CSE ») : même circuit que les autres documents à signer
+  window.cseDvDistance = async function (role) {
+    var i = inv(DV.id); if (!i) return; var sel = $('v94-dv-qui-' + role), e = sel && emp(sel.value);
+    if (!e) return dvMsg('Choisissez l\'élu qui signe.', 'text-rose-700');
+    if (!e.espaceToken) return dvMsg(nom(e) + ' n\'a pas encore son lien « Mon espace CSE ».', 'text-rose-700');
+    var autre = dvSigs(i)[role === 'tresorier' ? 'elu' : 'tresorier']; if (autre && String(autre.empId) === String(e.id)) return dvMsg('Les deux signatures doivent venir de deux élus différents.', 'text-rose-700');
+    db.signatures = SG().filter(function (x) { return !(x.kind === 'depense' && String(x.refId) === String(i.id) && x.role === role && x.statut === 'attente'); });
+    var x = Object.assign({ id: uid().slice(-9), statut: 'attente', demandeLe: new Date().toISOString(), par: qui() }, dvSujet(i, role, e.id)); SG().push(x); save();
+    dvMsg('Envoi dans son espace…');
+    try { if (window.cseEspacePublish) await cseEspacePublish(true, true); } catch (er) { }
+    var pm = '';
+    if (cfg().pushCfg && cfg().pushVapid) { try { var pj = await cseEspacePost('push', { cibles: [e.espaceToken], titre: '✍️ Dépense à valider', texte: x.titre + ' : ouvrez votre espace CSE pour signer.' }); pm = pj && pj.envoyes > 0 ? ' 📲 Notification envoyée.' : ' (pas de notification : non activées sur son téléphone)'; } catch (er) { } }
+    DV.msg = '✔ Envoyé dans l\'espace de ' + nom(e) + '.' + pm + ' Sa signature arrivera ici toute seule.'; cseDvOuvrir(i.id); rendreSup();
+  };
+  // Signature reçue depuis le téléphone d'un élu
+  async function dvRecu(x, png, at) {
+    var i = inv(x.refId), e = emp(x.empId); if (!i || !e) { x.statut = 'signe'; x.signeLe = at; return; }
+    poser(i, x.role, e, png, at, 'sur son téléphone'); x.statut = 'signe'; x.signeLe = at; x.ou = 'sur son téléphone';
+    if (dvOk(i)) { try { await dvRanger(i); } catch (er) { } }
+    save(); rendreSup();
+    if (DV.id === i.id && $('v94-sig-modal') && !$('v94-sig-modal').classList.contains('hidden')) cseDvOuvrir(i.id);
+  }
+  function dvHtml(i) {
+    var c = cfg(), logo = c.logoDataUrl && /^data:image\//.test(c.logoDataUrl) ? c.logoDataUrl : '', s = dvSigs(i), x = dvSujet(i, 'tresorier', s.tresorier.empId);
+    var case_ = function (r, lib) { var g = s[r]; return '<div style="flex:1;border:1px solid #cbd5e1;border-radius:8px;padding:8px 10px"><div style="font-size:11px;color:#475569">' + lib + '</div><div style="font-size:12px;font-weight:700">' + E(g.nom) + '</div><img src="' + g.png + '" style="max-width:280px;max-height:100px;display:block;margin:4px 0"><div style="font-size:10.5px;color:#475569">Signé le ' + E(new Date(g.at).toLocaleString('fr-FR')) + ' ' + E(g.ou || '') + '</div></div>'; };
+    return '<div style="font-family:Arial,Helvetica,sans-serif;color:#0f172a;padding:28px 34px;width:700px;box-sizing:border-box;background:#fff">'
+      + '<div style="display:flex;align-items:center;gap:14px;border-bottom:2px solid #1e3a8a;padding-bottom:10px">' + (logo ? '<img src="' + logo + '" style="height:56px">' : '') + '<div><div style="font-weight:800;font-size:16px">' + E(c.cseName || 'CSE') + '</div></div>'
+      + '<div style="margin-left:auto;text-align:right"><div style="font-weight:800;font-size:15px;color:#1e3a8a">Validation de dépense</div><div style="font-size:11px;color:#475569">Double signature à partir de ' + eur(i.dv.seuil || dcfg().seuil) + '</div></div></div>'
+      + '<h2 style="font-size:15px;margin:18px 0 6px">' + E(x.titre) + '</h2>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:12px">' + x.lignes.map(function (l) { return '<tr><td style="border:1px solid #cbd5e1;padding:6px 8px">' + E(l[0]) + '</td><td style="border:1px solid #cbd5e1;padding:6px 8px">' + E(l[1]) + '</td></tr>'; }).join('')
+      + '<tr><td style="border:1px solid #cbd5e1;padding:6px 8px;font-weight:700">Montant</td><td style="border:1px solid #cbd5e1;padding:6px 8px;font-weight:700">' + eur(i.amount) + '</td></tr></table>'
+      + '<p style="font-size:12.5px;margin:16px 0">Les deux élus soussignés valident cette dépense et autorisent son paiement.</p>'
+      + '<div style="display:flex;gap:12px">' + case_('tresorier', 'Le trésorier') + case_('elu', 'Le deuxième élu') + '</div>'
+      + '<p style="font-size:10px;color:#64748b;margin-top:22px;border-top:1px solid #e2e8f0;padding-top:6px">Document établi par le logiciel du CSE et signé électroniquement au doigt. Rangé dans le Drive du CSE (CSE - Documents).</p></div>';
+  }
+  async function dvRanger(i) {
+    if (!dvOk(i) || (i.dv && i.dv.url)) return;
+    i.dv.seuil = i.dv.seuil || dcfg().seuil;
+    if (!scriptOk()) { DV.msg += ' (PDF : script Google non relié, à ranger plus tard)'; return; }
+    var html = dvHtml(i), y = String(today()).slice(0, 4), payload = { fichier: 'Validation de dépense - ' + partie(i) + ' - ' + (i.number || '') + ' - ' + String(eur(i.amount)).replace(/[^\d,]/g, '') + ' euros', chemin: [y, KIND.depense[1], KIND.depense[2]], drive: true, mail: false };
+    try { payload.pdf = await pdfDe(html); } catch (er) { payload.html = html; }
+    try {
+      var j = await cseScriptPost('document', payload);
+      i.dv.url = j.url || ''; i.dv.rangeLe = new Date().toISOString();
+      SG().forEach(function (x) { if (x.kind === 'depense' && String(x.refId) === String(i.id) && x.statut === 'signe') x.url = i.dv.url; });
+      Object.keys(i.dv.sigs).forEach(function (r) { delete i.dv.sigs[r].png; });   // les images ne restent pas dans les données
+      db.docLog = Array.isArray(db.docLog) ? db.docLog : [];
+      db.docLog.push({ id: uid(), at: new Date().toISOString(), doc: 'dv', titre: 'Validation de dépense : ' + partie(i) + ' ' + eur(i.amount), fichier: payload.fichier, url: i.dv.url, dossier: payload.chemin.join(' › '), par: qui() });
+      save(); DV.msg += ' PDF rangé sur le Drive.';
+    } catch (er) { DV.msg += ' PDF non rangé : ' + er.message; }
+  }
+  window.cseDvRanger = async function (id) { var i = inv(id); if (!i) return; dvMsg('Rangement du PDF…'); await dvRanger(i); save(); cseDvOuvrir(id); };
+  function rendreSup() { try { if (typeof supRender === 'function') supRender(); } catch (e) { } }
+  // Le paiement d'une grosse dépense attend les deux signatures
+  if (typeof window.supOpenPay === 'function') {
+    var pay0 = window.supOpenPay;
+    window.supOpenPay = function (id) {
+      var i = inv(id);
+      if (dvFaut(i) && !dvOk(i)) { say('Dépense de ' + eur(i.amount) + ' : le trésorier et un deuxième élu doivent signer avant le paiement (' + dvN(i) + '/2).', 'warning'); return cseDvOuvrir(id); }
+      return pay0.apply(this, arguments);
+    };
+  }
+  if (typeof window.supInvoiceActions === 'function') {
+    var act0 = window.supInvoiceActions;
+    window.supInvoiceActions = function (i) {
+      var h = act0.apply(this, arguments);
+      try {
+        if (dvFaut(i) || (i && i.dv && i.dv.url)) {
+          var ok = dvOk(i), n = dvN(i), bt = '<button type="button" onclick="cseDvOuvrir(\'' + E(String(i.id)) + '\')" title="Double validation : trésorier + deuxième élu" class="px-2 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 ' + (ok ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-100 hover:bg-amber-200 text-amber-900') + '">✍️ ' + (ok ? 'Validée 2/2' : 'Double visa ' + n + '/2') + '</button>';
+          h = h.replace(/^<div class="flex flex-wrap items-center justify-end gap-1">/, function (m) { return m + bt; });
+        }
+      } catch (e) { }
+      return h;
+    };
+  }
+  window.cseDvSet = function (k, v) { var c = cfg(); if (k === 'on') c.dvOn = !!v; else if (k === 'seuil') c.dvSeuil = Math.max(1, parseFloat(String(v).replace(',', '.')) || 500); save(); dvCard(); rendreSup(); };
+  function dvCard() {
+    var c = card('v94-dv-card', 'etab', function () { return $('v94-sumup-card') || $('v94-rel-card'); }); if (!c) return;
+    var R = dcfg(), A = (db.supplierInvoices || []).filter(function (i) { return dvFaut(i) && !dvOk(i); });
+    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-user-shield text-indigo-600"></i> Double validation des grosses dépenses</h3>'
+      + '<p class="text-xs text-slate-500">À partir du montant choisi, une facture fournisseur ou une note de frais ne peut être payée qu\'après la signature au doigt du <b>trésorier</b> et d\'un <b>deuxième élu</b> (sur ce PC, le téléphone du CSE ou chacun sur son téléphone, depuis « Mon CSE »). Un PDF avec les deux signatures est rangé sur le Drive (1 - Paiements et caisse › Validations de dépenses).</p>'
+      + '<label class="flex items-center gap-2 text-sm font-bold ' + (R.on ? 'text-emerald-700' : 'text-slate-700') + '"><input type="checkbox"' + (R.on ? ' checked' : '') + ' onchange="cseDvSet(\'on\',this.checked)"> Double validation ' + (R.on ? 'activée' : 'désactivée') + '</label>'
+      + '<label class="text-xs text-slate-600 block max-w-xs">À partir de (€)<input type="number" min="1" step="1" class="' + INP + '" value="' + R.seuil + '" onchange="cseDvSet(\'seuil\',this.value)"></label>'
+      + (A.length ? '<div class="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2"><b>' + A.length + ' dépense(s) en attente des signatures :</b><div class="mt-1 space-y-1">' + A.slice(0, 6).map(function (i) { return '<div class="flex flex-wrap items-center gap-2"><span class="flex-1">' + E(partie(i)) + ' · ' + E(i.number || '') + ' · <b>' + eur(i.amount) + '</b> (' + dvN(i) + '/2)</span><button type="button" class="' + BTN + '" style="padding:3px 9px" onclick="cseDvOuvrir(\'' + E(String(i.id)) + '\')">✍️ Signer</button></div>'; }).join('') + '</div></div>' : '<p class="text-xs text-slate-500">Aucune dépense en attente de signatures.</p>');
+    if (c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
+  }
+
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
   setInterval(function () {
     try { if ($('v66-deploy-card')) pubCard(); } catch (e) { }
     try { if ($('pl-mgr')) relCard(); } catch (e) { }
-    try { if ($('v94-rel-card')) cautionCard(); } catch (e) { }
+    try { if ($('v94-rel-card')) { smCard(); dvCard(); cautionCard(); } } catch (e) { }
     try { if (document.querySelector('#tab-settings [data-sg="cloture"]')) expCard(); } catch (e) { }
     try { if ($('todo-pane-today') && !$('v94-today')) todayCard(); } catch (e) { }
   }, 1500);
-  setTimeout(function () { relTick(); expTick(); sigTick(); prtTick(); }, 40000);
-  setInterval(function () { relTick(); expTick(); sigTick(); prtTick(); }, 10 * 60000);
-  window.cseV94 = { dus: dus, aRelancer: aRelancer, classeur: classeur, sujet: sujet, docHtml: docHtml, todayCard: todayCard, relTick: relTick, expTick: expTick, mailRelance: mailRelance };
+  setTimeout(function () { relTick(); expTick(); sigTick(); prtTick(); smTick(); }, 40000);
+  setInterval(function () { relTick(); expTick(); sigTick(); prtTick(); smTick(); }, 10 * 60000);
+  window.cseV94 = { dus: dus, aRelancer: aRelancer, classeur: classeur, sujet: sujet, docHtml: docHtml, todayCard: todayCard, relTick: relTick, expTick: expTick, mailRelance: mailRelance, sumupAuto: function () { return cseSumupAuto(true); }, dvOk: function (id) { return dvOk(inv(id)); }, dvFaut: function (id) { return dvFaut(inv(id)); } };
 })();
 </script>
 
