@@ -151,7 +151,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var ELU = /elu/i.test(location.hash || '');
     return { ok: true, le: new Date().toISOString(),
       deleg: ELU ? { profil: { mail: 'camille.exemple@exemple.fr', rh: 'rh@exemple.fr', resp: 'chef@exemple.fr', respNom: 'M. Exemple', sig: '' }, liste: [{ id: 'd1', at: plus(-6) + 'T09:00:00Z', le: plus(-6), du: plus(-5), au: plus(-5), de: '08:00', a: '12:00', heures: 4, motif: 'Réunion CSE', statut: 'envoyée', vu: { at: plus(-4) + 'T10:00:00Z' } }, { id: 'd2', at: plus(-2) + 'T09:00:00Z', le: plus(-2), du: plus(-1), au: plus(-1), de: '13:30', a: '15:00', heures: 1.5, motif: '', statut: 'envoyée', vu: null }] } : null,
-      fiche: { colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 22, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 22, mois: 9.5, reste: 12.5, plafond: 33, reste33: 23.5, etat: 'ok', an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 22, mois: 26, reste: -4, plafond: 33, reste33: 7, etat: 'report', an: 60 }, { nom: 'Lou PETIT', credit: 22, mois: 35, reste: -13, plafond: 33, reste33: -2, etat: 'trop', an: 80 }] }, membreCse: /elu/i.test(location.hash || ''), reunions: [{ date: plus(6), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Approbation du procès-verbal précédent', 'Point sur les activités sociales', 'Questions des salariés'], odj: { le: plus(-1), url: '' }, pv: null }, { date: plus(-24), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Bilan des sorties', 'Colis de Noël'], odj: { le: plus(-30), url: '' }, pv: { le: plus(-12), url: '' } }], phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
+      fiche: { aSigner: [{ id: 'demo-sg1', kind: 'pret', type: 'Prêt de matériel', titre: 'Prêt de matériel du ' + plus(2).split('-').reverse().join('/') + ' au ' + plus(5).split('-').reverse().join('/'), date: plus(2), lignes: [['1 × Barnum 3×3 m', ''], ['2 × Table pliante', '']], montant: 0, texte: 'Je soussigné(e) reconnais avoir emprunté le matériel ci-dessus au CSE et m\'engage à le rendre complet et en bon état à la date prévue.' }], colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 22, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 22, mois: 9.5, reste: 12.5, plafond: 33, reste33: 23.5, etat: 'ok', an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 22, mois: 26, reste: -4, plafond: 33, reste33: 7, etat: 'report', an: 60 }, { nom: 'Lou PETIT', credit: 22, mois: 35, reste: -13, plafond: 33, reste33: -2, etat: 'trop', an: 80 }] }, membreCse: /elu/i.test(location.hash || ''), reunions: [{ date: plus(6), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Approbation du procès-verbal précédent', 'Point sur les activités sociales', 'Questions des salariés'], odj: { le: plus(-1), url: '' }, pv: null }, { date: plus(-24), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Bilan des sorties', 'Colis de Noël'], odj: { le: plus(-30), url: '' }, pv: { le: plus(-12), url: '' } }], phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
         children: [{ name: 'Léa Exemple', birthdate: '2015-04-12' }, { name: 'Hugo Exemple', birthdate: '2019-09-30' }], spouse: { name: 'Alex Exemple', birthdate: '1988-02-03' },
         achats: [{ date: d(10, 18), desc: '4 x Cinéma', total: 24, regle: true, mode: 'Carte Bancaire' }, { date: d(7, 2), desc: '2 x Parc Astérix', total: 70, regle: true, mode: 'Chèque' }, { date: d(11, 20), desc: '2 x Fraispertuis', total: 30, regle: false, mode: '' }, { date: d(12, 5, y - 1), desc: '3 x Cinéma', total: 18, regle: true, mode: 'Espèces' }],
         offert: [{ date: d(10, 18), label: 'Billets : 4 x Cinéma', montant: 12, type: 'Billetterie' }, { date: d(7, 2), label: 'Billets : 2 x Parc Astérix', montant: 40, type: 'Billetterie' }, { date: d(11, 20), label: 'Billets : 2 x Fraispertuis', montant: 18, type: 'Billetterie' }, { date: d(3, 15), label: 'Chèques vacances (part du CSE)', montant: 200, type: 'Chèques vacances' }, { date: d(12, 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }, { date: d(6, 10), label: 'Rentrée scolaire (Léa Exemple)', montant: 40, type: 'Œuvres sociales' }, { date: d(12, 10, y - 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }],
@@ -191,6 +191,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (method === 'POST' && body.action === 'idee') { await new Promise(function (r) { setTimeout(r, 500); }); if (!body.anonyme) D.fiche.idees.unshift({ date: today(), type: body.type, texte: body.texte, statut: 'Reçue', reponse: '' }); return { ok: true }; }
       if (method === 'POST' && body.action === 'deleg-profil') { await new Promise(function (r) { setTimeout(r, 300); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'deleg') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true, deleg: Object.assign({ id: 'n' + Date.now(), at: new Date().toISOString(), le: today(), statut: 'envoyée', vu: null, par: body.data && body.data.sansEnvoi ? 'ancienne' : 'espace' }, body.data) }; }
+      if (method === 'POST' && body.action === 'signature') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'avis') { await new Promise(function (r) { setTimeout(r, 400); }); D.avis = D.avis || {}; D.avis[body.o] = body.n; return { ok: true }; }
       if (method === 'POST') { await new Promise(function (r) { setTimeout(r, 500); }); D.demandes.push({ id: 'n' + Date.now(), at: new Date().toISOString(), type: body.type, resume: body.resume, statut: 'en attente', reponse: '' }); return { ok: true }; }
       return D;
@@ -543,6 +544,42 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     say('dg-pmsg', 'Enregistrement…', 'info');
     try { await api('POST', { action: 'deleg-profil', profil: o }); Object.assign(D.deleg.profil, o); dgRender(); say('dg-pmsg', '✔ Réglages enregistrés.', 'ok'); } catch (e) { say('dg-pmsg', e.message, 'bad'); }
   };
+
+  // --- V.9.4 : documents à signer au doigt (reçu de billetterie, remise de colis, prêt de matériel) ---
+  var SGP = { on: false, vide: true, fait: {} };
+  function signCards() {
+    var L = ((D.fiche || {}).aSigner || []).filter(function (x) { return !SGP.fait[x.id]; }); if (!L.length) return '';
+    var x = L[0];
+    return '<div class="card" style="border-left:4px solid #6366f1"><h2>✍️ Document à signer' + (L.length > 1 ? ' (1 sur ' + L.length + ')' : '') + '</h2>'
+      + '<p><b>' + E(x.type) + '</b> · ' + E(x.titre) + '</p>'
+      + (x.lignes || []).map(function (l) { return '<div class="row"><div class="l">' + E(l[0]) + '</div><div class="r">' + E(l[1] || '') + '</div></div>'; }).join('')
+      + (x.montant ? '<div class="row"><div class="l"><b>Total</b></div><div class="r"><b>' + eur(x.montant) + '</b></div></div>' : '')
+      + '<p style="margin:10px 0 6px">' + E(x.texte || '') + '</p>'
+      + '<p class="mute">Signez avec le doigt dans le cadre :</p>'
+      + '<canvas id="sg-pad" data-id="' + E(x.id) + '" style="width:100%;max-width:460px;aspect-ratio:5/2;border:2px dashed #94a3b8;border-radius:12px;background:#fff;touch-action:none;display:block"></canvas>'
+      + '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" id="sg-ok" onclick="cseSgOk()">Signer le document</button><button class="btn" onclick="cseSgEff()">Effacer</button></div>'
+      + '<div id="sg-msg"></div><p class="mute" style="margin-top:6px">Le CSE reçoit le document signé en PDF' + (D.fiche && D.fiche.email ? ' et vous en envoie une copie par e-mail' : '') + '.</p></div>';
+  }
+  function sgInit() {
+    var c = $('sg-pad'); if (!c) return; var x = c.getContext('2d'); c.width = 600; c.height = 240; x.lineWidth = 4; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#0b2a6b'; SGP.vide = true;
+    var pt = function (e) { var b = c.getBoundingClientRect(); return [(e.clientX - b.left) * c.width / b.width, (e.clientY - b.top) * c.height / b.height]; };
+    c.onpointerdown = function (e) { SGP.on = true; try { c.setPointerCapture(e.pointerId); } catch (er) { } var p = pt(e); x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(p[0] + .1, p[1] + .1); x.stroke(); SGP.vide = false; e.preventDefault(); };
+    c.onpointermove = function (e) { if (!SGP.on) return; var p = pt(e); x.lineTo(p[0], p[1]); x.stroke(); e.preventDefault(); };
+    c.onpointerup = c.onpointercancel = function () { SGP.on = false; };
+  }
+  window.cseSgEff = function () { var c = $('sg-pad'); if (c) { c.getContext('2d').clearRect(0, 0, c.width, c.height); SGP.vide = true; } };
+  window.cseSgOk = async function () {
+    var c = $('sg-pad'); if (!c) return; if (SGP.vide) return say('sg-msg', 'Signez d\'abord dans le cadre.', 'bad');
+    var x = c.getContext('2d'), d = x.getImageData(0, 0, c.width, c.height).data, x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+    for (var y = 0; y < c.height; y++) for (var i = 0; i < c.width; i++) if (d[(y * c.width + i) * 4 + 3] > 20) { if (i < x0) x0 = i; if (i > x1) x1 = i; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    var m = 8, w = Math.min(c.width, x1 - x0 + 2 * m), h = Math.min(c.height, y1 - y0 + 2 * m), o = document.createElement('canvas'); o.width = w; o.height = h;
+    var ox = o.getContext('2d'); ox.fillStyle = '#fff'; ox.fillRect(0, 0, w, h); ox.drawImage(c, Math.max(0, x0 - m), Math.max(0, y0 - m), w, h, 0, 0, w, h);
+    var b = $('sg-ok'); if (b) b.disabled = true; say('sg-msg', 'Envoi de la signature…', 'info');
+    try {
+      await api('POST', { action: 'signature', id: c.dataset.id, sig: o.toDataURL('image/png'), nom: (D.fiche || {}).nom || '' });
+      SGP.fait[c.dataset.id] = 1; say('sg-msg', (DEMO ? '(Exemple) ' : '') + '✔ Merci, le document est signé.', 'ok'); setTimeout(render, 1500);
+    } catch (e) { say('sg-msg', e.message, 'bad'); if (b) b.disabled = false; }
+  };
   // Signature au doigt (ou à la souris), gardée dans le profil
   var SIG = { on: false, vide: true };
   function sigInit() {
@@ -623,6 +660,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         var due = (f.achats || []).filter(function (a) { return !a.regle; }).reduce(function (s, a) { return s + a.total; }, 0) + (f.sorties || []).reduce(function (s, x) { return s + (x.aRegler || 0); }, 0);
         var cvDue = 0; (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut !== 'payé' && e.statut !== 'reçu') cvDue += e.montant || 0; }); });
         var open = (P.sorties || []).filter(function (o) { return !(f.sorties || []).some(function (x) { return x.outingId === o.id; }); });
+        h += signCards();
         h += annCards();
         h += colisCards();
         h += avisCards();
@@ -840,6 +878,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     };
     (R[TAB] || R.accueil)(); $('app').innerHTML = h;
     if (TAB === 'deleg' && D.deleg) { try { cseDgCalc(); sigInit(); } catch (e) { } }
+    if (TAB === 'accueil') { try { sgInit(); } catch (e) { } }
   }
 
   var ITYPES = { idee: '💡 Idée', sortie: '🎭 Idée de sortie', question: '❓ Question pour la prochaine réunion du CSE', message: '✉️ Message aux membres du CSE' };
@@ -907,7 +946,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '9.2', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '9.4', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
