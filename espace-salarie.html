@@ -850,7 +850,26 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   var PROMPT = null, STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
   var IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); PROMPT = e; var b = $('inst-btn'); if (b) b.hidden = false; });
-  window.addEventListener('appinstalled', function () { var b = $('inst-card'); if (b) b.hidden = true; });
+  window.addEventListener('appinstalled', function () { var b = $('inst-card'); if (b) b.hidden = true; var n = $('inst-ban'); if (n) n.remove(); });
+  // Fenêtre « Installer l'appli ? » qui s'ouvre toute seule : un appui sur « Installer », puis valider.
+  function instLater(k) { try { var t = Number(localStorage.getItem('cse_inst_plus_tard_' + k) || 0); return Date.now() < t; } catch (e) { return false; } }
+  function instBanner(kind) {
+    if (STANDALONE || PUBLIC || $('inst-ban') || instLater(kind)) return;
+    var d = document.createElement('div'); d.id = 'inst-ban';
+    d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;max-width:520px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 40px -12px rgba(15,23,42,.45);padding:14px 16px;font:15px system-ui,sans-serif;color:var(--ink)';
+    d.innerHTML = '<div style="display:flex;gap:12px;align-items:center"><img src="' + E($('h-logo').src) + '" alt="" style="width:44px;height:44px;border-radius:12px;object-fit:cover"><div style="flex:1"><b>Installer « Mon CSE » sur ce téléphone ?</b><div class="mute">' + (kind === 'ios' ? 'Sur iPhone : appuyez sur <b>Partager</b> ⬆︎ en bas de Safari, puis <b>« Sur l\'écran d\'accueil »</b> et <b>Ajouter</b>.' : 'Une icône sur l\'écran d\'accueil, comme une vraie appli. Rien à télécharger.') + '</div></div></div>'
+      + '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><button class="btn" id="inst-ban-non">Plus tard</button>' + (kind === 'ios' ? '<button class="btn p" id="inst-ban-ok">J\'ai compris</button>' : '<button class="btn p" id="inst-ban-ok">📲 Installer</button>') + '</div>';
+    document.body.appendChild(d);
+    var close = function (jours) { d.remove(); if (jours) { try { localStorage.setItem('cse_inst_plus_tard_' + kind, String(Date.now() + jours * 864e5)); } catch (e) { } } };
+    $('inst-ban-non').onclick = function () { close(7); };
+    $('inst-ban-ok').onclick = async function () {
+      if (kind === 'ios') { close(30); return; }
+      close(0); if (!PROMPT) return; PROMPT.prompt(); var r = null; try { r = await PROMPT.userChoice; } catch (e) { } PROMPT = null;
+      if (!r || r.outcome !== 'accepted') { try { localStorage.setItem('cse_inst_plus_tard_android', String(Date.now() + 3 * 864e5)); } catch (e) { } }
+    };
+  }
+  window.addEventListener('beforeinstallprompt', function () { setTimeout(function () { if (PROMPT) instBanner('android'); }, 2500); });
+  if (IOS && !STANDALONE && !DEMO) setTimeout(function () { if (/safari/i.test(navigator.userAgent) && !/crios|fxios|gsa\//i.test(navigator.userAgent)) instBanner('ios'); }, 4000);
   function installCard() {
     if (STANDALONE) return '';
     return '<div class="card" id="inst-card"><h2>📲 Installer l\'appli sur mon téléphone</h2><p class="mute">Gardez votre espace CSE comme une appli, sur l\'écran d\'accueil, sans rien télécharger dans un magasin d\'applications.</p>'

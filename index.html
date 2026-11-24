@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"wr1kjU1C0c9aemFnaW+g2g==","iv":"fKCVv82DeVGt6NzC","rev":"boot","lastModified":"2026-11-24T16:04:45.033Z","by":"Michaël GROSJEAN","data":"WrGdN++ISgXKc2qRcRfDdRXCa/kzHWXrhLh0t7JZvETojM81SduHt0IDHuKi/aWykIvZ1DP2B2Z3N2kKhNzctQ=="},"at":"2026-11-24T16:04:45.071Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"lSqvB64ukcagkGbHsmz1eQ==","iv":"a4D7MxppPiqH7yNI","rev":"boot","lastModified":"2026-11-24T16:10:32.387Z","by":"Michaël GROSJEAN","data":"NzgRZx6wmSGDHxbtuJl7T21hFkbr/hEJBtJl+xgc8vZ3ThroE9CD10RW5Hxx0okh+adQJvSqvGnsYV0S4ZGQAA=="},"at":"2026-11-24T16:10:32.427Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21723,6 +21723,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         // =====================================================================
         const CHANGELOG = [
             { v: 'V.9.0', date: '2026-11-24', items: [
+                "📲 L'appli et l'espace salarié proposent tout seuls « Installer l'appli ? » à l'ouverture : un appui sur « Installer », puis valider (Android, PC). Sur iPhone, la fenêtre explique le geste Partager › Sur l'écran d'accueil (Apple ne permet pas plus). « Plus tard » la cache 7 jours.",
                 "🕒 Heures de délégation des élus (bouton « Délégations » à côté de « Planning des élus ») : crédit d'heures par élu (par mois ou par an), compteur remis à zéro le 1er juillet, tableau et export Excel.",
                 "✍️ L'élu pose ses heures depuis son espace (onglet « Délégation ») ou le CSE le fait pour lui : la feuille « Heure de Délégation » DS Smith Velin est remplie et signée (signature gardée dans son profil), rangée sur le Drive du CSE dans son dossier, et envoyée depuis la boîte du CSE aux RH et à son responsable, avec l'élu en copie (réponses sur son adresse personnelle). Le responsable peut cliquer « vu ». Script Google version 76."
             ] },
@@ -40117,6 +40118,23 @@ function v65YcExtra(y, I) {
     window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); evt = e; installChip(); });
     window.addEventListener('appinstalled', function () { evt = null; var c = document.getElementById('v66-install-chip'); if (c) c.remove(); toast('Appli installée ✔', 'success'); });
     function standalone() { return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+    // Fenêtre « Installer l'appli ? » qui s'ouvre toute seule (Android, PC) : un appui sur « Installer », puis valider.
+    function banLater() { try { return Date.now() < Number(localStorage.getItem('cse_inst_plus_tard') || 0); } catch (e) { return false; } }
+    function installBanner(kind) {
+        if (standalone() || banLater() || document.getElementById('v90-inst-ban')) return;
+        var d = document.createElement('div'); d.id = 'v90-inst-ban';
+        d.className = 'bg-white rounded-2xl border border-slate-200 shadow-2xl p-4 text-sm text-slate-800';
+        d.style.cssText = 'position:fixed;z-index:9999;right:12px;bottom:' + (window.innerWidth < 768 ? '130px' : '76px') + ';left:' + (window.innerWidth < 768 ? '12px' : 'auto') + ';width:' + (window.innerWidth < 768 ? 'auto' : '420px');
+        d.innerHTML = '<div class="flex gap-3 items-center"><i class="fa-solid fa-mobile-screen-button text-2xl text-indigo-600"></i><div class="flex-1"><b>Installer l\'appli du CSE sur cet appareil ?</b><div class="text-slate-500 text-xs">' + (kind === 'ios' ? 'Sur iPhone : bouton <b>Partager</b> en bas de Safari, puis <b>« Sur l\'écran d\'accueil »</b> et <b>Ajouter</b>.' : 'Elle s\'ouvre en plein écran depuis une icône, comme une vraie appli.') + '</div></div></div>'
+            + '<div class="flex gap-2 justify-end mt-3"><button type="button" data-x="1" aria-label="Fermer" class="px-3 py-2 rounded-xl border border-slate-200 font-semibold">Plus tard</button><button type="button" data-ok="1" class="px-3 py-2 rounded-xl bg-indigo-600 text-white font-semibold">' + (kind === 'ios' ? 'J\'ai compris' : '<i class="fa-solid fa-download"></i> Installer') + '</button></div>';
+        document.body.appendChild(d);
+        var later = function (j) { d.remove(); try { localStorage.setItem('cse_inst_plus_tard', String(Date.now() + j * 864e5)); } catch (e) {} };
+        d.querySelector('[data-x]').onclick = function () { later(7); };
+        d.querySelector('[data-ok]').onclick = function () { if (kind === 'ios') { later(30); return; } d.remove(); window.cseInstall(); };
+    }
+    window.addEventListener('beforeinstallprompt', function () { setTimeout(function () { if (evt) installBanner('auto'); }, 4000); });
+    window.addEventListener('appinstalled', function () { var n = document.getElementById('v90-inst-ban'); if (n) n.remove(); });
+    setTimeout(function () { try { if (platform() === 'ios' && !standalone() && /^https:/.test(location.protocol) && !/crios|fxios/i.test(navigator.userAgent)) installBanner('ios'); } catch (e) {} }, 6000);
     function platform() {
         var ua = navigator.userAgent || '';
         if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
@@ -40125,7 +40143,7 @@ function v65YcExtra(y, I) {
         return 'pc';
     }
     window.cseInstall = async function () {
-        if (evt) { evt.prompt(); try { var r = await evt.userChoice; if (r.outcome === 'accepted') toast('Appli installée ✔', 'success'); } catch (e) {} evt = null; return; }
+        if (evt) { evt.prompt(); try { var r = await evt.userChoice; if (r.outcome === 'accepted') toast('Appli installée ✔', 'success'); else localStorage.setItem('cse_inst_plus_tard', String(Date.now() + 3 * 864e5)); } catch (e) {} evt = null; return; }
         var online = /^https:/.test(location.protocol), p = platform();
         var b = v59Modal('modal-v66-install', 'Installer l\'appli', 'fa-download');
         var steps = {
