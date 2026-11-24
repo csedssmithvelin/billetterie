@@ -933,9 +933,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function swileCard(memeTarif) {
     var W = D && D.pub && D.pub.swile; if (!W) return '';
     return '<div class="card"><h2>🛍️ Billetterie en ligne Swile</h2>' + (memeTarif ? '<p><b>Vous pouvez aussi prendre vos places aux mêmes tarifs sur la boutique Swile du CSE</b>, quand vous voulez, depuis votre téléphone.</p>' : '') + '<p class="mute">' + E(W.texte || 'Achetez vos billets à prix CSE sur la boutique Swile du CSE.') + '</p>'
-      + (W.url ? '<a class="btn p" href="' + E(swileHref(W.url)) + '"' + (/android/i.test(navigator.userAgent) ? '' : ' target="_blank" rel="noopener"') + '>Ouvrir la boutique Swile</a>' : '')
+      + (/android/i.test(navigator.userAgent)
+        // Android : l'appli Swile n'accepte pas le lien de la boutique ; on lance donc l'appli elle-même (onglet boutique dans l'appli),
+        // et la boutique reste accessible dans le navigateur.
+        ? '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn p" href="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=hr.lunc.client;S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=hr.lunc.client') + ';end">Ouvrir l\'appli Swile</a>'
+          + (W.url ? '<a class="btn" href="' + E(W.url) + '" target="_blank" rel="noopener">Boutique dans le navigateur</a>' : '') + '</div><p class="mute" style="margin-top:6px">Dans l\'appli Swile : onglet de la boutique / billetterie du CSE.</p>'
+        : (W.url ? '<a class="btn p" href="' + E(W.url) + '" target="_blank" rel="noopener">Ouvrir la boutique Swile</a>' : ''))
       + '<p class="mute" style="margin:12px 0 6px">Pas encore l\'appli Swile ?</p><div style="display:flex;gap:8px;flex-wrap:wrap">'
-      + '<a class="btn s" href="https://play.google.com/store/apps/developer?id=Swile" target="_blank" rel="noopener">🤖 Android (Google Play)</a>'
+      + '<a class="btn s" href="https://play.google.com/store/apps/details?id=hr.lunc.client" target="_blank" rel="noopener">🤖 Android (Google Play)</a>'
       + '<a class="btn s" href="https://apps.apple.com/fr/app/swile/id1190612035" target="_blank" rel="noopener">🍏 iPhone (App Store)</a></div></div>';
   }
   function outingRow(o) {
