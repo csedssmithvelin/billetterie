@@ -221,7 +221,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       theme(P); try { var dd = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }); $('h-sub').textContent = dd.charAt(0).toUpperCase() + dd.slice(1); } catch (e) { }
       document.title = 'Mon espace CSE · ' + (f.prenom || '');
       if (DEMO) $('nav').insertAdjacentHTML('beforebegin', '<div class="msg warn" style="margin:0 0 10px">👀 Exemple avec un salarié fictif : rien n\'est envoyé au CSE.</div>');
-      $('foot').innerHTML = '<div class="brandmark"><img src="' + E($('h-logo').src) + '" alt="">' + E((P.cse && P.cse.nom) || 'CSE') + '</div><div>Informations mises à jour le ' + E(fd(String(D.le || '').slice(0, 10))) + '. Cette page est personnelle : ne partagez pas son lien.</div>';
+      $('foot').innerHTML = '<div class="brandmark"><img src="' + E($('h-logo').src) + '" alt="">' + E((P.cse && P.cse.nom) || 'CSE') + '</div><div>Informations mises à jour le ' + E(fd(String(D.le || '').slice(0, 10))) + '. Cette page est personnelle : ne partagez pas son lien.</div><div style="opacity:.7;margin-top:4px">Version ' + E(typeof PAGE_VERSION !== 'undefined' ? PAGE_VERSION : '') + '</div>';
       nav(); render();
       if (!window.__pushChk) { window.__pushChk = 1; try { if ('serviceWorker' in navigator && /^https:/.test(location.protocol) && !DEMO) swReg().catch(function () { }); } catch (e) { } setTimeout(pushRefresh, 800); }
     } catch (e) {
@@ -971,7 +971,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '9.4.3', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '9.4.4', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
