@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"xfoNhMvCHHH8iqmKlTUKpg==","iv":"n9gA6nQ3xy1YLX56","rev":"boot","lastModified":"2026-11-24T17:37:24.045Z","by":"Michaël GROSJEAN","data":"AY5LFAdMG4e2TNHlzjlQzAO200QPXkKQ8Mp9Zk6glhO+D0/0GUlGnBoKUrG3zV6WxN3WBZhoJP7FYmy4WTpeJQ=="},"at":"2026-11-24T17:37:24.087Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Krc2zyYy4+GRK8H6hYlcug==","iv":"gNCQSUnarpAYsfop","rev":"boot","lastModified":"2026-11-24T18:04:22.157Z","by":"Michaël GROSJEAN","data":"o9dOvWXxbZ+oxvLZnWoq89iy+AVxY+e0u5g77P66vZSatFxfgGeNeviC8tQ4iHEju+3xnpOP2yKFsOMSb1SPRg=="},"at":"2026-11-24T18:04:22.203Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6939,7 +6939,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.9.1";
+        const APP_VERSION = "V.9.2";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21722,6 +21722,14 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.9.2', date: '2026-11-24', items: [
+                "🆕 L'appli installée vérifie toute seule s'il y a une nouvelle version sur GitHub : un bandeau « Nouvelle version, mettre à jour ? » apparaît, un appui et c'est à jour (vos données sont gardées). Pareil pour Mon espace.",
+                "🗂️ Sauvegarde chiffrée chaque semaine dans Mon Drive › CSE › CSE - Sauvegardes (26 dernières), par le script Google : personne n'a besoin de se connecter à Google. « Revenir en arrière » liste les sauvegardes et remet l'appli comme à cette date (Paramètres › Sauvegardes). Script v78 nécessaire.",
+                "🕒 Délégation : en posant des heures, l'appli affiche ce que donnera le mois (crédit, report, maximum 33 h) et demande confirmation avant de dépasser le maximum. L'élu reçoit déjà une notification quand le responsable a vu sa feuille.",
+                "📅 Récap mensuel des délégations pour les RH (PDF envoyé depuis la boîte du CSE le 1er du mois, copie sur le Drive) : réglage dans l'onglet Heures de délégation, désactivé par défaut. Aperçu et envoi à la main possibles.",
+                "📲 Nouvelle sortie ou nouveau colis : l'appli propose de prévenir les salariés concernés par une notification (comme pour les nouveaux billets, désormais proposé par défaut). Réglage dans Communication › Notifications.",
+                "🏛️ Réunions : « Envoyer la convocation et l'ordre du jour » et « Envoyer le compte rendu » partent en PDF depuis la boîte du CSE à tous les élus, rangés dans Mon Drive › CSE › CSE - Réunions. Les élus les retrouvent dans leur espace (onglet Délégation)."
+            ] },
             { v: 'V.9.1', date: '2026-11-24', items: [
                 "🌙 Délégation de nuit : « 21:00 à 05:00 » compte 8 h, la fin est mise au lendemain tout seul (feuille, e-mail et compteur).",
                 "➕ Plusieurs plages le même jour (ex. 13:00–13:30 puis 18:00–21:00 = 3 h30) : bouton « + une autre plage le même jour », dans l'appli et dans l'espace salarié."
@@ -44291,7 +44299,9 @@ var qrcode = function() {
     if (pushOn()) h += '<div class="' + CARD + ' space-y-2"><div class="font-bold text-sm">⚙️ Notifications automatiques</div>'
       + '<label class="flex items-center gap-2"><input type="checkbox" ' + (c.pushWaitlist !== false ? 'checked' : '') + ' onchange="cseCommPushOpt(\'pushWaitlist\', this.checked)"> Une place se libère dans une sortie : prévenir le premier de la liste d\'attente</label>'
       + '<label class="flex items-center gap-2"><input type="checkbox" ' + (c.pushCvPaye !== false ? 'checked' : '') + ' onchange="cseCommPushOpt(\'pushCvPaye\', this.checked)"> Chèques vacances : quand je valide un paiement (reçu / payé), le salarié reçoit « Paiement reçu » avec le reste à payer</label>'
-      + '<label class="flex items-center gap-2"><input type="checkbox" ' + (c.pushBillets ? 'checked' : '') + ' onchange="cseCommPushOpt(\'pushBillets\', this.checked)"> Nouveaux billets en stock : me proposer de prévenir tout le monde (je confirme à chaque fois)</label>'
+      + '<label class="flex items-center gap-2"><input type="checkbox" ' + (c.pushBillets !== false ? 'checked' : '') + ' onchange="cseCommPushOpt(\'pushBillets\', this.checked)"> Nouveaux billets en stock : me proposer de prévenir tout le monde (je confirme à chaque fois)</label>'
+      + '<label class="flex items-center gap-2"><input type="checkbox" ' + (c.pushSorties !== false ? 'checked' : '') + ' onchange="cseCommPushOpt(\'pushSorties\', this.checked)"> Nouvelle sortie publiée : me proposer de prévenir tout le monde (je confirme à chaque fois)</label>'
+      + '<label class="flex items-center gap-2"><input type="checkbox" ' + (c.pushColis !== false ? 'checked' : '') + ' onchange="cseCommPushOpt(\'pushColis\', this.checked)"> Nouveau colis (distribution) : me proposer de prévenir les salariés concernés</label>'
       + '<p class="text-[11px] text-slate-500">Rappels du matin (colis la veille de la permanence, chèques vacances J-3, sortie la veille, avis le lendemain) : Paramètres › « Boîte mail du CSE, agenda et rappels ».</p>'
       + '<div class="flex flex-wrap gap-2"><button type="button" class="' + V59_BTN + '" onclick="cseAutoOpen && cseAutoOpen()"><i class="fa-solid fa-bell"></i> Régler les rappels</button>'
       + '<button type="button" class="' + V59_BTN + '" onclick="cseFichesRelance()"><i class="fa-solid fa-id-card"></i> Fiches incomplètes (' + (window.cseFichesIncompletes ? cseFichesIncompletes().length : 0) + ') : prévenir</button></div></div>';
@@ -44398,7 +44408,7 @@ var qrcode = function() {
     return m;
   }
   async function billetsCheck() {
-    if (asking || !canSee() || !pushOn() || !cfg().pushBillets) return;
+    if (asking || !canSee() || !pushOn() || cfg().pushBillets === false) return;
     var cur = stockNow(), vu = cfg().pushBilletsVu, neuf = [];
     if (vu && typeof vu === 'object') Object.keys(cur).forEach(function (id) { var a = Number(vu[id]) || 0; if (cur[id] - a >= 5 || (!a && cur[id] > 0 && !(id in vu))) neuf.push(id); });
     var same = vu && JSON.stringify(vu) === JSON.stringify(cur);
@@ -44716,6 +44726,7 @@ var qrcode = function() {
             : '<canvas id="dg2-sig" style="width:100%;max-width:360px;aspect-ratio:5/2;border:2px dashed #cbd5e1;border-radius:10px;background:#fff;touch-action:none;display:block"></canvas><div class="flex gap-2 mt-1"><button type="button" class="px-2 py-1 border rounded text-xs" onclick="cseDgSigEfface()">Effacer</button><button type="button" class="px-2 py-1 border rounded text-xs bg-indigo-600 text-white" onclick="cseDgSigGarde()">Enregistrer la signature</button></div><p class="text-[11px] text-slate-500">Signez au doigt ou à la souris. Elle est mise sur chaque feuille.</p>') + '</div>'
           : '<p class="text-xs text-slate-500">Envoyez d\'abord le lien d\'espace salarié de ' + E(sel.name) + ' (Communication / Espace salarié). Ensuite ses réglages et sa signature se font ici ou depuis son espace.</p>') + '</div></div>';
     }
+    if (adm) h += dgRecapBloc();
     if (adm) h += '<details class="rounded-xl border border-slate-200 p-3"><summary class="cursor-pointer text-xs font-bold text-slate-700">Administrateur : ajouter un élu, e-mail des RH par défaut</summary><div class="grid grid-cols-3 gap-2 text-[11px] text-slate-600 mt-2">'
       + '<label class="col-span-3 sm:col-span-1">Nom<input type="text" id="dg-new-name" list="pp-names-dg" class="w-full p-2 bg-slate-50 border rounded-lg text-sm"></label><label>Heures / mois<input type="number" id="dg-new-credit" min="0" step="1" class="w-full p-2 bg-slate-50 border rounded-lg text-sm"></label>'
       + '<label>Mandat<select id="dg-new-role" class="w-full p-2 bg-slate-50 border rounded-lg text-sm"><option>Titulaire</option><option>Suppléant</option><option>Représentant syndical</option></select></label></div><datalist id="pp-names-dg">' + (db.employees || []).filter(function (e) { return e.active !== false; }).map(function (e) { return '<option value="' + E((e.firstname || '') + ' ' + String(e.lastname || '').toUpperCase()) + '">'; }).join('') + '</datalist>'
@@ -44841,6 +44852,90 @@ var qrcode = function() {
     } catch (er) { console.warn(er); }
   }; })();
 
+  // ---------- V.9.2 : récap mensuel aux RH (réglage, désactivé par défaut) et alerte avant le maximum du mois ----------
+  function moisPrec() { var d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+  function moisFr(M) { var n = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']; return n[Number(M.slice(5, 7)) - 1] + ' ' + M.slice(0, 4); }
+  function dgRecapRows(M) { return dgD().elus.map(function (el) { var m = dgMois(el, M); return { nom: el.name, mandat: el.role || '', credit: m.base, mutualise: Math.round((m.base - m.credit) * 100) / 100, utilisees: m.used, report: m.report, reste: m.reste33, etat: m.etat }; }); }
+  var RC = { busy: false, ap: '' };
+  function dgRecapBloc() {
+    var c = cfg(), M = moisPrec(), on = !!c.delegRecapOn, inp = 'w-full p-2 bg-slate-50 border rounded-lg text-sm';
+    return '<details class="rounded-xl border border-slate-200 p-3"' + (RC.ap ? ' open' : '') + '><summary class="cursor-pointer text-xs font-bold text-slate-700">📅 Réglage : récap mensuel aux RH ' + (on ? '<span class="text-emerald-700 font-normal">(activé)</span>' : '<span class="text-slate-400 font-normal">(désactivé)</span>') + '</summary><div class="space-y-2 mt-2 text-[11px] text-slate-600">'
+      + '<p>Le 1er de chaque mois, un PDF avec les heures de chaque élu du mois passé (crédit, utilisées, report, reste) part de la boîte du CSE vers les RH. Une copie est rangée dans « CSE - Heures de délégation › Récapitulatifs mensuels ». Il part depuis le premier appareil du CSE qui ouvre l\'appli ce jour-là (ou après).</p>'
+      + '<label class="flex items-center gap-2 text-xs text-slate-700"><input type="checkbox" id="dg2-rc-on"' + (on ? ' checked' : '') + '> Envoyer automatiquement chaque mois</label>'
+      + '<div class="grid sm:grid-cols-2 gap-2"><label>E-mail des RH (plusieurs : séparés par une virgule)<input id="dg2-rc-to" class="' + inp + '" value="' + E(c.delegRecapTo || c.delegRh || '') + '"></label><label>En copie (facultatif)<input id="dg2-rc-cc" class="' + inp + '" value="' + E(c.delegRecapCc || '') + '"></label></div>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-lg" onclick="cseDgRecapSave()">Enregistrer</button>'
+      + '<button type="button" class="px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-lg" onclick="cseDgRecapApercu()">👁️ Aperçu de ' + moisFr(M) + '</button>'
+      + '<button type="button" class="px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-lg"' + (RC.busy ? ' disabled' : '') + ' onclick="cseDgRecapEnvoi(true)">📧 Envoyer celui de ' + moisFr(M) + ' maintenant</button></div>'
+      + (c.delegRecapDone ? '<p class="text-emerald-700">Dernier récap envoyé : ' + moisFr(c.delegRecapDone) + (c.delegRecapAt ? ' (le ' + fd(String(c.delegRecapAt).slice(0, 10)) + ')' : '') + (c.delegRecapUrl ? ' · <a class="underline" target="_blank" rel="noopener" href="' + E(c.delegRecapUrl) + '">PDF</a>' : '') + '</p>' : '')
+      + RC.ap + '</div></details>';
+  }
+  window.cseDgRecapSave = function () {
+    if (!dgAdmin()) return; var c = cfg(), to = gv('dg2-rc-to'), on = !!(document.getElementById('dg2-rc-on') || {}).checked;
+    if (on && !to) { say('Indiquez l\'e-mail des RH.', 'warning'); return; }
+    c.delegRecapOn = on; c.delegRecapTo = to; c.delegRecapCc = gv('dg2-rc-cc');
+    if (on && !c.delegRecapDone) c.delegRecapDone = moisPrec();   // le premier récap automatique sera celui du mois en cours (envoyé le 1er du mois prochain)
+    try { logAction('Modification', 'delegation', 'Récap mensuel aux RH ' + (on ? 'activé' : 'désactivé')); saveDB(); } catch (e) { }
+    say(on ? '✔ Activé : le récap de ' + moisFr(today().slice(0, 7)) + ' partira le 1er du mois prochain.' : '✔ Enregistré (envoi automatique désactivé).', 'success'); dgRender();
+  };
+  window.cseDgRecapApercu = function () {
+    var M = moisPrec(), R0 = dgRecapRows(M);
+    RC.ap = '<div class="overflow-x-auto mt-2"><p class="text-xs font-bold text-slate-700">Aperçu : ' + moisFr(M) + '</p><table class="w-full text-xs"><thead><tr class="text-slate-500"><th class="p-1 text-left">Élu</th><th class="p-1">Crédit</th><th class="p-1">Utilisées</th><th class="p-1">Report</th><th class="p-1">Reste (max)</th></tr></thead><tbody>'
+      + R0.map(function (r) { return '<tr class="border-t border-slate-100"><td class="p-1">' + E(r.nom) + '</td><td class="p-1 text-center">' + hh(r.credit) + '</td><td class="p-1 text-center font-semibold" style="color:' + (r.etat === 'trop' ? '#b91c1c' : r.etat === 'report' ? '#c2410c' : 'inherit') + '">' + hh(r.utilisees) + '</td><td class="p-1 text-center">' + hh(r.report) + '</td><td class="p-1 text-center">' + hh(r.reste) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+    dgRender();
+  };
+  window.cseDgRecapEnvoi = async function (manuel) {
+    var c = cfg(), M = moisPrec(), to = manuel ? (gv('dg2-rc-to') || c.delegRecapTo || c.delegRh) : (c.delegRecapTo || c.delegRh);
+    if (RC.busy) return; if (!to) { if (manuel) say('Indiquez l\'e-mail des RH.', 'warning'); return; }
+    if (!dgD().elus.length) { if (manuel) say('Aucun élu dans la liste.', 'warning'); return; }
+    if (manuel && !(await uiConfirm('Envoyer aux RH le récap des heures de délégation de ' + moisFr(M) + ' ?\n\nÀ : ' + to + (c.delegRecapCc ? '\nCopie : ' + c.delegRecapCc : '') + '\n\nDepuis la boîte du CSE, PDF joint.', { okLabel: 'Envoyer' }))) return;
+    RC.busy = true;
+    if (!manuel) { c.delegRecapDone = M; try { saveDB(); } catch (e) { } }   // un seul envoi même si plusieurs appareils sont ouverts
+    try {
+      await dgSync(true);
+      var j = await cseScriptPost('deleg-recap', { mois: M, to: to, cc: c.delegRecapCc || '', rows: dgRecapRows(M), cse: c.cseName || 'CSE' });
+      c.delegRecapDone = M; c.delegRecapAt = new Date().toISOString(); c.delegRecapUrl = j.url || '';
+      try { logAction('Création', 'delegation', 'Récap des délégations de ' + moisFr(M) + ' envoyé aux RH'); saveDB(); } catch (e) { }
+      if (manuel) say('✔ Récap de ' + moisFr(M) + ' envoyé aux RH.', 'success');
+    } catch (e) {
+      if (!manuel) { c.delegRecapDone = c.delegRecapPrev || ''; }
+      say('Récap des délégations non envoyé : ' + (/inconnue|ancienne version/i.test(e.message) ? 'installez la version 78 du script Google.' : e.message), 'error');
+    }
+    RC.busy = false; try { if (document.getElementById('inst-delegation')) dgRender(); } catch (e) { }
+  };
+  function recapTick() {
+    try {
+      var c = cfg(); if (!window.__dbLoaded || !c.delegRecapOn || RC.busy || document.hidden) return;
+      var M = moisPrec(); if (c.delegRecapDone >= M) return;
+      if (!(typeof driveCfg === 'function' && driveCfg()) || (typeof isSeedData === 'function' && isSeedData(db))) return;
+      if (typeof cseIsCseMember === 'function' && !cseIsCseMember()) return;
+      c.delegRecapPrev = c.delegRecapDone || ''; cseDgRecapEnvoi(false);
+    } catch (e) { }
+  }
+  setTimeout(recapTick, 30000); setInterval(recapTick, 10 * 60000);
+  // Alerte en posant des heures : ce que donnera le mois (crédit, report, maximum)
+  function dgAvis(m, apres) {
+    if (!m.credit) return '';
+    if (apres > m.plafond + 1e-9) return '<span style="color:#b91c1c;font-weight:600">⛔ Avec ces heures : ' + hh(apres) + ' ce mois, au-delà du maximum de ' + hh(m.plafond) + ' (' + hh(apres - m.plafond) + ' de trop).</span>';
+    if (apres > m.base + 1e-9) return '<span style="color:#c2410c;font-weight:600">⚠️ Avec ces heures : ' + hh(apres) + ' ce mois. Crédit de ' + hh(m.base) + ' dépassé : ' + hh(apres - m.base) + ' prises sur le report. Il restera ' + hh(m.plafond - apres) + ' jusqu\'au maximum (' + hh(m.plafond) + ').</span>';
+    return '<span style="color:' + (m.plafond - apres <= 4 ? '#c2410c' : '#047857') + '">Après ces heures : ' + hh(apres) + ' sur ' + hh(m.base) + ' ce mois (reste ' + hh(m.base - apres) + ', <span style="color:#7c3aed">' + hh(m.plafond - apres) + ' avec le report</span>).</span>';
+  }
+  function dgApres() {
+    var el = dgD().elus.filter(function (x) { return x.id === DG.sel; })[0], du = gv('dg2-du'), h = dgParseH(gv('dg2-h'));
+    if (!el || !du || !(h > 0)) return null; var m = dgMois(el, du.slice(0, 7)); return { el: el, m: m, apres: m.used + h };
+  }
+  function dgAlerte() {
+    var j = document.getElementById('dg2-jour'); if (!j) return;
+    var box = document.getElementById('dg2-alerte'); if (!box) { box = document.createElement('p'); box.id = 'dg2-alerte'; box.className = 'text-[11px]'; j.parentNode.insertBefore(box, j.nextSibling); }
+    var x = dgApres(); box.innerHTML = x ? dgAvis(x.m, x.apres) : '';
+  }
+  (function () {
+    var calc0 = window.cseDgCalc; window.cseDgCalc = function () { var r = calc0.apply(this, arguments); try { dgAlerte(); } catch (e) { } return r; };
+    var pose0 = window.cseDgPose; window.cseDgPose = async function (mode) {
+      try { var x = dgApres(); if (x && x.m.credit && x.apres > x.m.plafond + 1e-9 && !(await uiConfirm(x.el.name + ' : avec ces heures, ' + hh(x.apres) + ' ce mois, soit au-delà du maximum de ' + hh(x.m.plafond) + '.\n\nPoser quand même ?', { okLabel: 'Poser quand même' }))) return; } catch (e) { }
+      return pose0.apply(this, arguments);
+    };
+    document.addEventListener('input', function (e) { if (e.target && e.target.id === 'dg2-h') { try { dgAlerte(); } catch (er) { } } });
+  })();
   // ---------- 3) Carte CSE : scanner le QR code du salarié ----------
   function byCode(code) {
     var m = /(?:CSEV:|carte=)([A-Za-z0-9_-]{8,})/i.exec(String(code || '').replace(/\s+/g, '')) || /^([A-Za-z0-9_-]{16})$/.exec(String(code || '').replace(/\s+/g, ''));
@@ -44964,6 +45059,249 @@ var qrcode = function() {
     if (cur !== 'dashboard') { fromPop = true; try { switchTab('dashboard'); } catch (e) { } fromPop = false; cur = 'dashboard'; }
     else if (!warned) { warned = 1; try { toast('Vous êtes sur l\'accueil. Pour quitter, fermez l\'appli.', 'info', { ms: 3000 }); } catch (e) { } setTimeout(function () { warned = 0; }, 4000); }
   });
+})();
+</script>
+
+<script id="v92-ameliorations">
+/* V.9.2 : 1) l'appli installée se met à jour toute seule (« Nouvelle version, mettre à jour ? »),
+   2) sauvegarde chiffrée chaque semaine dans le Drive du CSE (par le script Google) et retour en arrière en 2 clics,
+   5) nouvelle sortie / nouveau colis : proposer une notification aux salariés,
+   6) réunions : ordre du jour et compte rendu envoyés aux élus en PDF (boîte du CSE) et visibles dans leur espace. */
+(function () {
+  function E(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function cfg() { db.config = db.config || {}; return db.config; }
+  function say(m, t) { try { toast(m, t || 'info', { ms: 7000 }); } catch (e) { } }
+  function today() { return todayLocalISO(); }
+  function fd(d) { try { return formatDateDisplay(d); } catch (e) { return d; } }
+  function scriptOk() { return typeof driveCfg === 'function' && !!driveCfg(); }
+  function membre() { try { return typeof cseIsCseMember === 'function' ? cseIsCseMember() : true; } catch (e) { return true; } }
+  function pret() { return !!window.__dbLoaded && typeof db !== 'undefined' && db; }
+  function seed() { try { return isSeedData(db); } catch (e) { return false; } }
+  function perime() { try { return appOutdated(); } catch (e) { return false; } }
+  function qui() { try { return getCurrentUserName() || ''; } catch (e) { return ''; } }
+  var BTN = 'px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-lg';
+  var BTNP = 'px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs rounded-lg';
+
+  // ---------- 1) Mise à jour automatique de l'appli installée ----------
+  // L'appli regarde sur GitHub si un index.html plus récent a été déposé (au démarrage, puis toutes les 10 minutes
+  // et à chaque retour sur l'appli). Si oui : bandeau « Nouvelle version, mettre à jour ? ».
+  var UP = { at: 0, v: '', busy: false, non: '' };
+  function enLigne() { return /^https?:$/.test(location.protocol); }
+  async function upCheck(force) {
+    if (!enLigne() || UP.busy) return;
+    if (!force && Date.now() - UP.at < 10 * 60000) return;
+    UP.busy = true; UP.at = Date.now();
+    try {
+      var r = await fetch(location.pathname, { cache: 'no-cache' }); if (!r.ok) return;
+      var m = /const APP_VERSION = "([^"]+)"/.exec(await r.text());
+      if (m && typeof verCmp === 'function' && verCmp(m[1], APP_VERSION) > 0) { UP.v = m[1]; upBanner(); }
+    } catch (e) { } finally { UP.busy = false; }
+  }
+  function upBanner() {
+    if (!UP.v || UP.non === UP.v) return;
+    var b = document.getElementById('v92-up');
+    if (!b) { b = document.createElement('div'); b.id = 'v92-up'; b.setAttribute('role', 'alert'); b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:10001;max-width:calc(100vw - 32px);width:440px;background:#1e1b4b;color:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.3);padding:14px 16px;font-size:14px'; document.body.appendChild(b); }
+    b.innerHTML = '<div style="font-weight:700;margin-bottom:4px">🆕 Nouvelle version de l\'appli (' + E(UP.v) + ')</div>'
+      + '<div style="font-size:12px;opacity:.85;margin-bottom:10px">' + (perime() ? 'Vos données ont été enregistrées avec cette version : mettez à jour pour pouvoir de nouveau enregistrer.' : 'Vous utilisez la ' + E(APP_VERSION) + '. La mise à jour prend quelques secondes, vos données sont gardées.') + '</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="v92-up-go" onclick="cseMajAppli()" style="background:#fff;color:#1e1b4b;border:0;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer">Mettre à jour</button>'
+      + '<button type="button" onclick="cseMajPlusTard()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:8px 14px;cursor:pointer">Plus tard</button></div>';
+  }
+  window.cseMajPlusTard = function () { UP.non = UP.v; var b = document.getElementById('v92-up'); if (b) b.remove(); };
+  window.cseMajAppli = async function () {
+    var b = document.getElementById('v92-up-go'); if (b) { b.disabled = true; b.textContent = 'Mise à jour…'; }
+    try { if (!perime() && typeof saveDB === 'function') await Promise.race([saveDB(), new Promise(function (r) { setTimeout(r, 8000); })]); } catch (e) { }
+    try { var rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(function (r) { return r.update().catch(function () { }); })); } catch (e) { }
+    try { var ks = await caches.keys(); await Promise.all(ks.filter(function (k) { return k.indexOf('cse-app') === 0; }).map(function (k) { return caches.delete(k); })); } catch (e) { }
+    location.reload();
+  };
+  window.cseMajVerifier = function () { return upCheck(true); };
+  setTimeout(function () { upCheck(true); }, 6000);
+  setInterval(function () { upCheck(false); }, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - UP.at > 2 * 60000) upCheck(true); });
+
+  // ---------- 2) Sauvegarde chaque semaine dans le Drive du CSE (par le script Google) ----------
+  var BKW = { busy: false, list: null, err: '', open: false };
+  function bkLast() { return cfg().bkHebdoAt || ''; }
+  function bkDue() { var l = bkLast(); return !l || Date.now() - Date.parse(l) >= 7 * 864e5; }
+  function mo(n) { n = Number(n) || 0; return n > 1048576 ? (n / 1048576).toFixed(1).replace('.', ',') + ' Mo' : Math.max(1, Math.round(n / 1024)) + ' ko'; }
+  window.cseBkHebdo = async function (manual) {
+    if (BKW.busy) return;
+    if (!scriptOk()) { if (manual) say('Le script Google du CSE n\'est pas réglé (Budget › Banque › Liens Drive).', 'warning'); return; }
+    if (typeof dataPassword !== 'function' || !dataPassword()) { if (manual) say('Le mot de passe des données doit être enregistré sur cet appareil (Paramètres › Sécurité › Protection des données).', 'warning'); return; }
+    if (seed()) { if (manual) say('Données de démonstration : rien à sauvegarder.', 'info'); return; }
+    if (perime()) { if (manual) say('Mettez d\'abord l\'appli à jour : cette version est plus ancienne que les données.', 'warning'); return; }
+    BKW.busy = true; bkCard(); if (manual) say('Sauvegarde vers le Drive du CSE…', 'info');
+    try {
+      var who = qui(), copie = JSON.parse(JSON.stringify(db)); if (copie.config) delete copie.config.githubToken;
+      var env = await cloudEncrypt(copie, dataPassword(), { rev: 'hebdo-' + Date.now(), lastModified: db.lastModified, by: who });
+      env.appVersion = APP_VERSION;
+      var nom = 'CSE_sauvegarde_' + today() + '.json';
+      await cseScriptPost('sauvegarde', { nom: nom, contenu: JSON.stringify(env), par: who });
+      cfg().bkHebdoAt = new Date().toISOString(); cfg().bkHebdoBy = who; BKW.err = ''; BKW.list = null;
+      try { logAction('Synchronisation', 'settings', 'Sauvegarde de la semaine déposée dans le Drive (CSE - Sauvegardes)'); } catch (e) { }
+      try { saveDB(); } catch (e) { }
+      if (manual) say('✔ Sauvegarde déposée dans le Drive : CSE - Sauvegardes › ' + nom, 'success');
+    } catch (e) {
+      BKW.err = /inconnue|ancienne version/i.test(e.message) ? 'Installez la version 78 du script Google (script-google-cse-v78.txt).' : e.message;
+      if (manual) say('Sauvegarde impossible : ' + BKW.err, 'error'); else console.warn('Sauvegarde hebdo', e);
+    }
+    BKW.busy = false; bkCard();
+  };
+  window.cseBkAuto = function (on) { cfg().bkHebdoAuto = !!on; try { saveDB(); } catch (e) { } bkCard(); };
+  window.cseBkListe = async function () {
+    BKW.open = true; BKW.list = 'load'; bkCard();
+    try { BKW.list = (await cseScriptPost('sauvegardes', {})).liste || []; } catch (e) { BKW.list = null; say(/inconnue|ancienne version/i.test(e.message) ? 'Installez la version 78 du script Google.' : e.message, 'error'); }
+    bkCard();
+  };
+  window.cseBkRestaure = async function (id, nom, at) {
+    if (!(await uiConfirm('Revenir à la sauvegarde du ' + new Date(at).toLocaleString('fr-FR') + ' ?\n\nToutes les données de l\'appli sont remplacées par celles de cette sauvegarde. L\'état actuel est gardé dans l\'historique des versions (Paramètres › Sauvegardes) au cas où.', { okLabel: 'Revenir à cette sauvegarde' }))) return;
+    say('Téléchargement de la sauvegarde…', 'info');
+    try {
+      var j = await cseScriptPost('sauvegarde-lire', { id: id });
+      var f = new File([j.contenu], nom, { type: 'application/json' });
+      importJSON({ target: { files: [f], set value(v) { } } });
+      try { logAction('Restauration', 'settings', 'Retour à la sauvegarde ' + nom + ' (Drive)'); } catch (e) { }
+    } catch (e) { say('Restauration impossible : ' + e.message, 'error'); }
+  };
+  function bkCard() {
+    var a = document.getElementById('v66-cloud-card'); if (!a) return;
+    var c = document.getElementById('v92-bk-card');
+    if (!c) { c = document.createElement('div'); c.id = 'v92-bk-card'; c.className = a.className; c.setAttribute('data-sg', a.getAttribute('data-sg') || ''); a.parentNode.insertBefore(c, a); }
+    var l = bkLast(), ok = l && Date.now() - Date.parse(l) < 8 * 864e5, auto = cfg().bkHebdoAuto !== false;
+    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> Sauvegarde chaque semaine dans le Drive du CSE</h3>'
+      + '<p class="text-xs text-slate-500">Une fois par semaine, l\'appli dépose une <b>copie chiffrée de toutes les données</b> dans <b>Mon Drive › CSE › CSE - Sauvegardes</b> (les 26 dernières, soit environ 6 mois). Elle passe par le script Google du CSE : personne n\'a besoin de se connecter à Google. En cas de problème, « Revenir en arrière » remet l\'appli comme à cette date.</p>'
+      + '<p class="text-[11px] ' + (ok ? 'text-emerald-700' : 'text-amber-700') + '">' + (l ? 'Dernière sauvegarde : ' + new Date(l).toLocaleString('fr-FR') + (cfg().bkHebdoBy ? ' (par ' + E(cfg().bkHebdoBy) + ')' : '') : 'Pas encore de sauvegarde.') + (BKW.err ? ' · <span class="text-rose-700">' + E(BKW.err) + '</span>' : '') + '</p>'
+      + '<label class="flex items-center gap-2 text-xs text-slate-700"><input type="checkbox" ' + (auto ? 'checked' : '') + ' onchange="cseBkAuto(this.checked)"> Sauvegarde automatique chaque semaine</label>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" class="' + BTNP + '"' + (BKW.busy ? ' disabled' : '') + ' onclick="cseBkHebdo(true)"><i class="fa-solid fa-cloud-arrow-up"></i> ' + (BKW.busy ? 'Sauvegarde en cours…' : 'Sauvegarder maintenant') + '</button>'
+      + '<button type="button" class="' + BTN + '" onclick="cseBkListe()"><i class="fa-solid fa-rotate-left"></i> Revenir en arrière…</button></div>';
+    if (BKW.open) {
+      if (BKW.list === 'load') h += '<p class="text-xs text-slate-500">Lecture du Drive…</p>';
+      else if (Array.isArray(BKW.list)) h += BKW.list.length ? '<div class="border border-slate-200 rounded-xl divide-y divide-slate-100">' + BKW.list.map(function (x) {
+        return '<div class="flex flex-wrap items-center gap-2 px-3 py-2 text-xs"><div class="flex-1 min-w-[180px]"><b>' + new Date(x.at).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + '</b><div class="text-[11px] text-slate-500">' + E(x.nom) + ' · ' + mo(x.taille) + (x.info ? ' · ' + E(x.info) : '') + '</div></div>'
+          + '<button type="button" class="' + BTN + '" onclick="cseBkRestaure(\'' + E(x.id) + '\',\'' + E(x.nom) + '\',\'' + E(x.at) + '\')">Revenir à cette sauvegarde</button></div>';
+      }).join('') + '</div>' : '<p class="text-xs text-slate-500">Aucune sauvegarde dans le Drive pour le moment.</p>';
+    }
+    c.innerHTML = h;
+  }
+  setInterval(function () { try { if (document.getElementById('v66-cloud-card') && !document.getElementById('v92-bk-card')) bkCard(); } catch (e) { } }, 1500);
+  function bkTick() { try { if (pret() && cfg().bkHebdoAuto !== false && bkDue() && membre() && scriptOk() && !document.hidden) cseBkHebdo(false); } catch (e) { } }
+  setTimeout(bkTick, 45000); setInterval(bkTick, 5 * 60000);
+
+  // ---------- 5) Nouveautés pour les salariés : nouvelle sortie, nouveau colis ----------
+  var askN = false;
+  function d10(x) { return String(x || '').slice(0, 10); }
+  function sortiesNow() {
+    var T = today();
+    return (db.outings || []).filter(function (o) { return o && !o.archived && !o.espaceHidden && d10(o.date) >= T && (!o.registrationDeadline || d10(o.registrationDeadline) >= T); }).map(function (o) { return String(o.id); });
+  }
+  function colisNow() { return (db.distributions || []).filter(function (d) { return d && !d.archived; }).map(function (d) { return String(d.id); }); }
+  async function nouveautes() {
+    if (askN || !pret() || seed() || perime() || !membre() || !(window.cseCommPushOn && cseCommPushOn())) return;
+    var c = cfg(), ch = false;
+    var suivre = function (cle, cur) { var vu = c[cle]; if (!Array.isArray(vu)) { c[cle] = cur; ch = true; return []; } var n = cur.filter(function (id) { return vu.indexOf(id) < 0; }); if (n.length) { c[cle] = vu.concat(n).slice(-300); ch = true; } return n; };
+    var nS = c.pushSorties === false ? [] : suivre('pushSortiesVu', sortiesNow());
+    var nC = c.pushColis === false ? [] : suivre('pushColisVu', colisNow());
+    if (ch) { try { saveDB(); } catch (e) { } }
+    if (!nS.length && !nC.length) return;
+    askN = true;
+    try {
+      if (nS.length) {
+        var L = nS.map(function (id) { return (db.outings || []).filter(function (o) { return String(o.id) === id; })[0]; }).filter(Boolean);
+        var txt = L.slice(0, 3).map(function (o) { return o.name + ' le ' + fd(d10(o.date)); }).join(', ') + (L.length > 3 ? '…' : '');
+        if (L.length && await uiConfirm('Nouvelle sortie : ' + L.map(function (o) { return o.name; }).join(', ') + '.\n\nPrévenir les salariés par une notification sur leur téléphone ?', { okLabel: 'Prévenir' })) {
+          try { cseEspacePublish(true); } catch (e) { }
+          await cseCommPushSend('tous', '🎉 Nouvelle sortie du CSE', txt + ' : inscription depuis votre espace.');
+        }
+      }
+      for (var i = 0; i < nC.length; i++) {
+        var d = (db.distributions || []).filter(function (x) { return String(x.id) === nC[i]; })[0]; if (!d) continue;
+        var F = {}; try { F = cseEspaceBuild().fiches || {}; } catch (e) { }
+        var T = Object.keys(F).filter(function (t) { return (F[t].colis || []).some(function (x) { return x.nom === d.name; }); });
+        if (!T.length) continue;
+        if (await uiConfirm('Nouveau colis : « ' + d.name + ' ».\n\nPrévenir les ' + T.length + ' salarié(s) concerné(s) par une notification sur leur téléphone ?', { okLabel: 'Prévenir' })) {
+          try { cseEspacePublish(true); } catch (e) { }
+          await cseCommPushSend(T, '🎁 ' + d.name, 'Votre colis sera à récupérer à la permanence du CSE' + (d.date ? ' à partir du ' + fd(d10(d.date)) : '') + '. Le détail est dans votre espace.');
+        }
+      }
+    } finally { askN = false; }
+  }
+  setTimeout(function () { nouveautes(); }, 20000); setInterval(function () { nouveautes(); }, 60000);
+  window.cseV92Nouveautes = nouveautes;
+
+  // ---------- 6) Réunions : ordre du jour et compte rendu envoyés aux élus ----------
+  function elusMail() { return (db.employees || []).filter(function (e) { return e && e.active !== false && window.cseEmpIsCse && cseEmpIsCse(e); }).map(function (e) { return { nom: ((e.firstname || '') + ' ' + (e.lastname || '')).trim(), mail: String(e.email || '').trim() }; }); }
+  function typeR(m) { try { return INST_TYPES[m.type] || 'Réunion'; } catch (e) { return 'Réunion'; } }
+  function kindR(k) { try { return INST_POINT_KINDS[k] || ''; } catch (e) { return ''; } }
+  function titreR(m) { return m.title || typeR(m); }
+  function docHtml(kind, m) {
+    var cse = cfg().cseName || 'CSE', pv = kind === 'pv';
+    var td = 'font-size:12px;line-height:1.5';
+    var head = '<table style="width:100%;border-collapse:collapse"><tr>' + (cfg().logoDataUrl ? '<td style="width:80px"><img src="' + cfg().logoDataUrl + '" style="max-height:60px;max-width:70px"></td>' : '')
+      + '<td><div style="font-size:11px;color:#555">' + E(cse) + '</div><div style="font-size:19px;font-weight:bold">' + (pv ? 'Compte rendu (procès-verbal)' : 'Convocation et ordre du jour') + '</div><div style="font-size:14px">' + E(titreR(m)) + '</div></td></tr></table>'
+      + '<p style="' + td + ';margin:12px 0;padding:8px 10px;background:#f1f5f9;border-radius:6px">' + E(typeR(m)) + ' du <b>' + E(fd(m.date)) + '</b>' + (m.time ? ' à <b>' + E(m.time) + '</b>' : '') + (m.place ? ' · ' + E(m.place) : '') + '</p>';
+    var parts = pv && m.participants ? '<p style="font-weight:bold;font-size:13px;margin:14px 0 4px;border-bottom:1px solid #ccc">Présents</p><p style="' + td + '">' + E(m.participants) + '</p>' : '';
+    var pts = (m.agenda || []).map(function (p, i) {
+      var v = p.vote || {}, res = ''; try { res = mtVoteResult(p); } catch (e) { }
+      var h = '<p style="font-weight:bold;font-size:13px;margin:14px 0 4px;border-bottom:1px solid #ccc">' + (i + 1) + '. ' + E(p.title) + ' <span style="font-weight:normal;color:#555;font-size:11px">(' + E(kindR(p.kind)) + ')</span></p>';
+      if (pv) {
+        h += p.notes ? '<p style="' + td + ';white-space:pre-wrap">' + E(p.notes) + '</p>' : '';
+        if (p.kind === 'vote' || p.kind === 'consultation') h += '<p style="' + td + '">Vote : ' + (Number(v.pour) || 0) + ' pour, ' + (Number(v.contre) || 0) + ' contre, ' + (Number(v.abstention) || 0) + ' abstention(s)' + (res ? ' : <b>' + E(res) + '</b>' : '') + (p.avis ? ' · Avis : <b>' + E(p.avis) + '</b>' : '') + '</p>';
+        var A = (p.actions || []).filter(function (a) { return a && String(a.text || '').trim(); });
+        if (A.length) h += '<ul style="' + td + ';margin:4px 0 0 18px;padding:0">' + A.map(function (a) { return '<li>' + E(a.text) + (a.who ? ' · ' + E(a.who) : '') + (a.due ? ' · pour le ' + E(fd(a.due)) : '') + '</li>'; }).join('') + '</ul>';
+      }
+      return h;
+    }).join('');
+    var foot = pv ? '<p style="font-size:11px;color:#444;margin-top:30px">Procès-verbal à approuver lors de la prochaine réunion.</p><p style="font-size:12px;margin-top:18px">Le secrétaire du CSE :</p>' : '<p style="font-size:11px;color:#444;margin-top:30px">L\'ordre du jour est communiqué aux membres au moins 3 jours avant la réunion.</p>';
+    return '<html><head><meta charset="utf-8"></head><body style="font-family:Arial,Helvetica,sans-serif;color:#111;margin:28px">' + head + parts + (pts || '<p style="' + td + '">Aucun point.</p>') + foot + '</body></html>';
+  }
+  function envoiBloc() {
+    var m = typeof mtDraft !== 'undefined' ? mtDraft : null; if (!m) return '';
+    var L = elusMail(), avec = L.filter(function (x) { return x.mail; }), sans = L.filter(function (x) { return !x.mail; });
+    var st = function (x, t) { return x ? '<span class="text-emerald-700">✔ ' + t + ' envoyé le ' + E(fd(x.at)) + ' à ' + (x.n || 0) + ' élu(s)' + (x.url ? ' · <a class="underline" target="_blank" rel="noopener" href="' + E(x.url) + '">PDF</a>' : '') + '</span>' : ''; };
+    return '<div class="rounded-xl border border-indigo-200 bg-indigo-50/40 p-3 space-y-2 mt-3 text-left"><p class="text-xs font-bold text-slate-700">📧 Envoyer aux élus (depuis la boîte du CSE, en PDF)</p>'
+      + '<p class="text-[11px] text-slate-600">' + (avec.length ? avec.length + ' élu(s) : ' + E(avec.map(function (x) { return x.nom; }).join(', ')) : 'Aucun élu avec une adresse e-mail (fiche salarié + rôle dans Paramètres › Utilisateurs).') + (sans.length ? '<br><span class="text-amber-700">Sans e-mail, pas envoyé : ' + E(sans.map(function (x) { return x.nom; }).join(', ')) + '</span>' : '') + '</p>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" onclick="cseMtEnvoi(\'odj\')"><i class="fa-solid fa-paper-plane"></i> Envoyer la convocation et l\'ordre du jour</button><button type="button" class="' + BTN + '" onclick="cseMtEnvoi(\'pv\')"><i class="fa-solid fa-file-signature"></i> Envoyer le compte rendu</button><button type="button" class="' + BTN + '" onclick="cseMtApercu(\'odj\')">👁️ Aperçu ODJ</button><button type="button" class="' + BTN + '" onclick="cseMtApercu(\'pv\')">👁️ Aperçu compte rendu</button></div>'
+      + '<p class="text-[11px]">' + [st(m.odjEnvoi, 'Ordre du jour'), st(m.pvEnvoi, 'Compte rendu')].filter(Boolean).join('<br>') + '</p>'
+      + '<p class="text-[11px] text-slate-500">Le PDF est aussi rangé sur le Drive (Mon Drive › CSE › CSE - Réunions). Les élus retrouvent l\'ordre du jour et le compte rendu dans leur espace, onglet « Délégation ».</p></div>';
+  }
+  if (typeof window.mtFormHtml === 'function') { var _mtForm = window.mtFormHtml; window.mtFormHtml = function () { var h = _mtForm.apply(this, arguments); try { h += envoiBloc(); } catch (e) { console.warn(e); } return h; }; }
+  window.cseMtApercu = function (kind) { var w = window.open('', '_blank'); if (!w) { say('Fenêtre bloquée par le navigateur.', 'warning'); return; } w.document.write(docHtml(kind, mtDraft)); w.document.close(); };
+  window.cseMtEnvoi = async function (kind) {
+    var m = mtDraft; if (!m) return;
+    if (!db.meetings.some(function (x) { return x.id === m.id; })) { say('Enregistrez d\'abord la réunion.', 'warning'); return; }
+    if (!scriptOk()) { say('Le script Google du CSE n\'est pas réglé (Budget › Banque › Liens Drive).', 'warning'); return; }
+    var to = elusMail().filter(function (x) { return x.mail; }).map(function (x) { return x.mail; });
+    if (!to.length) { say('Aucun élu avec une adresse e-mail.', 'warning'); return; }
+    if (!(m.agenda || []).some(function (p) { return String(p.title || '').trim(); })) { say('Ajoutez d\'abord les points de l\'ordre du jour (puis Enregistrer).', 'warning'); return; }
+    var pv = kind === 'pv', cse = cfg().cseName || 'CSE', ty = typeR(m).toLowerCase();
+    if (pv && !(m.agenda || []).some(function (p) { return String(p.notes || '').trim(); }) && !(await uiConfirm('Le compte rendu ne contient encore aucune note. L\'envoyer quand même ?', { okLabel: 'Envoyer quand même' }))) return;
+    var sujet = (pv ? 'Compte rendu : ' : 'Convocation et ordre du jour : ') + titreR(m) + ' du ' + fd(m.date);
+    var ag = ''; try { ag = mtAgendaText(m); } catch (e) { }
+    var corps = pv
+      ? 'Bonjour,\n\nVeuillez trouver ci-joint le compte rendu (procès-verbal) de la ' + ty + ' du ' + fd(m.date) + '.' + ((m.pv && ['valide', 'diffuse'].indexOf(m.pv.status) >= 0) ? '' : '\nIl sera soumis à approbation lors de la prochaine réunion.') + '\n\nCordialement,\n' + cse
+      : 'Bonjour,\n\nVous êtes convoqué(e) à la ' + ty + ' du ' + cse + ' le ' + fd(m.date) + (m.time ? ' à ' + m.time : '') + (m.place ? ', ' + m.place : '') + '.\n\nOrdre du jour :\n' + ag + '\n\nL\'ordre du jour est joint en PDF.\n\nCordialement,\n' + cse;
+    if (!(await uiConfirm('Envoyer « ' + sujet + ' » depuis la boîte du CSE ?\n\nÀ : ' + to.join(', ') + '\n\nLe PDF est joint et rangé sur le Drive (CSE - Réunions).', { okLabel: 'Envoyer' }))) return;
+    say('Envoi en cours…', 'info');
+    try {
+      var j = await cseScriptPost('pdf-mail', { to: to.join(','), subject: sujet, body: corps, html: docHtml(kind, m), fichier: (pv ? 'Compte rendu ' : 'Ordre du jour ') + m.date + ' ' + titreR(m), dossier: 'reunions', sous: String(m.date).slice(0, 4) });
+      var s = db.meetings.filter(function (x) { return x.id === m.id; })[0], info = { at: today(), url: j.url || '', n: to.length };
+      s[pv ? 'pvEnvoi' : 'odjEnvoi'] = info; m[pv ? 'pvEnvoi' : 'odjEnvoi'] = info;
+      if (!pv) { s.convocationSentAt = today(); m.convocationSentAt = s.convocationSentAt; }
+      if (pv && s.pv && s.pv.status === 'valide') { s.pv.status = 'diffuse'; m.pv.status = 'diffuse'; }
+      try { logAction('Modification', 'meeting', (pv ? 'Compte rendu' : 'Ordre du jour') + ' envoyé aux élus : réunion du ' + fd(m.date)); } catch (e) { }
+      try { saveDB(); } catch (e) { } try { mtRefresh(); } catch (e) { } try { cseEspacePublish(true); } catch (e) { }
+      say('✔ Envoyé à ' + to.length + ' élu(s), PDF rangé sur le Drive.', 'success');
+    } catch (e) { say('Envoi impossible : ' + (/inconnue|ancienne version/i.test(e.message) ? 'installez la version 78 du script Google (script-google-cse-v78.txt).' : e.message), 'error'); }
+  };
+  // Espace des élus : les réunions à venir et les dernières passées, avec l'ordre du jour et le compte rendu
+  function reunionsPub() {
+    var T = today(), L = (db.meetings || []).slice().sort(function (a, b) { return (String(a.date) + (a.time || '')).localeCompare(String(b.date) + (b.time || '')); });
+    var fut = L.filter(function (m) { return m.date >= T; }).slice(0, 4), past = L.filter(function (m) { return m.date < T; }).slice(-4).reverse();
+    return fut.concat(past).map(function (m) {
+      return { date: m.date, heure: m.time || '', lieu: m.place || '', titre: titreR(m), type: typeR(m), points: (m.agenda || []).map(function (p) { return p.title; }).filter(Boolean).slice(0, 30), odj: m.odjEnvoi ? { le: m.odjEnvoi.at, url: m.odjEnvoi.url || '' } : null, pv: m.pvEnvoi ? { le: m.pvEnvoi.at, url: m.pvEnvoi.url || '' } : null };
+    });
+  }
+  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try { if (window.cseEmpIsCse && cseEmpIsCse(e)) f.reunions = reunionsPub(); } catch (er) { } }; })();
 })();
 </script>
 

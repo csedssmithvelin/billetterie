@@ -151,7 +151,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var ELU = /elu/i.test(location.hash || '');
     return { ok: true, le: new Date().toISOString(),
       deleg: ELU ? { profil: { mail: 'camille.exemple@exemple.fr', rh: 'rh@exemple.fr', resp: 'chef@exemple.fr', respNom: 'M. Exemple', sig: '' }, liste: [{ id: 'd1', at: plus(-6) + 'T09:00:00Z', le: plus(-6), du: plus(-5), au: plus(-5), de: '08:00', a: '12:00', heures: 4, motif: 'Réunion CSE', statut: 'envoyée', vu: { at: plus(-4) + 'T10:00:00Z' } }, { id: 'd2', at: plus(-2) + 'T09:00:00Z', le: plus(-2), du: plus(-1), au: plus(-1), de: '13:30', a: '15:00', heures: 1.5, motif: '', statut: 'envoyée', vu: null }] } : null,
-      fiche: { colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 22, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 22, mois: 9.5, reste: 12.5, plafond: 33, reste33: 23.5, etat: 'ok', an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 22, mois: 26, reste: -4, plafond: 33, reste33: 7, etat: 'report', an: 60 }, { nom: 'Lou PETIT', credit: 22, mois: 35, reste: -13, plafond: 33, reste33: -2, etat: 'trop', an: 80 }] }, membreCse: /elu/i.test(location.hash || ''), phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
+      fiche: { colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 22, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 22, mois: 9.5, reste: 12.5, plafond: 33, reste33: 23.5, etat: 'ok', an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 22, mois: 26, reste: -4, plafond: 33, reste33: 7, etat: 'report', an: 60 }, { nom: 'Lou PETIT', credit: 22, mois: 35, reste: -13, plafond: 33, reste33: -2, etat: 'trop', an: 80 }] }, membreCse: /elu/i.test(location.hash || ''), reunions: [{ date: plus(6), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Approbation du procès-verbal précédent', 'Point sur les activités sociales', 'Questions des salariés'], odj: { le: plus(-1), url: '' }, pv: null }, { date: plus(-24), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Bilan des sorties', 'Colis de Noël'], odj: { le: plus(-30), url: '' }, pv: { le: plus(-12), url: '' } }], phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
         children: [{ name: 'Léa Exemple', birthdate: '2015-04-12' }, { name: 'Hugo Exemple', birthdate: '2019-09-30' }], spouse: { name: 'Alex Exemple', birthdate: '1988-02-03' },
         achats: [{ date: d(10, 18), desc: '4 x Cinéma', total: 24, regle: true, mode: 'Carte Bancaire' }, { date: d(7, 2), desc: '2 x Parc Astérix', total: 70, regle: true, mode: 'Chèque' }, { date: d(11, 20), desc: '2 x Fraispertuis', total: 30, regle: false, mode: '' }, { date: d(12, 5, y - 1), desc: '3 x Cinéma', total: 18, regle: true, mode: 'Espèces' }],
         offert: [{ date: d(10, 18), label: 'Billets : 4 x Cinéma', montant: 12, type: 'Billetterie' }, { date: d(7, 2), label: 'Billets : 2 x Parc Astérix', montant: 40, type: 'Billetterie' }, { date: d(11, 20), label: 'Billets : 2 x Fraispertuis', montant: 18, type: 'Billetterie' }, { date: d(3, 15), label: 'Chèques vacances (part du CSE)', montant: 200, type: 'Chèques vacances' }, { date: d(12, 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }, { date: d(6, 10), label: 'Rentrée scolaire (Léa Exemple)', montant: 40, type: 'Œuvres sociales' }, { date: d(12, 10, y - 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }],
@@ -476,7 +476,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var report = Math.max(0, cr * (nb - 1) + L.filter(function (x) { return x.du >= S.debut && x.du < mois + '-01'; }).reduce(function (s, x) { return s + (x.type === 'recu' ? 1 : -1) * (Number(x.heures) || 0); }, 0));
     var plafond = Math.min(cr * 1.5 + Math.max(0, ioM), base + report), reste33 = plafond - mo, etat = mo <= base + 1e-9 ? 'ok' : mo <= plafond + 1e-9 ? 'report' : 'trop';
     var colU = etat === 'ok' ? 'var(--ok)' : etat === 'report' ? '#ea580c' : 'var(--bad)';
-    return { mo: mo, an: an, credit: cr, S: S,
+    return { mo: mo, an: an, credit: cr, S: S, base: base, plafond: plafond, mois: mois,
       html: '<div class="kpis">'
         + (cr ? '<div class="kpi" style="cursor:default"><span>Reste sur votre crédit</span><b style="color:' + (resteM < 0 ? '#ea580c' : 'var(--ok)') + '">' + hFr(resteM) + '</b><span class="mute">crédit ' + hFr(base) + ' ce mois</span></div>'
           + '<div class="kpi" style="cursor:default"><span>Reste avec le report</span><b style="color:' + (reste33 < 0 ? 'var(--bad)' : '#7c3aed') + '">' + hFr(reste33) + '</b><span class="mute">maximum ' + hFr(plafond) + ' ce mois' + (report ? ' · report ' + hFr(report) : '') + '</span></div>' : '')
@@ -493,6 +493,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function dgPlMin(x) { var d = dgMins(x.de), a = dgMins(x.a); return a > d ? a - d : a + 1440 - d; }
   function dgPlTxt(d) { var L = d.plages && d.plages.length ? d.plages : (d.de ? [{ de: d.de, a: d.a }] : []); return L.map(function (x) { return E(x.de) + ' – ' + E(x.a) + (x.a <= x.de ? ' (lendemain)' : ''); }).join(' et '); }
   window.cseDgPlage = function (k) { if (k) { var r = $('dg-pl' + k); r.style.display = 'none'; $('dg-de' + k).value = ''; $('dg-a' + k).value = ''; } else { var r2 = $('dg-pl2'), r3 = $('dg-pl3'); if (r2.style.display === 'none') r2.style.display = ''; else r3.style.display = ''; } $('dg-plus').style.display = ($('dg-pl2').style.display === 'none' || $('dg-pl3').style.display === 'none') ? '' : 'none'; $('dg-h').dataset.edit = ''; cseDgCalc(true); };
+  // V.9.2 : ce que donnera le mois avec ces heures (crédit, report, maximum)
+  function dgApres() { var c = dgCompteur(), du = $('dg-du') && $('dg-du').value, h = dgParseH($('dg-h') && $('dg-h').value); if (!c.credit || !du || du.slice(0, 7) !== c.mois || !(h > 0)) return null; return { c: c, apres: c.mo + h }; }
+  function dgAlerte() {
+    var j = $('dg-jour'); if (!j) return; var box = $('dg-alerte'); if (!box) { box = document.createElement('p'); box.id = 'dg-alerte'; box.style.margin = '4px 0'; box.style.fontSize = '13px'; j.parentNode.insertBefore(box, j.nextSibling); }
+    var x = dgApres(); if (!x) { box.innerHTML = ''; return; } var c = x.c, a = x.apres;
+    box.innerHTML = a > c.plafond + 1e-9 ? '<b style="color:var(--bad)">⛔ Avec ces heures : ' + hFr(a) + ' ce mois, au-delà du maximum de ' + hFr(c.plafond) + ' (' + hFr(a - c.plafond) + ' de trop).</b>'
+      : a > c.base + 1e-9 ? '<b style="color:#ea580c">⚠️ Avec ces heures : ' + hFr(a) + ' ce mois. Crédit de ' + hFr(c.base) + ' dépassé : ' + hFr(a - c.base) + ' prises sur le report. Il restera ' + hFr(c.plafond - a) + ' jusqu\'au maximum (' + hFr(c.plafond) + ').</b>'
+      : '<span style="color:' + (c.plafond - a <= 4 ? '#ea580c' : 'var(--ok)') + '">Après ces heures : ' + hFr(a) + ' sur ' + hFr(c.base) + ' ce mois (reste ' + hFr(c.base - a) + ', <span style="color:#7c3aed">' + hFr(c.plafond - a) + ' avec le report</span>).</span>';
+  }
+  document.addEventListener('input', function (e) { if (e.target && e.target.id === 'dg-h') { try { dgAlerte(); } catch (er) { } } });
   window.cseDgCalc = function (force) {
     var PL = dgPlagesForm(), du = $('dg-du').value, hEl = $('dg-h');
     var nuit = PL.some(function (x) { return dgMins(x.a) <= dgMins(x.de); });
@@ -502,6 +512,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var au = $('dg-au').value || du, unJour = !au || au === du || $('dg-au').dataset.auto;
     try { $('dg-jour').textContent = du ? '📅 ' + new Date(du + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + (au && au !== du ? ' → ' + new Date(au + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '') : ''; } catch (e) { }
     if ((force || !hEl.dataset.edit) && PL.length && unJour) hEl.value = dgFmtH(PL.reduce(function (s, x) { return s + dgPlMin(x); }, 0));
+    try { dgAlerte(); } catch (e) { }
     var G = D.deleg || {}, p = G.profil || {}, dest = [p.rh, p.resp].filter(Boolean);
     var cc = [p.mail, p.resp2].filter(Boolean);
     $('dg-resume').innerHTML = dest.length ? '📧 Sera envoyé depuis la boîte du CSE à : <b>' + E(dest.join(', ')) + '</b>' + (cc.length ? ', en copie : ' + E(cc.join(', ')) : '') + '. La feuille PDF est aussi rangée dans votre dossier sur le Drive du CSE.' : '⚠️ Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages » ci-dessous.';
@@ -513,6 +524,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!x.de || !x.a) return say('dg-msg', 'Indiquez l\'horaire (de … à …).', 'bad');
     if (PL.length > 1) x.plages = PL;
     if (!(x.heures > 0)) return say('dg-msg', 'Indiquez le nombre d\'heures.', 'bad');
+    var ax = dgApres(); if (ax && ax.apres > ax.c.plafond + 1e-9 && !confirm('Avec ces heures, vous arrivez à ' + hFr(ax.apres) + ' ce mois, au-delà du maximum de ' + hFr(ax.c.plafond) + '.\n\nPoser quand même ?')) return;
     if (!sans && !p.sig) return say('dg-msg', 'Ajoutez d\'abord votre signature dans « Mes réglages » ci-dessous.', 'bad');
     if (!sans && !p.rh && !p.resp) return say('dg-msg', 'Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages ».', 'bad');
     if (sans) x.sansEnvoi = true;
@@ -583,6 +595,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (TO.length) h += '<div class="card"><h2>👥 Compteurs des élus</h2><p class="mute">Pour information : chacun ne pose que ses propres heures.</p>' + TO.map(function (x) {
       return '<div class="row"' + (x.moi ? ' style="background:#eef2ff;border-radius:10px;padding-left:6px"' : '') + '><div class="l"><b>' + E(x.nom) + (x.moi ? ' (vous)' : '') + '</b><div class="mute">Ce mois : <b style="color:' + (x.etat === 'trop' ? 'var(--bad)' : x.etat === 'report' ? '#ea580c' : 'inherit') + '">' + hFr(x.mois) + '</b>' + (x.credit ? ' sur ' + hFr(x.credit) : '') + ' · depuis le 1er juillet : ' + hFr(x.an) + '</div></div><div class="r">' + (x.credit ? '<span class="tag ' + (x.reste < 0 ? 'warn' : 'ok') + '">reste ' + hFr(x.reste) + '</span>' + (x.plafond != null ? '<br><span class="tag" style="background:#ede9fe;color:#6d28d9;margin-top:4px">avec report ' + hFr(x.reste33) + '</span>' : '') : '') + '</div></div>';
     }).join('') + '</div>';
+    var RE = D.fiche.reunions || [];
+    if (RE.length) { var tR = today(); h += '<div class="card"><h2>🏛️ Réunions du CSE</h2>' + RE.map(function (r) {
+      var fut = r.date >= tR, lk = function (x, t) { return x ? (x.url ? '<a href="' + E(x.url) + '" target="_blank" rel="noopener">' + t + ' (PDF)</a>' : t + ' envoyé le ' + fd(x.le) + ' (voir vos e-mails)') : ''; };
+      return '<div class="row" style="display:block' + (fut ? ';background:#eef2ff;border-radius:10px;padding:8px' : '') + '"><b>' + fd(r.date) + (r.heure ? ' à ' + E(r.heure) : '') + ' · ' + E(r.titre) + '</b>' + (fut ? ' <span class="tag info">à venir</span>' : '') + '<div class="mute">' + E(r.type) + (r.lieu ? ' · ' + E(r.lieu) : '') + '</div>'
+        + (r.points && r.points.length ? '<ol style="margin:6px 0 0 18px;padding:0;font-size:14px">' + r.points.map(function (x) { return '<li>' + E(x) + '</li>'; }).join('') + '</ol>' : '')
+        + ((r.odj || r.pv) ? '<div style="margin-top:6px;font-size:13px">' + [lk(r.odj, 'Ordre du jour'), lk(r.pv, 'Compte rendu')].filter(Boolean).join(' · ') + '</div>' : '') + '</div>';
+    }).join('') + '<p class="mute" style="margin-top:6px">Les PDF sont sur le Drive du CSE ; vous les recevez aussi par e-mail.</p></div>'; }
     var showPad = !p.sig || p.sigRefaire;
     h += '<div class="card"><h2>⚙️ Mes réglages</h2>'
       + '<h3>Ma signature</h3>' + (showPad ? '<p class="mute">Signez avec le doigt dans le cadre. Elle est gardée et mise sur chaque feuille.</p><canvas id="dg-sig" style="width:100%;max-width:420px;aspect-ratio:5/2;border:2px dashed #cbd5e1;border-radius:12px;background:#fff;touch-action:none;display:block"></canvas><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" onclick="cseSigEfface()">Effacer</button><button class="btn p" onclick="cseSigGarde()">Enregistrer ma signature</button></div>'
@@ -887,6 +906,23 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function head(t, sub) { return '<div class="top"><div><h2>' + E(t) + '</h2>' + (sub ? '<div class="mute">' + sub + '</div>' : '') + '</div><button class="x" onclick="cseClose()" aria-label="Fermer">×</button></div>'; }
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
+  // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
+  var PAGE_VERSION = '9.2', UPV = { at: 0, non: '' };
+  function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
+  async function majCheck() {
+    if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
+    try { var r = await fetch(location.pathname, { cache: 'no-cache' }); if (!r.ok) return; var m = /var PAGE_VERSION = '([^']+)'/.exec(await r.text()); if (m && vCmp(m[1], PAGE_VERSION) > 0 && UPV.non !== m[1]) majBan(m[1]); } catch (e) { }
+  }
+  function majBan(v) {
+    if ($('maj-ban')) return; var d = document.createElement('div'); d.id = 'maj-ban'; d.setAttribute('role', 'alert');
+    d.style.cssText = 'position:fixed;left:12px;right:12px;top:12px;z-index:10000;max-width:520px;margin:0 auto;background:#1e1b4b;color:#fff;border-radius:16px;box-shadow:0 18px 40px -12px rgba(15,23,42,.45);padding:12px 14px;font-size:15px';
+    d.innerHTML = '<b>🆕 Nouvelle version de votre espace</b><div style="font-size:13px;opacity:.85;margin:2px 0 8px">Un appui et c\'est à jour.</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="maj-non" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)">Plus tard</button><button class="btn p" id="maj-ok" style="background:#fff;color:#1e1b4b">Mettre à jour</button></div>';
+    document.body.appendChild(d);
+    $('maj-non').onclick = function () { UPV.non = v; d.remove(); };
+    $('maj-ok').onclick = async function () { this.disabled = true; this.textContent = 'Mise à jour…'; try { var rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(function (r) { return r.update().catch(function () { }); })); } catch (e) { } try { var ks = await caches.keys(); await Promise.all(ks.filter(function (k) { return k.indexOf('cse-espace-') === 0; }).map(function (k) { return caches.delete(k); })); } catch (e) { } location.reload(); };
+  }
+  setTimeout(majCheck, 5000); setInterval(majCheck, 10 * 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) majCheck(); });
   // --- Installer l'appli sur le téléphone ---
   var PROMPT = null, STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
   var IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
