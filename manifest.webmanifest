@@ -1,6 +1,7 @@
 {
-  "name": "Portail & Gestion CSE - Velin / DS Smith",
-  "short_name": "CSE Velin",
+  "id": "/billetterie/",
+  "name": "CSE Velin – Gestion & permanence",
+  "short_name": "CSE Gestion",
   "description": "Billetterie, salariés, sorties, budget et documents du CSE",
   "lang": "fr",
   "start_url": "./",
@@ -9,8 +10,23 @@
   "background_color": "#ffffff",
   "theme_color": "#0f172a",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

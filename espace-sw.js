@@ -1,6 +1,6 @@
 // Espace salarié du CSE : copie hors ligne de la page + notifications sur le téléphone (Firebase).
 // La configuration Firebase (publique) arrive dans l'adresse de ce fichier (?cfg=…), donnée par la page.
-const CACHE = 'cse-espace-v1';
+const CACHE = 'cse-espace-v2';
 try {
   const cfg = JSON.parse(new URL(self.location.href).searchParams.get('cfg') || 'null');
   if (cfg && cfg.apiKey && cfg.messagingSenderId) {
@@ -11,7 +11,7 @@ try {
 } catch (e) { }
 self.addEventListener('install', e => {
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['espace-salarie.html', 'espace-manifest.webmanifest', 'icon-192.png'])).catch(() => {}));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['espace-salarie.html', 'espace-manifest.webmanifest', 'icon-192.png', 'icon-espace-192.png'])).catch(() => {}));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.indexOf('cse-espace-') === 0 && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
