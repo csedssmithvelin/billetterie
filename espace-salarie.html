@@ -224,7 +224,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
   }
 
- var TABS = [['accueil', '🏠 Accueil'], ['billets', '🎟️ Billetterie'], ['idees', '💡 Idées & questions'], ['achats', '🎟️ Mes achats'], ['offert', '🎁 Offert par le CSE'], ['cv', '🏖️ Chèques vacances'], ['sorties', '🎭 Sorties'], ['agenda', '📅 Agenda'], ['materiel', '⛺ Matériel'], ['docs', '📄 Documents'], ['fiche', '👤 Ma fiche'], ['demandes', '📨 Mes demandes']];
+ var TABS = [['accueil', '🏠 Accueil'], ['billets', '🎟️ Billetterie'], ['idees', '💡 Idées & questions'], ['achats', '🎟️ Mes achats'], ['offert', '🎁 Mes subventions'], ['cv', '🏖️ Chèques vacances'], ['sorties', '🎭 Sorties'], ['agenda', '📅 Agenda'], ['materiel', '⛺ Matériel'], ['docs', '📄 Documents'], ['fiche', '👤 Ma fiche'], ['demandes', '📨 Mes demandes']];
   // Réponses du CSE pas encore vues (mémorisées sur cet appareil).
   function seenKey() { return 'cse_dem_seen_' + (DEMO ? 'demo' : String(T || '').slice(0, 8)); }
   function seenMap() { try { return JSON.parse(localStorage.getItem(seenKey()) || 'null'); } catch (e) { return null; } }
@@ -356,7 +356,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var td = function (L) { return '<tr>' + L.map(function (x, i) { return '<td' + (i === L.length - 1 ? ' class="m"' : '') + '>' + x + '</td>'; }).join('') + '</tr>'; };
     var logo = ($('h-logo') && $('h-logo').src) || '';
     var h = '<div class="hd">' + (logo ? '<img src="' + E(logo) + '" alt="">' : '') + '<div><h1>Mon récapitulatif ' + Y + '</h1><div>' + E((P.cse && P.cse.nom) || 'CSE') + ' · ' + E(f.nom || '') + '</div><div style="color:#555">Édité le ' + fd(today()) + '</div></div></div>'
-      + '<h2>🎁 Offert par le CSE : ' + eur(tOff) + '</h2>' + (off.length ? tb(['Type', 'Montant'], Object.keys(byT).map(function (k) { return td([E(k), eur(byT[k])]); }), '<td>Total</td><td class="m">' + eur(tOff) + '</td>') + '<p></p>' + tb(['Date', 'Détail', 'Montant'], off.map(function (o) { return td([fd(o.date), E(o.label), eur(o.montant)]); })) : '<p>Rien cette année.</p>')
+      + '<h2>🎁 Total de vos subventions par le CSE : ' + eur(tOff) + '</h2>' + (off.length ? tb(['Type', 'Montant'], Object.keys(byT).map(function (k) { return td([E(k), eur(byT[k])]); }), '<td>Total</td><td class="m">' + eur(tOff) + '</td>') + '<p></p>' + tb(['Date', 'Détail', 'Montant'], off.map(function (o) { return td([fd(o.date), E(o.label), eur(o.montant)]); })) : '<p>Rien cette année.</p>')
       + '<h2>🎟️ Mes achats de billets</h2>' + (ach.length ? tb(['Date', 'Billets', 'Montant'], ach.map(function (a) { return td([fd(a.date), E(a.desc) + (a.regle ? '' : ' (à régler)'), eur(a.total)]); }), '<td></td><td>Total</td><td class="m">' + eur(ach.reduce(function (s, a) { return s + (a.total || 0); }, 0)) + '</td>') : '<p>Aucun achat.</p>')
       + '<h2>🎭 Mes sorties</h2>' + (so.length ? tb(['Date', 'Sortie', 'Montant'], so.map(function (x) { return td([fd(x.date), E(x.nom) + ((x.invites || []).length ? ' (+' + x.invites.length + ')' : ''), eur(x.montant)]); })) : '<p>Aucune sortie.</p>')
       + '<h2>🏖️ Chèques vacances ' + Y + '</h2>' + (cv.length ? cv.map(function (c) { return tb(['', 'Montant'], [td(['Valeur des chèques', eur(c.total)]), td(['Part du CSE', eur(c.cse)]), td(['Ma part', eur(c.salarie)])]); }).join('') : '<p>Pas de chèques vacances cette année.</p>')
@@ -474,13 +474,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         h += pushCard();
         h += permCard();
         h += '<div class="kpis">'
-          + '<div class="kpi" onclick="cseGo(\'offert\')"><span>Offert par le CSE en ' + new Date().getFullYear() + '</span><b>' + eur(offY) + '</b></div>'
+          + '<div class="kpi" onclick="cseGo(\'offert\')"><span>Vos subventions CSE en ' + new Date().getFullYear() + '</span><b>' + eur(offY) + '</b></div>'
           + '<div class="kpi" onclick="cseGo(\'achats\')"><span>Reste à régler</span><b style="color:' + (due ? 'var(--bad)' : 'var(--ok)') + '">' + eur(due) + '</b></div>'
           + '<div class="kpi" onclick="cseGo(\'cv\')"><span>Chèques vacances : à payer</span><b>' + eur(cvDue) + '</b></div>'
           + '<div class="kpi" onclick="cseGo(\'sorties\')"><span>Sorties ouvertes</span><b>' + open.length + '</b></div></div>';
         if (open.length) h += '<div class="card" style="margin-top:12px"><h2>🎭 Sorties où vous pouvez vous inscrire</h2>' + open.slice(0, 4).map(outingRow).join('') + '</div>';
         h += cvCard('🏖️ Chèques vacances');
-        h += '<div class="card"><h2>💡 Une idée, une question pour la réunion ?</h2><p class="mute">Boîte à idées, idée de sortie, question à poser à la prochaine réunion du CSE : avec votre nom ou en anonyme.</p><button class="btn p" onclick="cseGo(\'idees\')">Donner mon idée</button></div>';
+        h += '<div class="card"><h2>💡 Une idée, une question pour la réunion ?</h2><p class="mute">Boîte à idées, idée de sortie, question à poser à la prochaine réunion du CSE.</p><button class="btn p" onclick="cseGo(\'idees\')">Donner mon idée</button></div>';
         h += swileCard();
         h += installCard();
         h += '<div class="card"><h2>💬 Une question ?</h2><p class="mute">Écrivez au CSE directement d\'ici, ou par e-mail.</p><button class="btn" onclick="cseMsg()">Écrire au CSE</button> '
@@ -498,7 +498,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       offert: function () {
         var L = f.offert || [], ys = yearsOf(L, 'date'), Y = L.filter(function (a) { return String(a.date).slice(0, 4) === YEAR; });
         var tot = Y.reduce(function (s, o) { return s + (o.montant || 0); }, 0);
-        h += '<div class="card"><h2>🎁 Ce que le CSE vous a offert</h2>' + yearBar(ys)
+        h += '<div class="card"><h2>🎁 Total de vos subventions par le CSE</h2>' + yearBar(ys)
           + '<div class="kpi" style="cursor:default;margin-bottom:8px"><span>Total ' + YEAR + '</span><b style="color:var(--ok)">' + eur(tot) + '</b></div>'
           + (Y.length ? Y.map(function (o) { return '<div class="row"><div class="l"><b>' + E(o.label) + '</b><div class="mute">' + fd(o.date) + ' · ' + E(o.type) + '</div></div><div class="r" style="color:var(--ok)">' + eur(o.montant) + '</div></div>'; }).join('') : '<p class="empty">Rien d\'enregistré pour ' + YEAR + '.</p>')
           + '<p class="mute" style="margin-top:10px">Billets : différence entre le prix payé par le CSE et votre prix. Chèques vacances : part payée par le CSE.</p>'
@@ -679,21 +679,23 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     h += '<div class="card"><h2>💡 Boîte à idées et questions</h2><p class="mute">Une idée, une envie de sortie, une question à poser en réunion, un message pour le CSE.</p>'
       + '<label for="i-type">C\'est…</label><select id="i-type">' + Object.keys(ITYPES).map(function (k) { return '<option value="' + k + '">' + ITYPES[k] + '</option>'; }).join('') + '</select>'
       + '<label for="i-txt">Votre message</label><textarea id="i-txt" style="min-height:120px" maxlength="3000"></textarea>'
-      + (PUBLIC ? '<p class="mute">🔒 Message anonyme : le CSE ne sait pas qui l\'a écrit.</p>'
-        : '<label style="display:flex;gap:8px;align-items:flex-start;font-weight:600"><input type="checkbox" id="i-anon" style="width:auto;margin-top:3px"> <span>Envoyer anonymement<br><span class="mute" style="font-weight:400">Votre nom n\'est pas transmis ni gardé. Le CSE ne pourra pas vous répondre personnellement, mais il peut publier sa réponse pour tous ci-dessous.</span></span></label>')
+      + (PUBLIC ? '<label for="i-nom">Votre nom et prénom</label><input id="i-nom" maxlength="80" autocomplete="name">' : '')
       + '<div style="margin-top:12px"><button class="btn p" id="i-go">Envoyer</button></div><div id="i-msg"></div></div>';
     if (full && (f.idees || []).length) h += '<div class="card"><h2>📝 Mes idées et questions</h2>' + f.idees.map(function (x) { return '<div class="row"><div class="l"><div class="mute">' + E(ITYPES[x.type] || '') + ' · ' + fd(x.date) + '</div><div>' + E(x.texte) + '</div>' + (x.reponse ? '<div style="margin-top:4px">💬 <b>CSE :</b> ' + E(x.reponse) + '</div>' : '') + '</div><div class="r"><span class="tag ' + (/retenu|trait/i.test(x.statut) ? 'ok' : 'info') + '">' + E(x.statut) + '</span></div></div>'; }).join('') + '</div>';
     if (full && (P.reponses || []).length) h += '<div class="card"><h2>📣 Le CSE vous répond</h2>' + P.reponses.map(function (x) { return '<div class="row"><div class="l"><div class="mute">' + E(ITYPES[x.type] || '') + ' · ' + fd(x.date) + '</div><div><b>' + E(x.texte) + '</b></div><div style="margin-top:4px">💬 ' + E(x.reponse) + '</div></div></div>'; }).join('') + '</div>';
     setTimeout(function () {
       var b = $('i-go'); if (!b) return;
       b.onclick = async function () {
-        var t = $('i-txt').value.trim(), an = PUBLIC || !!($('i-anon') && $('i-anon').checked);
+        // Pas de message anonyme : depuis l'espace, le nom est celui de la fiche ; depuis la boîte publique, il est demandé.
+        var t = $('i-txt').value.trim(), an = false, nom = PUBLIC && $('i-nom') ? $('i-nom').value.trim() : '';
+        if (PUBLIC && nom.length < 3) return say('i-msg', 'Indiquez votre nom et prénom.', 'bad');
         if (t.length < 3) return say('i-msg', 'Écrivez votre message.', 'bad');
+        if (nom) t = 'De : ' + nom + '\n\n' + t;
         b.disabled = true; say('i-msg', 'Envoi…', 'info');
         try {
           await api('POST', { action: 'idee', type: $('i-type').value, texte: t, anonyme: an });
           $('i-txt').value = '';
-          say('i-msg', (DEMO ? '(Exemple) ' : '') + '✔ Merci ! Votre message est transmis au CSE' + (an ? ' de façon anonyme.' : '. Vous verrez sa réponse ici.'), 'ok');
+          say('i-msg', (DEMO ? '(Exemple) ' : '') + '✔ Merci ! Votre message est transmis au CSE' + (PUBLIC ? '.' : '. Vous verrez sa réponse ici.'), 'ok');
           if (!PUBLIC && !DEMO) { try { D = await api('GET'); } catch (e) { } }
           if (DEMO && !an) setTimeout(render, 1500);
         } catch (e) { say('i-msg', e.message, 'bad'); }
@@ -702,7 +704,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }, 0);
     return h;
   }
-  window.cseIdeaPublic = function () { $('h-nom').textContent = 'Boîte à idées du CSE'; $('app').innerHTML = ideaBox(false); $('foot').textContent = 'Message anonyme : aucune information sur vous n\'est transmise.'; };
+  window.cseIdeaPublic = function () { $('h-nom').textContent = 'Boîte à idées du CSE'; $('app').innerHTML = ideaBox(false); $('foot').textContent = 'Votre message est transmis au CSE avec votre nom.'; };
 
   // V.8.9 : sur Android, ouvre directement l'appli Swile si elle est installée (sinon la page web).
   // Sur iPhone, le lien https ouvre l'appli tout seul quand elle est installée (lien universel).

@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"0kGMsnqqNQgZ79KQEmQ8eA==","iv":"2djmdnzGOZJNMybk","rev":"boot","lastModified":"2026-11-24T15:13:06.704Z","by":"Michaël GROSJEAN","data":"Zw9AQvLD5Tt6OM+ETFt1+Ri/8xXsUGz/uzxvLaCv+SM88uagrQNm2CDLnsPvEhlX7yCvB1Y9QUIwlgZzWmdBew=="},"at":"2026-11-24T15:13:06.743Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Yh7Co21aMyrca5zyzMz86w==","iv":"UHIPUc2NGyWRHNrP","rev":"boot","lastModified":"2026-11-24T15:45:15.768Z","by":"Michaël GROSJEAN","data":"58PadzADFLOgzziLifsoHetRoGSuO8smhzXQoBVDqWx5T85z8BARfc3/ar/DuYuz55SNuxETPSnR73FIcwvA6A=="},"at":"2026-11-24T15:45:15.813Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21725,6 +21725,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             { v: 'V.8.9', date: '2026-11-24', items: [
                 "💳 Espace salarié : bouton « Payer en ligne » sur chaque ligne « À régler », avec le bon lien de paiement (Paramètres › liens de paiement : le lien d'une sortie est trouvé d'après son nom, « chèques vacances » pour les chèques vacances). « Prévenir le CSE que j'ai payé » envoie une demande ; le CSE valide le paiement à réception.",
                 "🎟️ Réserver des billets depuis l'espace (dans la limite du quota et du stock) ; les réservations acceptées apparaissent dans le mode permanence.",
+                "📱 Touche « retour » du téléphone : ferme la fenêtre ouverte ou revient à l'onglet précédent, l'appli ne se ferme plus. Espace salarié : plus de message anonyme (le nom est toujours transmis), onglet « Mes subventions » (Total de vos subventions par le CSE).",
                 "🙋 Planning des élus (bouton à côté de « Communication », et dans « À faire à la permanence ») : qui tient chaque permanence, « Je viens », « Je ne peux pas » (les autres élus sont prévenus pour remplacer), remplissage à tour de rôle, vendredis fermés grisés, rappel la veille.",
                 "👥 Bilan par salarié (bouton à côté de « Communication ») : offert par type, billets, sorties, total, salariés qui n'ont rien reçu ; export Excel et impression. 👋 Départ d'un salarié (date de sortie passée ou « Inactif ») : fiche archivée en inactif, lien « Mon espace » coupé tout seul, retiré des listes d'attente, noté dans l'historique.",
                 "📋 Mode permanence : « À faire à la permanence » (colis à remettre, billets réservés, matériel à sortir ou à récupérer, chèques vacances attendus) ; un clic sur un nom ouvre le salarié.",
@@ -43667,12 +43668,9 @@ var qrcode = function() {
       var yy = cvCampYear();
       if ((db.chequesVacances || []).some(function (c) { return c.employeeId === e.id && cvDossierYear(c) + 1 === yy; }) && !(await uiConfirm(empName(e) + ' a déjà un dossier de chèques vacances pour ' + yy + '.\n\nCréer quand même un autre dossier ?'))) return;
       switchTab('cheques-vacances'); openCVModal(); selectCVEmployee(e.id, e.lastname, e.firstname);
-      if (x.formats && typeof x.formats === 'object') ['paper', 'connect', 'swile'].forEach(function (k) { var i2 = document.getElementById('cv-format-' + k); if (i2) i2.value = Number(x.formats[k]) || 0; });
-      else { var k = /connect/i.test(x.format) ? 'connect' : /swile/i.test(x.format) ? 'swile' : 'paper'; var inp = document.getElementById('cv-format-' + k); if (inp) inp.value = x.montant || 0; }
-      try { updateCVRemainingDisplay(); } catch (er) { }
-      if (x.nb) { var nbi = document.getElementById('cv-installments-count'); if (nbi) nbi.value = Math.min(12, Math.max(1, Number(x.nb) || 1)); }
-      if (x.mode && CV_PAYMENT_METHODS.indexOf(x.mode) >= 0) window.__cvModeVoulu = x.mode;
-      say('Dossier prérempli (' + eur(x.montant) + ', ' + x.format + ', paiement souhaité : ' + x.paiement + ') : indiquez la part du CSE, cliquez « OK » à côté de « Répartir en ' + (x.nb || 1) + ' fois », enregistrez, puis « Accepter ».', 'info');
+      var k = /connect/i.test(x.format) ? 'connect' : /swile/i.test(x.format) ? 'swile' : 'paper';
+      var inp = document.getElementById('cv-format-' + k); if (inp) { inp.value = x.montant || 0; try { updateCVRemainingDisplay(); } catch (er) { } }
+      say('Dossier prérempli (' + eur(x.montant) + ', ' + x.format + ', paiement souhaité : ' + x.paiement + ') : indiquez la part du CSE et les échéances, enregistrez, puis « Accepter ».', 'info');
     }
   };
   function applyFiche(d, e) {
@@ -43764,7 +43762,7 @@ var qrcode = function() {
   // Envoi des liens / liens individuels
   // ------------------------------------------------------------------
   function oldTpl() { var c = cfg(); if (c.espaceMailB && /Le CSE vous ouvre votre espace personnel\. Vous y retrouvez/.test(c.espaceMailB)) { delete c.espaceMailB; delete c.espaceMailS; } }
-  var TPL_S = 'Votre espace CSE personnel est ouvert', TPL_B = 'Bonjour {prenom},\n\nLe CSE vous ouvre votre espace personnel, sur téléphone ou ordinateur. Il ne montre que VOS informations.\n\nCE QUE VOUS Y TROUVEZ\n• ce qui vous reste à régler, et ce que le CSE vous a offert cette année ;\n• vos achats de billets, vos sorties et vos chèques vacances, avec chaque paiement et s\'il a bien été reçu ;\n• les billets disponibles avec leurs prix, et le nombre qu\'il vous reste à prendre ;\n• les annonces du CSE, l\'agenda, les sondages, et vos colis à récupérer ;\n• vos documents et votre carte CSE (QR code) à montrer à la permanence ;\n• votre récapitulatif de l\'année, à enregistrer en PDF.\n\nCE QUE VOUS POUVEZ FAIRE\n• vous inscrire à une sortie, ou vous mettre en liste d\'attente ;\n• vous inscrire aux chèques vacances : montant, Papier, Connect ou Swile, et paiement en plusieurs fois ;\n• réserver du matériel : tables, bancs, chapiteaux ;\n• donner une idée ou poser une question pour la réunion, avec votre nom ou en anonyme ;\n• corriger votre fiche (adresse, téléphone, enfants…) ;\n• noter une sortie après y être allé.\n\nCOMMENT ÇA MARCHE\nChaque demande est envoyée au CSE, qui la valide. La réponse s\'affiche dans « Mes demandes ». Les paiements sont validés uniquement par le CSE, quand il les a reçus.\nPermanence du CSE : le vendredi de 11h à 13h30.\n\nSUR LE TÉLÉPHONE\nOuvrez le lien, puis « Installer l\'appli » ou « Ajouter à l\'écran d\'accueil ». Activez aussi les notifications pour être prévenu : réponse du CSE, place libérée, colis à récupérer, paiement reçu.\n\nVotre lien personnel (gardez-le pour vous, ne le transférez pas) :\n{lien}\n\nLe CSE';
+  var TPL_S = 'Votre espace CSE personnel est ouvert', TPL_B = 'Bonjour {prenom},\n\nLe CSE vous ouvre votre espace personnel, sur téléphone ou ordinateur. Il ne montre que VOS informations.\n\nCE QUE VOUS Y TROUVEZ\n• ce qui vous reste à régler, et ce que le CSE vous a offert cette année ;\n• vos achats de billets, vos sorties et vos chèques vacances, avec chaque paiement et s\'il a bien été reçu ;\n• les billets disponibles avec leurs prix, et le nombre qu\'il vous reste à prendre ;\n• les annonces du CSE, l\'agenda, les sondages, et vos colis à récupérer ;\n• vos documents et votre carte CSE (QR code) à montrer à la permanence ;\n• votre récapitulatif de l\'année, à enregistrer en PDF.\n\nCE QUE VOUS POUVEZ FAIRE\n• vous inscrire à une sortie, ou vous mettre en liste d\'attente ;\n• vous inscrire aux chèques vacances : montant, Papier, Connect ou Swile, et paiement en plusieurs fois ;\n• réserver du matériel : tables, bancs, chapiteaux ;\n• donner une idée ou poser une question pour la réunion ;\n• corriger votre fiche (adresse, téléphone, enfants…) ;\n• noter une sortie après y être allé.\n\nCOMMENT ÇA MARCHE\nChaque demande est envoyée au CSE, qui la valide. La réponse s\'affiche dans « Mes demandes ». Les paiements sont validés uniquement par le CSE, quand il les a reçus.\nPermanence du CSE : le vendredi de 11h à 13h30.\n\nSUR LE TÉLÉPHONE\nOuvrez le lien, puis « Installer l\'appli » ou « Ajouter à l\'écran d\'accueil ». Activez aussi les notifications pour être prévenu : réponse du CSE, place libérée, colis à récupérer, paiement reçu.\n\nVotre lien personnel (gardez-le pour vous, ne le transférez pas) :\n{lien}\n\nLe CSE';
   window.cseEspaceLinks = function () {
     if (!isAdmin()) return;
     var b = v59Modal('modal-v70-links', 'Liens personnels des salariés', 'fa-link'), L = actives().sort(function (a, b) { return empName(a).localeCompare(empName(b)); });
@@ -44677,6 +44675,41 @@ var qrcode = function() {
   })();
   window.cseV89Check = function () { waitCheck(); cvPayCheck(); return billetsCheck(); };
   setTimeout(function tick() { try { waitCheck(); } catch (e) { console.warn(e); } try { cvPayCheck(); } catch (e) { console.warn(e); } try { bkPill(); } catch (e) { } try { if (!departs.done) { departs.done = 1; departs(); } } catch (e) { console.warn(e); } try { billetsCheck(); } catch (e) { console.warn(e); } setTimeout(tick, 60000); }, 20000);
+})();
+</script>
+
+<script id="v89-retour">
+/* V.8.9 — Touche « retour » du téléphone : ferme la fenêtre ouverte ou revient à l'onglet précédent, sans jamais quitter l'appli. */
+(function () {
+  if (!window.history || !history.pushState || window.__cseBack) return; window.__cseBack = 1;
+  var fromPop = false, cur = 'dashboard';
+  // Fenêtres que la touche retour peut fermer : celles qui ont un bouton « Fermer » / croix, ou dont l'id commence par « modal ».
+  function closer(m) { return m.querySelector('[aria-label="Fermer"], [data-x]') || ((m.querySelector('button .fa-xmark') || {}).parentNode) || null; }
+  function topModal() {
+    var L = [].slice.call(document.querySelectorAll('.fixed.inset-0, [role="dialog"]')).map(function (m) { return m.classList.contains('fixed') ? m : (m.closest('.fixed') || m); })
+      .filter(function (m, i, a) { return a.indexOf(m) === i && !m.classList.contains('hidden') && getComputedStyle(m).display !== 'none' && m.getBoundingClientRect().width > 0 && (/^modal/.test(m.id || '') || closer(m)); });
+    return L.sort(function (a, b) { return (Number(getComputedStyle(b).zIndex) || 0) - (Number(getComputedStyle(a).zIndex) || 0); })[0] || null;
+  }
+  function closeModal(m) {
+    var bt = closer(m); if (bt && bt.click) bt.click();
+    if (/^modal/.test(m.id || '') && !m.classList.contains('hidden')) m.classList.add('hidden');
+  }
+  try { history.replaceState({ cse: 'root' }, ''); history.pushState({ cse: 'tab', tab: cur }, ''); } catch (e) { }
+  if (typeof window.switchTab === 'function' && !window.switchTab.__back) {
+    var os = window.switchTab; window.switchTab = function (t) { var r = os.apply(this, arguments); try { if (!fromPop && t && t !== cur) history.pushState({ cse: 'tab', tab: t }, ''); cur = t || cur; } catch (e) { } return r; };
+    for (var k in os) window.switchTab[k] = os[k]; window.switchTab.__back = 1;
+  }
+  var warned = 0;
+  window.addEventListener('popstate', function (ev) {
+    var m = topModal();
+    if (m) { closeModal(m); try { history.pushState({ cse: 'tab', tab: cur }, ''); } catch (e) { } return; }
+    var st = ev.state || {};
+    if (st.cse === 'tab' && st.tab) { fromPop = true; try { switchTab(st.tab); } catch (e) { } fromPop = false; cur = st.tab; return; }
+    // Tout au début : on reste dans l'appli (retour au tableau de bord)
+    try { history.pushState({ cse: 'tab', tab: 'dashboard' }, ''); } catch (e) { }
+    if (cur !== 'dashboard') { fromPop = true; try { switchTab('dashboard'); } catch (e) { } fromPop = false; cur = 'dashboard'; }
+    else if (!warned) { warned = 1; try { toast('Vous êtes sur l\'accueil. Pour quitter, fermez l\'appli.', 'info', { ms: 3000 }); } catch (e) { } setTimeout(function () { warned = 0; }, 4000); }
+  });
 })();
 </script>
 
