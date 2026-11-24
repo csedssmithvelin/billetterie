@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"eT6DD5Pw3wuuT4ldmcVO9A==","iv":"emstjKsJkz0GC0Zu","rev":"boot","lastModified":"2026-11-24T20:55:07.295Z","by":"Michaël GROSJEAN","data":"w30liSGLUe2yxH8E/5XVoTiYPPxdsTOwL2d/NF3jGGE73bNHLDzbEmGlt2941YY5K+yZyhGGA47KUGSq7aq/bg=="},"at":"2026-11-24T20:55:07.328Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"emoTwWNA7C4GNjV9WvVAQA==","iv":"IsqPaZvVZylibmO5","rev":"boot","lastModified":"2026-11-24T21:07:41.959Z","by":"Michaël GROSJEAN","data":"cw2wvoNdEcOmnjj/JVCL32zfUgkJPLCdEQXoPKGnVI1tYM7ZgCbzuGkLbnYVwsuT4p0u2yKTodpJT/U3+mVH8w=="},"at":"2026-11-24T21:07:41.990Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -45511,6 +45511,7 @@ var qrcode = function() {
       db.docLog = Array.isArray(db.docLog) ? db.docLog : [];
       db.docLog.push({ id: String(Date.now()) + Math.random().toString(36).slice(2, 6), at: new Date().toISOString(), doc: doc.id, titre: doc.title, fichier: f, emp: emp ? emp.id : null, to: envoi ? to : '', url: j.url || '', dossier: ch.join(' › '), par: qui() });
       if (db.docLog.length > 3000) db.docLog = db.docLog.slice(-3000);
+      setTimeout(function () { try { window.csePartagerDocs && csePartagerDocs(); } catch (e) { } }, 1500);
       try { logAction('Édition', 'document', doc.title + ' — ' + (envoi ? 'envoyé à ' + to + ' et ' : '') + (drive ? 'rangé sur le Drive (' + ch.join(' › ') + ')' : '')); } catch (e) { }
       try { saveDB(); } catch (e) { }
       var ok = (envoi ? '✔ Envoyé à ' + to + (drive ? ' et rangé' : '') : '✔ Rangé') + (drive ? ' dans CSE - Documents › ' + ch.join(' › ') : '') + '.';
@@ -45883,7 +45884,7 @@ var qrcode = function() {
     x.statut = 'signe'; x.signeLe = quand; x.ou = ou; x.url = j.url || ''; x.copie = payload.mail ? e.email : '';
     db.docLog = Array.isArray(db.docLog) ? db.docLog : [];
     db.docLog.push({ id: uid(), at: new Date().toISOString(), doc: 'sig-' + x.kind, titre: KIND[x.kind][0] + ' signé : ' + x.titre, fichier: payload.fichier, emp: x.empId, to: x.copie, url: x.url, dossier: payload.chemin.join(' › '), par: qui() });
-    save(); return x;
+    save(); setTimeout(function () { PRT.at = 0; csePartagerDocs(); }, 1500); return x;
   }
   // Fenêtre de signature (sur ce PC / téléphone du CSE)
   var PAD = { on: false, vide: true, x: null };
@@ -46178,6 +46179,29 @@ var qrcode = function() {
     if (d.dataset.h !== h) { d.innerHTML = h; d.dataset.h = h; }
   }
 
+  // =====================================================================
+  // 6) DOCUMENTS DU SALARIÉ DANS « MON ESPACE CSE » (PDF ouverts par lien, en lecture)
+  // =====================================================================
+  function idDrive(u) { var m = /\/d\/([\w-]{20,})/.exec(String(u || '')) || /[?&]id=([\w-]{20,})/.exec(String(u || '')); return m ? m[1] : ''; }
+  var PRT = { busy: false, at: 0, err: '' };
+  window.csePartagerDocs = async function () {
+    if (PRT.busy || !scriptOk() || seed()) return 0;
+    var L = (db.docLog || []).filter(function (x) { return x.emp != null && x.url && !x.partage && !x.partageKo && idDrive(x.url); }); if (!L.length) return 0;
+    PRT.busy = true; PRT.at = Date.now(); var n = 0;
+    try {
+      var lot = L.slice(0, 60), j = await cseScriptPost('partager', { ids: lot.map(function (x) { return idDrive(x.url); }) }), ok = (j && j.partages) || [], ko = (j && j.refus) || [];
+      lot.forEach(function (x) { var id = idDrive(x.url); if (ok.indexOf(id) >= 0) { x.partage = true; n++; } else if (ko.indexOf(id) >= 0) x.partageKo = true; });
+      if (n || ko.length) { save(); try { cseEspacePublish && cseEspacePublish(true); } catch (e) { } }
+      PRT.err = '';
+    } catch (e) { PRT.err = /inconnue/i.test(e.message) ? 'script v83 à installer' : e.message; }
+    PRT.busy = false; return n;
+  };
+  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try {
+    var L = (db.docLog || []).filter(function (x) { return String(x.emp) === String(e.id) && x.url && x.partage; }).slice(-80).reverse();
+    if (L.length) f.documents = L.map(function (x) { return { date: String(x.at || '').slice(0, 10), titre: x.titre || x.fichier || 'Document', url: x.url }; });
+  } catch (er) { } }; })();
+  function prtTick() { try { if (window.__dbLoaded && !document.hidden && isCse() && Date.now() - PRT.at > 2 * 60000) csePartagerDocs(); } catch (e) { } }
+
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
   setInterval(function () {
@@ -46186,8 +46210,8 @@ var qrcode = function() {
     try { if (document.querySelector('#tab-settings [data-sg="cloture"]')) expCard(); } catch (e) { }
     try { if ($('todo-pane-today') && !$('v94-today')) todayCard(); } catch (e) { }
   }, 1500);
-  setTimeout(function () { relTick(); expTick(); sigTick(); }, 40000);
-  setInterval(function () { relTick(); expTick(); sigTick(); }, 10 * 60000);
+  setTimeout(function () { relTick(); expTick(); sigTick(); prtTick(); }, 40000);
+  setInterval(function () { relTick(); expTick(); sigTick(); prtTick(); }, 10 * 60000);
   window.cseV94 = { dus: dus, aRelancer: aRelancer, classeur: classeur, sujet: sujet, docHtml: docHtml, todayCard: todayCard, relTick: relTick, expTick: expTick, mailRelance: mailRelance };
 })();
 </script>
