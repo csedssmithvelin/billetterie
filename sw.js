@@ -2,10 +2,10 @@
 // (« no-cache » : si elle n'a pas changé, GitHub répond « inchangé » et rien n'est retéléchargé)
 // (les mises à jour arrivent tout de suite) ; sans réseau, la dernière copie s'ouvre quand même.
 // Les données (Gist GitHub, Google) ne passent jamais par ce cache.
-const CACHE = 'cse-app-v2';
+const CACHE = 'cse-app-v3';
 self.addEventListener('install', e => {
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'])).catch(() => {}));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'])).catch(() => {}));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));

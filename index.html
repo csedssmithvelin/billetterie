@@ -2,11 +2,13 @@
 <html lang="fr" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
+    <script id="v94-index">/* Appli installée « CSE Gestion » : elle vit sur index.html, pour que « Mon espace CSE » (espace-salarie.html) s'installe à part. */
+    (function () { try { if (/^https:/.test(location.protocol) && /\/$/.test(location.pathname)) location.replace(location.pathname + 'index.html' + location.search + location.hash); } catch (e) { } })();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"wn8U4Tw2tM0nExHNx45TqA==","iv":"OrqU/pDxa2iMo6Jc","rev":"boot","lastModified":"2026-11-24T21:17:48.990Z","by":"Michaël GROSJEAN","data":"CsaBogKEwD20z9PYMeZDbH6pQFQr/gPXdhLLRr0FHdQMZ/xtk3yoFDUzqldyTMNxCIv9hFY1idu5pwQx0CLZlg=="},"at":"2026-11-24T21:17:49.021Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"2E3R0pWV15bRzovIUn1adw==","iv":"ZkgWZzn7JMqMcoUD","rev":"boot","lastModified":"2026-11-24T21:36:55.841Z","by":"Michaël GROSJEAN","data":"WEASZkwLPL41P2JWtZQEO/0gRa1JiOCP4Ao/E0cFEHX5gQ8UfHWT0HD5B2caVrlpVfmpyGRJF2VrWH/zlyFLkw=="},"at":"2026-11-24T21:36:55.878Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -45623,7 +45625,7 @@ var qrcode = function() {
   // 1) PUBLIER LA NOUVELLE VERSION SUR GITHUB (index.html + espace-salarie.html…)
   // =====================================================================
   var PUB = { busy: false, msg: '', ok: false, files: null };
-  var ALLOWED = ['espace-salarie.html', 'espace-sw.js', 'sw.js', 'manifest.webmanifest', 'espace-manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
+  var ALLOWED = ['espace-salarie.html', 'espace-sw.js', 'sw.js', 'manifest.webmanifest', 'espace-manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-espace-192.png', 'icon-espace-512.png'];
   function repo() {
     var c = cfg(); if (c.ghRepo) return c.ghRepo;
     var m = /^([a-z0-9-]+)\.github\.io$/i.exec(location.hostname), p = location.pathname.split('/').filter(Boolean)[0];
