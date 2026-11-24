@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Kzergd0Pmhv/4xQkjiSmag==","iv":"8F0M6uanbNTxUBzz","rev":"boot","lastModified":"2026-11-24T20:38:37.181Z","by":"Michaël GROSJEAN","data":"PjXKJSXlg6KezsaANx4k4TKm+l5hZ2X/A1giy7zq6GDmSvZ2nkITXCIHHol/0gPBFzN+48xCtRN90wejNX4y4w=="},"at":"2026-11-24T20:38:37.212Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"eT6DD5Pw3wuuT4ldmcVO9A==","iv":"emstjKsJkz0GC0Zu","rev":"boot","lastModified":"2026-11-24T20:55:07.295Z","by":"Michaël GROSJEAN","data":"w30liSGLUe2yxH8E/5XVoTiYPPxdsTOwL2d/NF3jGGE73bNHLDzbEmGlt2941YY5K+yZyhGGA47KUGSq7aq/bg=="},"at":"2026-11-24T20:55:07.328Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -45570,7 +45570,7 @@ var qrcode = function() {
     window.renderEmployeeProfile = function () {
       var r = prof0.apply(this, arguments);
       try {
-        var id = profileEmployeeId, L = (db.docLog || []).filter(function (x) { return String(x.emp) === String(id); }).slice(-40).reverse(), c = $('emp-profile-content');
+        var id = profileEmployeeId, L = (db.docLog || []).filter(function (x) { return String(x.emp) === String(id) && !/^sig-/.test(x.doc || ''); }).slice(-40).reverse(), c = $('emp-profile-content');
         if (c && L.length) c.insertAdjacentHTML('beforeend', '<div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2"><h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-folder-open text-emerald-600"></i> Documents envoyés et rangés</h4><div class="divide-y divide-slate-100">'
           + L.map(function (x) { return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="text-slate-500 w-24">' + E(new Date(x.at).toLocaleDateString('fr-FR')) + '</span><span class="flex-1 min-w-[160px] font-semibold text-slate-700">' + E(x.titre) + '</span><span class="text-slate-500">' + (x.to ? '📧 ' + E(x.to) : 'Drive seulement') + '</span>' + (x.url ? '<a class="text-emerald-700 underline" target="_blank" rel="noopener" href="' + E(x.url) + '">PDF</a>' : '') + '</div>'; }).join('') + '</div></div>');
       } catch (e) { }
@@ -45910,6 +45910,7 @@ var qrcode = function() {
       + (e && e.espaceToken ? '<button type="button" class="' + BTN + '" onclick="cseSigDistance()"><i class="fa-solid fa-mobile-screen"></i> Plutôt sur son téléphone</button>' : '') + '</div>'
       + '<p id="v94-sig-msg" class="text-xs"></p>';
     m.classList.remove('hidden'); padInit();
+    if (PAD.x.statut === 'attente') { $('v94-sig-msg').insertAdjacentHTML('afterend', '<p id="v94-sig-wait" class="text-xs text-amber-700">⏳ Déjà envoyé sur son téléphone le ' + E(new Date(PAD.x.demandeLe).toLocaleString('fr-FR')) + ' : en attente de sa signature. Il peut aussi signer ici.</p>'); attendre(PAD.x); }
   };
   function padInit() {
     var c = $('v94-pad'); if (!c) return; var x = c.getContext('2d'); c.width = 700; c.height = 280; x.lineWidth = 4; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#0b2a6b'; PAD.vide = true;
@@ -45949,10 +45950,31 @@ var qrcode = function() {
     x.statut = 'attente'; x.demandeLe = new Date().toISOString(); x.par = qui(); if (SG().indexOf(x) < 0) SG().push(x); save();
     msg('Envoi dans son espace…');
     try { if (window.cseEspacePublish) await cseEspacePublish(true, true); } catch (er) { }
-    try { if (cfg().pushCfg && cfg().pushVapid) await cseEspacePost('push', { cibles: [e.espaceToken], titre: '✍️ Document à signer', texte: x.titre + ' : ouvrez votre espace CSE pour signer.' }); } catch (er) { }
-    msg('✔ Envoyé : le document apparaît dans son espace, en haut de l\'accueil. Le PDF signé sera rangé tout seul.', 'text-emerald-700');
+    var pmsg = '';
+    if (!(cfg().pushCfg && cfg().pushVapid)) pmsg = ' Notification : pas envoyée (notifications pas réglées dans Communication › Notifications).';
+    else { try { var pj = await cseEspacePost('push', { cibles: [e.espaceToken], titre: '✍️ Document à signer', texte: x.titre + ' : ouvrez votre espace CSE pour signer.' }); pmsg = pj && pj.envoyes > 0 ? ' 📲 Notification envoyée sur ' + pj.envoyes + ' téléphone(s).' : ' Notification : pas envoyée, ce salarié n\'a pas activé les notifications sur son téléphone (bouton « Activer les notifications » dans son espace).'; } catch (er) { pmsg = ' Notification : erreur (' + er.message + ').'; } }
+    x.notif = pmsg; save();
+    msg('✔ Envoyé : le document apparaît dans son espace, en haut de l\'accueil. Le PDF signé sera rangé tout seul.' + pmsg, 'text-emerald-700');
+    var pw = $('v94-sig-msg'); if (pw) pw.insertAdjacentHTML('afterend', '<p id="v94-sig-wait" class="text-xs text-slate-500">⏳ En attente de sa signature…</p>'); attendre(x);
     say('✍️ Document envoyé à signer dans l\'espace de ' + nom(e) + '.', 'success'); rerender();
   };
+  window.cseSigNotif = async function (id) {
+    var x = SG().filter(function (s) { return String(s.id) === String(id); })[0], e = x && emp(x.empId); if (!e || !e.espaceToken) return;
+    try { var pj = await cseEspacePost('push', { cibles: [e.espaceToken], titre: '✍️ Document à signer', texte: x.titre + ' : ouvrez votre espace CSE pour signer.' }); say(pj && pj.envoyes > 0 ? '📲 Notification envoyée sur ' + pj.envoyes + ' téléphone(s).' : 'Pas de notification : ' + nom(e) + ' n\'a pas activé les notifications sur son téléphone.', pj && pj.envoyes > 0 ? 'success' : 'warning'); }
+    catch (er) { say('Notification : ' + er.message, 'error'); }
+  };
+  // Tant que la fenêtre est ouverte sur un document envoyé au téléphone : on regarde toutes les 15 s s'il est signé
+  var WAIT = null;
+  function attendre(x) {
+    clearInterval(WAIT); var t0 = Date.now();
+    var tick = async function () {
+      var m = $('v94-sig-modal'); if (!m || m.classList.contains('hidden') || PAD.x !== x || Date.now() - t0 > 15 * 60000) { clearInterval(WAIT); return; }
+      if (x.statut !== 'signe') { SGR.at = 0; await cseSigRecuperer(false); }
+      if (x.statut === 'signe') { clearInterval(WAIT); var w0 = $('v94-sig-wait'); if (w0) w0.remove(); var b = $('v94-sig-ok'); if (b) b.disabled = true; var p = $('v94-sig-msg'); if (p) { p.className = 'text-xs text-emerald-700 font-semibold'; p.innerHTML = '✔ Signé sur son téléphone le ' + E(new Date(x.signeLe).toLocaleString('fr-FR')) + '. PDF rangé sur le Drive' + (x.url ? ' : <a class="underline" target="_blank" rel="noopener" href="' + E(x.url) + '">ouvrir le PDF</a>' : '') + '.'; } }
+      else { var q = $('v94-sig-wait'); if (q) q.textContent = '⏳ En attente de sa signature… (vérifié à ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ')'; }
+    };
+    WAIT = setInterval(tick, 15000); setTimeout(tick, 3000);
+  }
   window.cseSigRetirer = function (id) { db.signatures = SG().filter(function (x) { return String(x.id) !== String(id); }); save(); try { cseEspacePublish && cseEspacePublish(true); } catch (e) { } rerender(); };
   // Signatures faites sur le téléphone du salarié : récupérées, mises en PDF et rangées
   var SGR = { busy: false, at: 0 };
@@ -45977,10 +45999,11 @@ var qrcode = function() {
   // Dans la fiche publiée du salarié : ses documents à signer
   (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try { var L = SG().filter(function (x) { return x.statut === 'attente' && String(x.empId) === String(e.id); }); if (L.length) f.aSigner = L.map(function (x) { return { id: x.id, kind: x.kind, type: KIND[x.kind][0], titre: x.titre, date: x.date, lignes: x.lignes, montant: x.montant || 0, texte: x.texte }; }); } catch (er) { } }; })();
   // Liste de tout ce qui attend une signature
-  window.cseSigListe = function () {
+  window.cseSigListe = function (deja) {
+    if (!deja) { SGR.at = 0; cseSigRecuperer(false).then(function (n) { var m = $('v94-sig-modal'); if (n && m && !m.classList.contains('hidden')) cseSigListe(true); }); }
     var m = modal(), b = $('v94-sig-box'), L = SG().filter(function (x) { return x.statut === 'attente'; });
     b.innerHTML = '<div class="flex items-start justify-between gap-2"><h3 class="font-extrabold text-slate-800 text-base">✍️ Documents à signer</h3><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="cseSigFermer()" aria-label="Fermer">×</button></div>'
-      + (L.length ? '<div class="divide-y divide-slate-100">' + L.map(function (x) { return '<div class="py-2 flex flex-wrap items-center gap-2 text-xs"><div class="flex-1 min-w-[180px]"><b>' + E(nom(emp(x.empId))) + '</b> · ' + E(x.titre) + '<div class="text-slate-500">Envoyé sur son téléphone le ' + E(new Date(x.demandeLe).toLocaleDateString('fr-FR')) + '</div></div><button type="button" class="' + BTN + '" onclick="cseFaireSigner(\'' + x.kind + '\',\'' + E(x.refId) + '\',\'' + E(x.empId) + '\')">Signer ici</button><button type="button" class="' + BTN + '" onclick="cseSigRetirer(\'' + E(x.id) + '\');cseSigListe()">Retirer</button></div>'; }).join('') + '</div>' : '<p class="text-xs text-slate-500">Rien en attente.</p>')
+      + (L.length ? '<div class="divide-y divide-slate-100">' + L.map(function (x) { return '<div class="py-2 flex flex-wrap items-center gap-2 text-xs"><div class="flex-1 min-w-[180px]"><b>' + E(nom(emp(x.empId))) + '</b> · ' + E(x.titre) + '<div class="text-slate-500">Envoyé sur son téléphone le ' + E(new Date(x.demandeLe).toLocaleDateString('fr-FR')) + '</div></div><button type="button" class="' + BTN + '" onclick="cseFaireSigner(\'' + x.kind + '\',\'' + E(x.refId) + '\',\'' + E(x.empId) + '\')">Signer ici</button><button type="button" class="' + BTN + '" onclick="cseSigNotif(\'' + E(x.id) + '\')">📲 Renvoyer la notification</button><button type="button" class="' + BTN + '" onclick="cseSigRetirer(\'' + E(x.id) + '\');cseSigListe()">Retirer</button></div>'; }).join('') + '</div>' : '<p class="text-xs text-slate-500">Rien en attente.</p>')
       + '<button type="button" class="' + BTN + '" onclick="cseSigRecuperer(true).then(function(){cseSigListe();})"><i class="fa-solid fa-rotate"></i> Vérifier les signatures reçues</button>';
     m.classList.remove('hidden');
   };
@@ -45992,14 +46015,17 @@ var qrcode = function() {
     (db.distributions || []).filter(function (d) { var M = d.marks || {}; return Object.keys(M).some(function (k) { return k === 'e:' + e.id || k.indexOf('c:' + e.id + ':') === 0; }); }).slice(-3).reverse().forEach(function (d) { out.push(['colis', d.id, 'Colis : ' + (d.name || 'distribution')]); });
     (db.loans || []).filter(function (l) { return String(l.employeeId) === String(id) && (!l.returned || String(l.startDate) >= lim); }).slice(-4).reverse().forEach(function (l) { out.push(['pret', l.id, 'Prêt du ' + fd(l.startDate) + ' : ' + (l.items || []).map(function (i) { return i.equipmentName; }).join(', ')]); });
     var st = function (k, r) { var s = SG().filter(function (x) { return x.kind === k && String(x.refId) === String(r) && String(x.empId) === String(id); }).slice(-1)[0]; return s; };
-    var h = '';
-    if (out.length) h += '<div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2"><h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-signature text-indigo-600"></i> Faire signer</h4><div class="divide-y divide-slate-100">'
-      + out.map(function (o) { var s = st(o[0], o[1]); return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="flex-1 min-w-[180px] text-slate-700">' + E(o[2]) + '</span>'
-        + (s && s.statut === 'signe' ? '<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">✔ Signé le ' + E(new Date(s.signeLe).toLocaleDateString('fr-FR')) + '</span>' + (s.url ? ' <a class="text-emerald-700 underline" target="_blank" rel="noopener" href="' + E(s.url) + '">PDF</a>' : '')
-          : (s && s.statut === 'attente' ? '<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">En attente sur son téléphone</span>' : '') + '<button type="button" class="' + BTN + '" style="padding:4px 10px" onclick="cseFaireSigner(\'' + o[0] + '\',\'' + E(o[1]) + '\',\'' + E(id) + '\')">✍️ Signer</button>') + '</div>'; }).join('') + '</div></div>';
+    var h = '', SEC = '<section class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2">';
+    var S = SG().filter(function (x) { return String(x.empId) === String(id) && x.statut === 'signe'; }).sort(function (a, b) { return String(b.signeLe).localeCompare(String(a.signeLe)); });
+    h += SEC + '<h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-file-signature text-emerald-600"></i> Documents signés (' + S.length + ')</h4>'
+      + (S.length ? '<div class="divide-y divide-slate-100">' + S.map(function (x) { return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="text-slate-500 w-24">' + E(new Date(x.signeLe).toLocaleDateString('fr-FR')) + '</span><span class="flex-1 min-w-[180px] text-slate-700"><b>' + E(KIND[x.kind][0]) + '</b> · ' + E(x.titre) + '<span class="text-slate-500"> · ' + E(x.ou || '') + (x.copie ? ' · copie à ' + E(x.copie) : '') + '</span></span>' + (x.url ? '<a class="' + BTN + '" style="padding:4px 10px" target="_blank" rel="noopener" href="' + E(x.url) + '"><i class="fa-solid fa-file-pdf"></i> PDF</a>' : '<span class="text-slate-400">PDF non rangé</span>') + '</div>'; }).join('') + '</div>' : '<p class="text-xs text-slate-500">Aucun document signé pour le moment.</p>') + '</section>';
+    var A = out.filter(function (o) { var s = st(o[0], o[1]); return !(s && s.statut === 'signe'); });
+    if (A.length) h += SEC + '<h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-signature text-indigo-600"></i> Documents à faire signer</h4><div class="divide-y divide-slate-100">'
+      + A.map(function (o) { var s = st(o[0], o[1]); return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="flex-1 min-w-[180px] text-slate-700">' + E(o[2]) + '</span>'
+        + (s && s.statut === 'attente' ? '<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">En attente sur son téléphone</span>' : '') + '<button type="button" class="' + BTN + '" style="padding:4px 10px" onclick="cseFaireSigner(\'' + o[0] + '\',\'' + E(o[1]) + '\',\'' + E(id) + '\')">✍️ Signer</button></div>'; }).join('') + '</div></section>';
     var R = RL().filter(function (x) { return String(x.empId) === String(id); }).slice(-30).reverse();
-    if (R.length) h += '<div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2"><h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-bell text-amber-600"></i> Relances envoyées</h4><div class="divide-y divide-slate-100">'
-      + R.map(function (x) { return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="text-slate-500 w-24">' + E(new Date(x.at).toLocaleDateString('fr-FR')) + '</span><span class="flex-1 min-w-[160px] text-slate-700">' + E(x.lib) + ' · ' + eur(x.montant) + ' · J+' + x.j + '</span><span class="' + (x.ok ? 'text-slate-500' : 'text-rose-700') + '">' + (x.ok ? (x.mail ? '📧 ' + E(x.mail) : '') + (x.push ? ' 📲' : '') : '⚠ ' + E(x.err || 'non envoyée')) + '</span></div>'; }).join('') + '</div></div>';
+    if (R.length) h += SEC + '<h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fa-solid fa-bell text-amber-600"></i> Relances envoyées</h4><div class="divide-y divide-slate-100">'
+      + R.map(function (x) { return '<div class="flex flex-wrap items-center gap-2 py-1.5 text-xs"><span class="text-slate-500 w-24">' + E(new Date(x.at).toLocaleDateString('fr-FR')) + '</span><span class="flex-1 min-w-[160px] text-slate-700">' + E(x.lib) + ' · ' + eur(x.montant) + ' · J+' + x.j + '</span><span class="' + (x.ok ? 'text-slate-500' : 'text-rose-700') + '">' + (x.ok ? (x.mail ? '📧 ' + E(x.mail) : '') + (x.push ? ' 📲' : '') : '⚠ ' + E(x.err || 'non envoyée')) + '</span></div>'; }).join('') + '</div></section>';
     return h;
   }
   if (typeof window.renderEmployeeProfile === 'function') {
