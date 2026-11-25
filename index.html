@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"W13G2zM3N6NKtZM2a3jrFA==","iv":"4oorPkLtuVamxuaH","rev":"boot","lastModified":"2026-11-24T22:07:01.692Z","by":"Michaël GROSJEAN","data":"831qfBbx+cVS4lYBo54AFW8QvbMZf3ZSxTzqlS34ueQO6rMdw2+JWJeSxe7PcJsEQp+/MhkzucwyZNIDFrMz1g=="},"at":"2026-11-24T22:07:01.724Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"nhSmuHpF8NHK8QUQNrTikA==","iv":"sHVEJWK7JoiA59tb","rev":"boot","lastModified":"2026-11-25T07:35:39.068Z","by":"Michaël GROSJEAN","data":"qBXD1NgksHKzDeRhOtQGxFZf7SH39qFqIh/3Y05pmrYKMNzHafz8AVPbdqL6cyRsnRvEhwne3ysB+6tIgzeCIA=="},"at":"2026-11-25T07:35:39.113Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.9.5";
+        const APP_VERSION = "V.9.6";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,11 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.9.6', date: '2026-11-25', items: [
+                'Paiement en espèces : reçu signé obligatoirement par le salarié (« j\'ai remis la somme ») et par l\'élu qui reçoit l\'argent. Le PDF part par e-mail au salarié, est rangé sur le Drive (1 - Paiements et caisse › Reçus espèces signés) et dans « Mes documents » de son espace.',
+                'Signer sur mon téléphone : depuis le PC, le document à signer (reçu espèces, billets, colis, prêt, restitution) s\'ouvre tout seul sur votre téléphone connecté au même compte (envoi immédiat, vérification toutes les 2 secondes) ; le PC reçoit la signature dans la foulée.',
+                'Mode permanence sur téléphone : fenêtres en plein écran, bouton de validation toujours visible, cadres de signature adaptés. Sur ordinateur, rien ne change.'
+            ] },
             { v: 'V.9.5', date: '2026-11-24', items: [
                 'Paiements SumUp rapprochés tout seuls : quand un salarié paie par carte (en ligne ou au terminal) et qu\'un seul billet, sortie ou échéance non réglé(e) correspond au centime près, l\'appli relie le paiement, le marque « réglé par carte » et les relances s\'arrêtent. En cas de doute, rien n\'est fait. Annulable en un clic (Paramètres › Paiement en ligne, et fiche du salarié).',
                 'Double validation des grosses dépenses : à partir du montant choisi (500 € par défaut), une facture ou note de frais ne peut être payée qu\'après la signature au doigt du trésorier et d\'un deuxième élu (ici ou chacun sur son téléphone). PDF avec les deux signatures rangé sur le Drive.',
@@ -46714,12 +46719,274 @@ var qrcode = function() {
     if (c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
   }
 
+  // =====================================================================
+  // 10) PAIEMENT EN ESPÈCES : reçu signé par le salarié ET par l'élu qui reçoit l'argent (obligatoire).
+  //     PDF envoyé au salarié par e-mail, rangé sur le Drive et dans « Mes documents » de son espace.
+  //     Signature possible sur le téléphone de l'élu connecté au même compte (« Signer sur mon téléphone »).
+  // =====================================================================
+  KIND.especes = ['Reçu de paiement en espèces', '1 - Paiements et caisse', 'Reçus espèces signés'];
+  function CSG() { db.cashSig = db.cashSig && typeof db.cashSig === 'object' && !Array.isArray(db.cashSig) ? db.cashSig : {}; return db.cashSig; }
+  function TEL() { db.telSig = db.telSig && typeof db.telSig === 'object' && !Array.isArray(db.telSig) ? db.telSig : {}; return db.telSig; }
+  function estEsp(m) { return /esp[eè]ces/i.test(String(m || '')); }
+  function moi() { return qui(); }
+  function appareil() { var k = 'cse_appareil_id', v = ''; try { v = localStorage.getItem(k) || ''; if (!v) { v = uid(); localStorage.setItem(k, v); } } catch (e) { v = v || 'x'; } return v; }
+  function isoDe(d) { d = String(d || ''); var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(d); return m ? m[3] + '-' + m[2] + '-' + m[1] : d.slice(0, 10); }
+  // Tous les règlements en espèces connus de l'appli
+  function cashOps() {
+    var L = [];
+    (db.sales || []).forEach(function (s) {
+      (s.installPlan || []).forEach(function (x, i) { if (x.paidAt && estEsp(x.method)) L.push({ key: 'ip:sale:' + s.id + ':' + i, empId: s.employeeId, montant: Number(x.amount) || 0, date: isoDe(x.paidAt), titre: 'Versement ' + (i + 1) + '/' + s.installPlan.length + ' : billets ' + saleTxt(s), lignes: [['Versement ' + (i + 1) + '/' + s.installPlan.length + ' — ' + saleTxt(s), eur(x.amount)]] }); });
+      if (!(s.installPlan && s.installPlan.length) && estEsp(s.paymentMethod) && Number(s.totalPaid) > 0) L.push({ key: 'sale:' + s.id, empId: s.employeeId, montant: Number(s.totalPaid), date: isoDe(s.settledDate || s.date), titre: 'Billets ' + (s.ref ? s.ref + ' ' : '') + ': ' + saleTxt(s), lignes: (s.items || []).map(function (i) { return [(i.qty || 1) + ' × ' + (i.ticketTitle || 'Billet'), eur((i.unitPrice || 0) * (i.qty || 1))]; }) });
+    });
+    (db.registrations || []).forEach(function (r) {
+      if (r.cancelled) return; var o = (db.outings || []).filter(function (x) { return x.id === r.outingId; })[0], on = o ? o.name : 'Sortie';
+      (r.installPlan || []).forEach(function (x, i) { if (x.paidAt && estEsp(x.method)) L.push({ key: 'ip:reg:' + r.id + ':' + i, empId: r.employeeId, montant: Number(x.amount) || 0, date: isoDe(x.paidAt), titre: 'Sortie ' + on + ' : versement ' + (i + 1) + '/' + r.installPlan.length, lignes: [['Sortie ' + on + ' — versement ' + (i + 1) + '/' + r.installPlan.length, eur(x.amount)]] }); });
+      if (!(r.installPlan && r.installPlan.length) && r.paid && estEsp(r.paymentMethod)) { var m = 0; try { m = computeRegistrationAmount(r.outingId, r.guests || [], r.employeePrice); } catch (e) { } if (m > 0) L.push({ key: 'reg:' + r.id, empId: r.employeeId, montant: m, date: isoDe(r.settledDate || r.paidDate), titre: 'Sortie ' + on + (o && o.date ? ' du ' + fd(o.date) : ''), lignes: [['Sortie ' + on + ((r.guests || []).length ? ' (+' + r.guests.length + ' invité(s))' : ''), eur(m)]] }); }
+    });
+    (db.chequesVacances || []).forEach(function (c) {
+      (c.installments || []).forEach(function (i, k) { var st = i.status || (i.paid ? 'paye' : 'attente'); if ((st === 'paye' || st === 'recu') && estEsp(i.method) && Number(i.amount) > 0) L.push({ key: 'cv:' + c.id + ':' + k, empId: c.employeeId, montant: Number(i.amount), date: isoDe(i.receivedDate || i.paidDate), titre: 'Chèques vacances : échéance ' + (k + 1) + '/' + c.installments.length, lignes: [['Chèques vacances — échéance ' + (k + 1) + '/' + c.installments.length, eur(i.amount)]] }); });
+    });
+    return L.filter(function (x) { return emp(x.empId); });
+  }
+  var CASH = { base: null, last: 0, cur: null, pads: {}, msg: '' };
+  function cashOn() { return cfg().cashSigOn !== false; }
+  document.addEventListener('pointerdown', function () { CASH.last = Date.now(); }, true);
+  document.addEventListener('keydown', function () { CASH.last = Date.now(); }, true);
+  // Nouveau règlement en espèces saisi ICI (pas reçu d'un autre poste) : il faut le reçu signé
+  function cashScan() {
+    if (!window.__dbLoaded || seed() || !cashOn()) return;
+    var L = cashOps();
+    if (!CASH.base || CASH.pull) { CASH.base = CASH.base || {}; L.forEach(function (x) { CASH.base[x.key] = 1; }); return; }
+    var neuf = L.filter(function (x) { return !CASH.base[x.key] && !CSG()[x.key]; });
+    L.forEach(function (x) { CASH.base[x.key] = 1; });
+    if (!neuf.length || Date.now() - CASH.last > 20000 || !isCse()) return;
+    neuf.forEach(function (x) { CSG()[x.key] = { statut: 'attente', at: new Date().toISOString(), empId: x.empId, montant: x.montant, par: moi(), dev: appareil() }; });
+    try { sd0(); } catch (e) { }
+    setTimeout(cashSuivant, 500);
+  }
+  // Point de départ : tout ce qui existe déjà au chargement (et ce qui arrive des autres postes) n'est pas à signer ici
+  var baseT = setInterval(function () { if (window.__dbLoaded && !seed()) { clearInterval(baseT); if (!CASH.base) { CASH.base = {}; cashOps().forEach(function (x) { CASH.base[x.key] = 1; }); } } }, 500);
+  if (typeof window.livePull === 'function') { var lp0 = window.livePull; window.livePull = async function () { CASH.pull = true; try { return await lp0.apply(this, arguments); } finally { try { cashOps().forEach(function (x) { if (CASH.base) CASH.base[x.key] = 1; }); } catch (e) { } CASH.pull = false; } }; }
+  var sd0 = null;
+  if (typeof window.saveDB === 'function') {
+    sd0 = window.saveDB;
+    var sdW = function () { var r = sd0.apply(this, arguments); try { cashScan(); } catch (e) { console.warn('[espèces]', e); } return r; };
+    for (var kk in sd0) sdW[kk] = sd0[kk];
+    window.saveDB = sdW;
+  }
+  function opDe(key) { return cashOps().filter(function (x) { return x.key === key; })[0] || null; }
+  // Le prochain reçu à faire signer sur CET appareil
+  function cashSuivant() {
+    if (CASH.cur) return; var m = $('v94-sig-modal'); if (m && !m.classList.contains('hidden')) { setTimeout(cashSuivant, 2500); return; }
+    var C = CSG(), k = Object.keys(C).filter(function (k) { var c = C[k]; return c.statut === 'attente' && (!c.dev || c.dev === appareil()); })[0];
+    if (!k) { k = Object.keys(TEL()).filter(function (k) { var t = TEL()[k]; return t.type === 'cash' && t.statut === 'attente' && t.user === moi() && t.device !== appareil(); })[0]; if (k) k = TEL()[k].key; }
+    if (k) cashOuvrir(k);
+  }
+  window.cseCashOuvrir = cashOuvrir;
+  function cashOuvrir(key) {
+    var x = opDe(key), c = CSG()[key]; if (!x) { if (c && c.statut !== 'signe') { c.statut = 'annule'; save(); } return; }
+    var e = emp(x.empId), me = null; try { me = getCurrentUserEmployee(); } catch (er) { }
+    CASH.cur = key; CASH.msg = '';
+    var m = modal(), b = $('v94-sig-box'), L = elusL().filter(function (u) { return String(u.id) !== String(x.empId); });
+    var defElu = me && String(me.id) !== String(x.empId) ? me.id : (tresorierId() && tresorierId() !== String(x.empId) ? tresorierId() : (L[0] && L[0].id));
+    var tel = Object.keys(TEL()).map(function (k) { return TEL()[k]; }).filter(function (t) { return t.type === 'cash' && t.key === key && t.statut === 'attente'; })[0];
+    b.innerHTML = '<div><h3 class="font-extrabold text-slate-800 text-base">💶 Reçu de paiement en espèces à signer</h3><p class="text-xs text-slate-500">' + E(nom(e)) + ' · ' + E(x.titre) + '</p></div>'
+      + '<div class="border border-slate-200 rounded-xl p-3 text-xs space-y-1 bg-slate-50">' + x.lignes.map(function (l) { return '<div class="flex justify-between gap-2"><span>' + E(l[0]) + '</span><b>' + E(l[1]) + '</b></div>'; }).join('') + '<div class="flex justify-between gap-2 border-t border-slate-200 pt-1 text-sm"><span>Payé en espèces le ' + fd(x.date) + '</span><b>' + eur(x.montant) + '</b></div></div>'
+      + '<p class="text-xs font-bold text-slate-700">1. ' + E(nom(e)) + ' signe : « J\'ai remis cette somme en espèces au CSE »</p>'
+      + '<canvas id="v94-cs-pad-s" style="width:100%;aspect-ratio:35/12;border:2px dashed #94a3b8;border-radius:12px;background:#fff;touch-action:none"></canvas><button type="button" class="' + BTN + '" onclick="cseCashEffacer(\'s\')">Effacer</button>'
+      + '<p class="text-xs font-bold text-slate-700">2. L\'élu qui reçoit l\'argent signe : « J\'ai reçu cette somme »</p>'
+      + '<select id="v94-cs-elu" class="' + INP + '">' + L.map(function (u) { return '<option value="' + E(u.id) + '"' + (String(u.id) === String(defElu) ? ' selected' : '') + '>' + E(nom(u)) + '</option>'; }).join('') + '</select>'
+      + '<canvas id="v94-cs-pad-c" style="width:100%;aspect-ratio:35/12;border:2px dashed #94a3b8;border-radius:12px;background:#fff;touch-action:none"></canvas><button type="button" class="' + BTN + '" onclick="cseCashEffacer(\'c\')">Effacer</button>'
+      + (e && e.email ? '<p class="text-[11px] text-slate-500">Le reçu signé partira par e-mail à ' + E(e.email) + ', sera rangé sur le Drive et dans « Mes documents » de son espace.</p>' : '<p class="text-[11px] text-amber-700">Pas d\'e-mail dans sa fiche : le reçu sera rangé sur le Drive et dans « Mes documents » de son espace.</p>')
+      + (tel && tel.device !== appareil() ? '<p class="text-[11px] text-indigo-700">📲 Demandé depuis un autre poste (' + E(tel.user) + ').</p>' : '')
+      + '<div id="v94-cs-act" class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" id="v94-cs-ok" onclick="cseCashValider()"><i class="fa-solid fa-check"></i> Valider les deux signatures</button>'
+      + (!tel || tel.device === appareil() ? '<button type="button" class="' + BTN + '" onclick="cseCashTel()"><i class="fa-solid fa-mobile-screen"></i> Signer sur mon téléphone</button>' : '') + '</div>'
+      + '<p id="v94-cs-msg" class="text-xs"></p><p class="text-[11px] text-slate-400">Signature obligatoire pour tout paiement en espèces.</p>';
+    m.classList.remove('hidden'); pad('v94-cs-pad-s'); pad('v94-cs-pad-c');
+  }
+  window.cseCashEffacer = function (w) { var c = $('v94-cs-pad-' + w); if (c) { c.getContext('2d').clearRect(0, 0, c.width, c.height); DV.pads[c.id].vide = true; } };
+  function csMsg(t, cl) { var p = $('v94-cs-msg'); if (p) { p.textContent = t; p.className = 'text-xs ' + (cl || 'text-slate-600'); } }
+  // La fenêtre ne se ferme pas tant que le reçu espèces n'est pas signé
+  (function () { var f0 = window.cseSigFermer; window.cseSigFermer = function (force) { if (CASH.cur && force !== true) { csMsg('La signature des deux personnes est obligatoire pour un paiement en espèces.', 'text-rose-700'); return; } return f0.apply(this, arguments); }; })();
+  function cashHtml(x, e, sigS, sigC, elu, quand, ou) {
+    var c = cfg(), logo = c.logoDataUrl && /^data:image\//.test(c.logoDataUrl) ? c.logoDataUrl : '';
+    var box = function (lib, n, s) { return '<div style="flex:1;border:1px solid #cbd5e1;border-radius:8px;padding:8px 10px"><div style="font-size:11px;color:#475569">' + lib + '</div><div style="font-size:12px;font-weight:700">' + E(n) + '</div><img src="' + s + '" style="max-width:280px;max-height:100px;display:block;margin:4px 0"></div>'; };
+    return '<div style="font-family:Arial,Helvetica,sans-serif;color:#0f172a;padding:28px 34px;width:700px;box-sizing:border-box;background:#fff">'
+      + '<div style="display:flex;align-items:center;gap:14px;border-bottom:2px solid #1e3a8a;padding-bottom:10px">' + (logo ? '<img src="' + logo + '" style="height:56px">' : '') + '<div><div style="font-weight:800;font-size:16px">' + E(c.cseName || 'CSE') + '</div></div>'
+      + '<div style="margin-left:auto;text-align:right"><div style="font-weight:800;font-size:15px;color:#1e3a8a">Reçu de paiement en espèces</div><div style="font-size:11px;color:#475569">N° ESP-' + E(String(x.id)) + '</div></div></div>'
+      + '<h2 style="font-size:15px;margin:18px 0 6px">' + E(x.titre) + '</h2>'
+      + '<p style="font-size:12px;margin:0 0 10px"><b>Salarié :</b> ' + E(nom(e)) + (e && e.matricule ? ' · matricule ' + E(e.matricule) : '') + ' · <b>Payé le :</b> ' + fd(x.date) + '</p>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:12px">' + x.lignes.map(function (l) { return '<tr><td style="border:1px solid #cbd5e1;padding:6px 8px">' + E(l[0]) + '</td><td style="border:1px solid #cbd5e1;padding:6px 8px;text-align:right">' + E(l[1]) + '</td></tr>'; }).join('')
+      + '<tr><td style="border:1px solid #cbd5e1;padding:6px 8px;font-weight:700">Total réglé en espèces</td><td style="border:1px solid #cbd5e1;padding:6px 8px;text-align:right;font-weight:700">' + eur(x.montant) + '</td></tr></table>'
+      + '<p style="font-size:12.5px;margin:16px 0">' + E(nom(e)) + ' a remis la somme de <b>' + eur(x.montant) + '</b> en espèces au CSE, reçue par ' + E(nom(elu)) + '.</p>'
+      + '<div style="display:flex;gap:12px">' + box('Le salarié (a remis la somme)', nom(e), sigS) + box('Pour le CSE (a reçu la somme)', nom(elu), sigC) + '</div>'
+      + '<p style="font-size:10.5px;color:#475569;margin-top:6px">Signé le ' + E(new Date(quand).toLocaleDateString('fr-FR')) + ' à ' + E(new Date(quand).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })) + ' ' + E(ou) + '</p>'
+      + '<p style="font-size:10px;color:#64748b;margin-top:18px;border-top:1px solid #e2e8f0;padding-top:6px">Document établi par le logiciel du CSE et signé électroniquement au doigt. Rangé dans le Drive du CSE (CSE - Documents).</p></div>';
+  }
+  var RANGE = {};
+  async function cashRanger(key) {
+    if (RANGE[key]) return false; RANGE[key] = 1;
+    try { return await cashRanger0(key); } finally { delete RANGE[key]; }
+  }
+  async function cashRanger0(key) {
+    var c = CSG()[key], x = opDe(key), e = x && emp(x.empId), elu = c && emp(c.eluId); if (!c || !x || !e || !c.sigS || !c.sigC) return false;
+    if (!scriptOk()) return false;
+    var X = Object.assign({ id: c.id || (c.id = uid().slice(-9)) }, x), y = String(x.date || today()).slice(0, 4);
+    var payload = { fichier: 'Reçu espèces signé - ' + nom(e) + ' - ' + fd(x.date).replace(/\//g, '-') + ' - ' + String(eur(x.montant)).replace(/[^\d,]/g, '') + ' euros - ESP-' + X.id, chemin: [y, KIND.especes[1], KIND.especes[2]], drive: true, mail: false };
+    var html = cashHtml(X, e, c.sigS, c.sigC, elu, c.signeLe, c.ou || '');
+    try { payload.pdf = await pdfDe(html); } catch (er) { payload.html = html; }
+    if (e.email) { payload.mail = true; payload.to = e.email; payload.subject = 'Votre reçu de paiement en espèces (' + eur(x.montant) + ')'; payload.body = 'Bonjour ' + (e.firstname || '') + ',\n\nVous trouverez ci-joint votre reçu signé pour le paiement en espèces de ' + eur(x.montant) + ' (' + x.titre + ') du ' + fd(x.date) + '.\nIl est aussi disponible dans « Mes documents » de votre espace CSE.\n\n' + (typeof mailClosing === 'function' ? mailClosing() : 'Cordialement,'); }
+    var j = await cseScriptPost('document', payload);
+    c.url = j.url || ''; c.copie = payload.mail ? e.email : ''; c.statut = 'signe'; c.rangeLe = new Date().toISOString(); delete c.sigS; delete c.sigC;
+    SG().push({ id: X.id, kind: 'especes', refId: key, empId: x.empId, titre: x.titre + ' · ' + eur(x.montant), date: x.date, montant: x.montant, statut: 'signe', signeLe: c.signeLe, ou: c.ou, url: c.url, copie: c.copie });
+    db.docLog = Array.isArray(db.docLog) ? db.docLog : [];
+    db.docLog.push({ id: uid(), at: new Date().toISOString(), doc: 'sig-especes', titre: 'Reçu espèces signé : ' + x.titre + ' · ' + eur(x.montant), fichier: payload.fichier, emp: x.empId, to: c.copie, url: c.url, dossier: payload.chemin.join(' › '), par: qui() });
+    save(); setTimeout(function () { PRT.at = 0; csePartagerDocs(); }, 1500);
+    return true;
+  }
+  window.cseCashValider = async function () {
+    var key = CASH.cur, c = CSG()[key] || (CSG()[key] = { statut: 'attente' }), x = opDe(key); if (!x) return;
+    var ps = $('v94-cs-pad-s'), pc = $('v94-cs-pad-c'), elu = emp(($('v94-cs-elu') || {}).value);
+    if (!ps || DV.pads[ps.id].vide) return csMsg('Le salarié doit d\'abord signer (cadre 1).', 'text-rose-700');
+    if (!elu) return csMsg('Choisissez l\'élu qui reçoit l\'argent.', 'text-rose-700');
+    if (!pc || DV.pads[pc.id].vide) return csMsg('L\'élu doit signer (cadre 2).', 'text-rose-700');
+    if (String(elu.id) === String(x.empId)) return csMsg('Le salarié et l\'élu qui reçoit l\'argent doivent être deux personnes différentes.', 'text-rose-700');
+    var s1 = recadre(ps), s2 = recadre(pc); if (!s1 || !s2) return csMsg('Signature vide : recommencez.', 'text-rose-700');
+    var b = $('v94-cs-ok'); if (b) b.disabled = true;
+    var tel = Object.keys(TEL()).filter(function (k) { return TEL()[k].type === 'cash' && TEL()[k].key === key && TEL()[k].statut === 'attente'; })[0];
+    c.sigS = s1; c.sigC = s2; c.eluId = elu.id; c.signeLe = new Date().toISOString(); c.ou = tel && TEL()[tel].device !== appareil() ? 'sur le téléphone de ' + nom(elu) : (window.innerWidth < 700 ? 'sur le téléphone du CSE' : 'sur l\'appareil du CSE'); c.statut = 'a-ranger'; c.par = moi(); c.dev = appareil();
+    if (tel) TEL()[tel].statut = 'fait';
+    save(); if (tel) pushNow(); csMsg('Fabrication du PDF, envoi et rangement sur le Drive…');
+    var ok = false; try { ok = await cashRanger(key); } catch (er) { csMsg('Signé. Envoi impossible pour l\'instant (' + er.message + ') : il sera refait tout seul.', 'text-amber-700'); }
+    try { cseEspacePublish && cseEspacePublish(true); } catch (er) { }
+    say(ok ? '💶 Reçu espèces signé par les deux : envoyé' + (CSG()[key].copie ? ' à ' + CSG()[key].copie : '') + ', rangé sur le Drive et dans son espace.' : '💶 Reçu espèces signé. Le PDF sera envoyé et rangé dès que le script Google répondra.', ok ? 'success' : 'warning');
+    CASH.cur = null; window.cseSigFermer(true); rerender(); setTimeout(cashSuivant, 800);
+  };
+  // Signer sur mon téléphone : le reçu s'ouvre tout seul sur mon téléphone (même compte, appli ouverte)
+  window.cseCashTel = function () {
+    var key = CASH.cur; if (!key) return; var id = 'c' + uid();
+    TEL()[id] = { type: 'cash', key: key, user: moi(), device: appareil(), at: new Date().toISOString(), statut: 'attente' };
+    CSG()[key].statut = 'telephone'; CSG()[key].par = moi(); save();
+    CASH.cur = null; window.cseSigFermer(true); telBanniere();
+    say('📲 Ouvrez l\'appli sur votre téléphone (connecté avec votre compte) : le reçu à signer s\'y affiche dans les secondes qui suivent.', 'info');
+    pushNow();
+  };
+  // Même chose pour les autres documents (reçu de billets, colis, prêt, restitution)
+  window.cseSigTel = function () {
+    var x = PAD.x; if (!x) return; var id = 'd' + uid();
+    TEL()[id] = { type: 'doc', kind: x.kind, refId: x.refId, empId: x.empId, user: moi(), device: appareil(), at: new Date().toISOString(), statut: 'attente' };
+    save(); window.cseSigFermer(); telBanniere();
+    say('📲 Ouvrez l\'appli sur votre téléphone (connecté avec votre compte) : le document à signer s\'y affiche dans les secondes qui suivent.', 'info');
+    pushNow();
+  };
+  (function () {
+    var f0 = window.cseFaireSigner;
+    window.cseFaireSigner = function (kind, refId, empId) {
+      var r = f0.apply(this, arguments);
+      try { var row = $('v94-sig-ok') && $('v94-sig-ok').parentNode; if (row && kind !== 'depense' && !$('v94-sig-tel')) row.insertAdjacentHTML('beforeend', '<button type="button" id="v94-sig-tel" class="' + BTN + '" onclick="cseSigTel()"><i class="fa-solid fa-mobile-screen-button"></i> Signer sur mon téléphone</button>'); } catch (e) { }
+      return r;
+    };
+  })();
+  // Bandeau « en attente sur votre téléphone » (sans formulaire, pour ne pas bloquer la synchronisation)
+  function telBanniere() {
+    var mine = Object.keys(TEL()).map(function (k) { return Object.assign({ id: k }, TEL()[k]); }).filter(function (t) { return t.statut === 'attente' && t.device === appareil(); });
+    var d = $('v94-tel-ban');
+    if (!mine.length) { if (d) d.remove(); return; }
+    if (!d) { d = document.createElement('div'); d.id = 'v94-tel-ban'; d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:84px;z-index:70;max-width:560px;margin:0 auto'; document.body.appendChild(d); }
+    var h = '<div class="bg-indigo-700 text-white rounded-2xl shadow-xl p-3 text-xs flex flex-wrap items-center gap-2"><span class="flex-1 min-w-[180px]">📲 <b>' + mine.length + ' signature(s) en attente sur votre téléphone</b><br>' + mine.map(function (t) { var e = emp(t.type === 'cash' ? (opDe(t.key) || {}).empId : t.empId); return E(nom(e)) + (t.type === 'cash' ? ' (espèces)' : ''); }).join(', ') + '</span>'
+      + '<button type="button" class="px-3 py-2 bg-white text-indigo-800 font-bold rounded-lg" onclick="cseTelIci(\'' + E(mine[0].id) + '\')">Signer plutôt ici</button></div>';
+    if (d.dataset.h !== h) { d.innerHTML = h; d.dataset.h = h; }
+  }
+  window.cseTelIci = function (id) {
+    var t = TEL()[id]; if (!t) return; t.statut = 'annule'; save(); telBanniere();
+    if (t.type === 'cash') { CSG()[t.key] && (CSG()[t.key].statut = 'attente'); cashOuvrir(t.key); } else cseFaireSigner(t.kind, t.refId, t.empId);
+  };
+  function telFaits() {
+    var T = TEL(), dev = appareil(), n = 0;
+    Object.keys(T).forEach(function (k) { var t = T[k]; if (t.statut !== 'attente') return;
+      var ok = (t.type === 'cash' && CSG()[t.key] && /^(signe|a-ranger)$/.test(CSG()[t.key].statut)) || (t.type === 'doc' && SG().some(function (s) { return s.kind === t.kind && String(s.refId) === String(t.refId) && String(s.empId) === String(t.empId) && s.statut === 'signe' && String(s.signeLe) > String(t.at); }));
+      if (ok) { t.statut = 'fait'; n++; if (t.device === dev) say(t.type === 'cash' ? '✔ Reçu espèces signé sur votre téléphone.' : '✔ Document signé sur votre téléphone.', 'success'); }
+    });
+    if (n) { save(); rerender(); pushNow(); }
+  }
+  // Envoi immédiat (sans attendre les 4 à 10 s habituelles) pour que l'autre appareil le voie tout de suite
+  async function pushNow(essai) {
+    try {
+      if (typeof liveSyncReady !== 'function' || !liveSyncReady() || seed()) return;
+      if (__liveBusy) { if ((essai || 0) < 15) setTimeout(function () { pushNow((essai || 0) + 1); }, 300); return; }
+      __liveLastSaveAt = 0; __liveLastPushAt = 0; __liveLastInputAt = 0;
+      await liveTick(true);
+    } catch (e) { console.warn('[envoi immédiat]', e); }
+  }
+  window.csePushNow = pushNow;
+  // Sur le téléphone : on regarde souvent s'il y a quelque chose à signer pour moi
+  var TELO = {};
+  function telTick() {
+    try {
+      if (!window.__dbLoaded || seed() || document.hidden) return;
+      var T = TEL(), me = moi(), dev = appareil(), now = Date.now();
+      Object.keys(T).forEach(function (k) { var t = T[k]; if (t.statut === 'attente' && now - new Date(t.at).getTime() > 2 * 3600000) t.statut = 'expire'; });
+      // Côté téléphone
+      telFaits();
+      var m = $('v94-sig-modal'), libre = !m || m.classList.contains('hidden');
+      var a = Object.keys(T).filter(function (k) { var t = T[k]; return t.statut === 'attente' && t.user === me && t.device !== dev && !TELO[k]; })[0];
+      if (a && libre) {
+        var t = T[a]; TELO[a] = 1;
+        if (t.type === 'cash') cashOuvrir(t.key);
+        else cseFaireSigner(t.kind, t.refId, t.empId);
+        try { if (navigator.vibrate) navigator.vibrate(200); } catch (er) { }
+      }
+      telBanniere();
+      // Synchronisation plus rapide tant qu'une signature est en attente, ou pendant la permanence
+      var attente = Object.keys(T).some(function (k) { return T[k].statut === 'attente' && T[k].user === me; });
+      var perm = $('tab-permanence') && !$('tab-permanence').classList.contains('hidden'), tel = window.innerWidth < 700;
+      if ((attente || perm || tel) && typeof liveTick === 'function' && !__liveBusy) liveTick();
+      // Reçus signés pas encore rangés (script injoignable au moment de la signature)
+      Object.keys(CSG()).forEach(function (k) { var c = CSG()[k]; if (c.statut === 'a-ranger' && c.dev === dev && !c.essai && !RANGE[k] && Date.now() - new Date(c.signeLe).getTime() > 60000) { c.essai = 1; cashRanger(k).then(function (ok) { delete c.essai; if (ok) { save(); rerender(); } }, function () { setTimeout(function () { delete c.essai; }, 5 * 60000); }); } });
+      if (!CASH.cur) cashSuivant();
+    } catch (e) { console.warn('[tel]', e); }
+  }
+  setInterval(telTick, 2000);
+  window.cseCashSet = function (k, v) { var c = cfg(); if (k === 'on') c.cashSigOn = !!v; save(); cashCard(); };
+  function cashCard() {
+    var c = card('v94-cash-card', 'etab', function () { return $('v94-dv-card') || $('v94-rel-card'); }); if (!c) return;
+    var on = cashOn(), L = Object.keys(CSG()).map(function (k) { return Object.assign({ key: k }, CSG()[k]); }), sg = L.filter(function (x) { return x.statut === 'signe'; }), att = L.filter(function (x) { return /^(attente|telephone|a-ranger)$/.test(x.statut); });
+    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-money-bill-wave text-emerald-600"></i> Paiements en espèces : reçu signé par les deux</h3>'
+      + '<p class="text-xs text-slate-500">À chaque règlement en espèces (billets, sortie, chèques vacances, versement), l\'appli ouvre le reçu : le salarié signe (« j\'ai remis la somme »), puis l\'élu qui reçoit l\'argent (« j\'ai reçu la somme »). Obligatoire : la fenêtre ne se ferme pas sans les deux signatures. Le PDF part par e-mail au salarié, est rangé sur le Drive (1 - Paiements et caisse › Reçus espèces signés) et dans « Mes documents » de son espace. Bouton « Signer sur mon téléphone » : le reçu s\'ouvre sur votre téléphone (appli ouverte avec le même compte).</p>'
+      + '<label class="flex items-center gap-2 text-sm font-bold ' + (on ? 'text-emerald-700' : 'text-slate-700') + '"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="cseCashSet(\'on\',this.checked)"> Reçu espèces signé ' + (on ? 'obligatoire' : 'désactivé') + '</label>'
+      + '<p class="text-xs text-slate-700"><b>' + sg.length + '</b> reçu(s) espèces signé(s)' + (att.length ? ' · <b class="text-amber-700">' + att.length + '</b> en attente' : '') + '</p>'
+      + (att.length ? '<div class="space-y-1">' + att.slice(0, 6).map(function (x) { var o = opDe(x.key); return '<div class="flex flex-wrap items-center gap-2 text-xs"><span class="flex-1">' + E(nom(emp(x.empId))) + ' · ' + E(o ? o.titre : x.key) + ' · <b>' + eur(x.montant) + '</b> · ' + (x.statut === 'a-ranger' ? 'signé, PDF à ranger' : x.statut === 'telephone' ? 'sur le téléphone' : 'à signer') + '</span>' + (x.statut !== 'a-ranger' ? '<button type="button" class="' + BTN + '" style="padding:3px 9px" onclick="cseCashOuvrir(\'' + E(x.key) + '\')">✍️ Signer</button>' : '') + '</div>'; }).join('') + '</div>' : '');
+    if (c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
+  }
+
+  // ---------- Mode permanence sur téléphone (l'ordinateur ne change pas) ----------
+  (function () {
+    if ($('v94-perm-mobile')) return;
+    var st = document.createElement('style'); st.id = 'v94-perm-mobile';
+    st.textContent = '@media (max-width:640px){'
+      + '#tab-permanence{padding-bottom:5.5rem}'
+      + '#tab-permanence > .flex.items-center.justify-between > .text-xs{display:none}'
+      + '#perm-focus-btn{display:none!important}'
+      + '#tab-permanence .permx-steps .ps,[id^="modal-perm-"] .permx-steps .ps{min-width:58px;padding:.3rem .15rem;font-size:10px}'
+      + '#tab-permanence .permx-steps .ps .e,[id^="modal-perm-"] .permx-steps .ps .e{font-size:14px}'
+      + '#perm-search{font-size:17px!important;padding-top:.9rem!important;padding-bottom:.9rem!important}'
+      + '[id^="modal-perm-"]{padding:0!important;align-items:stretch!important}'
+      + '[id^="modal-perm-"] > div{max-width:none!important;width:100%!important;max-height:100dvh!important;height:100dvh;border-radius:0!important}'
+      + '[id^="modal-perm-"] > div > .flex:last-child{position:sticky;bottom:-1.25rem;background:#fff;padding:.75rem 0 1.25rem;box-shadow:0 -8px 16px -8px rgba(15,23,42,.18);z-index:2}'
+      + '#v94-sig-modal{padding:0!important;align-items:stretch!important}'
+      + '#v94-sig-box{max-width:none!important;max-height:100dvh!important;height:100dvh;border-radius:0!important}'
+      + '#v94-sig-box canvas{aspect-ratio:5/2!important}'
+      + '#v94-cs-act{position:sticky;bottom:-1rem;background:#fff;padding:.6rem 0 1rem;box-shadow:0 -8px 16px -8px rgba(15,23,42,.18);z-index:2}'
+      + '}';
+    document.head.appendChild(st);
+  })();
+
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
   setInterval(function () {
     try { if ($('v66-deploy-card')) pubCard(); } catch (e) { }
     try { if ($('pl-mgr')) relCard(); } catch (e) { }
-    try { if ($('v94-rel-card')) { smCard(); dvCard(); cautionCard(); } } catch (e) { }
+    try { if ($('v94-rel-card')) { smCard(); dvCard(); cashCard(); cautionCard(); } } catch (e) { }
     try { if (document.querySelector('#tab-settings [data-sg="cloture"]')) expCard(); } catch (e) { }
     try { if ($('todo-pane-today') && !$('v94-today')) todayCard(); } catch (e) { }
   }, 1500);
