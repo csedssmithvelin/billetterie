@@ -18,6 +18,17 @@
 @supports (color:color-mix(in srgb,red,blue)){:root{--brand-d:color-mix(in srgb,var(--brand) 78%,#020617);--brand2:color-mix(in srgb,var(--brand) 11%,#fff)}}
 *{box-sizing:border-box}
 /* V.10.1 : tuiles, photos, mode sombre */
+.une{position:relative;overflow:hidden;border-radius:18px;margin:0 0 14px;height:190px;box-shadow:var(--sh)}
+.une .tr{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth}
+.une .tr::-webkit-scrollbar{display:none}
+.une .it{flex:0 0 100%;scroll-snap-align:start;position:relative;background-size:cover;background-position:center;cursor:pointer;border:0;padding:0;text-align:left;color:#fff;font:inherit}
+.une .it .t{position:absolute;left:0;right:0;bottom:0;padding:34px 16px 14px;background:linear-gradient(transparent,#000b)}
+.une .it .t b{display:block;font-size:18px;line-height:1.2}.une .it .t span{font-size:12.5px;opacity:.92}
+.une .it .emo{position:absolute;top:26px;left:0;right:0;text-align:center;font-size:58px}
+.une .it .lb{position:absolute;top:10px;left:12px;background:#fff;color:#0f172a;font-size:11px;font-weight:800;border-radius:999px;padding:3px 9px}
+.une .dots{position:absolute;bottom:9px;right:12px;display:flex;gap:5px}.une .dots i{width:7px;height:7px;border-radius:50%;background:#fff8}.une .dots i.on{background:#fff}
+.bp{display:flex;gap:12px;align-items:flex-start}.bp img,.bp .ic{width:64px;height:64px;flex:0 0 64px;border-radius:12px;object-fit:cover;background:var(--line);display:flex;align-items:center;justify-content:center;font-size:30px}
+.bp .code{display:inline-block;font-family:ui-monospace,monospace;font-weight:800;letter-spacing:1px;border:2px dashed var(--brand);border-radius:8px;padding:3px 8px;margin:6px 6px 0 0}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
 @media (min-width:560px){.tiles{grid-template-columns:repeat(6,1fr)}}
 .tile{position:relative;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:10px 4px 8px;text-align:center;cursor:pointer;box-shadow:var(--sh);font:600 11.5px system-ui,sans-serif;color:var(--ink);line-height:1.2;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
@@ -28,6 +39,7 @@
 .ph{width:100%;max-height:170px;object-fit:cover;border-radius:14px;margin:4px 0 8px;display:block;background:var(--line)}
 .ph.s{width:76px;height:76px;flex:0 0 76px;margin:0 10px 0 0;border-radius:12px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
 .chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:600 13px system-ui,sans-serif;cursor:pointer;background:var(--card);color:var(--ink)}
 .chip input{width:auto;margin:0}
 html.dark{--bg:#0b1120;--card:#111a2e;--ink:#e5e9f2;--mute:#94a3b8;--line:#22304a;--brand2:#1e2a4a;--okb:#064e3b;--ok:#6ee7b7;--warnb:#451a03;--warn:#fcd34d;--badb:#450a0a;--bad:#fca5a5;--sh:0 1px 2px #0006,0 10px 28px -14px #000a;color-scheme:dark}
@@ -194,8 +206,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         agenda: [{ date: plus(4), heure: '11h - 13h30', titre: 'Permanence', type: 'permanence' }, { date: plus(9), heure: '14:00', titre: 'Réunion du CSE', type: 'reunion' }, { date: plus(12), heure: '', titre: 'Marché de Noël de Strasbourg', type: 'sortie', texte: 'Strasbourg' }, { date: plus(32), heure: '', titre: 'Pas de permanence (fêtes)', type: 'fermeture' }],
         sondages: [{ id: 's1', question: 'Quelle sortie pour le printemps ?', choix: ['Europa Park', 'Karting', 'Bowling + restaurant'], multi: false, anonyme: true, fin: plus(14), res: { total: 23, n: [12, 7, 4] } }],
         materiel: [{ id: 1, nom: 'Tables pliantes', qte: 12, occupe: [{ d: plus(5), f: plus(7), q: 4 }] }, { id: 2, nom: 'Bancs', qte: 24, occupe: [{ d: plus(5), f: plus(7), q: 8 }] }, { id: 3, nom: 'Chapiteau 3x6', qte: 2, occupe: [{ d: plus(12), f: plus(13), q: 2 }] }, { id: 4, nom: 'Appareil à raclette', qte: 4, occupe: [] }],
+        bonsPlans: [{ id: 'bp1', nom: 'Pizzeria Da Marco', cat: '🍽️ Restaurants', reduc: '-10 % sur l\'addition', code: 'CSEVELIN10', adresse: '5 place des Vosges, 88000 Épinal', site: 'https://exemple.fr', cond: 'Sur présentation de la carte CSE, hors menus du midi.', fin: plus(60), nouveau: plus(-2) }, { id: 'bp2', nom: 'Institut Zen', cat: '💆 Beauté, bien-être', reduc: '15 € offerts dès 60 € de soins', code: '', adresse: '18 rue Thiers, 88000 Épinal', site: '', cond: 'Une fois par an et par salarié.', fin: '' }],
         aides: [{ nom: 'Naissance ou adoption', montant: 100, info: 'Justificatif : acte de naissance ou livret de famille.' }, { nom: 'Mariage ou PACS', montant: 80, info: 'Justificatif : acte de mariage ou de PACS.' }, { nom: 'Départ en retraite', montant: 150, info: '' }],
-        billets: [{ id: 11, titre: 'Cinéma Épinal', prix: 5.5, prixPublic: 11.9, stock: 23, expire: d(5, 2, y + 1), cinema: true }, { id: 13, titre: 'Cinéma Remiremont', prix: 5.5, prixPublic: 10.5, stock: 42, expire: d(5, 20, y + 1), cinema: true }, { id: 12, titre: 'Parc Astérix', prix: 35, prixPublic: 62, stock: 4, expire: d(10, 31, y + 1), cinema: false }, { id: 14, titre: 'Fraispertuis City', prix: 15, prixPublic: 29, stock: 18, expire: '', cinema: false }],
+        billets: [{ id: 11, titre: 'Cinéma Épinal', prix: 5.5, prixPublic: 11.9, stock: 23, expire: d(5, 2, y + 1), cinema: true }, { id: 13, titre: 'Cinéma Remiremont', prix: 5.5, prixPublic: 10.5, stock: 42, expire: d(5, 20, y + 1), cinema: true }, { id: 12, titre: 'Parc Astérix', prix: 35, prixPublic: 62, stock: 4, une: true, expire: d(10, 31, y + 1), cinema: false }, { id: 14, titre: 'Fraispertuis City', prix: 15, prixPublic: 29, stock: 18, expire: '', cinema: false }],
         quotas: { std: 2, stdFoyer: true, cine: 10, cineFoyer: false },
         reponses: [{ date: plus(-10), type: 'question', texte: 'Est-ce que les intérimaires ont droit à la billetterie ?', reponse: 'Non, la billetterie est réservée aux salariés de l\'entreprise, conformément au règlement intérieur du CSE.' }, { date: plus(-30), type: 'idee', texte: 'Mettre des places de cinéma moins chères.', reponse: 'Depuis octobre, la place de cinéma passe de 8 € à 6 €.' }],
         materielInfo: 'Retrait et retour le vendredi à la permanence du CSE.',
@@ -282,7 +295,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
   }
 
- var TABS = [['accueil', '🏠 Accueil'], ['messages', '💬 Messages'], ['billets', '🎟️ Billetterie'], ['idees', '💡 Idées & questions'], ['achats', '🎟️ Mes achats'], ['offert', '🎁 Mes subventions'], ['cv', '🏖️ Chèques vacances'], ['sorties', '🎭 Sorties'], ['agenda', '📅 Agenda'], ['materiel', '⛺ Matériel'], ['docs', '📄 Documents'], ['fiche', '👤 Ma fiche'], ['demandes', '📨 Mes demandes']];
+ var TABS = [['accueil', '🏠 Accueil'], ['messages', '💬 Messages'], ['billets', '🎟️ Billetterie'], ['idees', '💡 Idées & questions'], ['achats', '🎟️ Mes achats'], ['offert', '🎁 Mes subventions'], ['cv', '🏖️ Chèques vacances'], ['sorties', '🎭 Sorties'], ['agenda', '📅 Agenda'], ['materiel', '⛺ Matériel'], ['docs', '📄 Documents'], ['fiche', '👤 Ma fiche'], ['demandes', '📨 Mes demandes'], ['reglages', '⚙️ Réglages']];
   // Réponses du CSE pas encore vues (mémorisées sur cet appareil).
   function seenKey() { return 'cse_dem_seen_' + (DEMO ? 'demo' : String(T || '').slice(0, 8)); }
   function seenMap() { try { return JSON.parse(localStorage.getItem(seenKey()) || 'null'); } catch (e) { return null; } }
@@ -360,7 +373,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (TAB === 'demandes') markSeen(); if (TAB === 'messages') msgSeen();
     var n = (D.demandes || []).filter(function (d) { return d.statut === 'en attente'; }).length, nv = newReplies().length;
     var el = $('nav'); el.hidden = false;
-    var TB = TABS.slice(); if (D && D.deleg) TB.splice(TB.length - 1, 0, ['deleg', '🕒 Délégation']); if (D && D.pub && (D.pub.aides || []).length) TB.splice(TB.length - 1, 0, ['aides', '🤝 Aides']);
+    var TB = TABS.slice(); if (D && D.deleg) TB.splice(TB.length - 2, 0, ['deleg', '🕒 Délégation']); if (D && D.pub && (D.pub.aides || []).length) TB.splice(TB.length - 2, 0, ['aides', '🤝 Aides']); if (D && D.pub && (D.pub.bonsPlans || []).length) TB.splice(TB.length - 2, 0, ['bonsplans', '🏷️ Bons plans']);
     el.innerHTML = TB.map(function (t) { return '<button data-t="' + t[0] + '" class="' + (t[0] === TAB ? 'on' : '') + '">' + t[1] + (t[0] === 'messages' ? (msgNew() ? '<span class="n" title="Nouvelle réponse du CSE">' + msgNew() + '</span>' : '') : t[0] === 'demandes' ? (nv ? '<span class="n" title="Nouvelle réponse du CSE">' + nv + ' nouveau' + (nv > 1 ? 'x' : '') + '</span>' : n ? '<span class="n" style="background:#94a3b8">' + n + '</span>' : '') : '') + '</button>'; }).join('');
     el.querySelectorAll('button').forEach(function (b) { b.onclick = function () { go(b.dataset.t); }; });
     var on = el.querySelector('.on'); if (on && on.scrollIntoView && el.scrollWidth > el.clientWidth) { try { el.scrollLeft = Math.max(0, on.offsetLeft - 40); } catch (e) { } }
@@ -475,19 +488,19 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function phUrl(p) { return p && p.id ? 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(p.id) + '&sz=w900' : (p && p.url) || ''; }
   function DEMO_PREFS_VU() { try { return !!localStorage.getItem('cse_prefs_vu_' + (DEMO ? 'demo' : String(T || '').slice(0, 8))); } catch (e) { return false; } }
   function tilesHtml(open) {
-    var f = D.fiche || {}, P = D.pub || {}, ic = { messages: '💬', billets: '🎟️', idees: '💡', achats: '🧾', offert: '🎁', cv: '🏖️', sorties: '🎭', agenda: '📅', materiel: '⛺', docs: '📄', fiche: '👤', demandes: '📨', deleg: '🕒', aides: '🤝' };
-    var TB = TABS.slice(1); if (D.deleg) TB.splice(TB.length - 1, 0, ['deleg', '🕒 Délégation']); if ((P.aides || []).length) TB.splice(TB.length - 1, 0, ['aides', '🤝 Aides']);
+    var f = D.fiche || {}, P = D.pub || {}, ic = { messages: '💬', billets: '🎟️', idees: '💡', achats: '🧾', offert: '🎁', cv: '🏖️', sorties: '🎭', agenda: '📅', materiel: '⛺', docs: '📄', fiche: '👤', demandes: '📨', deleg: '🕒', aides: '🤝', bonsplans: '🏷️', reglages: '⚙️' };
+    var TB = TABS.slice(1); if (D.deleg) TB.splice(TB.length - 2, 0, ['deleg', '🕒 Délégation']); if ((P.aides || []).length) TB.splice(TB.length - 2, 0, ['aides', '🤝 Aides']); if ((P.bonsPlans || []).length) TB.splice(TB.length - 2, 0, ['bonsplans', '🏷️ Bons plans']);
     var nb = {}, bleu = {};
     nb.messages = msgNew(); nb.demandes = newReplies().length;
     nb.achats = (f.achats || []).filter(function (a) { return !a.regle; }).length;
     var cv = 0; (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut === 'en retard') cv++; }); }); nb.cv = cv;
-    bleu.sorties = (open || []).length; bleu.billets = (P.billets || []).filter(function (b) { return b.stock > 0; }).length;
+    bleu.bonsplans = (P.bonsPlans || []).filter(function (b) { return b.nouveau; }).length; bleu.sorties = (open || []).length; bleu.billets = (P.billets || []).filter(function (b) { return b.stock > 0; }).length;
     return '<div class="tiles">' + TB.map(function (t) {
       var lab = String(t[1]).replace(/^[^\s]+\s/, ''), n = nb[t[0]] || 0, b = bleu[t[0]] || 0;
       return '<button class="tile" onclick="cseGo(\'' + t[0] + '\')"><i>' + (ic[t[0]] || String(t[1]).split(' ')[0]) + '</i>' + E(lab.replace('Idées & questions', 'Idées').replace('Mes subventions', 'Subventions').replace('Chèques vacances', 'Chèques vac.')) + (n ? '<span class="n">' + n + '</span>' : b ? '<span class="n i">' + b + '</span>' : '') + '</button>';
     }).join('') + '</div>';
   }
-  var ALERTES = [['cinema', '🎬 Cinéma'], ['parcs', '🎢 Parcs de loisirs'], ['spectacles', '🎤 Spectacles, concerts'], ['loisirs', '🏊 Sport et loisirs'], ['sorties', '🎭 Sorties du CSE'], ['famille', '👨‍👩‍👧 Sorties en famille'], ['materiel', '⛺ Nouveau matériel à prêter']];
+  var ALERTES = [['cinema', '🎬 Cinéma'], ['parcs', '🎢 Parcs de loisirs'], ['spectacles', '🎤 Spectacles, concerts'], ['loisirs', '🏊 Sport et loisirs'], ['sorties', '🎭 Sorties du CSE'], ['famille', '👨‍👩‍👧 Sorties en famille'], ['materiel', '⛺ Nouveau matériel à prêter'], ['bonsplans', '🏷️ Bons plans partenaires']];
   function alertesCard(accueil) {
     var mine = (D.prefs && D.prefs.cats) || null;
     return '<div class="card"><h2>🔔 Mes alertes</h2><p class="mute">Cochez ce qui vous intéresse : vous recevrez une notification seulement quand le CSE ajoute quelque chose de nouveau dans ces catégories.</p>'
@@ -500,6 +513,85 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     say('al-msg', 'Enregistrement…', 'info');
     try { await api('POST', { action: 'prefs', cats: cats }); D.prefs = { cats: cats, at: new Date().toISOString() }; cachePut(D); try { localStorage.setItem('cse_prefs_vu_' + (DEMO ? 'demo' : String(T || '').slice(0, 8)), '1'); } catch (e) { } say('al-msg', (DEMO ? '(Exemple) ' : '') + '✔ Alertes enregistrées' + (cats.length ? ' : ' + cats.length + ' catégorie(s).' : ' : aucune.'), 'ok'); }
     catch (e) { say('al-msg', e.message, 'bad'); }
+  };
+  // ---------- V.10.2 : À la une, bons plans, mes données ----------
+  var UNE_T = null;
+  function uneHtml(open) {
+    var P = D.pub || {}, L = [], t0 = today(), vu = {};
+    var add = function (x) { if (vu[x.k]) return; vu[x.k] = 1; L.push(x); };
+    (P.sorties || []).forEach(function (o) { if (o.une || ((open || []).some(function (z) { return z.id === o.id; }) && o.date >= t0 && (!o.limite || o.limite >= t0))) add({ k: 'o' + o.id, go: 'sorties', ph: o.photo, emo: '🎭', lb: o.une ? '⭐ À la une' : 'Sortie', t: o.nom, s: fd(o.date) + (o.lieu ? ' · ' + o.lieu : '') + (o.restantes != null ? ' · ' + o.restantes + ' place(s)' : ''), une: o.une, d: o.date }); });
+    (P.billets || []).forEach(function (b) { if ((b.une || b.nouveau) && b.stock > 0) add({ k: 'b' + b.id, go: 'billets', ph: b.photo, emo: b.cinema ? '🎬' : '🎟️', lb: b.une ? '⭐ À la une' : '🆕 Nouveau', t: b.titre, s: eur(b.prix) + (b.prixPublic ? ' au lieu de ' + eur(b.prixPublic) : '') + ' · ' + b.stock + ' en stock', une: b.une, d: '0' }); });
+    (P.bonsPlans || []).forEach(function (p) { if (p.nouveau) add({ k: 'p' + p.id, go: 'bonsplans', ph: p.photo, emo: '🏷️', lb: '🆕 Bon plan', t: p.nom, s: p.reduc || p.cat, d: '1' }); });
+    L.sort(function (a, c) { return (c.une ? 1 : 0) - (a.une ? 1 : 0) || String(a.d).localeCompare(String(c.d)); }); L = L.slice(0, 8);
+    if (!L.length) return '';
+    var G = ['#1d4ed8,#7c3aed', '#db2777,#f59e0b', '#0d9488,#2563eb', '#7c3aed,#db2777', '#ea580c,#dc2626'];
+    setTimeout(uneAuto, 0);
+    return '<div class="une" id="une"><div class="tr" onscroll="cseUneDots()">' + L.map(function (x, i) { var u = phUrl(x.ph); return '<button class="it" onclick="cseGo(\'' + x.go + '\')" style="background:' + (u ? 'url(\'' + E(u) + '\') center/cover' : 'linear-gradient(135deg,' + G[i % G.length] + ')') + '">' + (u ? '' : '<span class="emo">' + x.emo + '</span>') + '<span class="lb">' + E(x.lb) + '</span><span class="t"><b>' + E(x.t) + '</b><span>' + E(x.s) + '</span></span></button>'; }).join('') + '</div>' + (L.length > 1 ? '<div class="dots">' + L.map(function (x, i) { return '<i' + (i ? '' : ' class="on"') + '></i>'; }).join('') + '</div>' : '') + '</div>';
+  }
+  function uneAuto() {
+    if (UNE_T) clearInterval(UNE_T); UNE_T = null; var u = $('une'); if (!u) return; var tr = u.querySelector('.tr'), n = tr.children.length; if (n < 2) return;
+    var stop = false; tr.addEventListener('touchstart', function () { stop = true; setTimeout(function () { stop = false; }, 12000); }, { passive: true });
+    UNE_T = setInterval(function () { if (!document.body.contains(tr)) { clearInterval(UNE_T); UNE_T = null; return; } if (stop || document.hidden) return; var w = tr.clientWidth, i = Math.round(tr.scrollLeft / w); tr.scrollLeft = ((i + 1) % n) * w; }, 5000);
+  }
+  window.cseUneDots = function () { var u = $('une'); if (!u) return; var tr = u.querySelector('.tr'), i = Math.round(tr.scrollLeft / tr.clientWidth); [].forEach.call(u.querySelectorAll('.dots i'), function (d, k) { d.className = k === i ? 'on' : ''; }); };
+  var BP_F = '';
+  window.cseAffSet = function (k, v) { AFF[k] = v; try { localStorage.setItem('cse_affichage', JSON.stringify(AFF)); } catch (e) { } affApplique(); render(); };
+  function reglagesPage() {
+    var h = '<div class="card"><h2>⚙️ Réglages</h2><p class="mute">Tout se règle ici, pour ce téléphone. Rien n\'est changé pour les autres salariés.</p></div>';
+    h += alertesCard();
+    var pc = pushCard(); h += pc || '<div class="card"><h2>🔔 Notifications</h2><p class="mute">Le CSE n\'a pas encore activé les notifications.</p></div>';
+    var z = function (n, l) { return '<button class="btn' + (AFF.z === n ? ' p' : '') + '" style="flex:1;font-size:' + (14 * n) + 'px" onclick="cseAffSet(\'z\',' + n + ')">' + l + '</button>'; };
+    h += '<div class="card"><h2>Aa Affichage</h2><label>Taille du texte</label><div style="display:flex;gap:8px;margin:4px 0 14px">' + z(1, 'A') + z(1.15, 'A+') + z(1.3, 'A++') + '</div>'
+      + '<label>Couleurs</label><div style="display:flex;gap:8px;margin:4px 0 14px;flex-wrap:wrap">' + [['auto', '📱 Comme le téléphone'], ['clair', '☀️ Clair'], ['sombre', '🌙 Sombre']].map(function (x) { return '<button class="btn' + ((AFF.th || 'auto') === x[0] ? ' p' : '') + '" style="flex:1;font-size:13px;padding:10px 6px" onclick="cseAffSet(\'th\',\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('') + '</div>'
+      + '<label style="display:flex;gap:10px;align-items:center;font-weight:600"><input type="checkbox" style="width:auto;margin:0"' + (AFF.simple ? ' checked' : '') + ' onchange="cseAffSet(\'simple\',this.checked)"> Mode simplifié</label><p class="mute">L\'accueil n\'affiche que l\'essentiel. Tout le reste reste dans les onglets.</p></div>';
+    h += installCard() || '<div class="card"><h2>📲 Appli</h2><p class="mute">✔ L\'appli est installée sur ce téléphone.</p></div>';
+    h += '<div class="card"><h2>📥 Mes données</h2><p class="mute">Tout ce que le CSE connaît de vous (identité, famille, achats, sorties, prêts, chèques vacances, documents, messages, demandes), dans un document à enregistrer en PDF ou en fichier.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p s" onclick="cseMesDonnees()">📄 Télécharger mes données (PDF)</button><button class="btn s" onclick="cseMesDonneesFichier()">💾 Fichier informatique (.json)</button></div></div>';
+    h += '<p class="mute" style="text-align:center">Version ' + E(typeof PAGE_VERSION !== 'undefined' ? PAGE_VERSION : '') + '</p>';
+    return h;
+  }
+  function bpPage() {
+    var L = (D.pub || {}).bonsPlans || [], cats = L.map(function (p) { return p.cat; }).filter(function (c, i, a) { return c && a.indexOf(c) === i; });
+    var V = L.filter(function (p) { return !BP_F || p.cat === BP_F; });
+    var h = '<div class="card"><h2>🏷️ Bons plans des partenaires du CSE</h2><p class="mute">Réductions négociées par le CSE chez les commerçants. Montrez votre carte CSE (Ma fiche › QR code) si on vous la demande.</p>'
+      + (cats.length > 1 ? '<div class="chips" style="margin-top:8px"><button class="chip' + (BP_F ? '' : ' on') + '" onclick="cseBpF(\'\')">Tout</button>' + cats.map(function (c) { return '<button class="chip' + (BP_F === c ? ' on' : '') + '" onclick="cseBpF(\'' + E(c).replace(/'/g, '') + '\')">' + E(c) + '</button>'; }).join('') + '</div>' : '') + '</div>';
+    h += V.map(function (p) {
+      var u = phUrl(p.photo);
+      return '<div class="card"><div class="bp">' + (u ? '<img src="' + E(u) + '" alt="">' : '<div class="ic">' + E(String(p.cat || '🏷️').split(' ')[0]) + '</div>') + '<div style="flex:1;min-width:0"><b style="font-size:16px">' + E(p.nom) + '</b>' + (p.nouveau ? ' <span class="tag info">Nouveau</span>' : '') + '<div class="mute">' + E(p.cat || '') + (p.fin ? ' · jusqu\'au ' + fd(p.fin) : '') + '</div>' + (p.reduc ? '<div style="font-weight:800;color:var(--brand);margin-top:4px">' + E(p.reduc) + '</div>' : '')
+        + (p.code ? '<div><span class="code">' + E(p.code) + '</span><button class="btn s" onclick="cseBpCopier(this,\'' + E(p.code).replace(/'/g, '') + '\')">📋 Copier le code</button></div>' : '')
+        + (p.cond ? '<p class="mute" style="margin:6px 0 0">' + E(p.cond) + '</p>' : '') + (p.adresse ? '<p style="margin:6px 0 0">📍 ' + E(p.adresse) + '</p>' : '')
+        + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">' + (p.adresse ? '<a class="btn s" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(p.adresse) + '">🧭 Itinéraire</a>' : '') + (p.site ? '<a class="btn s" target="_blank" rel="noopener" href="' + E(p.site) + '">🌐 Site</a>' : '') + '</div></div></div></div>';
+    }).join('');
+    return h;
+  }
+  window.cseBpF = function (c) { BP_F = c; render(); };
+  window.cseBpCopier = function (b, c) { var ok = function () { b.textContent = '✔ Copié'; setTimeout(function () { b.textContent = '📋 Copier le code'; }, 1800); }; try { navigator.clipboard.writeText(c).then(ok, function () { prompt('Code :', c); }); } catch (e) { prompt('Code :', c); } };
+  function mdTable(head, rows) { return rows.length ? '<table><tr>' + head.map(function (x) { return '<th>' + E(x) + '</th>'; }).join('') + '</tr>' + rows.map(function (r) { return '<tr>' + r.map(function (x) { return '<td>' + E(x == null ? '' : String(x)) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>' : '<p>Rien.</p>'; }
+  window.cseMesDonnees = function () {
+    var f = D.fiche || {}, P = D.pub || {}, logo = ($('h-logo') && $('h-logo').src) || '';
+    var id = [['Nom', f.nom], ['Prénom', f.prenom], ['E-mail', f.email], ['Téléphone', f.phone], ['Adresse', f.address], ['Service', f.service], ['Équipe', f.equipe && f.equipe.groupe ? 'Groupe ' + f.equipe.groupe : '']].filter(function (x) { return x[1]; });
+    var fam = (f.spouse && f.spouse.name ? [['Conjoint(e)', f.spouse.name, f.spouse.birthdate ? fd(f.spouse.birthdate) : '']] : []).concat((f.children || []).filter(function (k) { return k && k.name; }).map(function (k) { return ['Enfant', k.name, k.birthdate ? fd(k.birthdate) : '']; }));
+    var M = D.messages, ml = Array.isArray(M) ? M : (M && M.liste) || [];
+    var h = '<div class="hd">' + (logo ? '<img src="' + E(logo) + '" alt="">' : '') + '<div><h1>Mes données personnelles au CSE</h1><div>' + E((P.cse && P.cse.nom) || 'CSE') + ' · ' + E(f.nom || '') + '</div><div style="color:#555">Édité le ' + fd(today()) + ' (droit d\'accès, article 15 du RGPD)</div></div></div>'
+      + '<h2>🪪 Identité</h2>' + mdTable(['Donnée', 'Valeur'], id)
+      + '<h2>👨‍👩‍👧 Famille</h2>' + mdTable(['Lien', 'Nom', 'Naissance'], fam)
+      + '<h2>🎟️ Achats de billets</h2>' + mdTable(['Date', 'Détail', 'Montant', 'Réglé'], (f.achats || []).map(function (a) { return [fd(a.date), a.desc, eur(a.total || 0), a.regle ? 'oui' : 'non']; }))
+      + '<h2>🎁 Subventions reçues</h2>' + mdTable(['Date', 'Détail', 'Montant'], (f.offert || []).map(function (o) { return [fd(o.date), (o.type ? o.type + ' : ' : '') + (o.label || ''), eur(o.montant || 0)]; }))
+      + '<h2>🎭 Sorties</h2>' + mdTable(['Date', 'Sortie', 'Invités', 'Montant'], (f.sorties || []).map(function (x) { return [fd(x.date), x.nom, (x.invites || []).map(function (g) { return g.name || g.nom || ''; }).join(', '), eur(x.montant || 0)]; }))
+      + '<h2>⛺ Prêts de matériel</h2>' + mdTable(['Du', 'Au', 'Matériel', 'Statut'], (f.prets || []).map(function (x) { return [fd(x.debut), fd(x.fin), (Array.isArray(x.items) ? x.items.map(function (i) { return (i.qte || i.qty || 1) + ' × ' + (i.nom || i.name || ''); }).join(', ') : String(x.items || '')) || x.desc || '', x.statut || '']; }))
+      + '<h2>🏖️ Chèques vacances</h2>' + mdTable(['Année', 'Valeur', 'Part du CSE', 'Ma part'], (f.cv || []).map(function (c) { return [c.annee, eur(c.total || 0), eur(c.cse || 0), eur(c.salarie || 0)]; }))
+      + '<h2>🎁 Colis</h2>' + mdTable(['Distribution', 'Date', 'Remis'], (f.colis || []).map(function (c) { return [c.nom, fd(c.date), c.moi && c.moi.remis ? 'oui' : 'non']; }))
+      + '<h2>📄 Documents</h2>' + mdTable(['Date', 'Document'], (f.documents || []).map(function (d) { return [fd(d.date), d.titre]; }))
+      + '<h2>💬 Messages avec le CSE</h2>' + mdTable(['Date', 'De', 'Message'], ml.map(function (m) { return [fd(String(m.at || '').slice(0, 10)), m.de === 'cse' ? 'CSE' : 'Moi', (m.texte || '') + (m.pj ? ' 📎 ' + (m.pj.nom || '') : '')]; }))
+      + '<h2>📨 Demandes</h2>' + mdTable(['Date', 'Demande', 'Statut'], (D.demandes || []).map(function (d) { return [fd(String(d.at || '').slice(0, 10)), d.resume || d.type, d.statut]; }))
+      + (D.prefs ? '<h2>🔔 Alertes choisies</h2><p>' + E((D.prefs.cats || []).join(', ') || 'aucune') + '</p>' : '')
+      + '<p style="margin-top:20px;color:#555;font-size:11px">Ces données sont utilisées par le CSE uniquement pour les activités sociales et culturelles. Pour les faire corriger, utilisez « Ma fiche » ; pour toute autre demande (effacement, opposition), écrivez au CSE.</p>';
+    $('recap').innerHTML = h; document.body.classList.add('printing');
+    var done = function () { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done); setTimeout(function () { window.print(); }, 200);
+  };
+  window.cseMesDonneesFichier = function () {
+    var o = { edite: new Date().toISOString(), cse: ((D.pub || {}).cse || {}).nom || 'CSE', fiche: D.fiche || {}, messages: D.messages || [], demandes: D.demandes || [], alertes: D.prefs || null };
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(o, null, 2)], { type: 'application/json' })); a.download = 'mes-donnees-cse-' + today() + '.json'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   };
   var AIDE_PJ = null;
   function aidesPage() {
@@ -937,6 +1029,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var f = D.fiche, P = D.pub || {}, h = '';
     var R = {
       aides: function () { h += aidesPage(); },
+      bonsplans: function () { h += bpPage(); },
+      reglages: function () { h += reglagesPage(); },
       messages: function () { h += msgPage(); setTimeout(function () { var fl = $('msg-fil'); if (fl) fl.scrollTop = fl.scrollHeight; msgSeen(); }, 0); },
       accueil: function () {
         var offY = (f.offert || []).filter(function (o) { return String(o.date).slice(0, 4) === String(new Date().getFullYear()); }).reduce(function (s, o) { return s + (o.montant || 0); }, 0);
@@ -944,6 +1038,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         var cvDue = 0; (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut !== 'payé' && e.statut !== 'reçu') cvDue += e.montant || 0; }); });
         var open = (P.sorties || []).filter(function (o) { return !(f.sorties || []).some(function (x) { return x.outingId === o.id; }); });
         h += signCards();
+        h += uneHtml(open);
         if (f.equipe && f.equipe.texte) h += '<div class="msg" style="margin:0 0 10px">👷 Cette semaine, vous êtes en <b>' + E(({ matin: 'équipe du matin', 'apres-midi': 'équipe d\'après-midi', nuit: 'équipe de nuit', journee: 'journée' })[f.equipe.poste] || f.equipe.texte) + (/\(/.test(f.equipe.texte) ? ' ' + E(f.equipe.texte.replace(/^[^(]*/, '')) : '') + '</b>.</div>';
         h += tilesHtml(open);
         if ((f.prets || []).some(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }) && cautionTxt(true)) h += '<div class="card"><h2>⛺ Matériel à retirer</h2>' + (f.prets || []).filter(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }).map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div></div>'; }).join('') + cautionTxt(true) + '</div>';
@@ -1088,7 +1183,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         h += '<div class="card"><h2>📄 Documents du CSE</h2>' + (L.length ? L.map(function (d) { return '<div class="row"><div class="l"><b>' + E(d.titre) + '</b>' + (d.date ? '<div class="mute">' + fd(d.date) + '</div>' : '') + '</div><div class="r"><a class="btn s" href="' + E(d.url) + '" target="_blank" rel="noopener">Ouvrir</a></div></div>'; }).join('') : '<p class="empty">Aucun document pour le moment.</p>') + '</div>';
       },
       fiche: function () {
-        h += alertesCard();
+        h += '<div class="msg info" style="margin:0 0 12px;cursor:pointer" onclick="cseGo(\'reglages\')">⚙️ Alertes, notifications, affichage et « Mes données » : onglet <b>Réglages</b>.</div>';
         var pf = (D.demandes || []).filter(function (d) { return d.type === 'fiche' && d.statut === 'en attente'; }).length;
         if (pf) h += '<div class="msg warn" style="margin:0 0 12px">⏳ Votre demande de modification est en attente : votre fiche changera seulement quand le CSE l\'aura acceptée.</div>';
         h += '<div class="card"><h2>🪪 Ma carte CSE et mon récap</h2><p class="mute">Le QR code ouvre votre fiche à la permanence. Le récapitulatif reprend ce que vous avez reçu et payé dans l\'année.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p s" onclick="cseQr()">🪪 Afficher mon QR code</button><button class="btn s" onclick="cseRecap(\'' + new Date().getFullYear() + '\')">📄 Récap ' + new Date().getFullYear() + ' (PDF)</button></div></div>';
@@ -1243,7 +1338,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '10.1', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '10.2', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();

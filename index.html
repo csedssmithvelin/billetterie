@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"wLe6mdaBM+f2nBURJl9l0Q==","iv":"IpXGbos4yKTKy9sT","rev":"boot","lastModified":"2026-11-26T23:06:35.457Z","by":"Michaël GROSJEAN","data":"19wlxD4oYhjD3sGt5J1ImrMmdKiipIcYnBZBsPJcNH6h3b0erowrOAHspI5rIuf8ouFln7IhM83EMVYlCW+OxQ=="},"at":"2026-11-26T23:06:35.496Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"VhDjCrRTJHTIIwZTthVV8Q==","iv":"F1lNsAWxBuD8/18C","rev":"boot","lastModified":"2026-11-26T23:22:44.375Z","by":"Michaël GROSJEAN","data":"R0whBzJZseHSzuCxJYxCDBSs20gI/nTBmsjA1lJS8wsnkokkhKOgRlkyQV52LXZoo/zq2otNaSgfBshgKhd+lg=="},"at":"2026-11-26T23:22:44.412Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.1.1";
+        const APP_VERSION = "V.10.2";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,13 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.2', date: '2026-11-27', items: [
+                'Espace : bandeau photo « À la une » en haut de l\'accueil (prochaines sorties, billets ajoutés depuis moins de 30 jours, nouveaux bons plans). Case « ⭐ Mettre à la une » dans « Photos et catégories ».',
+                'Bons plans partenaires : nouvel onglet « Bons plans » dans Communication (commerçant, catégorie, réduction, code promo, adresse, site, conditions, date de fin, photo). Onglet « 🏷️ Bons plans » dans l\'espace, avec « Copier le code » et « Itinéraire ». Les bons plans expirés disparaissent seuls.',
+                'Alertes : nouvelle catégorie « Bons plans » ; la notification est proposée, avec aperçu, quand un bon plan est ajouté.',
+                'Espace : onglet « ⚙️ Réglages » (alertes, notifications, affichage, installation de l\'appli, « Mes données » à télécharger en PDF ou en fichier). Le message « Alertes enregistrées » reste affiché.',
+                'Nécessite le script Google v89.'
+            ] },
             { v: 'V.10.1.1', date: '2026-11-27', items: [
                 'Tableau de bord : la tuile « Colis à remettre » ouvre la livraison des colis.',
                 'Tableau de bord : la tuile « Impayés » compte les billets et sorties à encaisser, comme la page « À encaisser ». Les échéances de chèques vacances n\'y sont plus ajoutées ; seules celles en retard sont signalées en dessous.'
@@ -47300,7 +47307,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 88;
+  var SCRIPT_ATTENDU = 89;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -47997,7 +48004,7 @@ var qrcode = function() {
   function alApercu(q, R) {
     return new Promise(function (res) {
       var m = amModal(), b = $('v99-am-box');
-      b.innerHTML = '<h3 class="font-extrabold text-slate-800 text-base">🔔 Prévenir les salariés intéressés ?</h3><p class="text-xs text-slate-600">Catégorie : <b>' + E(q.cats.map(function (c3) { return ({ cinema: 'Cinéma', parcs: 'Parcs de loisirs', spectacles: 'Spectacles, concerts', loisirs: 'Sport et loisirs', sorties: 'Sorties', famille: 'Sorties en famille', materiel: 'Matériel à prêter' })[c3] || c3; }).join(', ')) + '</b> · <b>' + R.length + '</b> salarié(s) concerné(s) (ceux qui ont coché cette catégorie, et ceux qui n\'ont encore rien choisi).</p>'
+      b.innerHTML = '<h3 class="font-extrabold text-slate-800 text-base">🔔 Prévenir les salariés intéressés ?</h3><p class="text-xs text-slate-600">Catégorie : <b>' + E(q.cats.map(function (c3) { return ({ cinema: 'Cinéma', parcs: 'Parcs de loisirs', spectacles: 'Spectacles, concerts', loisirs: 'Sport et loisirs', sorties: 'Sorties', famille: 'Sorties en famille', materiel: 'Matériel à prêter', bonsplans: 'Bons plans' })[c3] || c3; }).join(', ')) + '</b> · <b>' + R.length + '</b> salarié(s) concerné(s) (ceux qui ont coché cette catégorie, et ceux qui n\'ont encore rien choisi).</p>'
         + '<div class="border border-slate-200 rounded-xl p-3 bg-slate-50"><b class="text-sm">' + E(q.titre) + '</b><p class="text-xs text-slate-700 mt-1">' + E(q.texte) + '</p></div>'
         + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" id="v101-al-ok"><i class="fa-solid fa-bell"></i> Envoyer la notification</button><button type="button" class="' + BTN + '" id="v101-al-non">Pas maintenant</button></div>';
       m.classList.remove('hidden');
@@ -48096,6 +48103,91 @@ var qrcode = function() {
   // Messagerie : « une équipe cette semaine »
   var msDest0 = msDest; msDest = function () { if (MS.dest === 'equipe') return msEmps().filter(function (e) { return e.groupe && posteDe(e.groupe) === MS.poste; }); return msDest0(); };
   var msGN0 = msGroupeNom; msGroupeNom = function () { return MS.dest === 'equipe' ? 'à l\'équipe ' + (posteTxt(MS.poste) || '').toLowerCase().replace(/ \(.*\)/, '') + ' de cette semaine' : msGN0(); };
+  // =====================================================================
+  // 18) V.10.2 : « À LA UNE » DANS L'ESPACE, BONS PLANS PARTENAIRES
+  // =====================================================================
+  // ---------- 18a) À la une : case dans « Photos et catégories », date d'ajout des billets ----------
+  window.cseUneSet = function (k, id, on) { var x = catObj(k, id); if (!x) return; if (on) x.une = true; else delete x.une; save(); };
+  var cat0 = window.cseCatalogue;
+  window.cseCatalogue = function () {
+    cat0();
+    var b = $('v94-sig-box'); if (!b) return; var I = catItems();
+    var put = function (k, L) { L.forEach(function (x) { var inp = b.querySelector('input[onchange*="cseCatPhoto(\'' + k + '\',\'' + String(x.id).replace(/'/g, '') + '\'"]'); var row = inp && inp.closest('.flex.items-center.gap-3'); var info = row && row.querySelector('.flex-1'); if (!info || info.querySelector('.v102-une')) return; info.insertAdjacentHTML('beforeend', '<label class="v102-une flex items-center gap-1 text-[11px] text-amber-700 font-semibold mt-1"><input type="checkbox"' + (x.une ? ' checked' : '') + ' onchange="cseUneSet(\'' + k + '\',\'' + E(x.id) + '\',this.checked)"> ⭐ Mettre à la une</label>'); }); };
+    put('t', I.B); put('o', I.S);
+    var p = b.querySelector('p.text-xs.text-slate-500'); if (p && !/à la une/.test(p.textContent)) p.insertAdjacentText('beforeend', ' « À la une » : le bandeau photo en haut de l\'accueil de l\'espace montre déjà les prochaines sorties et les billets ajoutés depuis moins de 30 jours ; cochez pour y mettre aussi un autre élément.');
+  };
+  var uneB = setInterval(function () { if (!window.__dbLoaded || seed()) return; clearInterval(uneB); (db.tickets || []).forEach(function (t) { if (t && !t.ajouteLe) t.ajouteLe = 'ancien'; }); }, 700);
+  function uneStamp() { if (!window.__dbLoaded || seed()) return; var t0 = today(); (db.tickets || []).forEach(function (t) { if (t && !t.ajouteLe) t.ajouteLe = t0; }); (db.bonsPlans || []).forEach(function (p) { if (!p.ajouteLe) p.ajouteLe = t0; }); }
+  if (typeof window.saveDB === 'function') { var sd3 = window.saveDB, sdW3 = function () { try { uneStamp(); } catch (e) { } return sd3.apply(this, arguments); }; for (var k3 in sd3) sdW3[k3] = sd3[k3]; window.saveDB = sdW3; }
+  // ---------- 18b) Bons plans partenaires ----------
+  var BP_CATS = [['resto', '🍽️ Restaurants'], ['beaute', '💆 Beauté, bien-être'], ['sport', '🏋️ Sport'], ['loisirs', '🎳 Loisirs'], ['shopping', '🛍️ Shopping'], ['auto', '🚗 Auto, services'], ['autre', '🏷️ Autre']];
+  var BP = { edit: null, photo: null };
+  function bpL() { db.bonsPlans = Array.isArray(db.bonsPlans) ? db.bonsPlans : []; return db.bonsPlans; }
+  function bpActif(p) { return p && p.nom && (!p.fin || String(p.fin) >= today()); }
+  function bpCat(c) { var x = BP_CATS.filter(function (y) { return y[0] === c; })[0]; return x ? x[1] : '🏷️ Autre'; }
+  function bpRender() {
+    var body = $('v85-body'); if (!body) return; var L = bpL().slice().sort(function (a, c) { return (bpActif(c) ? 1 : 0) - (bpActif(a) ? 1 : 0) || String(a.nom).localeCompare(String(c.nom)); });
+    var x = BP.edit ? (bpL().filter(function (p) { return p.id === BP.edit; })[0] || {}) : {}, v = function (k) { return E(x[k] || ''); };
+    var ph = BP.photo || x.photo, phImg = ph && ph.id ? '<img src="https://drive.google.com/thumbnail?id=' + encodeURIComponent(ph.id) + '&sz=w200" style="width:56px;height:56px;object-fit:cover;border-radius:10px">' : '';
+    var F = 'w-full p-2 bg-slate-50 border rounded-lg text-xs';
+    var h = '<div class="rounded-xl border border-slate-200 bg-white p-3 space-y-2"><div class="font-bold text-sm">' + (BP.edit ? '✏️ Modifier le bon plan' : '➕ Nouveau bon plan') + '</div>'
+      + '<div class="grid sm:grid-cols-2 gap-2"><input id="v102-bp-nom" class="' + F + '" placeholder="Commerçant (ex. : Pizzeria Da Marco)" value="' + v('nom') + '"><select id="v102-bp-cat" class="' + F + '">' + BP_CATS.map(function (c) { return '<option value="' + c[0] + '"' + (x.cat === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select>'
+      + '<input id="v102-bp-reduc" class="' + F + '" placeholder="Réduction (ex. : -10 % sur l\'addition)" value="' + v('reduc') + '"><input id="v102-bp-code" class="' + F + '" placeholder="Code promo (facultatif)" value="' + v('code') + '">'
+      + '<input id="v102-bp-adr" class="' + F + '" placeholder="Adresse (pour l\'itinéraire)" value="' + v('adresse') + '"><input id="v102-bp-site" class="' + F + '" placeholder="Site internet (facultatif)" value="' + v('site') + '"></div>'
+      + '<textarea id="v102-bp-cond" rows="2" class="' + F + '" placeholder="Conditions (ex. : sur présentation de la carte CSE, hors menus)">' + v('cond') + '</textarea>'
+      + '<div class="flex flex-wrap items-center gap-2 text-xs"><label>Valable jusqu\'au <input id="v102-bp-fin" type="date" class="p-1.5 bg-slate-50 border rounded-lg text-xs" value="' + v('fin') + '"></label>' + phImg + '<label class="' + BTN + '" style="cursor:pointer"><i class="fa-solid fa-camera"></i> ' + (ph ? 'Changer la photo' : 'Photo ou logo') + '<input type="file" accept="image/*" style="display:none" onchange="cseBpPhoto(this)"></label><span id="v102-bp-msg"></span></div>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" onclick="cseBpSave()"><i class="fa-solid fa-floppy-disk"></i> ' + (BP.edit ? 'Enregistrer' : 'Ajouter') + '</button>' + (BP.edit ? '<button type="button" class="' + BTN + '" onclick="cseBpEdit(\'\')">Annuler</button><button type="button" class="' + BTN + '" onclick="cseBpDel(\'' + E(BP.edit) + '\')"><i class="fa-solid fa-trash"></i> Supprimer</button>' : '') + '</div>'
+      + '<p class="text-[11px] text-slate-500">Les bons plans apparaissent dans l\'onglet « 🏷️ Bons plans » de l\'espace. Une fois la date de fin passée, ils disparaissent tout seuls. Pour un nouveau bon plan, l\'appli vous propose de prévenir les salariés qui ont choisi l\'alerte « Bons plans ».</p></div>';
+    h += '<div class="rounded-xl border border-slate-200 bg-white p-3"><div class="font-bold text-sm mb-1">🏷️ Bons plans (' + L.filter(bpActif).length + ' en cours)</div>' + (L.length ? L.map(function (p) { var on = bpActif(p); return '<div class="flex items-center gap-3 py-2 border-b border-slate-100' + (on ? '' : ' opacity-50') + '">' + (p.photo && p.photo.id ? '<img src="https://drive.google.com/thumbnail?id=' + encodeURIComponent(p.photo.id) + '&sz=w120" style="width:44px;height:44px;object-fit:cover;border-radius:8px">' : '<div style="width:44px;height:44px;border-radius:8px;background:#f1f5f9" class="flex items-center justify-center text-xl">' + bpCat(p.cat).split(' ')[0] + '</div>') + '<div class="flex-1 min-w-0"><b class="text-sm block truncate">' + E(p.nom) + '</b><span class="text-[11px] text-slate-500">' + E(bpCat(p.cat)) + (p.reduc ? ' · ' + E(p.reduc) : '') + (p.fin ? ' · ' + (on ? 'jusqu\'au ' : 'terminé le ') + fd(p.fin) : '') + '</span></div><button type="button" class="' + BTN + '" onclick="cseBpEdit(\'' + E(p.id) + '\')"><i class="fa-solid fa-pen"></i></button></div>'; }).join('') : '<p class="text-xs text-slate-400">Aucun bon plan pour l\'instant.</p>') + '</div>';
+    body.innerHTML = h;
+  }
+  window.cseBpEdit = function (id) { BP.edit = id || null; BP.photo = null; bpRender(); };
+  window.cseBpSave = function () {
+    var g = function (i) { return String(($(i) || {}).value || '').trim(); }, nomV = g('v102-bp-nom'); if (!nomV) { say('Indiquez le nom du commerçant.', 'warning'); return; }
+    var site = g('v102-bp-site'); if (site && !/^https?:\/\//i.test(site)) site = 'https://' + site;
+    var L = bpL(), x = BP.edit ? L.filter(function (p) { return p.id === BP.edit; })[0] : null; if (!x) { x = { id: uid() }; L.push(x); }
+    Object.assign(x, { nom: nomV, cat: g('v102-bp-cat') || 'autre', reduc: g('v102-bp-reduc'), code: g('v102-bp-code'), adresse: g('v102-bp-adr'), site: site, cond: g('v102-bp-cond'), fin: g('v102-bp-fin') });
+    if (BP.photo) x.photo = BP.photo;
+    try { logAction(BP.edit ? 'Modification' : 'Création', 'bon plan', nomV); } catch (e) { }
+    BP.edit = null; BP.photo = null; save(); bpRender(); say('✔ Bon plan enregistré : il sera dans l\'espace à la prochaine mise à jour.', 'success');
+  };
+  window.cseBpDel = async function (id) {
+    var ok = true; try { ok = await uiConfirm('Supprimer ce bon plan ?'); } catch (e) { } if (!ok) return;
+    db.bonsPlans = bpL().filter(function (p) { return p.id !== id; }); BP.edit = null; save(); bpRender();
+  };
+  window.cseBpPhoto = async function (inp) {
+    var f = inp.files && inp.files[0]; inp.value = ''; if (!f) return; var m = $('v102-bp-msg'), dit = function (t, c) { m = $('v102-bp-msg') || m; if (m) { m.textContent = t; m.className = c || ''; } };
+    if (!scriptOk()) return dit('Le script Google n\'est pas relié.', 'text-rose-700');
+    var keep = {}; ['nom', 'cat', 'reduc', 'code', 'adr', 'site', 'cond', 'fin'].forEach(function (k) { keep[k] = ($('v102-bp-' + k) || {}).value; });
+    dit('Envoi de la photo…');
+    try {
+      var ph = await pjLire(f), j = await cseScriptPost('fichier', { data: ph.data, type: 'image/jpeg', nom: 'Bon plan - ' + (keep.nom || 'partenaire'), chemin: [String(today()).slice(0, 4), '7 - Communication', 'Bons plans'] });
+      try { await cseScriptPost('partager', { ids: [j.id] }); } catch (er) { }
+      BP.photo = { id: j.id, url: j.url }; bpRender(); Object.keys(keep).forEach(function (k) { var z = $('v102-bp-' + k); if (z && keep[k] != null) z.value = keep[k]; }); dit('✔ Photo ajoutée (pensez à enregistrer).', 'text-emerald-700');
+    } catch (e) { dit('Erreur : ' + e.message, 'text-rose-700'); }
+  };
+  // Onglet « Bons plans » dans Communication
+  var comm0 = window.cseComm;
+  if (typeof comm0 === 'function') window.cseComm = function (tab) {
+    var bp = tab === 'bonsplans'; comm0(bp ? 'annonces' : tab);
+    var b = $('modal-v85-comm'); var row = b && b.querySelector('[data-v85t]') && b.querySelector('[data-v85t]').parentNode; if (!row) return;
+    if (!row.querySelector('[data-v102]')) { var bt = document.createElement('button'); bt.type = 'button'; bt.setAttribute('data-v102', '1'); bt.innerHTML = '<i class="fa-solid fa-tags mr-1"></i>Bons plans'; bt.onclick = function () { cseComm('bonsplans'); }; row.insertBefore(bt, row.querySelector('[data-v85t="stats"]')); }
+    var me = row.querySelector('[data-v102]'); me.className = 'px-3 py-2 rounded-xl text-xs font-bold border ' + (bp ? 'bg-brand-600 text-white border-brand-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50');
+    if (bp) { row.querySelectorAll('[data-v85t]').forEach(function (x) { x.className = x.className.replace('bg-brand-600 text-white border-brand-600', 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'); }); bpRender(); }
+  };
+  // ---------- 18c) Publication vers l'espace ----------
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try {
+      var lim = addD(today(), -30);
+      (P.billets || []).forEach(function (b) { var t = catObj('t', b.id); if (!t) return; if (t.une) b.une = true; if (t.ajouteLe && t.ajouteLe !== 'ancien' && t.ajouteLe >= lim) b.nouveau = t.ajouteLe; });
+      (P.sorties || []).forEach(function (s) { var o = catObj('o', s.id); if (o && o.une) s.une = true; });
+      P.bonsPlans = bpL().filter(bpActif).map(function (p) { return { id: p.id, nom: p.nom, cat: bpCat(p.cat), reduc: p.reduc || '', code: p.code || '', adresse: p.adresse || '', site: /^https?:\/\//.test(p.site || '') ? p.site : '', cond: p.cond || '', fin: p.fin || '', photo: p.photo && p.photo.id ? { id: p.photo.id } : null, nouveau: p.ajouteLe && p.ajouteLe >= lim ? p.ajouteLe : '' }; });
+    } catch (er) { console.warn('[espace 10.2]', er); }
+  }; })();
+  // ---------- 18d) Alerte « Bons plans » ----------
+  var alEtat0 = alEtat; alEtat = function () { var S = alEtat0(); bpL().forEach(function (p) { if (bpActif(p)) S['p:' + p.id] = 1; }); return S; };
+  var alQuoi0 = alQuoi; alQuoi = function (k) { if (k.indexOf('p:') !== 0) return alQuoi0(k); var p = bpL().filter(function (x) { return x.id === k.slice(2); })[0]; if (!p) return null; return { cats: ['bonsplans'], titre: '🏷️ Nouveau bon plan : ' + p.nom, texte: (p.reduc || 'Réduction pour les salariés') + '. Détails dans votre espace, onglet Bons plans.', nom: p.nom }; };
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
   setInterval(function () {
