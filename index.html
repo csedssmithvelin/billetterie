@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"5XjSsK2ReC/ZQ1dwEp7zmw==","iv":"PQCAgCPYcLT2vMIm","rev":"boot","lastModified":"2026-11-25T08:17:11.574Z","by":"Michaël GROSJEAN","data":"jFweUJFSGdmORW8vmVTnl/yRYLpdvrStyPKWPwUtLH/v977kgcy1dz8fr7/C2Wpu+Kdw2ytEn8UlkX31aVMRYA=="},"at":"2026-11-25T08:17:11.616Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"IqLjlxsBFDfwqPoi3uT51g==","iv":"7wxdY+0CRxmt8Eru","rev":"boot","lastModified":"2026-11-26T21:04:15.061Z","by":"Michaël GROSJEAN","data":"HxM8fXXFm0VpI1n8pY3USpPxBaifSMS2+apPEPWiYerYm/2q9JZ9hcqpWSQNUxqoiKNGnPlWCjG5fJnacLlfAg=="},"at":"2026-11-26T21:04:15.102Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.9.7";
+        const APP_VERSION = "V.9.8";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,9 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.9.8', date: '2026-11-26', items: [
+                'Feuille de délégation : case « Ajouter une absence autorisée » (facultative), avec ses horaires (de … à …) et ses heures. Ces heures ne sont pas déduites du crédit de délégation. Sur la feuille PDF, une ligne « Absence autorisée : de … à … » et une ligne dans le tableau sous « Délégation ». Dans l\'appli et dans l\'espace des élus. Nécessite le script Google v85.'
+            ] },
             { v: 'V.9.7', date: '2026-11-25', items: [
                 'Rappel la veille de la permanence (18h par défaut) : chaque salarié qui a quelque chose à faire (colis à retirer, matériel prêté à retirer avec le chèque de caution, matériel à rendre, somme à régler) reçoit une seule notification sur son téléphone. Réglages › Paiement en ligne › Rappels de la permanence. Nécessite le script Google v84.',
                 'Planning des élus qui se remplit tout seul : si une permanence n\'a pas assez d\'élus, les élus reçoivent une notification 6 jours puis 2 jours avant ; ils la prennent d\'un appui « ✋ Je la prends » dans leur espace, et le planning se met à jour ici automatiquement.',
@@ -44710,7 +44713,7 @@ var qrcode = function() {
       var id = 'fs-' + d.id, cur = D.entries.filter(function (x) { return x.id === id; })[0];
       if (d.statut === 'annulée') { if (cur) { D.entries = D.entries.filter(function (x) { return x.id !== id; }); ch = true; } return; }
       var e = (db.employees || []).filter(function (x) { return (x.espaceToken && x.espaceToken === d.t) || String(x.id) === String(d.empId); })[0], el = eluOfEmp(e); if (!el) return;
-      var o = { id: id, eluId: el.id, date: d.du, au: d.au || d.du, de: d.de, a: d.a, plages: d.plages || null, equipe: d.equipe || '', hours: Number(d.heures) || 0, motif: d.motif || '', note: '', source: d.par === 'ancienne' ? 'ancienne' : 'feuille', sheetId: d.id, vu: d.vu ? String(d.vu.at).slice(0, 10) : '', pdfUrl: d.pdfUrl || '' };
+      var o = { id: id, eluId: el.id, date: d.du, au: d.au || d.du, de: d.de, a: d.a, plages: d.plages || null, equipe: d.equipe || '', absence: Number(d.absence) || 0, absDe: d.absDe || '', absA: d.absA || '', hours: Number(d.heures) || 0, motif: d.motif || '', note: '', source: d.par === 'ancienne' ? 'ancienne' : 'feuille', sheetId: d.id, vu: d.vu ? String(d.vu.at).slice(0, 10) : '', pdfUrl: d.pdfUrl || '' };
       if (!cur) { D.entries.push(o); ch = true; } else if (cur.vu !== o.vu || cur.pdfUrl !== o.pdfUrl || (o.equipe && cur.equipe !== o.equipe)) { cur.vu = o.vu; cur.pdfUrl = o.pdfUrl; if (o.equipe) cur.equipe = o.equipe; ch = true; }
     });
     if (ch) { try { saveDB(); } catch (e) { } }
@@ -44752,7 +44755,9 @@ var qrcode = function() {
         + '<label class="' + lab + ' col-span-2">Horaire de travail habituel<select id="dg2-eq" class="' + inp + '"><option value="">— Choisir —</option>' + [['matin', 'Équipe du matin (5h – 13h)'], ['apres-midi', 'Équipe d\'après-midi (13h – 21h, le lundi 12h – 21h)'], ['nuit', 'Équipe de nuit (21h – 5h)'], ['repos', 'Repos']].map(function (o) { var dv = ''; try { dv = localStorage.getItem('cse_dg_eq_' + sel.id) || ''; } catch (er) { } return '<option value="' + o[0] + '"' + (o[0] === dv ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>'
         + '<label class="' + lab + '">Heures de délégation : de<input type="time" id="dg2-de" value="08:00" class="' + inp + '" onchange="cseDgCalc()"></label><label class="' + lab + '">à<input type="time" id="dg2-a" value="12:00" class="' + inp + '" onchange="cseDgCalc()"></label>' + [2, 3].map(function (k) { return '<div id="dg2-pl' + k + '" class="col-span-2 grid grid-cols-2 gap-2" style="display:none"><label class="' + lab + '">' + k + 'e plage : de<input type="time" id="dg2-de' + k + '" class="' + inp + '" onchange="cseDgCalc()"></label><label class="' + lab + '">à <button type="button" class="float-right text-slate-400 hover:text-rose-600" onclick="cseDgPlage(-' + k + ')" title="Retirer cette plage">✕</button><input type="time" id="dg2-a' + k + '" class="' + inp + '" onchange="cseDgCalc()"></label></div>'; }).join('')
         + '<div class="col-span-2 -mt-1"><button type="button" id="dg2-plus" class="text-[11px] text-indigo-700 underline" onclick="cseDgPlage(1)">+ une autre plage le même jour (ex. 13:00–13:30 et 18:00–21:00)</button> <span class="text-[11px] text-slate-500">· de nuit (21:00 à 05:00) : compté jusqu\'au lendemain</span></div>'
-        + '<label class="' + lab + '">Total des heures (ex. 8:15)<input id="dg2-h" placeholder="h:mm" class="' + inp + '" oninput="this.dataset.edit=1"></label><label class="' + lab + '">Motif<select id="dg2-motif" class="' + inp + '">' + DG_MOTIFS.map(function (m) { return '<option>' + m + '</option>'; }).join('') + '</select></label>'
+        + '<label class="' + lab + ' col-span-2 flex items-center gap-2 font-semibold text-slate-700"><input type="checkbox" id="dg2-abs-on" onchange="cseDgAbs()"> ➕ Ajouter une absence autorisée</label>'
+        + '<div id="dg2-abs" class="col-span-2 grid grid-cols-3 gap-2 rounded-lg bg-amber-50 border border-amber-200 p-2" style="display:none"><label class="' + lab + '">Absence autorisée : de<input type="time" id="dg2-abs-de" class="' + inp + '" onchange="cseDgAbs()"></label><label class="' + lab + '">à<input type="time" id="dg2-abs-a" class="' + inp + '" onchange="cseDgAbs()"></label><label class="' + lab + '">Heures (ex. 2:00)<input id="dg2-abs-h" placeholder="h:mm" class="' + inp + '" oninput="this.dataset.edit=1"></label><p class="col-span-3 text-[11px] text-amber-800">Non déduites du crédit de délégation. Absence autorisée seule : mettez 0 au total de délégation.</p></div>'
+        + '<label class="' + lab + '">Total des heures de délégation (ex. 8:15)<input id="dg2-h" placeholder="h:mm" class="' + inp + '" oninput="this.dataset.edit=1"></label><label class="' + lab + '">Motif<select id="dg2-motif" class="' + inp + '">' + DG_MOTIFS.map(function (m) { return '<option>' + m + '</option>'; }).join('') + '</select></label>'
         + '<label class="' + lab + ' col-span-2">Remarque (facultatif)<input id="dg2-note" class="' + inp + '" maxlength="150"></label></div>'
         + '<p class="text-[11px] text-slate-500" id="dg2-jour"></p>'
         + '<div class="flex flex-wrap gap-2"><button type="button" class="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs rounded-lg disabled:opacity-50"' + (ok && pr.sig && dest.length ? '' : ' disabled') + ' onclick="cseDgPose(\'feuille\')"><i class="fa-solid fa-paper-plane"></i> Signer et envoyer la feuille</button>'
@@ -44777,17 +44782,19 @@ var qrcode = function() {
     h += '<div class="overflow-x-auto"><table class="w-full text-xs"><thead><tr class="text-slate-500"><th class="p-2 text-left">Date</th><th class="p-2 text-left">Élu</th><th class="p-2 text-left">Équipe · délégation</th><th class="p-2 text-left">Motif</th><th class="p-2 text-left">Suivi</th><th class="p-2 text-right">Heures</th><th></th></tr></thead><tbody>'
       + (L.map(function (x) {
         var can = dgPeut(x.eluId), sr = x.type === 'transfer' ? ['Cession', 'bg-amber-50 text-amber-700'] : SRC[x.source || 'saisie'] || SRC.saisie;
-        return '<tr class="border-t border-slate-100' + (me && x.eluId === me.id ? ' bg-indigo-50/40' : '') + '"><td class="p-2">' + fd(x.date) + (x.au && x.au !== x.date ? ' → ' + fd(x.au) : '') + '</td><td class="p-2">' + E(nmE(x.eluId)) + (x.type === 'transfer' ? ' → ' + E(nmE(x.toId)) : '') + '</td><td class="p-2">' + (x.equipe ? '<span class="text-slate-500">' + E(dgEqTxt(x.equipe, x.date)) + '</span><br>' : '') + (x.plages && x.plages.length ? x.plages.map(function (p) { return E(p.de) + ' – ' + E(p.a); }).join('<br>') : x.de ? E(x.de) + ' – ' + E(x.a) : '') + '</td>'
+        return '<tr class="border-t border-slate-100' + (me && x.eluId === me.id ? ' bg-indigo-50/40' : '') + '"><td class="p-2">' + fd(x.date) + (x.au && x.au !== x.date ? ' → ' + fd(x.au) : '') + '</td><td class="p-2">' + E(nmE(x.eluId)) + (x.type === 'transfer' ? ' → ' + E(nmE(x.toId)) : '') + '</td><td class="p-2">' + (x.equipe ? '<span class="text-slate-500">' + E(dgEqTxt(x.equipe, x.date)) + '</span><br>' : '') + (!(x.hours > 0) && x.absence > 0 ? '' : x.plages && x.plages.length ? x.plages.map(function (p) { return E(p.de) + ' – ' + E(p.a); }).join('<br>') : x.de ? E(x.de) + ' – ' + E(x.a) : '') + '</td>'
           + '<td class="p-2">' + E(x.type === 'transfer' ? 'Cession d\'heures' : (x.motif || '')) + (x.note ? ' · ' + E(x.note) : '') + '</td>'
           + '<td class="p-2"><span class="px-2 py-0.5 rounded-full ' + sr[1] + '">' + sr[0] + '</span>' + (x.vu ? ' <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">vue le ' + fd(x.vu) + '</span>' : '') + (can && x.pdfUrl ? ' <a class="text-indigo-700 underline" target="_blank" rel="noopener" href="' + E(x.pdfUrl) + '">PDF</a>' : '') + '</td>'
-          + '<td class="p-2 text-right font-semibold">' + hh(x.hours) + '</td><td class="p-2 text-right">' + (can ? '<button type="button" onclick="dgDelete(\'' + E(x.id) + '\')" class="text-slate-400 hover:text-rose-600" aria-label="Supprimer" title="Supprimer"><i class="fa-solid fa-trash-can"></i></button>' : '') + '</td></tr>';
+          + '<td class="p-2 text-right font-semibold">' + hh(x.hours) + (x.absence > 0 ? '<div class="text-[11px] font-normal text-amber-700" title="Non déduite du crédit">+ ' + hh(x.absence) + ' abs. autorisée' + (x.absDe ? ' (' + E(x.absDe) + '–' + E(x.absA) + ')' : '') + '</div>' : '') + '</td><td class="p-2 text-right">' + (can ? '<button type="button" onclick="dgDelete(\'' + E(x.id) + '\')" class="text-slate-400 hover:text-rose-600" aria-label="Supprimer" title="Supprimer"><i class="fa-solid fa-trash-can"></i></button>' : '') + '</td></tr>';
       }).join('') || '<tr><td colspan="7" class="p-2 text-slate-500">Aucune saisie ce mois-ci.</td></tr>') + '</tbody></table></div></div>';
-    var keep = {}; ['dg2-eq', 'dg2-du', 'dg2-au', 'dg2-de', 'dg2-a', 'dg2-h', 'dg2-motif', 'dg2-note'].forEach(function (i) { var el = document.getElementById(i); if (el) keep[i] = el.value; });
+    var absOn = document.getElementById('dg2-abs-on') && document.getElementById('dg2-abs-on').checked; var keep = {}; ['dg2-abs-de', 'dg2-abs-a', 'dg2-abs-h', 'dg2-eq', 'dg2-du', 'dg2-au', 'dg2-de', 'dg2-a', 'dg2-h', 'dg2-motif', 'dg2-note'].forEach(function (i) { var el = document.getElementById(i); if (el) keep[i] = el.value; });
     var edH = document.getElementById('dg2-h') && document.getElementById('dg2-h').dataset.edit;
     box.innerHTML = h;
     Object.keys(keep).forEach(function (i) { var el = document.getElementById(i); if (el) el.value = keep[i]; }); if (edH && document.getElementById('dg2-h')) document.getElementById('dg2-h').dataset.edit = edH;
+    if (absOn && document.getElementById('dg2-abs-on')) { document.getElementById('dg2-abs-on').checked = true; document.getElementById('dg2-abs').style.display = ''; }
     try { cseDgCalc(); dgSigInit(); } catch (e) { }
   };
+  window.cseDgAbs = function () { var c = document.getElementById('dg2-abs-on'), b = document.getElementById('dg2-abs'); if (!c || !b) return; b.style.display = c.checked ? '' : 'none'; var de = gv('dg2-abs-de'), a = gv('dg2-abs-a'), h = document.getElementById('dg2-abs-h'); if (c.checked && de && a && de !== a && !h.dataset.edit) h.value = dgFmtH(dgPlMin({ de: de, a: a })); };
   // Heures : « 8:15 », « 8h15 », « 45min » ou « 8,25 » sont acceptés
   function dgParseH(v) { v = String(v || '').trim().toLowerCase().replace(/\s+/g, ''); var m = /^(\d{1,3})(?:[:h](\d{0,2}))?(?:min)?$/.exec(v); if (m && (m[2] !== undefined || /[:h]/.test(v))) return Number(m[1]) + (Number(m[2]) || 0) / 60; m = /^(\d{1,3})min$/.exec(v); if (m) return Number(m[1]) / 60; var n = Number(v.replace(',', '.')); return isNaN(n) ? 0 : n; }
   function dgFmtH(mins) { mins = Math.round(mins); return Math.floor(mins / 60) + ':' + String(mins % 60).padStart(2, '0'); }
@@ -44822,12 +44829,13 @@ var qrcode = function() {
     var el = selOk(); if (!el) return; var e = empOfElu(el);
     var PL = dgPlagesForm();
     var x = { du: gv('dg2-du'), au: gv('dg2-au') || gv('dg2-du'), de: (PL[0] || {}).de || gv('dg2-de'), a: (PL[PL.length - 1] || {}).a || gv('dg2-a'), plages: PL.length > 1 ? PL : null, heures: Math.round(dgParseH(gv('dg2-h')) * 10000) / 10000, motif: gv('dg2-motif'), note: gv('dg2-note'), equipe: gv('dg2-eq') };
-    if (!x.du || !(x.heures > 0)) { say('Indiquez la date et le nombre d\'heures.', 'warning'); return; }
+    var ab = document.getElementById('dg2-abs-on'); if (ab && ab.checked) { x.absDe = gv('dg2-abs-de'); x.absA = gv('dg2-abs-a'); x.absence = Math.round(dgParseH(gv('dg2-abs-h')) * 10000) / 10000; if (!x.absDe || !x.absA || !(x.absence > 0)) { say('Absence autorisée : indiquez l\'horaire (de … à …) et les heures.', 'warning'); return; } } else { x.absence = 0; x.absDe = ''; x.absA = ''; }
+    if (!x.du || !(x.heures > 0 || x.absence > 0)) { say('Indiquez la date et le nombre d\'heures.', 'warning'); return; }
     if (!x.equipe) { say('Choisissez l\'horaire de travail habituel (équipe ou repos).', 'warning'); return; }
     try { localStorage.setItem('cse_dg_eq_' + el.id, x.equipe); } catch (er) { }
     var D = dgD();
     if (mode === 'sans') {
-      D.entries.push({ id: String(generateUniqueId()), eluId: el.id, date: x.du, au: x.au, de: x.de, a: x.a, plages: x.plages, equipe: x.equipe, hours: x.heures, motif: x.motif, note: x.note, source: 'ancienne', by: (moiEmp() || {}).id || '' });
+      D.entries.push({ id: String(generateUniqueId()), eluId: el.id, date: x.du, au: x.au, de: x.de, a: x.a, plages: x.plages, equipe: x.equipe, absence: x.absence, absDe: x.absDe, absA: x.absA, hours: x.heures, motif: x.motif, note: x.note, source: 'ancienne', by: (moiEmp() || {}).id || '' });
       try { logAction('Création', 'delegation', 'Délégation (déjà prise) : ' + el.name + ' ' + fd(x.du) + ' (' + hh(x.heures) + ')'); saveDB(); } catch (er) { }
       dgMonth = x.du.slice(0, 7); dgRender(); try { cseEspacePublish(true); } catch (er) { }
       var mm = dgMois(el, x.du.slice(0, 7)); say(mm.etat === 'trop' ? el.name + ' : au-delà du maximum du mois (' + hh(mm.plafond) + ').' : mm.etat === 'report' ? '✔ Ajoutée. Crédit du mois dépassé : pris sur le report (reste ' + hh(mm.reste33) + ' jusqu\'au maximum).' : '✔ Ajoutée au compteur (aucune feuille envoyée).', mm.etat === 'ok' ? 'success' : 'warning'); return;
@@ -44836,7 +44844,7 @@ var qrcode = function() {
     var pr = DG.profils[e.espaceToken] || {};
     if (!(await uiConfirm('Envoyer la feuille de délégation de ' + el.name + ' ?\n\n' + fd(x.du) + (x.au !== x.du ? ' au ' + fd(x.au) : '') + ', ' + (x.plages || [{ de: x.de, a: x.a }]).map(function (p) { return 'de ' + p.de + ' à ' + p.a; }).join(' et ') + ' : ' + hh(x.heures) + '\n\nÀ : ' + [pr.rh, pr.resp].filter(Boolean).join(', ') + ([pr.mail, pr.resp2].filter(Boolean).length ? '\nCopie : ' + [pr.mail, pr.resp2].filter(Boolean).join(', ') : ''), { okLabel: 'Signer et envoyer' }))) return;
     try {
-      var moi0 = moiEmp(), j = await cseEspacePost('deleg-appli', Object.assign({ t: e.espaceToken, data: { du: x.du, au: x.au, de: x.de, a: x.a, plages: x.plages, equipe: x.equipe, heures: x.heures, motif: x.motif + (x.note ? ' · ' + x.note : '') } }, moi0 && String(moi0.id) === String(e.id) && window.cseSigLogo ? cseSigLogo() : {}));
+      var moi0 = moiEmp(), j = await cseEspacePost('deleg-appli', Object.assign({ t: e.espaceToken, data: { du: x.du, au: x.au, de: x.de, a: x.a, plages: x.plages, equipe: x.equipe, absence: x.absence, absDe: x.absDe, absA: x.absA, heures: x.heures, motif: x.motif + (x.note ? ' · ' + x.note : '') } }, moi0 && String(moi0.id) === String(e.id) && window.cseSigLogo ? cseSigLogo() : {}));
       DG.at = 0; await dgSync(true); dgMonth = x.du.slice(0, 7); dgRender();
       try { logAction('Création', 'delegation', 'Feuille de délégation envoyée : ' + el.name + ' ' + fd(x.du) + ' (' + hh(x.heures) + ')'); } catch (er) { }
       say('✔ Feuille signée, envoyée et rangée sur le Drive.', 'success');
@@ -44890,7 +44898,7 @@ var qrcode = function() {
       var D = dgD(); dgLink(); var el = eluOfEmp(e), S = dgSaison(), mo = today().slice(0, 7); f.nomFamille = e.lastname || '';
       var tous = D.elus.map(function (x) { var mm = dgMois(x, mo), an = dgAn(x); return { nom: x.name, credit: mm.credit, mois: mm.used, reste: mm.reste, base: mm.base, reste33: mm.reste33, plafond: mm.plafond, report: mm.report, etat: mm.etat, an: an.used, anCredit: an.credit, moi: el && x.id === el.id }; });
       f.deleg = { credit: el ? Number(el.credit) || 0 : 0, mandat: el ? el.role || '' : '', tous: tous,
-        entries: el ? D.entries.filter(function (x) { return x.date >= S.debut && x.date <= S.fin && (x.eluId === el.id || x.toId === el.id); }).map(function (x) { return { id: x.id, sheetId: x.sheetId || '', du: x.date, au: x.au || x.date, de: x.de || '', a: x.a || '', plages: x.plages || null, equipe: x.equipe || '', heures: x.hours, motif: x.type === 'transfer' ? (x.toId === el.id ? 'Heures reçues' : 'Heures cédées') : (x.motif || ''), type: x.type === 'transfer' ? (x.toId === el.id ? 'recu' : 'cede') : x.source || 'saisie', vu: x.vu || '' }; }) : [],
+        entries: el ? D.entries.filter(function (x) { return x.date >= S.debut && x.date <= S.fin && (x.eluId === el.id || x.toId === el.id); }).map(function (x) { return { id: x.id, sheetId: x.sheetId || '', du: x.date, au: x.au || x.date, de: x.de || '', a: x.a || '', plages: x.plages || null, equipe: x.equipe || '', absence: x.absence || 0, absDe: x.absDe || '', absA: x.absA || '', heures: x.hours, motif: x.type === 'transfer' ? (x.toId === el.id ? 'Heures reçues' : 'Heures cédées') : (x.motif || ''), type: x.type === 'transfer' ? (x.toId === el.id ? 'recu' : 'cede') : x.source || 'saisie', vu: x.vu || '' }; }) : [],
         an: el ? dgAn(el) : null, mois: el ? dgMois(el, mo) : null };
     } catch (er) { console.warn(er); }
   }; })();
@@ -47071,7 +47079,7 @@ var qrcode = function() {
       });
       if (faits.length) await cseScriptPost('permanence-fait', { ids: faits });
       if (noms.length) { save(); say('🙋 Permanence prise depuis l\'espace : ' + noms.join(', ') + '.', 'success'); try { cseEspacePublish && cseEspacePublish(true, true); } catch (er) { } try { cseRappelsSync && cseRappelsSync(true); } catch (er) { } try { pushNow(); } catch (er) { } }
-    } catch (e) { if (force) say('Planning : ' + (/inconnue/i.test(e.message) ? 'installez le script Google v84 (script-google-cse-v84.txt).' : e.message), 'warning'); }
+    } catch (e) { if (force) say('Planning : ' + (/inconnue/i.test(e.message) ? 'installez le script Google v85 (script-google-cse-v85.txt).' : e.message), 'warning'); }
     PPR.busy = false;
   }
   window.csePermPrises = function () { return permPrisesTick(true); };

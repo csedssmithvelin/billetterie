@@ -482,7 +482,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function dgListe() {
     var G = D.deleg || {}, F = (D.fiche.deleg || {}).entries || [], vus = {}, out = [];
     F.forEach(function (x) { if (x.sheetId) vus[x.sheetId] = 1; out.push(x); });
-    (G.liste || []).forEach(function (d) { if (vus[d.id] || d.statut === 'annulée') return; out.push({ id: d.id, sheetId: d.id, du: d.du, au: d.au, de: d.de, a: d.a, plages: d.plages, equipe: d.equipe || '', heures: d.heures, motif: d.motif, type: d.par === 'ancienne' ? 'ancienne' : 'feuille', vu: d.vu ? String(d.vu.at).slice(0, 10) : '', at: d.at }); });
+    (G.liste || []).forEach(function (d) { if (vus[d.id] || d.statut === 'annulée') return; out.push({ id: d.id, sheetId: d.id, du: d.du, au: d.au, de: d.de, a: d.a, plages: d.plages, equipe: d.equipe || '', absence: d.absence || 0, absDe: d.absDe || '', absA: d.absA || '', heures: d.heures, motif: d.motif, type: d.par === 'ancienne' ? 'ancienne' : 'feuille', vu: d.vu ? String(d.vu.at).slice(0, 10) : '', at: d.at }); });
     return out;
   }
   function dgCompteur() {
@@ -527,6 +527,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       : '<span style="color:' + (c.plafond - a <= 4 ? '#ea580c' : 'var(--ok)') + '">Après ces heures : ' + hFr(a) + ' sur ' + hFr(c.base) + ' ce mois (reste ' + hFr(c.base - a) + ', <span style="color:#7c3aed">' + hFr(c.plafond - a) + ' avec le report</span>).</span>';
   }
   document.addEventListener('input', function (e) { if (e.target && e.target.id === 'dg-h') { try { dgAlerte(); } catch (er) { } } });
+  window.cseDgAbs = function () { var on = $('dg-abs-on') && $('dg-abs-on').checked, b = $('dg-abs'); if (!b) return; b.style.display = on ? '' : 'none'; var de = $('dg-abs-de').value, a = $('dg-abs-a').value, h = $('dg-abs-h'); if (on && de && a && de !== a && !h.dataset.edit) h.value = dgFmtH(dgPlMin({ de: de, a: a })); };
   window.cseDgCalc = function (force) {
     var PL = dgPlagesForm(), du = $('dg-du').value, hEl = $('dg-h');
     var nuit = PL.some(function (x) { return dgMins(x.a) <= dgMins(x.de); });
@@ -547,9 +548,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!x.du) return say('dg-msg', 'Choisissez la date.', 'bad');
     x.equipe = ($('dg-eq') || {}).value || ''; if (!x.equipe) return say('dg-msg', 'Choisissez votre horaire de travail habituel (équipe ou repos).', 'bad');
     try { localStorage.setItem('cse_dg_eq', x.equipe); } catch (e) { }
+    if ($('dg-abs-on') && $('dg-abs-on').checked) { x.absDe = $('dg-abs-de').value; x.absA = $('dg-abs-a').value; x.absence = Math.round(dgParseH($('dg-abs-h').value) * 10000) / 10000; if (!x.absDe || !x.absA || !(x.absence > 0)) return say('dg-msg', 'Absence autorisée : indiquez l\'horaire (de … à …) et les heures.', 'bad'); }
     if (!x.de || !x.a) return say('dg-msg', 'Indiquez l\'horaire (de … à …).', 'bad');
     if (PL.length > 1) x.plages = PL;
-    if (!(x.heures > 0)) return say('dg-msg', 'Indiquez le nombre d\'heures.', 'bad');
+    if (!(x.heures > 0) && !(x.absence > 0)) return say('dg-msg', 'Indiquez le nombre d\'heures.', 'bad');
     var ax = dgApres(); if (ax && ax.apres > ax.c.plafond + 1e-9 && !confirm('Avec ces heures, vous arrivez à ' + hFr(ax.apres) + ' ce mois, au-delà du maximum de ' + hFr(ax.c.plafond) + '.\n\nPoser quand même ?')) return;
     if (!sans && !p.sig) return say('dg-msg', 'Ajoutez d\'abord votre signature dans « Mes réglages » ci-dessous.', 'bad');
     if (!sans && !p.rh && !p.resp) return say('dg-msg', 'Indiquez d\'abord l\'e-mail des RH et de votre responsable dans « Mes réglages ».', 'bad');
@@ -647,11 +649,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   window.cseSigRefaire = function () { D.deleg.profil.sigRefaire = true; dgRender(); };
   // Ré-affiche la page sans perdre ce qui est en cours de saisie dans « Poser des heures »
   function dgRender() {
-    var ids = ['dg-eq', 'dg-du', 'dg-au', 'dg-de', 'dg-a', 'dg-de2', 'dg-a2', 'dg-de3', 'dg-a3', 'dg-h', 'dg-motif'], v = {}, ed = $('dg-h') && $('dg-h').dataset.edit, vis = {};
-    ['dg-pl2', 'dg-pl3', 'dg-plus'].forEach(function (i) { if ($(i)) vis[i] = $(i).style.display; }); var aa = $('dg-au') && $('dg-au').dataset.auto;
+    var ids = ['dg-eq', 'dg-abs-de', 'dg-abs-a', 'dg-abs-h', 'dg-du', 'dg-au', 'dg-de', 'dg-a', 'dg-de2', 'dg-a2', 'dg-de3', 'dg-a3', 'dg-h', 'dg-motif'], v = {}, ed = $('dg-h') && $('dg-h').dataset.edit, vis = {};
+    ['dg-pl2', 'dg-pl3', 'dg-plus', 'dg-abs'].forEach(function (i) { if ($(i)) vis[i] = $(i).style.display; }); var aa = $('dg-au') && $('dg-au').dataset.auto;
     ids.forEach(function (i) { if ($(i)) v[i] = $(i).value; }); render();
     for (var k in vis) if ($(k)) $(k).style.display = vis[k]; if (aa && $('dg-au')) $('dg-au').dataset.auto = aa;
-    ids.forEach(function (i) { if ($(i) && i in v) $(i).value = v[i]; }); if (ed && $('dg-h')) $('dg-h').dataset.edit = ed; try { cseDgCalc(); } catch (e) { }
+    ids.forEach(function (i) { if ($(i) && i in v) $(i).value = v[i]; }); if ($('dg-abs-on') && $('dg-abs')) $('dg-abs-on').checked = $('dg-abs').style.display !== 'none'; if (ed && $('dg-h')) $('dg-h').dataset.edit = ed; try { cseDgCalc(); } catch (e) { }
   }
   function dgPage() {
     var G = D.deleg || { profil: {}, liste: [] }, p = G.profil || {}, c = dgCompteur(), h = '', t = today();
@@ -663,14 +665,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       + '<div class="grid2"><div><label>Heures de délégation : de</label><input type="time" id="dg-de" value="08:00" onchange="cseDgCalc()"></div><div><label>à</label><input type="time" id="dg-a" value="12:00" onchange="cseDgCalc()"></div></div>'
       + [2, 3].map(function (k) { return '<div class="grid2" id="dg-pl' + k + '" style="display:none"><div><label>puis de</label><input type="time" id="dg-de' + k + '" onchange="cseDgCalc()"></div><div><label>à <a href="#" onclick="cseDgPlage(' + k + ');return false" style="float:right">✕ retirer</a></label><input type="time" id="dg-a' + k + '" onchange="cseDgCalc()"></div></div>'; }).join('')
       + '<p style="margin:4px 0 8px"><button class="btn" id="dg-plus" type="button" onclick="cseDgPlage()">➕ une autre plage le même jour</button></p><p class="mute" style="margin:0 0 8px">De nuit (ex. 21:00 à 05:00) : la fin est comptée le lendemain automatiquement.</p>'
-      + '<div class="grid2"><div><label>Total des heures (ex. 8:15)</label><input id="dg-h" placeholder="h:mm" oninput="this.dataset.edit=1"></div><div><label>Motif (facultatif)</label><input id="dg-motif" maxlength="200" placeholder="Réunion CSE, CSSCT…"></div></div>'
+      + '<label style="display:flex;gap:8px;align-items:center;font-weight:600;margin:6px 0 8px"><input type="checkbox" id="dg-abs-on" style="width:auto;margin:0" onchange="cseDgAbs()"> ➕ Ajouter une absence autorisée</label>'
+      + '<div id="dg-abs" style="display:none"><div class="grid2"><div><label>Absence autorisée : de</label><input type="time" id="dg-abs-de" onchange="cseDgAbs()"></div><div><label>à</label><input type="time" id="dg-abs-a" onchange="cseDgAbs()"></div></div><label>Heures d\'absence autorisée (ex. 2:00)</label><input id="dg-abs-h" placeholder="h:mm" oninput="this.dataset.edit=1"><p class="mute" style="margin:4px 0 8px">Ces heures ne sont pas déduites de votre crédit de délégation. Si vous ne posez que de l\'absence autorisée, mettez 0 au total des heures de délégation.</p></div>'
+      + '<div class="grid2"><div><label>Total des heures de délégation (ex. 8:15)</label><input id="dg-h" placeholder="h:mm" oninput="this.dataset.edit=1"></div><div><label>Motif (facultatif)</label><input id="dg-motif" maxlength="200" placeholder="Réunion CSE, CSSCT…"></div></div>'
       + '<div class="msg info" id="dg-resume" style="margin:10px 0"></div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" id="dg-go" onclick="cseDgPoser()">✍️ Signer et envoyer</button><button class="btn" id="dg-old" onclick="cseDgPoser(\'sans\')">➕ Déjà prise : ajouter sans feuille</button></div><p class="mute" style="margin-top:6px">« Déjà prise » : pour ajouter à votre compteur une délégation de ce mois (ou d\'avant) dont la feuille est déjà faite. Rien n\'est envoyé.</p><div id="dg-msg"></div></div>';
     var L = dgListe().sort(function (a, b) { return String(b.du).localeCompare(String(a.du)); });
     var TG = { feuille: ['info', 'Feuille envoyée'], ancienne: ['', 'Déjà prise'], saisie: ['', 'Saisie par le CSE'], recu: ['ok', 'Heures reçues'], cede: ['warn', 'Heures cédées'] };
     h += '<div class="card"><h2>📋 Mes délégations depuis le 1er juillet</h2>' + (L.length ? L.map(function (d) {
       var t = TG[d.type] || TG.saisie, st = d.vu ? '<span class="tag ok">Vue le ' + fd(d.vu) + '</span>' : '<span class="tag ' + t[0] + '">' + t[1] + '</span>';
-      return '<div class="row"><div class="l"><b>' + (d.au && d.au !== d.du ? 'Du ' + fd(d.du) + ' au ' + fd(d.au) : fd(d.du)) + (d.de ? ' · ' + dgPlTxt(d) : '') + '</b><div class="mute">' + [d.equipe ? E(dgEqTxt(d.equipe, d.du)) : '', E(d.motif || '')].filter(Boolean).join(' · ') + '</div></div><div class="r">' + (d.type === 'cede' ? '−' : d.type === 'recu' ? '+' : '') + hFr(d.heures) + '<br>' + st + '</div></div>';
+      return '<div class="row"><div class="l"><b>' + (d.au && d.au !== d.du ? 'Du ' + fd(d.du) + ' au ' + fd(d.au) : fd(d.du)) + (d.de && (d.heures > 0 || !(d.absence > 0)) ? ' · ' + dgPlTxt(d) : '') + '</b><div class="mute">' + [d.equipe ? E(dgEqTxt(d.equipe, d.du)) : '', d.absence > 0 ? '<b>Absence autorisée ' + hFr(d.absence) + '</b>' + (d.absDe ? ' (' + E(d.absDe) + ' – ' + E(d.absA) + ')' : '') + ', non déduite' : '', E(d.motif || '')].filter(Boolean).join(' · ') + '</div></div><div class="r">' + (d.type === 'cede' ? '−' : d.type === 'recu' ? '+' : '') + hFr(d.heures) + '<br>' + st + '</div></div>';
     }).join('') : '<p class="empty">Aucune délégation pour le moment.</p>') + '</div>';
     var TO = (D.fiche.deleg || {}).tous || [];
     if (TO.length) h += '<div class="card"><h2>👥 Compteurs des élus</h2><p class="mute">Pour information : chacun ne pose que ses propres heures.</p>' + TO.map(function (x) {
@@ -998,7 +1002,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '9.7', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '9.8', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
