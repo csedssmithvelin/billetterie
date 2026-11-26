@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"aCRt6NByhtdPCkVfeI/j4A==","iv":"TKIoAr9ewDz8gp5Y","rev":"boot","lastModified":"2026-11-26T23:24:37.322Z","by":"Michaël GROSJEAN","data":"rt9wc2wVu1Sk1daQLY0rIHbVfGZK6DMHGyEG1ecDWQhgMp8YlxOoxv44exmW0I/kUERp1mw1YvZDjoeAgUSKDQ=="},"at":"2026-11-26T23:24:37.361Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"IQ1Xjc4FDlpjblQIO+TiOA==","iv":"zR5/Xgph0Vw/obuB","rev":"boot","lastModified":"2026-11-26T23:46:32.628Z","by":"Michaël GROSJEAN","data":"6fR7jMIkE7GCZhnoUmfqjexXUoqVM5axucgKDDIJCFp6Hzh6POGoR0yQrYoJCvNdpmmGg5wwlWBuENERzV9xjA=="},"at":"2026-11-26T23:46:32.669Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.2.1";
+        const APP_VERSION = "V.10.3";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,12 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.3', date: '2026-11-27', items: [
+                'Nécessite le script Google v90.',
+                'Espace : onglet « ⚖️ Mes droits » avec 16 fiches du Code du travail (recherche, sources officielles, encadré « Chez nous »), calculs indicatifs (congés payés acquis, événement familial, fin de préavis), affichage obligatoire et PV de réunion publiés. Rien n\'est visible tant que « Publier » n\'est pas coché.',
+                'Espace : onglet « 🆘 Aide et contacts » : signaler un problème (sécurité, conditions de travail, harcèlement), en option anonyme avec code de suivi, envoyé aux élus et au référent harcèlement ; contacts des élus et contacts utiles ; numéros d\'urgence ; FAQ avec recherche.',
+                'Communication : nouveaux onglets Mes droits, Contacts, Affichage (documents + PV à publier), FAQ et Signalements (réponse, statut, note). Bouton « ➕ FAQ » dans les messages pour transformer une réponse en question de FAQ.'
+            ] },
             { v: 'V.10.2.1', date: '2026-11-27', items: [
                 'Sauvegarde dans le Drive du CSE (CSE - Sauvegardes) : chaque jour au lieu de chaque semaine, 30 jours gardés (la plus ancienne est effacée toute seule). Après chaque sauvegarde, l\'appli affiche le fichier confirmé par le Drive et sa taille.'
             ] },
@@ -47313,7 +47319,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 89;
+  var SCRIPT_ATTENDU = 90;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -48194,6 +48200,169 @@ var qrcode = function() {
   // ---------- 18d) Alerte « Bons plans » ----------
   var alEtat0 = alEtat; alEtat = function () { var S = alEtat0(); bpL().forEach(function (p) { if (bpActif(p)) S['p:' + p.id] = 1; }); return S; };
   var alQuoi0 = alQuoi; alQuoi = function (k) { if (k.indexOf('p:') !== 0) return alQuoi0(k); var p = bpL().filter(function (x) { return x.id === k.slice(2); })[0]; if (!p) return null; return { cats: ['bonsplans'], titre: '🏷️ Nouveau bon plan : ' + p.nom, texte: (p.reduc || 'Réduction pour les salariés') + '. Détails dans votre espace, onglet Bons plans.', nom: p.nom }; };
+  // =====================================================================
+  // 19) V.10.3 : MES DROITS (fiches, calculs, affichage obligatoire, PV) ET AIDE (signalements, contacts, FAQ)
+  // =====================================================================
+  var FICHES_T = [['conges-payes', 'Congés payés'], ['jours-feries', 'Jours fériés'], ['evenements', 'Congés pour événements familiaux'], ['paternite', 'Naissance : congé de paternité'], ['maladie', 'Arrêt maladie'], ['accident', 'Accident du travail'], ['heures-sup', 'Heures supplémentaires'], ['nuit', 'Travail de nuit'], ['pauses', 'Pauses et temps de repos'], ['retrait', 'Droit d\'alerte et de retrait'], ['harcelement', 'Harcèlement moral et sexuel'], ['medecine', 'Visites médicales'], ['cpf', 'Compte personnel de formation (CPF)'], ['entretien-pro', 'Entretien professionnel'], ['demission', 'Démission'], ['rupture', 'Rupture conventionnelle']];
+  var EVTS_T = [['mariage', 'Mariage ou PACS du salarié', 4], ['mariage-enfant', 'Mariage d\'un enfant', 1], ['naissance', 'Naissance ou adoption', 3], ['deces-enfant', 'Décès d\'un enfant', 5], ['deces-conjoint', 'Décès du conjoint, partenaire de PACS ou concubin', 3], ['deces-parent', 'Décès du père, de la mère, d\'un beau-parent, d\'un frère ou d\'une sœur', 3], ['handicap-enfant', 'Annonce d\'un handicap, d\'une maladie chronique ou d\'un cancer chez un enfant', 5]];
+  var CATS_P = [['ouvrier', 'Ouvriers'], ['etam', 'Employés, techniciens, agents de maîtrise'], ['cadre', 'Cadres']];
+  function IF() { db.infos = db.infos && typeof db.infos === 'object' ? db.infos : {}; var I = db.infos; I.on = I.on || {}; I.chez = I.chez || {}; I.evts = I.evts || {}; I.preavis = I.preavis || {}; I.contacts = I.contacts || []; I.affichage = I.affichage || []; I.faq = I.faq || []; I.referents = I.referents || []; return I; }
+  var INF = { tab: '', open: '', sig: null, sigSel: '', faqPre: null };
+  function inpF(id, ph, v, ty) { return '<input id="' + id + '" type="' + (ty || 'text') + '" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="' + E(ph || '') + '" value="' + E(v == null ? '' : v) + '">'; }
+  var BOX = 'rounded-xl border border-slate-200 bg-white p-3 space-y-2';
+  function setMsg(id, t, c) { var z = $(id); if (z) { z.textContent = t; z.className = 'text-xs ' + (c || ''); } }
+  async function fichierPartage(file, chemin, nomF) {
+    var ph = await pjLire(file); var j = await cseScriptPost('fichier', { data: ph.data, type: ph.type, nom: nomF || ph.nom, chemin: chemin });
+    try { await cseScriptPost('partager', { ids: [j.id] }); } catch (e) { }
+    return { id: j.id, url: j.url, nom: ph.nom, type: ph.type };
+  }
+  // ---------- 19a) Onglet « Mes droits » : fiches + réglages des calculs ----------
+  function rDroits() {
+    var I = IF(), nOn = FICHES_T.filter(function (f) { return I.on[f[0]]; }).length;
+    var h = '<div class="' + BOX + '"><div class="flex flex-wrap items-center gap-2"><b class="text-sm flex-1">⚖️ Fiches « Mes droits » (' + nOn + ' publiée(s) sur ' + FICHES_T.length + ')</b><button type="button" class="' + BTN + '" onclick="cseInfDroitsTout(true)">Tout publier</button><button type="button" class="' + BTN + '" onclick="cseInfDroitsTout(false)">Tout masquer</button></div>'
+      + '<p class="text-[11px] text-slate-500">Les fiches résument la loi (Code du travail) avec leurs sources, à jour au 27/11/2026. Elles ne remplacent pas un conseil juridique : faites-les relire par un élu avant de les publier. L\'encadré « Chez nous » s\'affiche sous la fiche (convention collective, accord d\'entreprise plus favorables…). Aperçu : ouvrez l\'espace en mode exemple.</p>'
+      + FICHES_T.map(function (f) { var op = INF.open === f[0]; return '<div class="border-t border-slate-100 pt-2"><div class="flex items-center gap-2"><label class="flex items-center gap-2 text-sm flex-1"><input type="checkbox"' + (I.on[f[0]] ? ' checked' : '') + ' onchange="cseInfDroit(\'' + f[0] + '\',this.checked)"> ' + E(f[1]) + '</label>' + (I.chez[f[0]] ? '<span class="text-[10px] bg-amber-100 text-amber-800 rounded px-1.5">Chez nous</span>' : '') + '<button type="button" class="text-xs text-indigo-700 underline" onclick="cseInfOpen(\'' + f[0] + '\')">' + (op ? 'Fermer' : '« Chez nous »') + '</button></div>'
+        + (op ? '<textarea id="v103-chez" rows="3" class="w-full p-2 bg-slate-50 border rounded-lg text-xs mt-1" placeholder="Ex. : notre convention collective prévoit 5 jours pour le mariage du salarié.">' + E(I.chez[f[0]] || '') + '</textarea><button type="button" class="' + BTNP + '" onclick="cseInfChez(\'' + f[0] + '\')">Enregistrer</button>' : '') + '</div>'; }).join('') + '</div>';
+    h += '<div class="' + BOX + '"><label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox"' + (I.calculsOn ? ' checked' : '') + ' onchange="cseInfSet(\'calculsOn\',this.checked)"> 🧮 Publier les calculs (congés payés, événements familiaux, fin de préavis)</label>'
+      + '<p class="text-[11px] text-slate-500">Le calcul se fait sur le téléphone du salarié : rien n\'est envoyé au CSE. Les résultats sont indiqués comme « indicatifs ».</p>'
+      + '<label class="text-xs text-slate-600 block">Début de l\'année de congés payés<select class="w-full p-2 bg-slate-50 border rounded-lg text-xs" onchange="cseInfSet(\'cpDebut\',Number(this.value))">' + ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'].map(function (m, i) { return '<option value="' + (i + 1) + '"' + ((I.cpDebut || 6) === i + 1 ? ' selected' : '') + '>1er ' + m + (i === 5 ? ' (par défaut dans la loi)' : '') + '</option>'; }).join('') + '</select></label>'
+      + '<p class="text-xs font-bold text-slate-700 mt-2">Jours pour événements familiaux (laissez vide = minimum légal)</p><div class="grid sm:grid-cols-2 gap-1">' + EVTS_T.map(function (x) { return '<label class="flex items-center gap-2 text-[11px] text-slate-600"><input type="number" min="0" max="30" class="w-16 p-1 border rounded text-xs" placeholder="' + x[2] + '" value="' + (I.evts[x[0]] || '') + '" onchange="cseInfEvt(\'' + x[0] + '\',this.value)"> ' + E(x[1]) + ' <span class="text-slate-400">(loi : ' + x[2] + ' j)</span></label>'; }).join('') + '</div>'
+      + '<p class="text-xs font-bold text-slate-700 mt-2">Préavis de démission (selon votre convention collective)</p><div class="grid sm:grid-cols-3 gap-2">' + CATS_P.map(function (c) { var v = I.preavis[c[0]] || {}; return '<label class="text-[11px] text-slate-600">' + E(c[1]) + '<div class="flex gap-1"><input type="number" min="0" max="12" class="w-16 p-1 border rounded text-xs" value="' + (v.n || '') + '" onchange="cseInfPreavis(\'' + c[0] + '\',\'n\',this.value)"><select class="p-1 border rounded text-xs" onchange="cseInfPreavis(\'' + c[0] + '\',\'u\',this.value)">' + ['jours', 'semaines', 'mois'].map(function (u) { return '<option' + ((v.u || 'mois') === u ? ' selected' : '') + '>' + u + '</option>'; }).join('') + '</select></div></label>'; }).join('') + '</div>'
+      + '<p class="text-[11px] text-slate-500">Sans durée saisie, l\'espace indique « selon votre convention collective : demandez au CSE ». Le préavis de licenciement suit la loi (1 mois de 6 mois à 2 ans d\'ancienneté, 2 mois au-delà) ; mettez dans « Chez nous » de la fiche Démission ce que prévoit la convention.</p></div>';
+    return h;
+  }
+  window.cseInfDroit = function (id, on) { var I = IF(); if (on) I.on[id] = true; else delete I.on[id]; save(); };
+  window.cseInfDroitsTout = function (on) { var I = IF(); FICHES_T.forEach(function (f) { if (on) I.on[f[0]] = true; else delete I.on[f[0]]; }); save(); infRender(); };
+  window.cseInfOpen = function (id) { INF.open = INF.open === id ? '' : id; infRender(); };
+  window.cseInfChez = function (id) { var I = IF(), v = String(($('v103-chez') || {}).value || '').trim(); if (v) I.chez[id] = v; else delete I.chez[id]; INF.open = ''; save(); infRender(); say('✔ Encadré « Chez nous » enregistré.', 'success'); };
+  window.cseInfSet = function (k, v) { IF()[k] = v; save(); infRender(); };
+  window.cseInfEvt = function (id, v) { var I = IF(), n = parseInt(v, 10); if (n > 0) I.evts[id] = n; else delete I.evts[id]; save(); };
+  window.cseInfPreavis = function (c, k, v) { var I = IF(), x = I.preavis[c] = I.preavis[c] || { u: 'mois' }; if (k === 'n') { var n = parseInt(v, 10); if (n > 0) x.n = n; else delete x.n; } else x.u = v; save(); };
+  // ---------- 19b) Contacts : élus (automatique) + contacts utiles ----------
+  var CT_TYPES = ['Médecine du travail', 'Inspection du travail', 'Mutuelle', 'Prévoyance', 'Action Logement', 'Ressources humaines', 'Assistante sociale', 'Défenseur des droits'];
+  function elusVrais() { return (db.employees || []).filter(function (e) { return e.active !== false && typeof window.cseEmpIsCse === 'function' && cseEmpIsCse(e); }).sort(function (a, b) { return nom(a).localeCompare(nom(b)); }); }
+  function roleDe(e) { try { var u = ((db.rbac && db.rbac.users) || []).filter(function (x) { return String(x.employeeId) === String(e.id); })[0]; return u ? rbacRoleLabel(u.role) : 'Élu(e) du CSE'; } catch (er) { return 'Élu(e) du CSE'; } }
+  function rContacts() {
+    var I = IF(), L = elusVrais();
+    var h = '<div class="' + BOX + '"><b class="text-sm">👥 Les élus (repris automatiquement des rôles du CSE)</b><p class="text-[11px] text-slate-500">Le salarié voit le nom, le rôle, le service et l\'équipe. Le téléphone et l\'e-mail ne s\'affichent que si vous les saisissez ici (de préférence professionnels).</p>'
+      + (L.length ? L.map(function (e) { var c = e.cseContact || {}, ph = c.photo && c.photo.id; return '<div class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-2">' + (ph ? '<img src="https://drive.google.com/thumbnail?id=' + encodeURIComponent(ph) + '&sz=w120" style="width:40px;height:40px;border-radius:50%;object-fit:cover">' : '<div style="width:40px;height:40px;border-radius:50%;background:#e0e7ff" class="flex items-center justify-center font-bold text-indigo-700">' + E((e.firstName || nom(e)).charAt(0)) + '</div>') + '<div class="flex-1 min-w-[140px]"><b class="text-sm">' + E(nom(e)) + '</b><div class="text-[11px] text-slate-500">' + E(roleDe(e)) + (e.service ? ' · ' + E(e.service) : '') + '</div></div>'
+        + '<input class="p-1.5 border rounded text-xs w-32" placeholder="Téléphone" value="' + E(c.tel || '') + '" onchange="cseInfElu(\'' + E(e.id) + '\',\'tel\',this.value)"><input class="p-1.5 border rounded text-xs w-44" placeholder="E-mail" value="' + E(c.mail || '') + '" onchange="cseInfElu(\'' + E(e.id) + '\',\'mail\',this.value)">'
+        + '<label class="' + BTN + '" style="cursor:pointer"><i class="fa-solid fa-camera"></i><input type="file" accept="image/*" style="display:none" onchange="cseInfEluPhoto(\'' + E(e.id) + '\',this)"></label>'
+        + '<label class="text-[11px] flex items-center gap-1"><input type="checkbox"' + (I.referents.indexOf(String(e.id)) >= 0 ? ' checked' : '') + ' onchange="cseInfRef(\'' + E(e.id) + '\',this.checked)"> Référent harcèlement</label></div>'; }).join('') : '<p class="text-xs text-amber-700">Aucun élu trouvé : reliez les utilisateurs du CSE à leur fiche salarié (Paramètres › Utilisateurs).</p>') + '<p id="v103-ct-msg" class="text-xs"></p></div>';
+    var x = INF.ctEdit ? I.contacts.filter(function (c) { return c.id === INF.ctEdit; })[0] || {} : {};
+    h += '<div class="' + BOX + '"><b class="text-sm">' + (INF.ctEdit ? '✏️ Modifier le contact' : '➕ Contact utile') + '</b><div class="grid sm:grid-cols-2 gap-2"><input id="v103-ct-type" list="v103-ct-types" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Type (ex. : Médecine du travail)" value="' + E(x.type || '') + '"><datalist id="v103-ct-types">' + CT_TYPES.map(function (t) { return '<option value="' + E(t) + '">'; }).join('') + '</datalist>'
+      + inpF('v103-ct-nom', 'Nom (ex. : Dr Martin, AST88)', x.nom) + inpF('v103-ct-tel', 'Téléphone', x.tel) + inpF('v103-ct-mail', 'E-mail', x.mail) + inpF('v103-ct-adr', 'Adresse', x.adresse) + inpF('v103-ct-site', 'Site internet', x.site) + '</div>' + '<textarea id="v103-ct-info" rows="2" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Infos (horaires, n° de contrat, quand l\'appeler…)">' + E(x.info || '') + '</textarea>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" onclick="cseInfCt()">' + (INF.ctEdit ? 'Enregistrer' : 'Ajouter') + '</button>' + (INF.ctEdit ? '<button type="button" class="' + BTN + '" onclick="cseInfCtEdit(\'\')">Annuler</button><button type="button" class="' + BTN + '" onclick="cseInfCtDel(\'' + E(INF.ctEdit) + '\')"><i class="fa-solid fa-trash"></i> Supprimer</button>' : '') + '</div>'
+      + (I.contacts.length ? I.contacts.map(function (c) { return '<div class="flex items-center gap-2 border-t border-slate-100 pt-2 text-xs"><div class="flex-1"><b>' + E(c.type || 'Contact') + '</b> · ' + E(c.nom || '') + '<div class="text-slate-500">' + E([c.tel, c.mail].filter(Boolean).join(' · ')) + '</div></div><button type="button" class="' + BTN + '" onclick="cseInfCtEdit(\'' + E(c.id) + '\')"><i class="fa-solid fa-pen"></i></button></div>'; }).join('') : '<p class="text-[11px] text-slate-400">Aucun contact. Les numéros d\'urgence (15, 17, 18, 112, 114, 3919) s\'affichent toujours dans l\'espace.</p>') + '</div>';
+    return h;
+  }
+  window.cseInfElu = function (id, k, v) { var e = emp(id); if (!e) return; e.cseContact = e.cseContact || {}; v = String(v || '').trim(); if (v) e.cseContact[k] = v; else delete e.cseContact[k]; save(); };
+  window.cseInfEluPhoto = async function (id, inp) { var f = inp.files && inp.files[0]; inp.value = ''; var e = emp(id); if (!f || !e) return; if (!scriptOk()) return setMsg('v103-ct-msg', 'Le script Google n\'est pas relié.', 'text-rose-700'); setMsg('v103-ct-msg', 'Envoi de la photo…'); try { var r = await fichierPartage(f, ['7 - Communication', 'Photos des élus'], 'Élu - ' + nom(e)); e.cseContact = e.cseContact || {}; e.cseContact.photo = { id: r.id }; save(); infRender(); } catch (er) { setMsg('v103-ct-msg', 'Erreur : ' + er.message, 'text-rose-700'); } };
+  window.cseInfRef = function (id, on) { var I = IF(); I.referents = I.referents.filter(function (x) { return x !== String(id); }); if (on) I.referents.push(String(id)); save(); sigReglages(); };
+  window.cseInfCtEdit = function (id) { INF.ctEdit = id || ''; infRender(); };
+  window.cseInfCt = function () { var I = IF(), g = function (k) { return String(($('v103-ct-' + k) || {}).value || '').trim(); }; if (!g('type') && !g('nom')) { say('Indiquez au moins le type ou le nom.', 'warning'); return; } var x = INF.ctEdit ? I.contacts.filter(function (c) { return c.id === INF.ctEdit; })[0] : null; if (!x) { x = { id: uid() }; I.contacts.push(x); } var site = g('site'); if (site && !/^https?:\/\//i.test(site)) site = 'https://' + site; Object.assign(x, { type: g('type'), nom: g('nom'), tel: g('tel'), mail: g('mail'), adresse: g('adr'), site: site, info: g('info') }); INF.ctEdit = ''; save(); infRender(); };
+  window.cseInfCtDel = async function (id) { if (!(await uiConfirm('Supprimer ce contact ?'))) return; var I = IF(); I.contacts = I.contacts.filter(function (c) { return c.id !== id; }); INF.ctEdit = ''; save(); infRender(); };
+  // ---------- 19c) Affichage obligatoire + procès-verbaux publiés ----------
+  var AF_TYPES = ['Convention collective', 'Règlement intérieur', 'Horaires de travail', 'Consignes de sécurité et d\'incendie', 'Égalité femmes-hommes', 'Harcèlement : textes et sanctions', 'Lutte contre les discriminations', 'Document unique (DUERP) : consultation', 'Accord d\'entreprise', 'Autre'];
+  function pvId(u) { var m = /\/d\/([A-Za-z0-9_-]{20,})/.exec(String(u || '')) || /[?&]id=([A-Za-z0-9_-]{20,})/.exec(String(u || '')); return m ? m[1] : ''; }
+  function rAffichage() {
+    var I = IF();
+    var h = '<div class="' + BOX + '"><b class="text-sm">📌 Affichage obligatoire en ligne</b><p class="text-[11px] text-slate-500">Déposez le PDF (ou une photo) de chaque document. Il est rangé sur le Drive (CSE - Documents › Affichage obligatoire), ouvert en lecture par lien, et apparaît dans l\'espace (Mes droits). L\'affichage papier dans l\'entreprise reste à faire par l\'employeur.</p>'
+      + '<div class="grid sm:grid-cols-2 gap-2"><select id="v103-af-type" class="w-full p-2 bg-slate-50 border rounded-lg text-xs">' + AF_TYPES.map(function (t) { return '<option>' + E(t) + '</option>'; }).join('') + '</select>' + inpF('v103-af-titre', 'Titre affiché (facultatif)') + '</div>'
+      + '<div class="flex flex-wrap items-center gap-2"><label class="' + BTNP + '" style="cursor:pointer"><i class="fa-solid fa-file-arrow-up"></i> Déposer le PDF<input type="file" accept="application/pdf,image/*" style="display:none" onchange="cseInfAf(this)"></label><span id="v103-af-msg" class="text-xs"></span></div>'
+      + (I.affichage.length ? I.affichage.map(function (a) { return '<div class="flex items-center gap-2 border-t border-slate-100 pt-2 text-xs"><i class="fa-solid fa-file-pdf text-rose-600"></i><div class="flex-1"><b>' + E(a.titre) + '</b> <span class="text-slate-400">· ' + E(a.type) + ' · ' + fd(String(a.at).slice(0, 10)) + '</span></div><a class="' + BTN + '" target="_blank" rel="noopener" href="' + E(a.url) + '">Ouvrir</a><button type="button" class="' + BTN + '" onclick="cseInfAfDel(\'' + E(a.id) + '\')"><i class="fa-solid fa-trash"></i></button></div>'; }).join('') : '<p class="text-[11px] text-slate-400">Aucun document pour l\'instant.</p>') + '</div>';
+    var M = (db.meetings || []).filter(function (m) { return m.pvEnvoi && m.pvEnvoi.url; }).sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });
+    h += '<div class="' + BOX + '"><b class="text-sm">📝 Procès-verbaux des réunions du CSE</b><p class="text-[11px] text-slate-500">Les comptes rendus envoyés aux élus (Réunions › Envoyer le compte rendu) apparaissent ici. Cochez ceux qui sont approuvés pour les publier aux salariés (onglet Mes droits de l\'espace).</p>'
+      + (M.length ? M.map(function (m) { var st = m.pv && m.pv.status; return '<label class="flex items-center gap-2 border-t border-slate-100 pt-2 text-xs"><input type="checkbox"' + (m.pvPublie ? ' checked' : '') + ' onchange="cseInfPv(\'' + E(m.id) + '\',this.checked)"><span class="flex-1"><b>' + E(fd(m.date)) + '</b> · ' + E(m.title || m.type || 'Réunion') + (st ? ' <span class="text-slate-400">(' + E(st === 'diffuse' ? 'diffusé' : st === 'valide' ? 'validé' : st) + ')</span>' : '') + '</span><a class="underline text-indigo-700" target="_blank" rel="noopener" href="' + E(m.pvEnvoi.url) + '">PDF</a></label>'; }).join('') : '<p class="text-[11px] text-slate-400">Aucun compte rendu envoyé pour le moment.</p>') + '<p id="v103-pv-msg" class="text-xs"></p></div>';
+    return h;
+  }
+  window.cseInfAf = async function (inp) { var f = inp.files && inp.files[0]; inp.value = ''; if (!f) return; if (!scriptOk()) return setMsg('v103-af-msg', 'Le script Google n\'est pas relié.', 'text-rose-700'); var ty = ($('v103-af-type') || {}).value || 'Autre', ti = String(($('v103-af-titre') || {}).value || '').trim() || ty; setMsg('v103-af-msg', 'Envoi…'); try { var r = await fichierPartage(f, ['Affichage obligatoire'], ti); IF().affichage.push({ id: uid(), type: ty, titre: ti, url: r.url, fid: r.id, at: new Date().toISOString() }); save(); infRender(); say('✔ Document déposé.', 'success'); } catch (e) { setMsg('v103-af-msg', 'Erreur : ' + e.message, 'text-rose-700'); } };
+  window.cseInfAfDel = async function (id) { if (!(await uiConfirm('Retirer ce document de l\'espace ? (le fichier reste sur le Drive)'))) return; var I = IF(); I.affichage = I.affichage.filter(function (a) { return a.id !== id; }); save(); infRender(); };
+  window.cseInfPv = async function (id, on) { var m = (db.meetings || []).filter(function (x) { return x.id === id; })[0]; if (!m) return; if (!on) { delete m.pvPublie; save(); return; } var fid = pvId(m.pvEnvoi && m.pvEnvoi.url); setMsg('v103-pv-msg', 'Ouverture du PDF en lecture…'); try { var j = await cseScriptPost('partager', { ids: [fid] }); if (fid && (j.refus || []).indexOf(fid) >= 0) throw new Error('installez le script Google v90.'); m.pvPublie = true; save(); setMsg('v103-pv-msg', '✔ PV publié aux salariés (à la prochaine mise à jour de l\'espace).', 'text-emerald-700'); } catch (e) { setMsg('v103-pv-msg', 'Erreur : ' + e.message, 'text-rose-700'); infRender(); } };
+  // ---------- 19d) FAQ ----------
+  function rFaq() {
+    var I = IF(), x = INF.faqEdit ? I.faq.filter(function (q) { return q.id === INF.faqEdit; })[0] || {} : (INF.faqPre || {});
+    var h = '<div class="' + BOX + '"><b class="text-sm">' + (INF.faqEdit ? '✏️ Modifier la question' : '➕ Nouvelle question') + '</b>' + (INF.faqPre ? '<p class="text-[11px] text-amber-700">Reprise d\'un échange de la messagerie : relisez et retirez tout ce qui permettrait de reconnaître le salarié.</p>' : '')
+      + inpF('v103-fq-cat', 'Thème (ex. : Chèques vacances, Mutuelle, Colis…)', x.cat) + '<textarea id="v103-fq-q" rows="2" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Question">' + E(x.q || '') + '</textarea><textarea id="v103-fq-r" rows="4" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Réponse">' + E(x.r || '') + '</textarea>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" onclick="cseInfFaq()">' + (INF.faqEdit ? 'Enregistrer' : 'Ajouter à la FAQ') + '</button>' + (INF.faqEdit || INF.faqPre ? '<button type="button" class="' + BTN + '" onclick="cseInfFaqEdit(\'\')">Annuler</button>' : '') + (INF.faqEdit ? '<button type="button" class="' + BTN + '" onclick="cseInfFaqDel(\'' + E(INF.faqEdit) + '\')"><i class="fa-solid fa-trash"></i> Supprimer</button>' : '') + '</div></div>';
+    h += '<div class="' + BOX + '"><b class="text-sm">❓ Foire aux questions (' + I.faq.length + ')</b><p class="text-[11px] text-slate-500">Astuce : dans Messages, le bouton « ➕ FAQ » reprend la dernière question du salarié et votre réponse.</p>' + (I.faq.length ? I.faq.map(function (q) { return '<div class="flex items-start gap-2 border-t border-slate-100 pt-2 text-xs"><div class="flex-1"><span class="text-[10px] text-indigo-700 font-bold">' + E(q.cat || '') + '</span><div><b>' + E(q.q) + '</b></div><div class="text-slate-500 line-clamp-2">' + E(q.r) + '</div></div><button type="button" class="' + BTN + '" onclick="cseInfFaqEdit(\'' + E(q.id) + '\')"><i class="fa-solid fa-pen"></i></button></div>'; }).join('') : '<p class="text-[11px] text-slate-400">Aucune question pour l\'instant.</p>') + '</div>';
+    return h;
+  }
+  window.cseInfFaqEdit = function (id) { INF.faqEdit = id || ''; INF.faqPre = null; infRender(); };
+  window.cseInfFaq = function () { var I = IF(), g = function (k) { return String(($('v103-fq-' + k) || {}).value || '').trim(); }; if (!g('q') || !g('r')) { say('Écrivez la question et la réponse.', 'warning'); return; } var x = INF.faqEdit ? I.faq.filter(function (q) { return q.id === INF.faqEdit; })[0] : null; if (!x) { x = { id: uid() }; I.faq.push(x); } Object.assign(x, { cat: g('cat'), q: g('q'), r: g('r'), at: today() }); INF.faqEdit = ''; INF.faqPre = null; save(); infRender(); say('✔ Question enregistrée.', 'success'); };
+  window.cseInfFaqDel = async function (id) { if (!(await uiConfirm('Supprimer cette question ?'))) return; var I = IF(); I.faq = I.faq.filter(function (q) { return q.id !== id; }); INF.faqEdit = ''; save(); infRender(); };
+  window.cseInfFaqDepuisMsg = function () {
+    var f = (MS.fils || {})[MS.sel]; if (!f) return; var L = f.liste || [], iC = -1; for (var i = L.length - 1; i >= 0; i--) if (L[i].de === 'cse' && L[i].texte) { iC = i; break; }
+    if (iC < 0) { say('Répondez d\'abord au salarié : sa question et votre réponse seront reprises.', 'info'); return; }
+    var q = ''; for (var k = iC - 1; k >= 0; k--) if (L[k].de === 'sal' && L[k].texte) { q = L[k].texte; break; }
+    INF.faqPre = { q: q, r: L[iC].texte, cat: '' }; INF.faqEdit = ''; try { cseMsgFermer(); } catch (e) { } cseComm('faq');
+  };
+  // Bouton « ➕ FAQ » dans la messagerie
+  var msR19 = msRender; msRender = function () { msR19.apply(this, arguments); try { var fil = $('v99-msg-fil'); if (fil && MS.sel && !MS.nouveau && !$('v103-faq-bt')) fil.insertAdjacentHTML('afterend', '<div class="px-3 pt-1 text-right"><button type="button" id="v103-faq-bt" class="text-[11px] text-indigo-700 underline" onclick="cseInfFaqDepuisMsg()">➕ FAQ : ajouter cette question et ma réponse</button></div>'); } catch (e) { } };
+  // ---------- 19e) Signalements ----------
+  function sigReglages() {
+    if (!scriptOk()) return; var I = IF(), R = I.referents.map(function (id) { return emp(id); }).filter(Boolean);
+    var to = R.map(function (e) { return (e.cseContact && e.cseContact.mail) || e.email; }).filter(Boolean), liens = R.map(function (e) { return e.espaceToken; }).filter(Boolean);
+    cseScriptPost('signal-reglages', { to: to, liens: liens }).catch(function (e) { console.warn('[signalements]', e.message); });
+  }
+  async function sigCharger() { try { INF.sig = (await cseScriptPost('signalements', {})).liste || []; INF.sigErr = ''; } catch (e) { INF.sig = []; INF.sigErr = /inconnue/i.test(e.message) ? 'Installez le script Google v90.' : e.message; } var c = cfg(); c.sigVus = c.sigVus || {}; infRender(); }
+  var STS = { nouveau: ['🆕 Nouveau', 'bg-rose-100 text-rose-800'], 'en cours': ['⏳ En cours', 'bg-amber-100 text-amber-800'], 'traité': ['✅ Traité', 'bg-emerald-100 text-emerald-800'] };
+  function rSignal() {
+    var I = IF(), R = I.referents.map(function (id) { return emp(id); }).filter(Boolean);
+    var h = '<div class="' + BOX + '"><label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox"' + (I.signalOn ? ' checked' : '') + ' onchange="cseInfSet(\'signalOn\',this.checked);cseInfSigRegl()"> 🆘 Permettre les signalements depuis l\'espace</label>'
+      + '<p class="text-[11px] text-slate-500">Sécurité, conditions de travail, harcèlement ou discrimination, avec une option anonyme (aucun nom gardé, seulement un code de suivi). Chaque signalement part par e-mail aux référents ci-dessous (sinon à la boîte du CSE) et en notification. Son contenu n\'est visible que par les membres du CSE.</p>'
+      + '<p class="text-xs">Référents : ' + (R.length ? R.map(function (e) { return '<b>' + E(nom(e)) + '</b>' + (((e.cseContact && e.cseContact.mail) || e.email) ? '' : ' <span class="text-amber-700">(sans e-mail)</span>'); }).join(', ') : '<span class="text-amber-700">aucun : choisissez-les dans l\'onglet Contacts (case « Référent harcèlement »)</span>') + '</p></div>';
+    h += '<div class="' + BOX + '"><div class="flex items-center gap-2"><b class="text-sm flex-1">📥 Signalements reçus</b><button type="button" class="' + BTN + '" onclick="cseInfSigCharger()"><i class="fa-solid fa-rotate"></i> Actualiser</button></div>' + (INF.sigErr ? '<p class="text-xs text-rose-700">' + E(INF.sigErr) + '</p>' : '');
+    if (INF.sig === null) { h += '<p class="text-xs text-slate-500">Chargement…</p>'; setTimeout(sigCharger, 0); }
+    else if (!INF.sig.length) h += '<p class="text-[11px] text-slate-400">Aucun signalement.</p>';
+    else h += INF.sig.map(function (x) { var st = STS[x.statut] || STS.nouveau, op = INF.sigSel === x.id; return '<div class="border-t border-slate-100 pt-2 text-xs"><div class="flex flex-wrap items-center gap-2 cursor-pointer" onclick="cseInfSigSel(\'' + E(x.id) + '\')"><span class="rounded px-1.5 py-0.5 text-[10px] font-bold ' + st[1] + '">' + st[0] + '</span><b>' + E(x.catNom) + '</b><span class="text-slate-500">' + E(fd(String(x.at).slice(0, 10))) + ' · ' + (x.anonyme ? '🕶️ anonyme' : E(x.nom || '')) + (x.lieu ? ' · ' + E(x.lieu) : '') + '</span></div>'
+      + (op ? '<div class="mt-2 space-y-2 pl-2 border-l-2 border-indigo-200"><p class="whitespace-pre-wrap text-slate-800">' + E(x.texte) + '</p>' + (x.quand ? '<p class="text-slate-500">Date des faits : ' + E(fd(x.quand)) + '</p>' : '') + (x.pj && x.pj.url ? '<a class="underline text-indigo-700" target="_blank" rel="noopener" href="' + E(x.pj.url) + '">📎 ' + E(x.pj.nom || 'Pièce jointe') + '</a>' : '')
+        + (x.reponses || []).map(function (r) { return '<div class="bg-indigo-50 rounded-lg p-2"><b>Réponse du ' + E(fd(String(r.at).slice(0, 10))) + (r.par ? ' (' + E(r.par) + ')' : '') + '</b><div class="whitespace-pre-wrap">' + E(r.texte) + '</div></div>'; }).join('')
+        + '<textarea id="v103-sg-rep" rows="3" class="w-full p-2 bg-slate-50 border rounded-lg text-xs" placeholder="Réponse visible par le salarié' + (x.anonyme ? ' (avec son code de suivi)' : ' (dans son espace et en notification)') + '"></textarea><div class="flex flex-wrap gap-2 items-center"><select id="v103-sg-st" class="p-1.5 border rounded text-xs">' + Object.keys(STS).map(function (k) { return '<option value="' + k + '"' + (x.statut === k ? ' selected' : '') + '>' + STS[k][0] + '</option>'; }).join('') + '</select><button type="button" class="' + BTNP + '" onclick="cseInfSigRep(\'' + E(x.id) + '\')"><i class="fa-solid fa-paper-plane"></i> Enregistrer</button></div>'
+        + '<textarea id="v103-sg-note" rows="2" class="w-full p-2 bg-amber-50 border border-amber-200 rounded-lg text-xs" placeholder="Note interne (jamais montrée au salarié)">' + E(x.note || '') + '</textarea></div>' : '') + '</div>'; }).join('');
+    return h + '</div>';
+  }
+  window.cseInfSigRegl = function () { sigReglages(); };
+  window.cseInfSigCharger = function () { INF.sig = null; infRender(); };
+  window.cseInfSigSel = function (id) { INF.sigSel = INF.sigSel === id ? '' : id; infRender(); };
+  window.cseInfSigRep = async function (id) {
+    var t = String(($('v103-sg-rep') || {}).value || '').trim(), st = ($('v103-sg-st') || {}).value, note = ($('v103-sg-note') || {}).value;
+    if (t && !(await uiConfirm('Envoyer cette réponse au salarié ?\n\n' + t))) return;
+    try { var j = await cseScriptPost('signalement-repondre', { id: id, texte: t, statut: st, note: note, par: qui() }); INF.sig = INF.sig.map(function (x) { return x.id === id ? j.signalement : x; }); infRender(); say('✔ Enregistré' + (t ? ' : la réponse est visible par le salarié.' : '.'), 'success'); }
+    catch (e) { say('Erreur : ' + e.message, 'error'); }
+  };
+  // Nouveaux signalements : petite pastille sur le bouton Communication (vérifié toutes les 10 min)
+  async function sigTick() { if (!IF().signalOn || !scriptOk() || seed() || !isCse() || document.hidden) return; try { var L = (await cseScriptPost('signalements', {})).liste || [], n = L.filter(function (x) { return x.statut === 'nouveau'; }).length; INF.sigNew = n; if (n && !INF.sigVuN) { INF.sigVuN = n; say('🆘 ' + n + ' signalement(s) à traiter : Communication › Signalements.', 'warning'); } } catch (e) { } }
+  // ---------- 19f) Onglets supplémentaires dans « Communication » ----------
+  var INF_TABS = [['droits', 'fa-scale-balanced', 'Mes droits', rDroits], ['contacts', 'fa-address-book', 'Contacts', rContacts], ['affichage', 'fa-thumbtack', 'Affichage', rAffichage], ['faq', 'fa-circle-question', 'FAQ', rFaq], ['signal', 'fa-triangle-exclamation', 'Signalements', rSignal]];
+  function infRender() { var body = $('v85-body'); if (!body || !INF.tab) return; var t = INF_TABS.filter(function (x) { return x[0] === INF.tab; })[0]; if (!t) return; var y = body.scrollTop; body.innerHTML = t[3](); body.scrollTop = y; }
+  var comm1 = window.cseComm;
+  window.cseComm = function (tab) {
+    var mine = INF_TABS.some(function (x) { return x[0] === tab; });
+    if (!mine && tab) INF.tab = ''; comm1(mine ? 'annonces' : tab);
+    var b = $('modal-v85-comm'), r0 = b && b.querySelector('[data-v85t]'), row = r0 && r0.parentNode; if (!row) return;
+    INF_TABS.forEach(function (t) {
+      var bt = row.querySelector('[data-v103="' + t[0] + '"]');
+      if (!bt) { bt = document.createElement('button'); bt.type = 'button'; bt.setAttribute('data-v103', t[0]); bt.innerHTML = '<i class="fa-solid ' + t[1] + ' mr-1"></i>' + t[2] + (t[0] === 'signal' && INF.sigNew ? ' <span class="bg-rose-600 text-white rounded-full px-1.5 text-[10px]">' + INF.sigNew + '</span>' : ''); bt.onclick = function () { cseComm(t[0]); }; row.appendChild(bt); }
+      bt.className = 'px-3 py-2 rounded-xl text-xs font-bold border ' + (tab === t[0] ? 'bg-brand-600 text-white border-brand-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50');
+    });
+    if (mine) { INF.tab = tab; row.querySelectorAll('[data-v85t],[data-v102]').forEach(function (x) { x.className = x.className.replace('bg-brand-600 text-white border-brand-600', 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'); }); if (tab === 'signal' && INF.sig === null) { } infRender(); }
+  };
+  // ---------- 19g) Publication vers l'espace ----------
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try {
+      var I = IF(), elus = elusVrais();
+      P.infos = {
+        fiches: FICHES_T.filter(function (f) { return I.on[f[0]]; }).map(function (f) { return f[0]; }), chez: I.chez, calculs: !!I.calculsOn, evts: I.evts, preavis: I.preavis, cpDebut: I.cpDebut || 6,
+        affichage: I.affichage.map(function (a) { return { titre: a.titre, type: a.type, url: a.url, at: String(a.at || '').slice(0, 10) }; }),
+        pv: (db.meetings || []).filter(function (m) { return m.pvPublie && m.pvEnvoi && m.pvEnvoi.url; }).sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); }).map(function (m) { return { date: m.date, titre: m.title || m.type || 'Réunion du CSE', url: m.pvEnvoi.url }; }),
+        elus: elus.map(function (e) { var c = e.cseContact || {}, p = ''; try { p = posteTxt(posteDe(e.groupe)); } catch (er) { } return { nom: nom(e), role: roleDe(e), service: e.service || '', equipe: p, tel: c.tel || '', mail: c.mail || '', photo: c.photo && c.photo.id ? { id: c.photo.id } : null, referent: I.referents.indexOf(String(e.id)) >= 0 }; }),
+        contacts: I.contacts.map(function (c) { return { type: c.type, nom: c.nom, tel: c.tel, mail: c.mail, adresse: c.adresse, site: /^https?:\/\//.test(c.site || '') ? c.site : '', info: c.info }; }),
+        faq: I.faq.map(function (q) { return { cat: q.cat, q: q.q, r: q.r }; }), signal: !!I.signalOn
+      };
+    } catch (er) { console.warn('[espace 10.3]', er); }
+  }; })();
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
   setInterval(function () {
@@ -48218,6 +48387,8 @@ var qrcode = function() {
   setTimeout(function () { obBan(); }, 2000);
   setTimeout(function () { obVider(); phEnvoyer(); }, 40000);
   setTimeout(function () { bmTick(); }, 45000);
+  setTimeout(function () { sigTick(); }, 50000);
+  setInterval(function () { sigTick(); }, 10 * 60000);
   setInterval(function () { bmTick(); }, 10 * 60000);
   setInterval(function () { obVider(); phEnvoyer(); }, 5 * 60000);
   setTimeout(function () { msSync(); budTick(); }, 40000);
