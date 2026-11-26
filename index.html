@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"3QchOHnC4W/YS0++ItXIvg==","iv":"6XOfTIi5d2rF5gUv","rev":"boot","lastModified":"2026-11-26T22:31:54.259Z","by":"Michaël GROSJEAN","data":"fFAWZWdjyMgcHECBJ83tWwp/tkej6SK9rVsRS+CazX0QDDph7afKRX5Vd+7CyCOUSJay7w+fsBUiqo62hPsCfQ=="},"at":"2026-11-26T22:31:54.318Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"y0fGC4WeSrKNdzXSPRe4CQ==","iv":"jWzw8n8bhKPSjujc","rev":"boot","lastModified":"2026-11-26T23:00:26.001Z","by":"Michaël GROSJEAN","data":"chfH1LD6IQ8nSyUFMGSBrNi9DNtex5VEiJBDr8J6NvFXm97WXrzynuu8KWU5r8kLY8mGMXNFmyldw/hZBtrzMA=="},"at":"2026-11-26T23:00:26.038Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.0";
+        const APP_VERSION = "V.10.1";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,16 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.1', date: '2026-11-26', items: [
+                'Tableau de bord : 6 grandes tuiles de couleur en haut (ventes du mois, colis à remettre, prêts en cours, messages non lus, budget utilisé, impayés). Un clic ouvre la page.',
+                'Équipes : chaque salarié a un groupe (A, B, C ou Journée), dans sa fiche ou d\'un coup avec « Répartir les salariés ». Dans Paramètres, on indique le poste de chaque groupe cette semaine ; chaque lundi le roulement avance tout seul.',
+                'Messages : « Une équipe de cette semaine » (matin, après-midi, nuit ou journée) dans la liste des destinataires.',
+                'Catalogue de l\'espace : bouton « Photos et catégories » dans Billetterie et Inscriptions, pour ajouter une photo à un billet ou une sortie (rangée sur le Drive, 7 - Communication › Photos du catalogue) et choisir sa catégorie.',
+                'Alertes au choix : quand un billet, une sortie ou du matériel est ajouté, l\'appli propose 1 min 30 après de prévenir seulement les salariés qui ont coché cette catégorie (ou qui n\'ont rien choisi). Le message est montré avant l\'envoi.',
+                'Demandes d\'aide en ligne (naissance, mariage, retraite, rentrée…) avec justificatif en photo ou PDF : types et montants dans Paramètres, désactivé par défaut. Les demandes arrivent avec les autres demandes ; les justificatifs sont rangés à part sur le Drive, non partagés.',
+                'Bilan du mois aux élus en PDF le 1er du mois (désactivé par défaut) : montré avant l\'envoi, envoyé par e-mail aux élus et rangé sur le Drive (6 - Bilans et budget › Bilans du mois).',
+                'Nécessite le script Google v88.'
+            ] },
             { v: 'V.10.0', date: '2026-11-26', items: [
                 'Messages : « Écrire » permet d\'envoyer à un salarié, à tous, à un service, aux inscrits d\'une sortie, aux élus ou à une liste choisie à la main. Chacun le reçoit dans son espace, en notification et par e-mail (dans la limite du quota Google du jour). La liste des destinataires est montrée avant l\'envoi.',
                 'Messages : pièce jointe 📎 (photo réduite automatiquement, ou PDF de 5 Mo au plus) dans les deux sens, rangée sur le Drive (CSE - Documents › Messages).',
@@ -43658,7 +43668,7 @@ var qrcode = function() {
     var n = pending().length;
     document.querySelectorAll('[data-v70n]').forEach(function (el) { el.textContent = n; el.style.display = n ? '' : 'none'; });
   }
-  var TYPES = { sortie: ['fa-masks-theater', 'Inscription à une sortie'], 'sortie-modif': ['fa-pen', 'Modifier une inscription'], 'sortie-annul': ['fa-ban', 'Annuler une inscription'], materiel: ['fa-campground', 'Réservation de matériel'], cv: ['fa-umbrella-beach', 'Chèques vacances'], fiche: ['fa-id-card', 'Modification de fiche'], message: ['fa-comment', 'Message'], billets: ['fa-ticket', 'Réservation de billets'], paiement: ['fa-credit-card', 'Paiement en ligne'] };
+  var TYPES = { sortie: ['fa-masks-theater', 'Inscription à une sortie'], 'sortie-modif': ['fa-pen', 'Modifier une inscription'], 'sortie-annul': ['fa-ban', 'Annuler une inscription'], materiel: ['fa-campground', 'Réservation de matériel'], cv: ['fa-umbrella-beach', 'Chèques vacances'], fiche: ['fa-id-card', 'Modification de fiche'], message: ['fa-comment', 'Message'], billets: ['fa-ticket', 'Réservation de billets'], paiement: ['fa-credit-card', 'Paiement en ligne'], aide: ['fa-hand-holding-heart', 'Demande d\'aide'] };
   window.cseDemandes = function () {
     if (!isCse()) { say('Réservé aux membres du CSE.', 'warning'); return; }
     var b = v59Modal('modal-v70-dem', 'Demandes des salariés', 'fa-inbox');
@@ -43684,6 +43694,7 @@ var qrcode = function() {
     else if (d.type === 'materiel') h = '<div>' + (x.items || []).map(function (i) { return i.qte + ' x ' + E(i.nom); }).join(', ') + ' · du ' + fd(x.debut) + ' au ' + fd(x.fin) + '</div>';
     else if (d.type === 'billets') h = '<div><b>' + E(x.qte) + ' x ' + E(x.titre) + '</b> · ' + eur(x.total || 0) + ' · à préparer pour la permanence</div>';
     else if (d.type === 'paiement') h = '<div>Le salarié dit avoir payé en ligne <b>' + eur(x.montant || 0) + '</b> (' + E(x.quoi || '') + '). Vérifiez la notification SumUp / le relevé, puis validez le paiement dans l\'appli.</div>';
+    else if (d.type === 'aide') h = '<div>🤝 <b>' + E(x.aide || 'Aide') + '</b>' + (x.date ? ' · événement du ' + fd(x.date) : '') + (x.montant ? ' · montant prévu ' + eur(x.montant) : '') + '</div>' + (x.justificatif && x.justificatif.url ? '<div><a href="' + E(x.justificatif.url) + '" target="_blank" rel="noopener" class="text-indigo-700 underline">📎 Justificatif : ' + E(x.justificatif.nom || 'ouvrir') + '</a> <span class="text-slate-400">(rangé dans CSE - Documents › Demandes d\'aide)</span></div>' : '<div class="text-amber-700">Pas de justificatif joint.</div>');
     else if (d.type === 'cv') h = '<div>Montant souhaité <b>' + eur(x.montant) + '</b> · ' + E(x.format) + ' · paiement : ' + E(x.paiement) + '</div>';
     else if (d.type === 'fiche') {
       var c = x.changes || {}, lab = { address: 'Adresse', phone: 'Téléphone', email: 'E-mail' };
@@ -47285,7 +47296,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 87;
+  var SCRIPT_ATTENDU = 88;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -47342,10 +47353,11 @@ var qrcode = function() {
       var svcs = EM.map(function (e) { return e.service || ''; }).filter(function (s, i, a) { return s && a.indexOf(s) === i; }).sort();
       var sorties = (db.outings || []).filter(function (o) { return o.status !== 'annulee' && String(o.date || '') >= addD(today(), -60); }).sort(function (a, c) { return String(a.date).localeCompare(String(c.date)); }).slice(0, 40);
       droite = '<div class="p-4 space-y-2 overflow-y-auto flex-1"><p class="text-sm font-bold text-slate-800">✉️ Écrire au salarié ou à plusieurs</p>'
-        + '<select class="' + INP + '" onchange="cseMsgDest(\'dest\',this.value)">' + sel('un', 'Un salarié') + sel('tous', 'Tous les salariés') + sel('service', 'Un service') + sel('sortie', 'Les inscrits d\'une sortie') + sel('elus', 'Les élus du CSE') + sel('choix', 'Choisir à la main') + (MS.liste ? sel('liste', MS.liste.nom) : '') + '</select>';
+        + '<select class="' + INP + '" onchange="cseMsgDest(\'dest\',this.value)">' + sel('un', 'Un salarié') + sel('tous', 'Tous les salariés') + sel('service', 'Un service') + sel('sortie', 'Les inscrits d\'une sortie') + sel('elus', 'Les élus du CSE') + sel('equipe', 'Une équipe de cette semaine') + sel('choix', 'Choisir à la main') + (MS.liste ? sel('liste', MS.liste.nom) : '') + '</select>';
       if (D === 'un') droite += '<select id="v99-msg-to" class="' + INP + '" onchange="cseMsgDest(\'to\',this.value)"><option value="">— Choisir —</option>' + EM.map(function (e) { return '<option value="' + E(e.espaceToken) + '"' + (MS.to === e.espaceToken ? ' selected' : '') + '>' + E(nom(e)) + (e.email ? '' : ' (pas d\'e-mail : espace seulement)') + '</option>'; }).join('') + '</select>';
       if (D === 'service') droite += '<select class="' + INP + '" onchange="cseMsgDest(\'svc\',this.value)"><option value="">— Service —</option>' + svcs.map(function (s) { return '<option' + (MS.svc === s ? ' selected' : '') + '>' + E(s) + '</option>'; }).join('') + '</select>';
       if (D === 'sortie') droite += '<select class="' + INP + '" onchange="cseMsgDest(\'sortie\',this.value)"><option value="">— Sortie —</option>' + sorties.map(function (o) { return '<option value="' + E(o.id) + '"' + (String(MS.sortie) === String(o.id) ? ' selected' : '') + '>' + E(fd(o.date) + ' · ' + (o.name || o.title || 'Sortie')) + '</option>'; }).join('') + '</select>';
+      if (D === 'equipe') droite += '<select class="' + INP + '" onchange="cseMsgDest(\'poste\',this.value)"><option value="">— Équipe —</option>' + ['matin', 'apres-midi', 'nuit', 'journee'].map(function (p) { return '<option value="' + p + '"' + (MS.poste === p ? ' selected' : '') + '>' + E(posteTxt(p)) + '</option>'; }).join('') + '</select>';
       if (D === 'choix') droite += '<div class="border border-slate-200 rounded-lg max-h-48 overflow-y-auto p-2 grid sm:grid-cols-2 gap-1">' + EM.map(function (e) { return '<label class="flex items-center gap-1.5 text-xs"><input type="checkbox"' + ((MS.choix || {})[e.espaceToken] ? ' checked' : '') + ' onchange="cseMsgDest(\'choix\',\'' + E(e.espaceToken) + '\',this.checked)"> ' + E(nom(e)) + '</label>'; }).join('') + '</div>';
       if (groupe) { var R = msDest(), sm = R.filter(function (e) { return !e.email; }).length; droite += '<p class="text-xs ' + (R.length ? 'text-slate-700' : 'text-rose-700') + '"><b>' + R.length + ' destinataire(s)</b>' + (sm ? ' · ' + sm + ' sans e-mail (espace et notification seulement)' : '') + (MS.horsEsp ? ' · ' + MS.horsEsp + ' sans lien d\'espace, non joints' : '') + '</p>'
         + '<label class="text-xs text-slate-600 block">Objet de l\'e-mail<input id="v99-msg-titre" class="' + INP + '" value="' + E(gT != null ? gT : (MS.titre || 'Message du CSE')) + '"></label>'; }
@@ -47861,6 +47873,225 @@ var qrcode = function() {
     return p;
   }; });
 
+  // =====================================================================
+  // 17) V.10.1 : ROULEMENT DES ÉQUIPES, PHOTOS ET CATÉGORIES DU CATALOGUE, ALERTES AU CHOIX,
+  //     DEMANDES D'AIDE, ACCUEIL EN GRANDES TUILES, BILAN DU MOIS AUX ÉLUS
+  // =====================================================================
+  // ---------- 17a) Roulement des équipes ----------
+  var POSTES = { matin: 'Matin (5h–13h)', 'apres-midi': 'Après-midi (13h–21h)', nuit: 'Nuit (21h–5h)' };
+  function lundi(iso) { var d = new Date((iso || today()) + 'T12:00:00'), j = (d.getDay() + 6) % 7; d.setDate(d.getDate() - j); return d.toISOString().slice(0, 10); }
+  function rl() { var c = cfg(); c.roulement = c.roulement || {}; var R = c.roulement; if (!R.ref) R.ref = lundi(); if (!R.postes) R.postes = { A: 'matin', B: 'apres-midi', C: 'nuit' }; if (!R.cycle) R.cycle = ['matin', 'apres-midi', 'nuit']; return R; }
+  function posteDe(g, iso) {
+    if (g === 'J') return 'journee'; if (!/^[ABC]$/.test(g || '')) return ''; var R = rl(), p0 = R.postes[g]; if (!p0) return '';
+    var n = Math.round((new Date(lundi(iso) + 'T12:00:00') - new Date(R.ref + 'T12:00:00')) / (7 * 864e5)), i = R.cycle.indexOf(p0); if (i < 0) return p0;
+    return R.cycle[(((i + n) % 3) + 3) % 3];
+  }
+  function posteTxt(p) { return p === 'journee' ? 'Journée' : POSTES[p] || ''; }
+  window.cseEquipe = function (id) { var e = emp(id); if (!e || !e.groupe) return null; var p = posteDe(e.groupe); return { groupe: e.groupe, poste: p, texte: posteTxt(p) }; };
+  window.cseRlSet = function (k, v, w) { var R = rl(); if (k === 'poste') { R.postes[v] = w; R.ref = lundi(); } else if (k === 'cycle') R.cycle = v === 'inverse' ? ['matin', 'nuit', 'apres-midi'] : ['matin', 'apres-midi', 'nuit']; save(); cfgCard(true); };
+  window.cseGroupeSet = function (id, g) { var e = emp(id); if (!e) return; if (g) e.groupe = g; else delete e.groupe; save(); try { logAction('Modification', 'employee', 'Équipe de ' + nom(e) + ' : ' + (g ? 'groupe ' + g : 'aucune')); } catch (er) { } var z = $('v101-eq'); if (z) { z.remove(); eqFiche(); } };
+  function eqFiche() {
+    var box = $('emp-profile-content'); if (!box || typeof profileEmployeeId === 'undefined' || !profileEmployeeId || $('v101-eq')) return; var e = emp(profileEmployeeId); if (!e) return;
+    var p = posteDe(e.groupe), opt = function (v, l) { return '<option value="' + v + '"' + ((e.groupe || '') === v ? ' selected' : '') + '>' + l + '</option>'; };
+    box.insertAdjacentHTML('afterbegin', '<div id="v101-eq" class="flex flex-wrap items-center gap-2 text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 mb-3"><b class="text-slate-700">👷 Équipe :</b><select class="p-1 border rounded text-xs" onchange="cseGroupeSet(\'' + E(e.id) + '\',this.value)">' + opt('', '—') + opt('A', 'Groupe A') + opt('B', 'Groupe B') + opt('C', 'Groupe C') + opt('J', 'Journée (horaires fixes)') + '</select>' + (p ? '<span class="text-slate-600">Cette semaine : <b>' + E(posteTxt(p)) + '</b></span>' : '') + '</div>');
+  }
+  window.cseRlRepartir = function () {
+    var m = modal(), b = $('v94-sig-box'), L = (db.employees || []).filter(function (e) { return e.active !== false; }).sort(function (a, c) { return nom(a).localeCompare(nom(c)); });
+    var opt = function (e, v, l) { return '<option value="' + v + '"' + ((e.groupe || '') === v ? ' selected' : '') + '>' + l + '</option>'; };
+    b.innerHTML = '<div class="flex items-start justify-between"><h3 class="font-extrabold text-slate-800 text-base">👷 Répartir les salariés dans les groupes</h3><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="cseSigFermer()">×</button></div><input class="' + INP + '" placeholder="Rechercher…" oninput="[].forEach.call(document.querySelectorAll(\'#v101-rp>div\'),function(d){d.style.display=d.textContent.toLowerCase().indexOf(this.value.toLowerCase())>=0?\'\':\'none\'},this)"><div id="v101-rp" class="max-h-[60vh] overflow-y-auto divide-y" style="max-height:60vh">'
+      + L.map(function (e) { return '<div class="flex items-center gap-2 py-1.5 text-xs"><span class="flex-1">' + E(nom(e)) + (e.service ? ' <span class="text-slate-400">· ' + E(e.service) + '</span>' : '') + '</span><select class="p-1 border rounded text-xs" onchange="cseGroupeSet(\'' + E(e.id) + '\',this.value)">' + opt(e, '', '—') + opt(e, 'A', 'A') + opt(e, 'B', 'B') + opt(e, 'C', 'C') + opt(e, 'J', 'Journée') + '</select></div>'; }).join('') + '</div>';
+    m.classList.remove('hidden');
+  };
+  // ---------- 17b) Photos et catégories du catalogue de l'espace ----------
+  var CATS_B = [['parcs', '🎢 Parc de loisirs'], ['cinema', '🎬 Cinéma'], ['spectacles', '🎤 Spectacle, concert'], ['loisirs', '🏊 Sport et loisirs']];
+  function catBillet(t) { return t.alerteCat || (/cin[ée]ma/i.test(t.title || '') ? 'cinema' : 'parcs'); }
+  function catSortie(o) { var p = o.prices || o.price || {}; return ['sorties'].concat(o.kids || Number(p.childGuest) > 0 || /famille|enfant/i.test(o.name || '') ? ['famille'] : []); }
+  function phId(x) { return x && x.photo && x.photo.id; }
+  function catItems() {
+    var t = today();
+    var B = (db.tickets || []).filter(function (k) { return k && !k.archived && !k.espaceHidden && (!k.expiryDate || String(typeof ccIso === 'function' ? ccIso(k.expiryDate) : k.expiryDate) >= t); }).sort(function (a, c) { return String(a.title).localeCompare(String(c.title)); });
+    var S = (db.outings || []).filter(function (o) { return o.status !== 'annulee' && String(typeof ccIso === 'function' ? ccIso(o.date) : o.date) >= t; }).sort(function (a, c) { return String(a.date).localeCompare(String(c.date)); });
+    return { B: B, S: S };
+  }
+  window.cseCatalogue = function () {
+    var m = modal(), b = $('v94-sig-box'), I = catItems();
+    var ligne = function (k, x, titre, sous, cat) { var id = phId(x); return '<div class="flex items-center gap-3 py-2">' + (id ? '<img src="https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w200" style="width:64px;height:64px;object-fit:cover;border-radius:10px;background:#f1f5f9">' : '<div style="width:64px;height:64px;border-radius:10px;background:#f1f5f9" class="flex items-center justify-center text-2xl">🖼️</div>')
+      + '<div class="flex-1 min-w-0"><b class="text-sm text-slate-800 block truncate">' + E(titre) + '</b><span class="text-[11px] text-slate-500">' + E(sous) + '</span>' + (cat || '') + '</div>'
+      + '<label class="' + BTN + '" style="cursor:pointer"><i class="fa-solid fa-camera"></i> ' + (id ? 'Changer' : 'Photo') + '<input type="file" accept="image/*" style="display:none" onchange="cseCatPhoto(\'' + k + '\',\'' + E(x.id) + '\',this)"></label>' + (id ? '<button type="button" class="' + BTN + '" title="Retirer la photo" onclick="cseCatPhotoOter(\'' + k + '\',\'' + E(x.id) + '\')"><i class="fa-solid fa-trash"></i></button>' : '') + '</div>'; };
+    b.innerHTML = '<div class="flex items-start justify-between"><h3 class="font-extrabold text-slate-800 text-base">📷 Photos et catégories pour l\'espace salarié</h3><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="cseSigFermer()">×</button></div><p class="text-xs text-slate-500">La photo s\'affiche sur la carte du billet ou de la sortie dans l\'espace. La catégorie sert aux alertes choisies par les salariés.</p><p id="v101-cat-msg" class="text-xs"></p>'
+      + '<h4 class="font-bold text-slate-700 text-sm mt-2">🎟️ Billets</h4><div class="divide-y">' + (I.B.length ? I.B.map(function (t) { return ligne('t', t, t.title, (t.stock || 0) + ' en stock', '<select class="mt-1 p-1 border rounded text-[11px] block" onchange="cseCatSet(\'' + E(t.id) + '\',this.value)">' + CATS_B.map(function (c) { return '<option value="' + c[0] + '"' + (catBillet(t) === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select>'); }).join('') : '<p class="text-xs text-slate-400">Aucun billet en vente.</p>') + '</div>'
+      + '<h4 class="font-bold text-slate-700 text-sm mt-3">🎭 Sorties à venir</h4><div class="divide-y">' + (I.S.length ? I.S.map(function (o) { return ligne('o', o, o.name || o.title || 'Sortie', fd(o.date) + (o.location ? ' · ' + o.location : '')); }).join('') : '<p class="text-xs text-slate-400">Aucune sortie à venir.</p>') + '</div>';
+    m.classList.remove('hidden');
+  };
+  function catObj(k, id) { return (k === 't' ? db.tickets : db.outings || []).filter(function (x) { return String(x.id) === String(id); })[0]; }
+  window.cseCatSet = function (id, v) { var t = catObj('t', id); if (t) { t.alerteCat = v; save(); } };
+  window.cseCatPhotoOter = function (k, id) { var x = catObj(k, id); if (x) { delete x.photo; save(); cseCatalogue(); } };
+  window.cseCatPhoto = async function (k, id, inp) {
+    var f = inp.files && inp.files[0]; inp.value = ''; var x = catObj(k, id); if (!f || !x) return; var p = $('v101-cat-msg');
+    var dit = function (m, c) { p = $('v101-cat-msg') || p; if (p) { p.textContent = m; p.className = 'text-xs ' + (c || ''); } };
+    if (!scriptOk()) return dit('Le script Google n\'est pas relié.', 'text-rose-700');
+    dit('Envoi de la photo…');
+    try {
+      var ph = await pjLire(f), Y = String(today()).slice(0, 4);
+      var j = await cseScriptPost('fichier', { data: ph.data, type: 'image/jpeg', nom: (k === 't' ? 'Billet - ' : 'Sortie - ') + (x.title || x.name || 'photo'), chemin: [Y, '7 - Communication', 'Photos du catalogue'] });
+      try { await cseScriptPost('partager', { ids: [j.id] }); } catch (er) { }
+      x.photo = { id: j.id, url: j.url, at: new Date().toISOString() }; save(); cseCatalogue(); dit('✔ Photo ajoutée : elle apparaîtra dans l\'espace à la prochaine mise à jour (quelques minutes).', 'text-emerald-700');
+    } catch (e) { dit('Erreur : ' + (/inconnue/i.test(e.message) ? 'installez le script Google v88.' : e.message), 'text-rose-700'); }
+  };
+  function catBarre() {
+    [['tab-ticketing', 'Photos et catégories des billets pour l\'espace salarié'], ['tab-inscriptions', 'Photos des sorties pour l\'espace salarié']].forEach(function (x) {
+      var tab = $(x[0]); if (!tab || tab.classList.contains('hidden') || tab.querySelector('.v101-cat')) return;
+      tab.insertAdjacentHTML('afterbegin', '<div class="v101-cat flex flex-wrap items-center gap-2 bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-2 mb-3 text-xs"><span class="flex-1 text-indigo-900 font-semibold">📷 ' + x[1] + '</span><button type="button" class="' + BTN + '" onclick="cseCatalogue()"><i class="fa-solid fa-images"></i> Ouvrir</button></div>');
+    });
+  }
+  // ---------- 17c) Ce que l'espace reçoit : photos, aides, équipe de la semaine ----------
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try {
+      (P.billets || []).forEach(function (b) { var t = catObj('t', b.id); if (t && phId(t)) b.photo = { id: t.photo.id }; if (t) b.cat = catBillet(t); });
+      (P.sorties || []).forEach(function (s) { var o = catObj('o', s.id); if (o && phId(o)) s.photo = { id: o.photo.id }; });
+      var c = cfg(); P.aides = c.aidesOn ? aidesL().filter(function (a) { return a.nom; }).map(function (a) { return { nom: a.nom, montant: Number(a.montant) || 0, info: a.info || '', justif: a.justif !== false }; }) : [];
+    } catch (er) { console.warn('[espace 10.1]', er); }
+  }; })();
+  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) {
+    if (prev) { try { prev(f, e); } catch (er) { } }
+    try { if (e && e.groupe) { var p = posteDe(e.groupe); f.equipe = { groupe: e.groupe, poste: p, texte: posteTxt(p) }; } } catch (er) { }
+  }; })();
+  // ---------- 17d) Alertes au choix : notification aux salariés intéressés seulement ----------
+  var AL = { base: null, prefs: null, at: 0, q: [], busy: false };
+  function alEtat() { var S = {}; (db.tickets || []).forEach(function (t) { if (t && !t.archived) S['t:' + t.id] = 1; }); (db.outings || []).forEach(function (o) { if (o.status !== 'annulee') S['o:' + o.id] = 1; }); (db.equipment || []).forEach(function (q) { if (!q.espaceHidden) S['m:' + q.id] = 1; }); return S; }
+  var alB = setInterval(function () { if (window.__dbLoaded && !seed()) { clearInterval(alB); if (!AL.base) AL.base = alEtat(); } }, 500);
+  if (typeof window.livePull === 'function') { var lp2 = window.livePull; window.livePull = async function () { AL.pull = true; try { return await lp2.apply(this, arguments); } finally { try { AL.base = alEtat(); } catch (e) { } AL.pull = false; } }; }
+  if (typeof window.saveDB === 'function') { var sd2 = window.saveDB, sdW2 = function () { var r = sd2.apply(this, arguments); try { alScan(); } catch (e) { console.warn('[alertes]', e); } return r; }; for (var k2 in sd2) sdW2[k2] = sd2[k2]; window.saveDB = sdW2; }
+  function alScan() {
+    if (!AL.base || AL.pull || !window.__dbLoaded || seed() || !isCse()) return; var S = alEtat(), fait = cfg().alerteFaites || {};
+    Object.keys(S).forEach(function (k) { if (!AL.base[k] && !fait[k] && AL.q.indexOf(k) < 0) AL.q.push(k); }); AL.base = S;
+    if (AL.q.length) setTimeout(alSuivant, 90000);   // 1 min 30 pour finir de remplir la fiche (nom, prix, photo)
+  }
+  function alQuoi(k) {
+    var p = k.split(':'), ty = p[0], x = ty === 't' ? catObj('t', p[1]) : ty === 'o' ? catObj('o', p[1]) : (db.equipment || []).filter(function (q) { return String(q.id) === p[1]; })[0];
+    if (!x) return null;
+    if (ty === 't') return { cats: [catBillet(x)], titre: '🎟️ Nouveau au CSE : ' + (x.title || 'billet'), texte: (x.title || 'Billet') + ' à ' + eur(x.price || 0) + (x.publicPrice > x.price ? ' au lieu de ' + eur(x.publicPrice) : '') + '. Réservez-le depuis votre espace.', nom: x.title };
+    if (ty === 'o') return { cats: catSortie(x), titre: '🎭 Nouvelle sortie : ' + (x.name || 'sortie'), texte: (x.name || 'Sortie') + ' le ' + fd(x.date) + (x.location ? ' (' + x.location + ')' : '') + '. Inscrivez-vous depuis votre espace.', nom: x.name };
+    return { cats: ['materiel'], titre: '⛺ Nouveau matériel à prêter', texte: (x.name || 'Matériel') + ' : réservez-le depuis votre espace.', nom: x.name };
+  }
+  async function alSuivant() {
+    if (AL.busy || !AL.q.length || !scriptOk()) return; if (!pushOk()) { AL.q = []; return; }
+    var m = $('v94-sig-modal'); if (m && !m.classList.contains('hidden')) { setTimeout(alSuivant, 20000); return; }
+    AL.busy = true; var k = AL.q.shift(), c = cfg(); c.alerteFaites = c.alerteFaites || {};
+    try {
+      var q = alQuoi(k); if (!q || !q.nom) { AL.busy = false; return setTimeout(alSuivant, 500); }
+      if (!AL.prefs || Date.now() - AL.at > 600000) { var j = await cseScriptPost('prefs-tous', {}); AL.prefs = j.prefs || {}; AL.at = Date.now(); }
+      var R = (db.employees || []).filter(function (e) { if (!e.espaceToken || e.active === false) return false; var pf = AL.prefs[e.espaceToken]; return !pf || (pf.cats || []).some(function (c2) { return q.cats.indexOf(c2) >= 0; }); });
+      if (!R.length) { c.alerteFaites[k] = today(); save(); AL.busy = false; return setTimeout(alSuivant, 500); }
+      var ok = await alApercu(q, R); c.alerteFaites[k] = today(); save();
+      if (ok) { var r = await cseEspacePost('push', { cibles: R.map(function (e) { return e.espaceToken; }), titre: q.titre, texte: q.texte }); say('🔔 Alerte envoyée à ' + R.length + ' salarié(s) intéressé(s)' + (r && r.envoyes != null ? ' (' + r.envoyes + ' téléphone(s))' : '') + '.', 'success'); }
+    } catch (e) { if (/inconnue/i.test(e.message)) AL.q = []; else console.warn('[alertes]', e.message); }
+    AL.busy = false; if (AL.q.length) setTimeout(alSuivant, 1500);
+  }
+  function pushOk() { var c = cfg(); return !!(c.pushCfg && c.pushVapid); }
+  function alApercu(q, R) {
+    return new Promise(function (res) {
+      var m = amModal(), b = $('v99-am-box');
+      b.innerHTML = '<h3 class="font-extrabold text-slate-800 text-base">🔔 Prévenir les salariés intéressés ?</h3><p class="text-xs text-slate-600">Catégorie : <b>' + E(q.cats.map(function (c3) { return ({ cinema: 'Cinéma', parcs: 'Parcs de loisirs', spectacles: 'Spectacles, concerts', loisirs: 'Sport et loisirs', sorties: 'Sorties', famille: 'Sorties en famille', materiel: 'Matériel à prêter' })[c3] || c3; }).join(', ')) + '</b> · <b>' + R.length + '</b> salarié(s) concerné(s) (ceux qui ont coché cette catégorie, et ceux qui n\'ont encore rien choisi).</p>'
+        + '<div class="border border-slate-200 rounded-xl p-3 bg-slate-50"><b class="text-sm">' + E(q.titre) + '</b><p class="text-xs text-slate-700 mt-1">' + E(q.texte) + '</p></div>'
+        + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" id="v101-al-ok"><i class="fa-solid fa-bell"></i> Envoyer la notification</button><button type="button" class="' + BTN + '" id="v101-al-non">Pas maintenant</button></div>';
+      m.classList.remove('hidden');
+      var fin = function (v) { m.classList.add('hidden'); res(v); };
+      $('v101-al-ok').onclick = function () { fin(true); }; $('v101-al-non').onclick = function () { fin(false); };
+    });
+  }
+  // ---------- 17e) Demandes d'aide : types et montants ----------
+  var AIDES_DEF = [{ nom: 'Naissance ou adoption', montant: 0, info: 'Justificatif : acte de naissance ou livret de famille.' }, { nom: 'Mariage ou PACS', montant: 0, info: 'Justificatif : acte de mariage ou de PACS.' }, { nom: 'Départ en retraite', montant: 0, info: 'Justificatif : attestation de départ.' }, { nom: 'Rentrée scolaire', montant: 0, info: 'Justificatif : certificat de scolarité.' }];
+  function aidesL() { var c = cfg(); return Array.isArray(c.aides) && c.aides.length ? c.aides : AIDES_DEF; }
+  window.cseAideSet = function (i, k, v) { var c = cfg(); if (!Array.isArray(c.aides) || !c.aides.length) c.aides = AIDES_DEF.map(function (a) { return Object.assign({}, a); }); if (k === 'del') c.aides.splice(i, 1); else if (k === 'add') c.aides.push({ nom: '', montant: 0, info: '' }); else if (k === 'montant') c.aides[i].montant = parseFloat(String(v).replace(',', '.')) || 0; else if (k === 'justif') c.aides[i].justif = !!v; else c.aides[i][k] = v; save(); cfgCard(true); };
+  window.cseAidesOn = function (v) { cfg().aidesOn = !!v; save(); cfgCard(true); };
+  // ---------- 17f) Bilan du mois aux élus (PDF, le 1er du mois) ----------
+  function moisPrec2() { var d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+  function moisNom(M) { return ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'][Number(M.slice(5, 7)) - 1] + ' ' + M.slice(0, 4); }
+  function dIso(x) { try { return String(typeof ccIso === 'function' ? ccIso(x) || x : x || ''); } catch (e) { return String(x || ''); } }
+  function bmHtml(M) {
+    var inM = function (x) { return dIso(x).slice(0, 7) === M; };
+    var V = (db.sales || []).filter(function (s) { return inM(s.date); }), vT = V.reduce(function (s, x) { return s + (Number(x.totalPaid) || 0); }, 0), vQ = V.reduce(function (s, x) { return s + (x.items || []).reduce(function (a, i) { return a + (Number(i.qty) || 0); }, 0); }, 0);
+    var parB = {}; V.forEach(function (s) { (s.items || []).forEach(function (i) { var k = i.ticketTitle || 'Billet'; parB[k] = (parB[k] || 0) + (Number(i.qty) || 0); }); });
+    var So = (db.outings || []).filter(function (o) { return inM(o.date); }), Rg = db.registrations || [];
+    var Pr = (db.loans || []).filter(function (l) { return inM(l.startDate); }), Re = (db.loans || []).filter(function (l) { return l.pickedUp && !l.returned && dIso(l.endDate) < today(); });
+    var Bd = (db.budgetEntries || []).filter(function (b) { return inM(b.date) && !b.transfer; }), dep = {}, rec = 0; Bd.forEach(function (b) { if (b.type === 'expense') { var k = (b.envelope || 'ASC') + ' · ' + (b.category || 'Autre'); dep[k] = (dep[k] || 0) + (Number(b.amount) || 0); } else if (b.type === 'income') rec += Number(b.amount) || 0; });
+    var dT = Object.keys(dep).reduce(function (s, k) { return s + dep[k]; }, 0), F = MS.fils || {}, nMsg = 0; Object.keys(F).forEach(function (t) { (F[t].liste || []).forEach(function (m) { if (m.de === 'sal' && String(m.at).slice(0, 7) === M) nMsg++; }); });
+    var tb = function (h, rows) { return '<table style="width:100%;border-collapse:collapse;font-size:12px;margin:6px 0 12px"><tr>' + h.map(function (x, i) { return '<th style="text-align:' + (i ? 'right' : 'left') + ';border-bottom:2px solid #1e3a8a;padding:4px">' + x + '</th>'; }).join('') + '</tr>' + rows.map(function (r) { return '<tr>' + r.map(function (x, i) { return '<td style="text-align:' + (i ? 'right' : 'left') + ';border-bottom:1px solid #e2e8f0;padding:4px">' + x + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>'; };
+    var kp = function (l, v) { return '<div style="flex:1;min-width:120px;border:1px solid #cbd5e1;border-radius:10px;padding:8px 10px"><div style="font-size:11px;color:#64748b">' + l + '</div><div style="font-size:18px;font-weight:800;color:#0f172a">' + v + '</div></div>'; };
+    var logo = (window.cseSigLogo && cseSigLogo().logo) || '';
+    return '<div style="font-family:Helvetica,Arial,sans-serif;color:#0f172a;padding:24px;width:700px;background:#fff">'
+      + '<div style="display:flex;align-items:center;gap:12px;border-bottom:3px solid #1e3a8a;padding-bottom:10px">' + (logo ? '<img src="' + logo + '" style="height:48px">' : '') + '<div><div style="font-size:20px;font-weight:800">Bilan du mois : ' + E(moisNom(M)) + '</div><div style="font-size:12px;color:#475569">' + E(cfg().cseName || 'CSE') + ' · document interne pour les élus · édité le ' + fd(today()) + '</div></div></div>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0">' + kp('Ventes de billets', eur(vT)) + kp('Billets vendus', vQ) + kp('Dépenses du mois', eur(dT)) + kp('Recettes du mois', eur(rec)) + kp('Messages des salariés', nMsg) + kp('Prêts sortis', Pr.length) + '</div>'
+      + '<h3 style="color:#1e3a8a;font-size:14px;margin:10px 0 0">🎟️ Billetterie</h3>' + (Object.keys(parB).length ? tb(['Billet', 'Quantité'], Object.keys(parB).sort(function (a, b) { return parB[b] - parB[a]; }).map(function (k) { return [E(k), parB[k]]; })) : '<p style="font-size:12px">Aucune vente.</p>')
+      + '<h3 style="color:#1e3a8a;font-size:14px;margin:10px 0 0">🎭 Sorties du mois</h3>' + (So.length ? tb(['Sortie', 'Inscrits'], So.map(function (o) { return [E((o.name || 'Sortie') + ' (' + fd(dIso(o.date)) + ')'), Rg.filter(function (r) { return String(r.outingId) === String(o.id) && !r.cancelled && !r.waitlist; }).length]; })) : '<p style="font-size:12px">Aucune sortie ce mois-ci.</p>')
+      + '<h3 style="color:#1e3a8a;font-size:14px;margin:10px 0 0">💶 Dépenses par activité</h3>' + (dT ? tb(['Activité', 'Montant'], Object.keys(dep).sort(function (a, b) { return dep[b] - dep[a]; }).map(function (k) { return [E(k), eur(dep[k])]; })) : '<p style="font-size:12px">Aucune dépense enregistrée.</p>')
+      + '<h3 style="color:#1e3a8a;font-size:14px;margin:10px 0 0">⛺ Prêts de matériel</h3><p style="font-size:12px">' + Pr.length + ' prêt(s) sorti(s) dans le mois · ' + Re.length + ' retour(s) en retard aujourd\'hui.</p>'
+      + '<p style="font-size:10px;color:#64748b;margin-top:18px">Chiffres calculés automatiquement depuis l\'appli du CSE.</p></div>';
+  }
+  function bmDest() { return elusL().filter(function (e) { return e.email; }); }
+  window.cseBilanMois = async function (envoyer) {
+    var M = moisPrec2(), html = bmHtml(M), D = bmDest(), m = modal(), b = $('v94-sig-box');
+    b.innerHTML = '<div class="flex items-start justify-between"><h3 class="font-extrabold text-slate-800 text-base">📊 Bilan du mois aux élus : ' + E(moisNom(M)) + '</h3><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="cseSigFermer()">×</button></div><p class="text-xs text-slate-600">À : ' + (D.length ? D.map(function (e) { return E(nom(e)); }).join(', ') : '<b class="text-rose-700">aucun élu avec une adresse e-mail</b>') + '</p><div class="border rounded-xl overflow-auto" style="max-height:55vh">' + html + '</div><div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" id="v101-bm-ok"' + (D.length ? '' : ' disabled') + '><i class="fa-solid fa-paper-plane"></i> Envoyer aux élus (PDF) et ranger sur le Drive</button></div><p id="v101-bm-msg" class="text-xs"></p>';
+    m.classList.remove('hidden');
+    $('v101-bm-ok').onclick = async function () {
+      var p = $('v101-bm-msg'), bt = $('v101-bm-ok'); bt.disabled = true; p.textContent = 'Fabrication du PDF…';
+      try {
+        var pl = { fichier: 'Bilan du mois - ' + moisNom(M), chemin: [M.slice(0, 4), '6 - Bilans et budget', 'Bilans du mois'], drive: true, mail: true, to: D.map(function (e) { return e.email; }).join(','), subject: 'Bilan du mois du CSE : ' + moisNom(M), body: 'Bonjour,\n\nVoici le bilan du CSE pour ' + moisNom(M) + ' (ventes, sorties, dépenses, prêts), en pièce jointe.\n\nBonne lecture.' };
+        try { pl.pdf = await pdfDe(html); } catch (er) { pl.html = html; }
+        var j = await cseScriptPost('document', pl), c = cfg(); c.bilanMoisFait = M; c.bilanMoisVu = true; save();
+        db.docLog = Array.isArray(db.docLog) ? db.docLog : []; db.docLog.push({ id: uid(), at: new Date().toISOString(), doc: 'bilan-mois', titre: 'Bilan du mois ' + moisNom(M), fichier: pl.fichier, url: j.url || '', dossier: pl.chemin.join(' › '), par: qui() });
+        p.textContent = '✔ Envoyé à ' + D.length + ' élu(s) et rangé sur le Drive.'; p.className = 'text-xs text-emerald-700'; setTimeout(cseSigFermer, 1500);
+      } catch (e) { bt.disabled = false; p.textContent = 'Erreur : ' + e.message; p.className = 'text-xs text-rose-700'; }
+    };
+  };
+  function bmTick() {
+    var c = cfg(); if (!c.bilanMoisOn || !scriptOk() || seed() || !isCse() || !window.__dbLoaded) return; var M = moisPrec2(); if (c.bilanMoisFait === M) return;
+    var mo = $('v94-sig-modal'); if (mo && !mo.classList.contains('hidden')) return; cseBilanMois();
+  }
+  window.cseBmOn = function (v) { cfg().bilanMoisOn = !!v; save(); cfgCard(true); };
+  // ---------- 17g) Réglages : roulement, aides, bilan du mois ----------
+  function cfgCard(force) {
+    var c0 = card('v101-cfg-card', 'etab', function () { return $('v100-md-card') || $('v99-am-card') || $('v94-rel-card'); }); if (!c0) return;
+    if (!force && c0.contains(document.activeElement)) return;
+    var R = rl(), c = cfg(), A = aidesL(), n = { A: 0, B: 0, C: 0, J: 0 }; (db.employees || []).forEach(function (e) { if (e.active !== false && n[e.groupe] != null) n[e.groupe]++; });
+    var sp = function (g) { return '<label class="text-xs text-slate-600">Groupe ' + g + ' (' + n[g] + ')<select class="' + INP + '" onchange="cseRlSet(\'poste\',\'' + g + '\',this.value)">' + Object.keys(POSTES).map(function (p) { return '<option value="' + p + '"' + (posteDe(g) === p ? ' selected' : '') + '>' + POSTES[p] + '</option>'; }).join('') + '</select></label>'; };
+    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-people-group text-brand-600"></i> Équipes, aides et bilan du mois</h3>'
+      + '<p class="text-xs font-bold text-slate-700">👷 Roulement des équipes : cette semaine (du ' + fd(lundi()) + ')</p><div class="grid grid-cols-1 sm:grid-cols-3 gap-2">' + sp('A') + sp('B') + sp('C') + '</div>'
+      + '<label class="text-xs text-slate-600 block">Chaque lundi, chaque groupe passe au poste suivant :<select class="' + INP + '" onchange="cseRlSet(\'cycle\',this.value)"><option value="normal"' + (R.cycle[1] === 'apres-midi' ? ' selected' : '') + '>Matin → Après-midi → Nuit → Matin…</option><option value="inverse"' + (R.cycle[1] === 'nuit' ? ' selected' : '') + '>Matin → Nuit → Après-midi → Matin…</option></select></label>'
+      + '<div class="flex flex-wrap gap-2 items-center"><button type="button" class="' + BTN + '" onclick="cseRlRepartir()"><i class="fa-solid fa-users"></i> Répartir les salariés (A, B, C, journée)</button><span class="text-[11px] text-slate-500">' + n.J + ' en journée · aussi modifiable dans la fiche du salarié.</span></div>'
+      + '<hr class="border-slate-100"><label class="flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox"' + (c.aidesOn ? ' checked' : '') + ' onchange="cseAidesOn(this.checked)"> 🤝 Demandes d\'aide en ligne dans l\'espace (onglet « Aides »)</label>'
+      + '<div class="space-y-1' + (c.aidesOn ? '' : ' opacity-60') + '">' + A.map(function (a, i) { return '<div class="grid gap-1 items-center" style="grid-template-columns:1fr 90px auto"><input class="' + INP + '" placeholder="Nom de l\'aide" value="' + E(a.nom) + '" onchange="cseAideSet(' + i + ',\'nom\',this.value)"><input class="' + INP + '" type="number" min="0" step="5" placeholder="€" value="' + (Number(a.montant) || '') + '" onchange="cseAideSet(' + i + ',\'montant\',this.value)"><button type="button" class="' + BTN + '" onclick="cseAideSet(' + i + ',\'del\')"><i class="fa-solid fa-trash"></i></button><input class="' + INP + '" style="grid-column:1/-1" placeholder="Justificatif demandé (affiché au salarié)" value="' + E(a.info || '') + '" onchange="cseAideSet(' + i + ',\'info\',this.value)"></div>'; }).join('')
+      + '<button type="button" class="' + BTN + '" onclick="cseAideSet(0,\'add\')"><i class="fa-solid fa-plus"></i> Ajouter une aide</button></div>'
+      + '<p class="text-[11px] text-slate-500">Les demandes arrivent avec les autres demandes des salariés (À faire › Demandes), justificatif joint. Le montant est indicatif : vous l\'enregistrez ensuite dans Œuvres sociales.</p>'
+      + '<hr class="border-slate-100"><label class="flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox"' + (c.bilanMoisOn ? ' checked' : '') + ' onchange="cseBmOn(this.checked)"> 📊 Bilan du mois aux élus en PDF (le 1er du mois, à l\'ouverture de l\'appli)</label>'
+      + '<div class="flex flex-wrap gap-2 items-center pl-6"><button type="button" class="' + BTN + '" onclick="cseBilanMois()"><i class="fa-solid fa-eye"></i> Voir le bilan de ' + E(moisNom(moisPrec2())) + '</button><span class="text-[11px] text-slate-500">' + bmDest().length + ' élu(s) avec e-mail' + (c.bilanMoisFait ? ' · dernier envoi : ' + E(moisNom(c.bilanMoisFait)) : '') + '. Il vous est montré avant chaque envoi.</span></div>';
+    if (force || c0.dataset.h !== h) { c0.innerHTML = h; c0.dataset.h = h; }
+  }
+  // ---------- 17h) Accueil de l'appli : grandes tuiles en haut du tableau de bord ----------
+  function kpiTuiles() {
+    var tab = $('tab-dashboard'); if (!tab || tab.classList.contains('hidden') || !window.__dbLoaded) return;
+    var d = $('v101-kpi'); if (!d) { d = document.createElement('div'); d.id = 'v101-kpi'; d.className = 'grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-4'; d.onclick = function (e) { var b = e.target.closest('[data-k]'); if (!b) return; var k = b.dataset.k; if (k.indexOf('fn:') === 0) { try { window[k.slice(3)](); } catch (er) { } } else try { switchTab(k); } catch (er) { } }; tab.insertBefore(d, tab.firstChild); }
+    var t = today(), M = t.slice(0, 7), V = (db.sales || []).filter(function (s) { return dIso(s.date).slice(0, 7) === M; }), vT = V.reduce(function (s, x) { return s + (Number(x.totalPaid) || 0); }, 0);
+    var cb = $('nav-colis-badge'), colis = cb && cb.style.display !== 'none' ? parseInt(cb.textContent, 10) || 0 : 0;
+    var pr = (db.loans || []).filter(function (l) { return l.pickedUp && !l.returned; }), prR = pr.filter(function (l) { return dIso(l.endDate) < t; }).length;
+    var msg = msNonLus(), imp = 0, impN = 0; try { dus().forEach(function (x) { imp += Number(x.montant) || 0; impN++; }); } catch (e) { }
+    var bu = 0, al = 0; try { ['ASC', 'AEP'].forEach(function (env) { var r = budgetForecastCalc(env, t.slice(0, 4)); if (r && r.hasAlloc) { bu += Number(r.committed) || 0; al += Number(r.alloc) || 0; } }); } catch (e) { }
+    var pc = al > 0 ? Math.round(bu / al * 100) : null;
+    var T = [
+      { k: 'sales-summary', ic: '🎟️', l: 'Ventes du mois', v: eur(vT), s: V.length + ' vente(s)', c: '#2563eb' },
+      { k: 'social', ic: '🎁', l: 'Colis à remettre', v: colis, s: colis ? 'à la permanence' : 'rien en attente', c: '#db2777' },
+      { k: 'loans', ic: '⛺', l: 'Prêts en cours', v: pr.length, s: prR ? prR + ' en retard' : 'aucun retard', c: prR ? '#dc2626' : '#0d9488' },
+      { k: 'fn:cseMsgOuvrir', ic: '💬', l: 'Messages non lus', v: msg, s: msg ? 'à lire' : 'tout est lu', c: msg ? '#dc2626' : '#7c3aed' },
+      { k: 'budget', ic: '📊', l: 'Budget utilisé', v: pc == null ? '—' : pc + ' %', s: pc == null ? 'budget non saisi' : eur(bu) + ' / ' + eur(al), c: pc >= 100 ? '#dc2626' : pc >= 80 ? '#d97706' : '#16a34a' },
+      { k: 'receivables', ic: '💶', l: 'Impayés', v: eur(imp), s: impN + ' ligne(s)', c: impN ? '#d97706' : '#16a34a' }];
+    var h = T.map(function (x) { return '<button type="button" data-k="' + x.k + '" class="text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-4 hover:shadow-md transition relative overflow-hidden"><span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:' + x.c + '"></span><div class="flex items-center justify-between"><span class="text-xs font-semibold text-slate-500">' + x.l + '</span><span class="text-xl">' + x.ic + '</span></div><div class="text-2xl font-extrabold mt-1" style="color:' + x.c + '">' + x.v + '</div><div class="text-[11px] text-slate-500 mt-0.5">' + E(x.s) + '</div></button>'; }).join('');
+    if (d.dataset.h !== h) { d.innerHTML = h; d.dataset.h = h; }
+  }
+  // Messagerie : « une équipe cette semaine »
+  var msDest0 = msDest; msDest = function () { if (MS.dest === 'equipe') return msEmps().filter(function (e) { return e.groupe && posteDe(e.groupe) === MS.poste; }); return msDest0(); };
+  var msGN0 = msGroupeNom; msGroupeNom = function () { return MS.dest === 'equipe' ? 'à l\'équipe ' + (posteTxt(MS.poste) || '').toLowerCase().replace(/ \(.*\)/, '') + ' de cette semaine' : msGN0(); };
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
   setInterval(function () {
@@ -47877,9 +48108,15 @@ var qrcode = function() {
     try { msBadge(); } catch (e) { }
     try { if ($('v94-rel-card')) mdCard(); } catch (e) { }
     try { relanceBoutons(); } catch (e) { }
+    try { if ($('v94-rel-card')) cfgCard(); } catch (e) { }
+    try { catBarre(); } catch (e) { }
+    try { eqFiche(); } catch (e) { }
+    try { kpiTuiles(); } catch (e) { }
   }, 1500);
   setTimeout(function () { obBan(); }, 2000);
   setTimeout(function () { obVider(); phEnvoyer(); }, 40000);
+  setTimeout(function () { bmTick(); }, 45000);
+  setInterval(function () { bmTick(); }, 10 * 60000);
   setInterval(function () { obVider(); phEnvoyer(); }, 5 * 60000);
   setTimeout(function () { msSync(); budTick(); }, 40000);
   setInterval(function () { if (!document.hidden) msSync(); }, 2 * 60000);

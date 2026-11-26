@@ -17,6 +17,29 @@
 :root{--bg:#f3f5fa;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e8ecf3;--brand:#1d4ed8;--brand-d:#1e3a8a;--brand2:#e0e9ff;--ok:#047857;--okb:#d1fae5;--warn:#b45309;--warnb:#fef3c7;--bad:#b91c1c;--badb:#fee2e2;--sh:0 1px 2px #0f172a0a,0 10px 28px -14px #0f172a26}
 @supports (color:color-mix(in srgb,red,blue)){:root{--brand-d:color-mix(in srgb,var(--brand) 78%,#020617);--brand2:color-mix(in srgb,var(--brand) 11%,#fff)}}
 *{box-sizing:border-box}
+/* V.10.1 : tuiles, photos, mode sombre */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media (min-width:560px){.tiles{grid-template-columns:repeat(6,1fr)}}
+.tile{position:relative;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:10px 4px 8px;text-align:center;cursor:pointer;box-shadow:var(--sh);font:600 11.5px system-ui,sans-serif;color:var(--ink);line-height:1.2;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.tile i{font-style:normal;font-size:26px;line-height:1}
+.tile:active{transform:scale(.97)}
+.tile .n{position:absolute;top:4px;right:6px;min-width:18px;padding:0 5px;border-radius:9px;background:#ef4444;color:#fff;font-size:11px;line-height:18px}
+.tile .n.i{background:var(--brand)}
+.ph{width:100%;max-height:170px;object-fit:cover;border-radius:14px;margin:4px 0 8px;display:block;background:var(--line)}
+.ph.s{width:76px;height:76px;flex:0 0 76px;margin:0 10px 0 0;border-radius:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:600 13px system-ui,sans-serif;cursor:pointer;background:var(--card);color:var(--ink)}
+.chip input{width:auto;margin:0}
+html.dark{--bg:#0b1120;--card:#111a2e;--ink:#e5e9f2;--mute:#94a3b8;--line:#22304a;--brand2:#1e2a4a;--okb:#064e3b;--ok:#6ee7b7;--warnb:#451a03;--warn:#fcd34d;--badb:#450a0a;--bad:#fca5a5;--sh:0 1px 2px #0006,0 10px 28px -14px #000a;color-scheme:dark}
+html.dark .btn{background:#17223a;color:var(--ink);border-color:var(--line)}
+html.dark .btn.p{background:linear-gradient(135deg,var(--brand),var(--brand-d));border-color:transparent;color:#fff}
+html.dark input,html.dark select,html.dark textarea{background:#0f172a;border-color:#2a3a58;color:var(--ink)}
+html.dark #sheet{background:var(--card);color:var(--ink)}
+html.dark nav button:hover{background:#1b2742}
+html.dark .logo{background:#fff}
+html.dark [style*="background:#f1f5f9"]{background:#1b2742!important;color:var(--ink)!important}
+html.dark [style*="background:#fff"]:not(.logo):not(img){background:var(--card)!important}
+
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 header{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--brand-d),var(--brand));color:#fff;padding:20px 16px 70px}
 header::before,header::after{content:"";position:absolute;border-radius:50%;background:#ffffff14;pointer-events:none}
@@ -152,7 +175,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var ELU = /elu/i.test(location.hash || '');
     return { ok: true, le: new Date().toISOString(),
       deleg: ELU ? { profil: { mail: 'camille.exemple@exemple.fr', rh: 'rh@exemple.fr', resp: 'chef@exemple.fr', respNom: 'M. Exemple', sig: '' }, liste: [{ id: 'd1', at: plus(-6) + 'T09:00:00Z', le: plus(-6), du: plus(-5), au: plus(-5), de: '08:00', a: '12:00', heures: 4, motif: 'Réunion CSE', statut: 'envoyée', vu: { at: plus(-4) + 'T10:00:00Z' } }, { id: 'd2', at: plus(-2) + 'T09:00:00Z', le: plus(-2), du: plus(-1), au: plus(-1), de: '13:30', a: '15:00', heures: 1.5, motif: '', statut: 'envoyée', vu: null }] } : null,
-      fiche: { documents: [{ date: plus(-2), titre: 'Reçu de billetterie signé : Reçu de billetterie B-2026-112', url: 'https://drive.google.com/file/d/exemple/view' }, { date: plus(-20), titre: 'Attestation de paiement', url: 'https://drive.google.com/file/d/exemple2/view' }], aSigner: [{ id: 'demo-sg1', kind: 'pret', type: 'Prêt de matériel', titre: 'Prêt de matériel du ' + plus(2).split('-').reverse().join('/') + ' au ' + plus(5).split('-').reverse().join('/'), date: plus(2), lignes: [['1 × Barnum 3×3 m', ''], ['2 × Table pliante', '']], montant: 0, texte: 'Je soussigné(e) reconnais avoir emprunté le matériel ci-dessus au CSE et m\'engage à le rendre complet et en bon état à la date prévue.' }], colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 22, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 22, mois: 9.5, reste: 12.5, plafond: 33, reste33: 23.5, etat: 'ok', an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 22, mois: 26, reste: -4, plafond: 33, reste33: 7, etat: 'report', an: 60 }, { nom: 'Lou PETIT', credit: 22, mois: 35, reste: -13, plafond: 33, reste33: -2, etat: 'trop', an: 80 }] }, membreCse: /elu/i.test(location.hash || ''), permVides: [{ date: plus(2), presents: [] }, { date: plus(9), presents: ['Dominique MARTIN'] }], permMoi: [plus(16)], permTexte: 'Le vendredi de 11h à 13h30', reunions: [{ date: plus(6), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Approbation du procès-verbal précédent', 'Point sur les activités sociales', 'Questions des salariés'], odj: { le: plus(-1), url: '' }, pv: null }, { date: plus(-24), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Bilan des sorties', 'Colis de Noël'], odj: { le: plus(-30), url: '' }, pv: { le: plus(-12), url: '' } }], phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production',
+      fiche: { documents: [{ date: plus(-2), titre: 'Reçu de billetterie signé : Reçu de billetterie B-2026-112', url: 'https://drive.google.com/file/d/exemple/view' }, { date: plus(-20), titre: 'Attestation de paiement', url: 'https://drive.google.com/file/d/exemple2/view' }], aSigner: [{ id: 'demo-sg1', kind: 'pret', type: 'Prêt de matériel', titre: 'Prêt de matériel du ' + plus(2).split('-').reverse().join('/') + ' au ' + plus(5).split('-').reverse().join('/'), date: plus(2), lignes: [['1 × Barnum 3×3 m', ''], ['2 × Table pliante', '']], montant: 0, texte: 'Je soussigné(e) reconnais avoir emprunté le matériel ci-dessus au CSE et m\'engage à le rendre complet et en bon état à la date prévue.' }], colis: [{ nom: 'Colis de Noël ' + y, date: plus(10), moi: { remis: false, le: '' }, enfants: [{ nom: 'Léa', age: 11, remis: true, le: plus(-1) }, { nom: 'Hugo', age: 7, remis: false, le: '' }] }], id: 1, nom: 'EXEMPLE Camille', prenom: 'Camille', email: 'camille.exemple@exemple.fr', deleg: { credit: 22, entries: [{ id: 'a1', du: plus(-12), au: plus(-12), de: '09:00', a: '11:00', heures: 2, motif: 'Préparation de réunion', type: 'ancienne' }], tous: [{ nom: 'Camille EXEMPLE', credit: 22, mois: 9.5, reste: 12.5, plafond: 33, reste33: 23.5, etat: 'ok', an: 31, moi: true }, { nom: 'Dominique MARTIN', credit: 22, mois: 26, reste: -4, plafond: 33, reste33: 7, etat: 'report', an: 60 }, { nom: 'Lou PETIT', credit: 22, mois: 35, reste: -13, plafond: 33, reste33: -2, etat: 'trop', an: 80 }] }, membreCse: /elu/i.test(location.hash || ''), permVides: [{ date: plus(2), presents: [] }, { date: plus(9), presents: ['Dominique MARTIN'] }], permMoi: [plus(16)], permTexte: 'Le vendredi de 11h à 13h30', reunions: [{ date: plus(6), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Approbation du procès-verbal précédent', 'Point sur les activités sociales', 'Questions des salariés'], odj: { le: plus(-1), url: '' }, pv: null }, { date: plus(-24), heure: '14:00', lieu: 'Salle du CSE', titre: 'Réunion ordinaire', type: 'Réunion ordinaire', points: ['Bilan des sorties', 'Colis de Noël'], odj: { le: plus(-30), url: '' }, pv: { le: plus(-12), url: '' } }], phone: '06 12 34 56 78', address: '12 rue des Lilas, 88000 Épinal', service: 'Production', equipe: { groupe: 'B', poste: 'nuit', texte: 'Nuit (21h–5h)' },
         children: [{ name: 'Léa Exemple', birthdate: '2015-04-12' }, { name: 'Hugo Exemple', birthdate: '2019-09-30' }], spouse: { name: 'Alex Exemple', birthdate: '1988-02-03' },
         achats: [{ date: d(10, 18), desc: '4 x Cinéma', total: 24, regle: true, mode: 'Carte Bancaire' }, { date: d(7, 2), desc: '2 x Parc Astérix', total: 70, regle: true, mode: 'Chèque' }, { date: d(11, 20), desc: '2 x Fraispertuis', total: 30, regle: false, mode: '' }, { date: d(12, 5, y - 1), desc: '3 x Cinéma', total: 18, regle: true, mode: 'Espèces' }],
         offert: [{ date: d(10, 18), label: 'Billets : 4 x Cinéma', montant: 12, type: 'Billetterie' }, { date: d(7, 2), label: 'Billets : 2 x Parc Astérix', montant: 40, type: 'Billetterie' }, { date: d(11, 20), label: 'Billets : 2 x Fraispertuis', montant: 18, type: 'Billetterie' }, { date: d(3, 15), label: 'Chèques vacances (part du CSE)', montant: 200, type: 'Chèques vacances' }, { date: d(12, 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }, { date: d(6, 10), label: 'Rentrée scolaire (Léa Exemple)', montant: 40, type: 'Œuvres sociales' }, { date: d(12, 10, y - 1), label: 'Bon de Noël', montant: 50, type: 'Œuvres sociales' }],
@@ -171,6 +194,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         agenda: [{ date: plus(4), heure: '11h - 13h30', titre: 'Permanence', type: 'permanence' }, { date: plus(9), heure: '14:00', titre: 'Réunion du CSE', type: 'reunion' }, { date: plus(12), heure: '', titre: 'Marché de Noël de Strasbourg', type: 'sortie', texte: 'Strasbourg' }, { date: plus(32), heure: '', titre: 'Pas de permanence (fêtes)', type: 'fermeture' }],
         sondages: [{ id: 's1', question: 'Quelle sortie pour le printemps ?', choix: ['Europa Park', 'Karting', 'Bowling + restaurant'], multi: false, anonyme: true, fin: plus(14), res: { total: 23, n: [12, 7, 4] } }],
         materiel: [{ id: 1, nom: 'Tables pliantes', qte: 12, occupe: [{ d: plus(5), f: plus(7), q: 4 }] }, { id: 2, nom: 'Bancs', qte: 24, occupe: [{ d: plus(5), f: plus(7), q: 8 }] }, { id: 3, nom: 'Chapiteau 3x6', qte: 2, occupe: [{ d: plus(12), f: plus(13), q: 2 }] }, { id: 4, nom: 'Appareil à raclette', qte: 4, occupe: [] }],
+        aides: [{ nom: 'Naissance ou adoption', montant: 100, info: 'Justificatif : acte de naissance ou livret de famille.' }, { nom: 'Mariage ou PACS', montant: 80, info: 'Justificatif : acte de mariage ou de PACS.' }, { nom: 'Départ en retraite', montant: 150, info: '' }],
         billets: [{ id: 11, titre: 'Cinéma Épinal', prix: 5.5, prixPublic: 11.9, stock: 23, expire: d(5, 2, y + 1), cinema: true }, { id: 13, titre: 'Cinéma Remiremont', prix: 5.5, prixPublic: 10.5, stock: 42, expire: d(5, 20, y + 1), cinema: true }, { id: 12, titre: 'Parc Astérix', prix: 35, prixPublic: 62, stock: 4, expire: d(10, 31, y + 1), cinema: false }, { id: 14, titre: 'Fraispertuis City', prix: 15, prixPublic: 29, stock: 18, expire: '', cinema: false }],
         quotas: { std: 2, stdFoyer: true, cine: 10, cineFoyer: false },
         reponses: [{ date: plus(-10), type: 'question', texte: 'Est-ce que les intérimaires ont droit à la billetterie ?', reponse: 'Non, la billetterie est réservée aux salariés de l\'entreprise, conformément au règlement intérieur du CSE.' }, { date: plus(-30), type: 'idee', texte: 'Mettre des places de cinéma moins chères.', reponse: 'Depuis octobre, la place de cinéma passe de 8 € à 6 €.' }],
@@ -195,6 +219,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (method === 'POST' && body.action === 'deleg') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true, deleg: Object.assign({ id: 'n' + Date.now(), at: new Date().toISOString(), le: today(), statut: 'envoyée', vu: null, par: body.data && body.data.sansEnvoi ? 'ancienne' : 'espace' }, body.data) }; }
       if (method === 'POST' && body.action === 'message') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true, message: { id: 'n' + Date.now(), at: new Date().toISOString(), de: 'sal', texte: body.texte, pj: body.pj ? { nom: body.pj.nom, type: body.pj.type, url: body.pj.data, id: '' } : null } }; }
       if (method === 'POST' && body.action === 'messages-vus') return { ok: true };
+      if (method === 'POST' && body.action === 'prefs') { await new Promise(function (r) { setTimeout(r, 300); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'permanence-prendre') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'signature') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'avis') { await new Promise(function (r) { setTimeout(r, 400); }); D.avis = D.avis || {}; D.avis[body.o] = body.n; return { ok: true }; }
@@ -335,7 +360,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (TAB === 'demandes') markSeen(); if (TAB === 'messages') msgSeen();
     var n = (D.demandes || []).filter(function (d) { return d.statut === 'en attente'; }).length, nv = newReplies().length;
     var el = $('nav'); el.hidden = false;
-    var TB = TABS.slice(); if (D && D.deleg) TB.splice(TB.length - 1, 0, ['deleg', '🕒 Délégation']);
+    var TB = TABS.slice(); if (D && D.deleg) TB.splice(TB.length - 1, 0, ['deleg', '🕒 Délégation']); if (D && D.pub && (D.pub.aides || []).length) TB.splice(TB.length - 1, 0, ['aides', '🤝 Aides']);
     el.innerHTML = TB.map(function (t) { return '<button data-t="' + t[0] + '" class="' + (t[0] === TAB ? 'on' : '') + '">' + t[1] + (t[0] === 'messages' ? (msgNew() ? '<span class="n" title="Nouvelle réponse du CSE">' + msgNew() + '</span>' : '') : t[0] === 'demandes' ? (nv ? '<span class="n" title="Nouvelle réponse du CSE">' + nv + ' nouveau' + (nv > 1 ? 'x' : '') + '</span>' : n ? '<span class="n" style="background:#94a3b8">' + n + '</span>' : '') : '') + '</button>'; }).join('');
     el.querySelectorAll('button').forEach(function (b) { b.onclick = function () { go(b.dataset.t); }; });
     var on = el.querySelector('.on'); if (on && on.scrollIntoView && el.scrollWidth > el.clientWidth) { try { el.scrollLeft = Math.max(0, on.offsetLeft - 40); } catch (e) { } }
@@ -445,6 +470,64 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   };
   window.cseAvisNon = function (o) { avisMark(o, -1); render(); };
   // --- Récapitulatif annuel à enregistrer en PDF (V.8.9) ---
+
+  // ---------- V.10.1 : tuiles de l'accueil, photos, alertes au choix, demandes d'aide ----------
+  function phUrl(p) { return p && p.id ? 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(p.id) + '&sz=w900' : (p && p.url) || ''; }
+  function DEMO_PREFS_VU() { try { return !!localStorage.getItem('cse_prefs_vu_' + (DEMO ? 'demo' : String(T || '').slice(0, 8))); } catch (e) { return false; } }
+  function tilesHtml(open) {
+    var f = D.fiche || {}, P = D.pub || {}, ic = { messages: '💬', billets: '🎟️', idees: '💡', achats: '🧾', offert: '🎁', cv: '🏖️', sorties: '🎭', agenda: '📅', materiel: '⛺', docs: '📄', fiche: '👤', demandes: '📨', deleg: '🕒', aides: '🤝' };
+    var TB = TABS.slice(1); if (D.deleg) TB.splice(TB.length - 1, 0, ['deleg', '🕒 Délégation']); if ((P.aides || []).length) TB.splice(TB.length - 1, 0, ['aides', '🤝 Aides']);
+    var nb = {}, bleu = {};
+    nb.messages = msgNew(); nb.demandes = newReplies().length;
+    nb.achats = (f.achats || []).filter(function (a) { return !a.regle; }).length;
+    var cv = 0; (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut === 'en retard') cv++; }); }); nb.cv = cv;
+    bleu.sorties = (open || []).length; bleu.billets = (P.billets || []).filter(function (b) { return b.stock > 0; }).length;
+    return '<div class="tiles">' + TB.map(function (t) {
+      var lab = String(t[1]).replace(/^[^\s]+\s/, ''), n = nb[t[0]] || 0, b = bleu[t[0]] || 0;
+      return '<button class="tile" onclick="cseGo(\'' + t[0] + '\')"><i>' + (ic[t[0]] || String(t[1]).split(' ')[0]) + '</i>' + E(lab.replace('Idées & questions', 'Idées').replace('Mes subventions', 'Subventions').replace('Chèques vacances', 'Chèques vac.')) + (n ? '<span class="n">' + n + '</span>' : b ? '<span class="n i">' + b + '</span>' : '') + '</button>';
+    }).join('') + '</div>';
+  }
+  var ALERTES = [['cinema', '🎬 Cinéma'], ['parcs', '🎢 Parcs de loisirs'], ['spectacles', '🎤 Spectacles, concerts'], ['loisirs', '🏊 Sport et loisirs'], ['sorties', '🎭 Sorties du CSE'], ['famille', '👨‍👩‍👧 Sorties en famille'], ['materiel', '⛺ Nouveau matériel à prêter']];
+  function alertesCard(accueil) {
+    var mine = (D.prefs && D.prefs.cats) || null;
+    return '<div class="card"><h2>🔔 Mes alertes</h2><p class="mute">Cochez ce qui vous intéresse : vous recevrez une notification seulement quand le CSE ajoute quelque chose de nouveau dans ces catégories.</p>'
+      + '<div class="chips" id="al-chips">' + ALERTES.map(function (a) { return '<label class="chip"><input type="checkbox" value="' + a[0] + '"' + (!mine || mine.indexOf(a[0]) >= 0 ? ' checked' : '') + '> ' + a[1] + '</label>'; }).join('') + '</div>'
+      + '<div class="msg" id="al-msg" hidden></div><button class="btn p" onclick="cseAlertes()">Enregistrer mes alertes</button>' + (accueil ? ' <button class="btn" onclick="cseAlertesPlusTard()">Plus tard</button>' : '') + '<p class="mute" style="margin-top:8px">Il faut aussi avoir activé les notifications sur ce téléphone.</p></div>';
+  }
+  window.cseAlertesPlusTard = function () { try { localStorage.setItem('cse_prefs_vu_' + (DEMO ? 'demo' : String(T || '').slice(0, 8)), '1'); } catch (e) { } render(); };
+  window.cseAlertes = async function () {
+    var cats = [].map.call(document.querySelectorAll('#al-chips input:checked'), function (i) { return i.value; });
+    say('al-msg', 'Enregistrement…', 'info');
+    try { await api('POST', { action: 'prefs', cats: cats }); D.prefs = { cats: cats, at: new Date().toISOString() }; cachePut(D); try { localStorage.setItem('cse_prefs_vu_' + (DEMO ? 'demo' : String(T || '').slice(0, 8)), '1'); } catch (e) { } say('al-msg', (DEMO ? '(Exemple) ' : '') + '✔ Alertes enregistrées' + (cats.length ? ' : ' + cats.length + ' catégorie(s).' : ' : aucune.'), 'ok'); }
+    catch (e) { say('al-msg', e.message, 'bad'); }
+  };
+  var AIDE_PJ = null;
+  function aidesPage() {
+    var P = D.pub || {}, A = P.aides || [], mes = (D.demandes || []).filter(function (d) { return d.type === 'aide'; }).slice().reverse();
+    var h = '<div class="card"><h2>🤝 Demander une aide du CSE</h2><p class="mute">Choisissez l\'aide, indiquez la date de l\'événement et joignez le justificatif (photo ou PDF). Le CSE vous répond ici, en notification et par e-mail.</p>'
+      + '<label>Aide</label><select id="ai-type" onchange="cseAideInfo()">' + A.map(function (a, i) { return '<option value="' + i + '">' + E(a.nom) + (a.montant ? ' · ' + eur(a.montant) : '') + '</option>'; }).join('') + '</select>'
+      + '<p class="mute" id="ai-info" style="margin:6px 0 10px">' + E((A[0] && A[0].info) || '') + '</p>'
+      + '<label>Date de l\'événement</label><input type="date" id="ai-date">'
+      + '<label style="margin-top:10px;display:block">Précisions (facultatif)</label><textarea id="ai-txt" rows="3" placeholder="Ex. : prénom de l\'enfant, établissement scolaire…"></textarea>'
+      + '<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap"><label class="btn" style="cursor:pointer">📎 Justificatif<input type="file" accept="image/*,application/pdf" style="display:none" onchange="cseAidePj(this)"></label><span class="mute" id="ai-pj">' + (AIDE_PJ ? '📎 ' + E(AIDE_PJ.nom) : 'Aucun fichier') + '</span></div>'
+      + '<div class="msg" id="ai-msg" hidden></div><button class="btn p" style="margin-top:12px" id="ai-go" onclick="cseAideEnvoyer()">📨 Envoyer ma demande</button></div>';
+    h += '<div class="card"><h2>📨 Mes demandes d\'aide</h2>' + (mes.length ? mes.map(function (d) { var ok = d.statut === 'acceptée', att = d.statut === 'en attente'; return '<div class="row"><div class="l"><b>' + E(d.resume) + '</b><div class="mute">' + fd(String(d.at).slice(0, 10)) + (d.reponse ? ' · 💬 ' + E(d.reponse) : '') + '</div></div><div class="r"><span class="tag ' + (att ? 'info' : ok ? 'ok' : 'bad') + '">' + (att ? 'En attente' : ok ? '✅ Acceptée' : '❌ ' + E(d.statut)) + '</span></div></div>'; }).join('') : '<p class="empty">Aucune demande d\'aide pour le moment.</p>') + '</div>';
+    return h;
+  }
+  window.cseAideInfo = function () { var A = (D.pub || {}).aides || [], a = A[Number(($('ai-type') || {}).value) || 0]; var z = $('ai-info'); if (z) z.textContent = (a && a.info) || ''; };
+  window.cseAidePj = async function (inp) { var f = inp.files && inp.files[0]; inp.value = ''; if (!f) return; try { AIDE_PJ = await pjLire(f); var z = $('ai-pj'); if (z) z.textContent = '📎 ' + AIDE_PJ.nom; } catch (e) { say('ai-msg', e.message, 'bad'); } };
+  window.cseAideEnvoyer = async function () {
+    var A = (D.pub || {}).aides || [], a = A[Number(($('ai-type') || {}).value) || 0]; if (!a) return;
+    var dt = ($('ai-date') || {}).value || '', tx = (($('ai-txt') || {}).value || '').trim();
+    if (!dt) return say('ai-msg', 'Indiquez la date de l\'événement.', 'bad');
+    if (a.justif !== false && !AIDE_PJ) return say('ai-msg', 'Joignez le justificatif (photo ou PDF).', 'bad');
+    var b = $('ai-go'); b.disabled = true; say('ai-msg', AIDE_PJ ? 'Envoi du justificatif…' : 'Envoi…', 'info');
+    try {
+      await api('POST', { type: 'aide', resume: a.nom + ' (' + fd(dt) + ')', data: { aide: a.nom, montant: a.montant || 0, date: dt, texte: tx }, pj: AIDE_PJ || undefined });
+      AIDE_PJ = null; if (!DEMO) { try { D = await api('GET'); cachePut(D); } catch (e) { } }
+      render(); say('ai-msg', (DEMO ? '(Exemple) ' : '') + '✔ Demande envoyée au CSE. Vous aurez la réponse ici.', 'ok');
+    } catch (e) { b.disabled = false; say('ai-msg', e.message, 'bad'); }
+  };
   // V.10.0 : « Ce que le CSE m'a apporté » (accueil)
   function apportCard() {
     var f = D.fiche || {}, Y = String(new Date().getFullYear()), inY = function (d) { return String(d || '').slice(0, 4) === Y; };
@@ -611,7 +694,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // Horaire de travail habituel (équipe), retenu pour la prochaine fois
   var DG_EQ = [['matin', 'Équipe du matin (5h – 13h)'], ['apres-midi', 'Équipe d\'après-midi (13h – 21h, le lundi 12h – 21h)'], ['nuit', 'Équipe de nuit (21h – 5h)'], ['repos', 'Repos']];
   function dgEqTxt(eq, du) { var L = { matin: 'Équipe du matin', 'apres-midi': 'Équipe d\'après-midi', nuit: 'Équipe de nuit', repos: 'Repos' }; if (!L[eq]) return ''; var h = eq === 'matin' ? '5h – 13h' : eq === 'nuit' ? '21h – 5h' : eq === 'apres-midi' ? (new Date((du || today()) + 'T12:00').getDay() === 1 ? '12h – 21h' : '13h – 21h') : ''; return L[eq] + (h ? ' (' + h + ')' : ''); }
-  function dgEqDef() { try { var v = localStorage.getItem('cse_dg_eq'); if (v) return v; } catch (e) { } var L = ((D.deleg || {}).liste || []).filter(function (d) { return d.equipe; }); return L.length ? L[0].equipe : ''; }
+  function dgEqDef() { var fe = (D.fiche || {}).equipe; if (fe && DG_EQ.some(function (x) { return x[0] === fe.poste; })) return fe.poste; try { var v = localStorage.getItem('cse_dg_eq'); if (v) return v; } catch (e) { } var L = ((D.deleg || {}).liste || []).filter(function (d) { return d.equipe; }); return L.length ? L[0].equipe : ''; }
   function dgMins(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ''); return m ? Number(m[1]) * 60 + Number(m[2]) : null; }
   // Heures : « 8:15 », « 8h15 », « 45min » ou « 8,25 » sont acceptés
   function dgParseH(v) { v = String(v || '').trim().toLowerCase().replace(/\s+/g, ''); var m = /^(\d{1,3})(?:[:h](\d{0,2}))?(?:min)?$/.exec(v); if (m && (m[2] !== undefined || /[:h]/.test(v))) return Number(m[1]) + (Number(m[2]) || 0) / 60; m = /^(\d{1,3})min$/.exec(v); if (m) return Number(m[1]) / 60; var n = Number(v.replace(',', '.')); return isNaN(n) ? 0 : n; }
@@ -838,11 +921,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   };
   // V.9.9 : taille du texte (3 niveaux) et mode simplifié, gardés sur ce téléphone
   var AFF = (function () { try { return JSON.parse(localStorage.getItem('cse_affichage') || 'null') || { z: 1, simple: false }; } catch (e) { return { z: 1, simple: false }; } })(), SIMPLE = !!AFF.simple;
-  function affApplique() { try { document.body.style.zoom = AFF.z > 1 ? String(AFF.z) : ''; } catch (e) { } SIMPLE = !!AFF.simple; }
+  function affApplique() { try { document.body.style.zoom = AFF.z > 1 ? String(AFF.z) : ''; } catch (e) { } SIMPLE = !!AFF.simple;
+    try { var sombre = AFF.th === 'sombre' || (AFF.th !== 'clair' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.classList.toggle('dark', !!sombre); var mc = document.querySelector('meta[name=theme-color]'); if (mc && sombre) mc.content = '#0b1120'; } catch (e) { } }
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { affApplique(); }); } catch (e) { }
   window.cseAffichage = function (k, v) {
     if (k) { AFF[k] = v; try { localStorage.setItem('cse_affichage', JSON.stringify(AFF)); } catch (e) { } affApplique(); render(); }
     var z = function (n, l) { return '<button class="btn' + (AFF.z === n ? ' p' : '') + '" style="flex:1;font-size:' + (14 * n) + 'px" onclick="cseAffichage(\'z\',' + n + ')">' + l + '</button>'; };
     sheet(head('Aa Affichage', 'Réglé pour ce téléphone') + '<label>Taille du texte</label><div style="display:flex;gap:8px;margin:4px 0 14px">' + z(1, 'A') + z(1.15, 'A+') + z(1.3, 'A++') + '</div>'
+      + '<label>Couleurs</label><div style="display:flex;gap:8px;margin:4px 0 14px">' + [['auto', '📱 Comme le téléphone'], ['clair', '☀️ Clair'], ['sombre', '🌙 Sombre']].map(function (x) { return '<button class="btn' + ((AFF.th || 'auto') === x[0] ? ' p' : '') + '" style="flex:1;font-size:13px;padding:10px 6px" onclick="cseAffichage(\'th\',\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('') + '</div>'
       + '<label style="display:flex;gap:10px;align-items:center;font-weight:600"><input type="checkbox" style="width:auto;margin:0"' + (AFF.simple ? ' checked' : '') + ' onchange="cseAffichage(\'simple\',this.checked)"> Mode simplifié</label><p class="mute">L\'accueil n\'affiche que l\'essentiel : documents à signer, colis, à régler, messages, permanence. Tout le reste reste dans les onglets.</p><button class="btn" onclick="cseClose()">Fermer</button>');
   };
   affApplique();
@@ -850,6 +936,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     AGV = {};
     var f = D.fiche, P = D.pub || {}, h = '';
     var R = {
+      aides: function () { h += aidesPage(); },
       messages: function () { h += msgPage(); setTimeout(function () { var fl = $('msg-fil'); if (fl) fl.scrollTop = fl.scrollHeight; msgSeen(); }, 0); },
       accueil: function () {
         var offY = (f.offert || []).filter(function (o) { return String(o.date).slice(0, 4) === String(new Date().getFullYear()); }).reduce(function (s, o) { return s + (o.montant || 0); }, 0);
@@ -857,6 +944,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         var cvDue = 0; (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut !== 'payé' && e.statut !== 'reçu') cvDue += e.montant || 0; }); });
         var open = (P.sorties || []).filter(function (o) { return !(f.sorties || []).some(function (x) { return x.outingId === o.id; }); });
         h += signCards();
+        if (f.equipe && f.equipe.texte) h += '<div class="msg" style="margin:0 0 10px">👷 Cette semaine, vous êtes en <b>' + E(({ matin: 'équipe du matin', 'apres-midi': 'équipe d\'après-midi', nuit: 'équipe de nuit', journee: 'journée' })[f.equipe.poste] || f.equipe.texte) + (/\(/.test(f.equipe.texte) ? ' ' + E(f.equipe.texte.replace(/^[^(]*/, '')) : '') + '</b>.</div>';
+        h += tilesHtml(open);
         if ((f.prets || []).some(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }) && cautionTxt(true)) h += '<div class="card"><h2>⛺ Matériel à retirer</h2>' + (f.prets || []).filter(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }).map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div></div>'; }).join('') + cautionTxt(true) + '</div>';
         if (!SIMPLE) h += annCards();
         h += colisCards();
@@ -876,6 +965,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           + '<div class="row"><div class="l"><b>Total</b><div class="mute">Billets, sorties et chèques vacances · à régler à la permanence du CSE' + (payLinksFor(PAY).length ? ' ou en ligne' : '') + '</div></div><div class="r">' + eur(PAY.reduce(function (a, x) { return a + x.m; }, 0)) + '</div></div>' + payButtons(PAY) + '</div>';
         h += permCards();
         if (!SIMPLE) h += sondCards();
+        if (!SIMPLE && !D.prefs && !DEMO_PREFS_VU()) h += alertesCard(true);
         h += pushCard();
         h += permCard();
         if (!SIMPLE) h += '<div class="kpis">'
@@ -998,6 +1088,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         h += '<div class="card"><h2>📄 Documents du CSE</h2>' + (L.length ? L.map(function (d) { return '<div class="row"><div class="l"><b>' + E(d.titre) + '</b>' + (d.date ? '<div class="mute">' + fd(d.date) + '</div>' : '') + '</div><div class="r"><a class="btn s" href="' + E(d.url) + '" target="_blank" rel="noopener">Ouvrir</a></div></div>'; }).join('') : '<p class="empty">Aucun document pour le moment.</p>') + '</div>';
       },
       fiche: function () {
+        h += alertesCard();
         var pf = (D.demandes || []).filter(function (d) { return d.type === 'fiche' && d.statut === 'en attente'; }).length;
         if (pf) h += '<div class="msg warn" style="margin:0 0 12px">⏳ Votre demande de modification est en attente : votre fiche changera seulement quand le CSE l\'aura acceptée.</div>';
         h += '<div class="card"><h2>🪪 Ma carte CSE et mon récap</h2><p class="mute">Le QR code ouvre votre fiche à la permanence. Le récapitulatif reprend ce que vous avez reçu et payé dans l\'année.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p s" onclick="cseQr()">🪪 Afficher mon QR code</button><button class="btn s" onclick="cseRecap(\'' + new Date().getFullYear() + '\')">📄 Récap ' + new Date().getFullYear() + ' (PDF)</button></div></div>';
@@ -1053,7 +1144,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           + '<p class="mute" style="margin-top:8px">À titre d\'information : le CSE vérifie à la vente. Votre foyer est calculé d\'après votre fiche (onglet « Ma fiche »).</p></div>';
         h += '<div class="card"><h2>🎫 Billets disponibles au CSE</h2>' + (B.length ? B.map(function (b) {
           var deja = pris[b.id] || 0, reste = b.cinema ? resteCine : Math.max(0, limStd - deja);
-          return '<div class="row"><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + (b.prixPublic ? '<s>' + eur(b.prixPublic) + '</s> ' : '') + '<b style="color:var(--ink)">' + eur(b.prix) + '</b>' + (b.expire ? ' · valable jusqu\'au ' + fd(b.expire) : '') + '</div>'
+          return (b.photo ? '<img class="ph" loading="lazy" src="' + E(phUrl(b.photo)) + '" alt="">' : '') + '<div class="row"' + (b.photo ? ' style="border-top:0;padding-top:0"' : '') + '><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + (b.prixPublic ? '<s>' + eur(b.prixPublic) + '</s> ' : '') + '<b style="color:var(--ink)">' + eur(b.prix) + '</b>' + (b.expire ? ' · valable jusqu\'au ' + fd(b.expire) : '') + '</div>'
             + '<div class="mute">Votre quota : ' + (deja ? deja + ' pris · ' : '') + '<b>' + reste + ' restant(s)</b>' + (b.cinema ? ' (cinéma)' : '') + '</div></div>'
             + '<div class="r">' + (b.stock > 0 ? '<span class="tag ' + (b.stock <= 5 ? 'warn' : 'ok') + '">' + (b.stock <= 5 ? 'Plus que ' + b.stock : b.stock + ' en stock') + '</span>' : '<span class="tag bad">Épuisé</span>')
             + (b.stock > 0 && reste > 0 && !PUBLIC ? '<br><button class="btn s p" style="margin-top:6px" onclick="cseBillet(\'' + E(String(b.id)) + '\')">Réserver</button>' : '') + '</div></div>';
@@ -1136,7 +1227,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function outingRow(o) {
     var full = o.places != null && o.restantes <= 0, late = o.limite && o.limite < today();
-    return '<div class="row"><div class="l"><b>' + E(o.nom) + '</b><div class="mute">' + fd(o.date) + (o.lieu ? ' · ' + E(o.lieu) : '') + '</div>'
+    return (o.photo ? '<img class="ph" loading="lazy" src="' + E(phUrl(o.photo)) + '" alt="">' : '') + '<div class="row"' + (o.photo ? ' style="border-top:0;padding-top:0"' : '') + '><div class="l"><b>' + E(o.nom) + '</b><div class="mute">' + fd(o.date) + (o.lieu ? ' · ' + E(o.lieu) : '') + '</div>'
       + '<div class="mute">Vous : ' + eur(o.prix.salarie) + ' · invité adulte : ' + eur(o.prix.adulte) + ' · enfant : ' + eur(o.prix.enfant) + '</div>'
       + (o.limite ? '<div class="mute">Inscriptions jusqu\'au ' + fd(o.limite) + '</div>' : '') + (o.notes ? '<div class="mute">' + E(o.notes) + '</div>' : '') + '</div>'
       + '<div class="r">' + (o.places != null ? '<span class="tag ' + (full ? 'bad' : 'info') + '">' + (full ? 'Complet' : o.restantes + ' place(s)') + '</span><br>' : '')
@@ -1152,7 +1243,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '10.0', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '10.1', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
