@@ -275,9 +275,24 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     h += '<div id="msg-fil" style="display:flex;flex-direction:column;gap:8px;margin:10px 0;max-height:55vh;overflow:auto">' + (L.length ? L.map(function (m) {
       var moi = m.de !== 'cse'; return '<div style="align-self:' + (moi ? 'flex-end' : 'flex-start') + ';max-width:85%;background:' + (moi ? 'var(--brand)' : '#f1f5f9') + ';color:' + (moi ? '#fff' : 'inherit') + ';border-radius:16px;padding:8px 12px;white-space:pre-wrap;word-wrap:break-word">' + E(m.texte) + '<div style="font-size:11px;opacity:.75;margin-top:3px">' + (moi ? 'Vous' : 'CSE' + (m.par ? ' · ' + E(m.par) : '')) + ' · ' + new Date(m.at).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + '</div></div>';
     }).join('') : '<p class="empty">Aucun message pour le moment.</p>') + '</div>';
-    h += '<textarea id="msg-txt" rows="4" maxlength="3000" placeholder="Votre message au CSE…" style="width:100%"></textarea><div class="msg" id="msg-msg" hidden></div><button class="btn p" id="msg-go" style="margin-top:8px" onclick="cseMsgEnvoyer()">📨 Envoyer</button></div>';
+    h += '<textarea id="msg-txt" rows="4" maxlength="3000" placeholder="Votre message au CSE…" style="width:100%"></textarea><div class="msg" id="msg-msg" hidden></div><div style="display:flex;gap:8px;margin-top:8px;align-items:center"><button type="button" class="btn s" title="Ajouter une émoticône" style="font-size:20px;padding:6px 12px" onclick="cseEmoji(this,\'msg-txt\')">😊</button><button class="btn p" id="msg-go" onclick="cseMsgEnvoyer()">📨 Envoyer</button></div></div>';
     return h;
   }
+  // Émoticônes dans la rédaction des messages
+  window.cseEmoji = function (btn, id) {
+    var old = document.getElementById('cse-emo'); if (old) { old.remove(); if (old.dataset.for === id) return; }
+    var L = '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 😉 😍 🥰 😘 😋 😎 🤩 🥳 🤔 🤗 😐 😴 😮 😢 😭 😡 😱 🙄 😬 👍 👎 👌 ✌️ 🤞 👏 🙌 🙏 💪 👋 ❤️ 🧡 💛 💚 💙 💜 🎉 🎁 🎄 🎂 🎟️ 🎭 ⚽ 🏖️ ☀️ 🌧️ ❄️ 🔥 ⭐ ✅ ❌ ⚠️ ❓ 📅 ⏰ 📞 📧 💶 🚗 ✈️'.split(' ');
+    var p = document.createElement('div'); p.id = 'cse-emo'; p.dataset.for = id;
+    p.style.cssText = 'position:fixed;z-index:9999;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:grid;grid-template-columns:repeat(8,36px);gap:2px;max-width:calc(100vw - 16px)';
+    L.forEach(function (e) { var b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.style.cssText = 'font-size:22px;width:36px;height:36px;border:0;background:none;border-radius:8px;cursor:pointer;padding:0;line-height:36px';
+      b.onmouseenter = function () { b.style.background = '#f1f5f9'; }; b.onmouseleave = function () { b.style.background = 'none'; };
+      b.onclick = function (ev) { ev.preventDefault(); var t = document.getElementById(id); if (!t) return; var s = t.selectionStart != null ? t.selectionStart : t.value.length, f = t.selectionEnd != null ? t.selectionEnd : s; t.value = t.value.slice(0, s) + e + t.value.slice(f); t.focus(); try { t.setSelectionRange(s + e.length, s + e.length); } catch (er) { } t.dispatchEvent(new Event('input', { bubbles: true })); };
+      p.appendChild(b); });
+    document.body.appendChild(p);
+    var r = btn.getBoundingClientRect(), w = p.offsetWidth, h = p.offsetHeight, x = Math.max(8, Math.min(r.left, innerWidth - w - 8)), y = r.top - h - 6; if (y < 8) y = r.bottom + 6;
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    setTimeout(function () { document.addEventListener('pointerdown', function fe(ev) { if (!p.contains(ev.target) && ev.target !== btn) { p.remove(); document.removeEventListener('pointerdown', fe, true); } }, true); }, 0);
+  };
   window.cseMsgEnvoyer = async function () {
     var t = ($('msg-txt').value || '').trim(); if (t.length < 2) return say('msg-msg', 'Écrivez votre message.', 'bad');
     var b = $('msg-go'); b.disabled = true; say('msg-msg', 'Envoi…', 'info');
@@ -1094,7 +1109,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '9.9', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '9.9.1', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();

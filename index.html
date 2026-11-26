@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"k8taT43dSakzzW//NDJe1A==","iv":"1EUzfDfZDvtK60YD","rev":"boot","lastModified":"2026-11-26T21:56:13.301Z","by":"Michaël GROSJEAN","data":"ecjGPOefSWoK3TZd2FjTwQ2nJRBA99eLikxeG/gdF5rQKi35DLT9Y7ZrUdebnIzvg3gbafjiAX/yfsD+nx+cZw=="},"at":"2026-11-26T21:56:13.339Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"M3nczC0Zkp7cxehoFayh9A==","iv":"QF551Kpi7Dc6F5HT","rev":"boot","lastModified":"2026-11-26T22:03:51.761Z","by":"Michaël GROSJEAN","data":"CA4wHQVcmvmKa88lbsBMnqm5F+0U4G5G2e/let8eByCxGhMUAqLkwtwS0jKyWN5S2N+BtwPi+g/ElbzysT9dAA=="},"at":"2026-11-26T22:03:51.799Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -21725,6 +21725,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         // =====================================================================
         const CHANGELOG = [
             { v: 'V.9.9.1', date: '2026-11-26', items: [
+                'Messages : bouton 😊 pour ajouter des émoticônes en écrivant (dans l\'appli et dans l\'espace salarié).',
                 'Messages des salariés : quand la fenêtre est ouverte, les nouveaux messages arrivent toutes les 15 secondes et sont marqués lus tout de suite.',
                 'L\'ancienne sauvegarde automatique de 13h45 est retirée : la synchronisation en direct envoie déjà chaque modification, et la sauvegarde de la semaine part sur le Drive (copiée sur le Synology).',
             ] },
@@ -47324,11 +47325,26 @@ var qrcode = function() {
       + '<button type="button" class="' + BTN + '" onclick="cseMsgNouveau()"><i class="fa-solid fa-pen"></i> Écrire à un salarié</button><button type="button" class="' + BTN + '" onclick="cseMsgSync()"><i class="fa-solid fa-rotate' + (MS.busy ? ' fa-spin' : '') + '"></i></button><button type="button" class="text-slate-400 hover:text-slate-700 text-2xl px-2" onclick="cseMsgFermer()" aria-label="Fermer">×</button></div>'
       + (MS.err ? '<p class="px-4 py-2 text-xs font-semibold text-amber-800 bg-amber-50">' + E(MS.err) + '</p>' : '')
       + '<div class="flex-1 flex min-h-0"><div style="width:33%;min-width:160px" class="border-r border-slate-200 overflow-y-auto">' + (list || '<p class="p-3 text-xs text-slate-400">Aucune conversation.</p>') + '</div><div class="flex-1 flex flex-col min-w-0">' + droite
-      + (peutEcrire ? '<div class="border-t border-slate-200 p-3 space-y-2"><textarea id="v99-msg-txt" rows="3" class="' + INP + '" placeholder="Votre réponse…"></textarea><div class="flex flex-wrap items-center gap-3"><label class="text-xs text-slate-600 flex items-center gap-1"><input type="checkbox" id="v99-msg-mail" checked> Aussi par e-mail' + (e2 && e2.email ? ' (' + E(e2.email) + ')' : '') + '</label><span class="text-[11px] text-slate-500 flex-1">Il le reçoit dans son espace' + (pushPret() ? ', en notification' : '') + ' et par e-mail.</span><button type="button" id="v99-msg-go" class="' + BTNP + '" onclick="cseMsgRepondre()"><i class="fa-solid fa-paper-plane"></i> Envoyer</button></div><p id="v99-msg-msg" class="text-xs"></p></div>' : '')
+      + (peutEcrire ? '<div class="border-t border-slate-200 p-3 space-y-2"><textarea id="v99-msg-txt" rows="3" class="' + INP + '" placeholder="Votre réponse…"></textarea><div class="flex flex-wrap items-center gap-3"><button type="button" title="Ajouter une émoticône" class="' + BTN + '" style="font-size:18px;padding:4px 10px" onclick="cseEmoji(this,\'v99-msg-txt\')">😊</button><label class="text-xs text-slate-600 flex items-center gap-1"><input type="checkbox" id="v99-msg-mail" checked> Aussi par e-mail' + (e2 && e2.email ? ' (' + E(e2.email) + ')' : '') + '</label><span class="text-[11px] text-slate-500 flex-1">Il le reçoit dans son espace' + (pushPret() ? ', en notification' : '') + ' et par e-mail.</span><button type="button" id="v99-msg-go" class="' + BTNP + '" onclick="cseMsgRepondre()"><i class="fa-solid fa-paper-plane"></i> Envoyer</button></div><p id="v99-msg-msg" class="text-xs"></p></div>' : '')
       + '</div></div>';
     if ($('v99-msg-txt') && garde) $('v99-msg-txt').value = garde;
     var fl = $('v99-msg-fil'); if (fl) fl.scrollTop = fl.scrollHeight;
   }
+  // Émoticônes dans la rédaction des messages
+  window.cseEmoji = function (btn, id) {
+    var old = document.getElementById('cse-emo'); if (old) { old.remove(); if (old.dataset.for === id) return; }
+    var L = '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 😉 😍 🥰 😘 😋 😎 🤩 🥳 🤔 🤗 😐 😴 😮 😢 😭 😡 😱 🙄 😬 👍 👎 👌 ✌️ 🤞 👏 🙌 🙏 💪 👋 ❤️ 🧡 💛 💚 💙 💜 🎉 🎁 🎄 🎂 🎟️ 🎭 ⚽ 🏖️ ☀️ 🌧️ ❄️ 🔥 ⭐ ✅ ❌ ⚠️ ❓ 📅 ⏰ 📞 📧 💶 🚗 ✈️'.split(' ');
+    var p = document.createElement('div'); p.id = 'cse-emo'; p.dataset.for = id;
+    p.style.cssText = 'position:fixed;z-index:9999;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:grid;grid-template-columns:repeat(8,36px);gap:2px;max-width:calc(100vw - 16px)';
+    L.forEach(function (e) { var b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.style.cssText = 'font-size:22px;width:36px;height:36px;border:0;background:none;border-radius:8px;cursor:pointer;padding:0;line-height:36px';
+      b.onmouseenter = function () { b.style.background = '#f1f5f9'; }; b.onmouseleave = function () { b.style.background = 'none'; };
+      b.onclick = function (ev) { ev.preventDefault(); var t = document.getElementById(id); if (!t) return; var s = t.selectionStart != null ? t.selectionStart : t.value.length, f = t.selectionEnd != null ? t.selectionEnd : s; t.value = t.value.slice(0, s) + e + t.value.slice(f); t.focus(); try { t.setSelectionRange(s + e.length, s + e.length); } catch (er) { } t.dispatchEvent(new Event('input', { bubbles: true })); };
+      p.appendChild(b); });
+    document.body.appendChild(p);
+    var r = btn.getBoundingClientRect(), w = p.offsetWidth, h = p.offsetHeight, x = Math.max(8, Math.min(r.left, innerWidth - w - 8)), y = r.top - h - 6; if (y < 8) y = r.bottom + 6;
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    setTimeout(function () { document.addEventListener('pointerdown', function fe(ev) { if (!p.contains(ev.target) && ev.target !== btn) { p.remove(); document.removeEventListener('pointerdown', fe, true); } }, true); }, 0);
+  };
   window.cseMsgSync = function () { msSync(true); msRender(); };
   window.cseMsgRepondre = async function () {
     var t = MS.nouveau ? ($('v99-msg-to') || {}).value : MS.sel, tx = (($('v99-msg-txt') || {}).value || '').trim(), p = $('v99-msg-msg');
@@ -47337,7 +47353,7 @@ var qrcode = function() {
     var b = $('v99-msg-go'); if (b) b.disabled = true; dit('Envoi…');
     try {
       var sl = window.cseSigLogo ? cseSigLogo() : {};
-      var j = await cseScriptPost('message-repondre', { t: t, texte: tx, par: qui(), mail: !!($('v99-msg-mail') || {}).checked, sig: sl.sig, logo: sl.logo });
+      var j = await cseScriptPost('message-repondre', { t: t, texte: tx, par: qui(), mail: !!($('v99-msg-mail') || {}).checked, to: (empTok(t) || {}).email || '', sig: sl.sig, logo: sl.logo });
       MS.fils = MS.fils || {}; var f = MS.fils[t] = MS.fils[t] || { liste: [], nom: nom(empTok(t)) }; f.liste.push(j.message); f.der = j.message.at; f.nonLu = 0;
       MS.sel = t; MS.nouveau = false; if ($('v99-msg-txt')) $('v99-msg-txt').value = ''; msRender();
       dit('✔ Envoyé' + (j.mail ? ' (espace + e-mail)' : ' (espace)') + (j.push ? ' · notification reçue sur ' + j.push + ' téléphone(s)' : '') + '.', 'text-emerald-700');
