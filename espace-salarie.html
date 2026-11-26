@@ -193,7 +193,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (method === 'POST' && body.action === 'idee') { await new Promise(function (r) { setTimeout(r, 500); }); if (!body.anonyme) D.fiche.idees.unshift({ date: today(), type: body.type, texte: body.texte, statut: 'Reçue', reponse: '' }); return { ok: true }; }
       if (method === 'POST' && body.action === 'deleg-profil') { await new Promise(function (r) { setTimeout(r, 300); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'deleg') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true, deleg: Object.assign({ id: 'n' + Date.now(), at: new Date().toISOString(), le: today(), statut: 'envoyée', vu: null, par: body.data && body.data.sansEnvoi ? 'ancienne' : 'espace' }, body.data) }; }
-      if (method === 'POST' && body.action === 'message') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true, message: { id: 'n' + Date.now(), at: new Date().toISOString(), de: 'sal', texte: body.texte } }; }
+      if (method === 'POST' && body.action === 'message') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true, message: { id: 'n' + Date.now(), at: new Date().toISOString(), de: 'sal', texte: body.texte, pj: body.pj ? { nom: body.pj.nom, type: body.pj.type, url: body.pj.data, id: '' } : null } }; }
+      if (method === 'POST' && body.action === 'messages-vus') return { ok: true };
       if (method === 'POST' && body.action === 'permanence-prendre') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'signature') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'avis') { await new Promise(function (r) { setTimeout(r, 400); }); D.avis = D.avis || {}; D.avis[body.o] = body.n; return { ok: true }; }
@@ -269,13 +270,40 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // V.9.9 : messagerie avec le CSE
   function msgK() { return 'cse_msg_vu_' + (DEMO ? 'demo' : String(T || '').slice(0, 8)); }
   function msgNew() { var vu = ''; try { vu = localStorage.getItem(msgK()) || ''; } catch (e) { } return (D && D.messages || []).filter(function (m) { return m.de === 'cse' && m.at > vu; }).length; }
-  function msgSeen() { var L = (D && D.messages) || []; if (!L.length) return; try { localStorage.setItem(msgK(), L[L.length - 1].at); } catch (e) { } }
+  function msgSeen() { var L = (D && D.messages) || []; if (!L.length) return; var avant = ''; try { avant = localStorage.getItem(msgK()) || ''; localStorage.setItem(msgK(), L[L.length - 1].at); } catch (e) { }
+    var dc = L.filter(function (m) { return m.de === 'cse'; }).pop(); if (dc && dc.at > avant && !DEMO) api('POST', { action: 'messages-vus' }).catch(function () { }); }
+  // V.10.0 : pièce jointe (photo réduite automatiquement, ou PDF de 5 Mo au plus)
+  var PJSEL = null;
+  function pjLire(file) {
+    return new Promise(function (ok, ko) {
+      if (!file) return ko(new Error('Aucun fichier.'));
+      var fr = new FileReader();
+      if (/^image\//.test(file.type)) {
+        fr.onload = function () { var im = new Image(); im.onload = function () { var M = 1600, w = im.width, h = im.height, k = Math.min(1, M / Math.max(w, h)), c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k); var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height); ok({ nom: (file.name || 'photo').replace(/\.[a-z0-9]+$/i, '') + '.jpg', type: 'image/jpeg', data: c.toDataURL('image/jpeg', 0.8) }); }; im.onerror = function () { ko(new Error('Photo illisible.')); }; im.src = fr.result; };
+      } else if (file.type === 'application/pdf') {
+        if (file.size > 5 * 1024 * 1024) return ko(new Error('PDF trop gros (5 Mo au plus).'));
+        fr.onload = function () { ok({ nom: file.name || 'document.pdf', type: 'application/pdf', data: fr.result }); };
+      } else return ko(new Error('Photo ou PDF seulement.'));
+      fr.onerror = function () { ko(new Error('Fichier illisible.')); }; fr.readAsDataURL(file);
+    });
+  }
+  function pjHtml(pj, moi) {
+    if (!pj) return ''; var u = pj.url || '#', img = /^image\//.test(pj.type || '');
+    if (img) { var src = pj.id ? 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(pj.id) + '&sz=w600' : u; return '<a href="' + E(u) + '" target="_blank" rel="noopener" style="display:block;margin:4px 0"><img src="' + E(src) + '" alt="' + E(pj.nom) + '" style="max-width:220px;max-height:220px;border-radius:10px;display:block;background:#fff"></a>'; }
+    return '<a href="' + E(u) + '" target="_blank" rel="noopener" style="display:inline-block;margin:4px 0;color:' + (moi ? '#fff' : 'var(--brand)') + ';font-weight:600;text-decoration:underline">📄 ' + E(pj.nom || 'Document') + '</a>';
+  }
+  window.csePjChoisir = async function (inp) {
+    var f = inp.files && inp.files[0]; inp.value = ''; if (!f) return;
+    try { PJSEL = await pjLire(f); var z = $('msg-pj-nom'); if (z) { z.hidden = false; z.innerHTML = '📎 ' + E(PJSEL.nom) + ' <button type="button" class="btn s" style="padding:2px 8px;margin-left:6px" onclick="csePjOter()">✕</button>'; } }
+    catch (e) { PJSEL = null; say('msg-msg', e.message, 'bad'); }
+  };
+  window.csePjOter = function () { PJSEL = null; var z = $('msg-pj-nom'); if (z) { z.hidden = true; z.innerHTML = ''; } };
   function msgPage() {
     var L = (D.messages || []), h = '<div class="card"><h2>💬 Écrire au CSE</h2><p class="mute">Une question, un souci, une info ? Le CSE reçoit votre message dans l\'appli et par e-mail. La réponse arrive ici, en notification et par e-mail.</p>';
     h += '<div id="msg-fil" style="display:flex;flex-direction:column;gap:8px;margin:10px 0;max-height:55vh;overflow:auto">' + (L.length ? L.map(function (m) {
-      var moi = m.de !== 'cse'; return '<div style="align-self:' + (moi ? 'flex-end' : 'flex-start') + ';max-width:85%;background:' + (moi ? 'var(--brand)' : '#f1f5f9') + ';color:' + (moi ? '#fff' : 'inherit') + ';border-radius:16px;padding:8px 12px;white-space:pre-wrap;word-wrap:break-word">' + E(m.texte) + '<div style="font-size:11px;opacity:.75;margin-top:3px">' + (moi ? 'Vous' : 'CSE' + (m.par ? ' · ' + E(m.par) : '')) + ' · ' + new Date(m.at).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + '</div></div>';
-    }).join('') : '<p class="empty">Aucun message pour le moment.</p>') + '</div>';
-    h += '<textarea id="msg-txt" rows="4" maxlength="3000" placeholder="Votre message au CSE…" style="width:100%"></textarea><div class="msg" id="msg-msg" hidden></div><div style="display:flex;gap:8px;margin-top:8px;align-items:center"><button type="button" class="btn s" title="Ajouter une émoticône" style="font-size:20px;padding:6px 12px" onclick="cseEmoji(this,\'msg-txt\')">😊</button><button class="btn p" id="msg-go" onclick="cseMsgEnvoyer()">📨 Envoyer</button></div></div>';
+      var moi = m.de !== 'cse'; return '<div style="align-self:' + (moi ? 'flex-end' : 'flex-start') + ';max-width:85%;background:' + (moi ? 'var(--brand)' : '#f1f5f9') + ';color:' + (moi ? '#fff' : 'inherit') + ';border-radius:16px;padding:8px 12px;white-space:pre-wrap;word-wrap:break-word">' + (m.groupe ? '<div style="font-size:11px;font-weight:700;opacity:.8;margin-bottom:2px">📣 Message ' + E(m.groupe) + '</div>' : '') + E(m.texte) + pjHtml(m.pj, moi) + '<div style="font-size:11px;opacity:.75;margin-top:3px">' + (moi ? 'Vous' : 'CSE' + (m.par ? ' · ' + E(m.par) : '')) + ' · ' + new Date(m.at).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + '</div></div>';
+    }).join('') + (function () { var ds = L.filter(function (m) { return m.de !== 'cse'; }).pop(), vu = D.messagesVu || ''; return ds && vu && vu >= ds.at && L[L.length - 1] === ds ? '<div style="align-self:flex-end;font-size:11px;color:var(--mute,#64748b)">✓ Vu par le CSE le ' + new Date(vu).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + '</div>' : ''; })() : '<p class="empty">Aucun message pour le moment.</p>') + '</div>';
+    h += '<textarea id="msg-txt" rows="4" maxlength="3000" placeholder="Votre message au CSE…" style="width:100%"></textarea><div id="msg-pj-nom" class="mute" style="margin-top:6px"' + (PJSEL ? '>📎 ' + E(PJSEL.nom) + ' <button type="button" class="btn s" style="padding:2px 8px;margin-left:6px" onclick="csePjOter()">✕</button>' : ' hidden>') + '</div><div class="msg" id="msg-msg" hidden></div><div style="display:flex;gap:8px;margin-top:8px;align-items:center"><button type="button" class="btn s" title="Ajouter une émoticône" style="font-size:20px;padding:6px 12px" onclick="cseEmoji(this,\'msg-txt\')">😊</button><label class="btn s" title="Joindre une photo ou un PDF" style="font-size:20px;padding:6px 12px;cursor:pointer">📎<input type="file" accept="image/*,application/pdf" style="display:none" onchange="csePjChoisir(this)"></label><button class="btn p" id="msg-go" onclick="cseMsgEnvoyer()">📨 Envoyer</button></div></div>';
     return h;
   }
   // Émoticônes dans la rédaction des messages
@@ -294,10 +322,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     setTimeout(function () { document.addEventListener('pointerdown', function fe(ev) { if (!p.contains(ev.target) && ev.target !== btn) { p.remove(); document.removeEventListener('pointerdown', fe, true); } }, true); }, 0);
   };
   window.cseMsgEnvoyer = async function () {
-    var t = ($('msg-txt').value || '').trim(); if (t.length < 2) return say('msg-msg', 'Écrivez votre message.', 'bad');
-    var b = $('msg-go'); b.disabled = true; say('msg-msg', 'Envoi…', 'info');
+    var t = ($('msg-txt').value || '').trim(); if (t.length < 2 && !PJSEL) return say('msg-msg', 'Écrivez votre message.', 'bad');
+    var b = $('msg-go'); b.disabled = true; say('msg-msg', PJSEL ? 'Envoi de la pièce jointe…' : 'Envoi…', 'info');
     try {
-      var r = await api('POST', { action: 'message', texte: t });
+      var r = await api('POST', { action: 'message', texte: t, pj: PJSEL || undefined }); PJSEL = null;
       D.messages = (D.messages || []).concat([r.message || { id: 'n' + Date.now(), at: new Date().toISOString(), de: 'sal', texte: t }]); cachePut(D);
       render(); say('msg-msg', (DEMO ? '(Exemple) ' : '') + '✔ Envoyé au CSE. Vous aurez la réponse ici.', 'ok');
       var fl = $('msg-fil'); if (fl) fl.scrollTop = fl.scrollHeight;
@@ -417,6 +445,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   };
   window.cseAvisNon = function (o) { avisMark(o, -1); render(); };
   // --- Récapitulatif annuel à enregistrer en PDF (V.8.9) ---
+  // V.10.0 : « Ce que le CSE m'a apporté » (accueil)
+  function apportCard() {
+    var f = D.fiche || {}, Y = String(new Date().getFullYear()), inY = function (d) { return String(d || '').slice(0, 4) === Y; };
+    var off = (f.offert || []).filter(function (o) { return inY(o.date); }), tot = off.reduce(function (s, o) { return s + (Number(o.montant) || 0); }, 0), byT = {};
+    off.forEach(function (o) { var k = o.type || 'Autre'; byT[k] = (byT[k] || 0) + (Number(o.montant) || 0); });
+    var nB = (f.achats || []).filter(function (a) { return inY(a.date); }).length, nS = (f.sorties || []).filter(function (x) { return inY(x.date); }).length;
+    var nC = (f.colis || []).filter(function (c) { return (c.moi && c.moi.remis) || (c.enfants || []).some(function (e) { return e.remis; }); }).length, nP = (f.prets || []).filter(function (p) { return inY(p.debut); }).length;
+    if (!(tot > 0) && !nB && !nS && !nC && !nP) return '';
+    var ch = []; if (nB) ch.push('🎟️ ' + nB + ' achat' + (nB > 1 ? 's' : '') + ' de billets'); if (nS) ch.push('🎭 ' + nS + ' sortie' + (nS > 1 ? 's' : '')); if (nC) ch.push('🎁 ' + nC + ' colis'); if (nP) ch.push('⛺ ' + nP + ' prêt' + (nP > 1 ? 's' : '') + ' de matériel');
+    return '<div class="card" style="border-left:4px solid var(--ok);cursor:pointer" onclick="cseGo(\'offert\')"><h2>🎁 Ce que le CSE m\'a apporté en ' + Y + '</h2>'
+      + (tot > 0 ? '<div class="kpi" style="cursor:pointer;margin-bottom:8px"><span>Total offert par le CSE</span><b style="color:var(--ok)">' + eur(tot) + '</b></div>' : '')
+      + (Object.keys(byT).length ? Object.keys(byT).sort(function (a, b) { return byT[b] - byT[a]; }).map(function (k) { return '<div class="row"><div class="l">' + E(k) + '</div><div class="r" style="color:var(--ok)">' + eur(byT[k]) + '</div></div>'; }).join('') : '')
+      + (ch.length ? '<p class="mute" style="margin-top:6px">' + ch.join(' · ') + '</p>' : '') + '<p class="mute">Touchez pour voir le détail et votre récapitulatif PDF.</p></div>';
+  }
   window.cseRecap = function (y) {
     var f = D.fiche || {}, P = D.pub || {}, Y = String(y || YEAR || new Date().getFullYear()), inY = function (d) { return String(d || '').slice(0, 4) === Y; };
     var off = (f.offert || []).filter(function (o) { return inY(o.date); }), ach = (f.achats || []).filter(function (a) { return inY(a.date); }), so = (f.sorties || []).filter(function (x) { return inY(x.date); }), cv = (f.cv || []).filter(function (c) { return String(c.annee) === Y; });
@@ -821,6 +863,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         if (!SIMPLE) h += avisCards();
         if (!SIMPLE) h += ficheCard();
         h += dgCard();
+        h += apportCard();
         if (msgNew()) h += '<div class="card" style="border-left:4px solid var(--brand);cursor:pointer" onclick="cseGo(\'messages\')"><h2>💬 Le CSE vous a répondu</h2><p class="mute">' + E(((D.messages || []).filter(function (m) { return m.de === 'cse'; }).pop() || {}).texte || '').slice(0, 160) + '</p><button class="btn p">Lire et répondre</button></div>';
         var NV = newReplies();
         if (NV.length) h += '<div class="card" style="border-left:4px solid var(--ok)"><h2>🔔 Le CSE a répondu</h2>' + NV.map(function (d) { var ok = d.statut === 'acceptée'; return '<div class="row"><div class="l"><b>' + E(d.resume) + '</b>' + (d.reponse ? '<div class="mute">💬 ' + E(d.reponse) + '</div>' : '') + '</div><div class="r"><span class="tag ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✅ acceptée' : '❌ ' + E(d.statut)) + '</span></div></div>'; }).join('') + '<button class="btn s" onclick="cseGo(\'demandes\')">Voir mes demandes</button></div>';
@@ -1109,7 +1152,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '9.9.1', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '10.0', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();

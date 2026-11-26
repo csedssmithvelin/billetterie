@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"M3nczC0Zkp7cxehoFayh9A==","iv":"QF551Kpi7Dc6F5HT","rev":"boot","lastModified":"2026-11-26T22:03:51.761Z","by":"Michaël GROSJEAN","data":"CA4wHQVcmvmKa88lbsBMnqm5F+0U4G5G2e/let8eByCxGhMUAqLkwtwS0jKyWN5S2N+BtwPi+g/ElbzysT9dAA=="},"at":"2026-11-26T22:03:51.799Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"3QchOHnC4W/YS0++ItXIvg==","iv":"6XOfTIi5d2rF5gUv","rev":"boot","lastModified":"2026-11-26T22:31:54.259Z","by":"Michaël GROSJEAN","data":"fFAWZWdjyMgcHECBJ83tWwp/tkej6SK9rVsRS+CazX0QDDph7afKRX5Vd+7CyCOUSJay7w+fsBUiqo62hPsCfQ=="},"at":"2026-11-26T22:31:54.318Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.9.9.1";
+        const APP_VERSION = "V.10.0";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,17 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.0', date: '2026-11-26', items: [
+                'Messages : « Écrire » permet d\'envoyer à un salarié, à tous, à un service, aux inscrits d\'une sortie, aux élus ou à une liste choisie à la main. Chacun le reçoit dans son espace, en notification et par e-mail (dans la limite du quota Google du jour). La liste des destinataires est montrée avant l\'envoi.',
+                'Messages : pièce jointe 📎 (photo réduite automatiquement, ou PDF de 5 Mo au plus) dans les deux sens, rangée sur le Drive (CSE - Documents › Messages).',
+                'Messages : « ✓ Vu » sous votre réponse quand le salarié l\'a lue ; le salarié voit « Vu par le CSE ».',
+                'Messages : bouton « Modèles » (réponses toutes faites : permanence, colis, chèques vacances, billets, prêt), modifiables dans Paramètres.',
+                'Permanence sans internet : bandeau « Hors ligne » ; les saisies restent sur l\'appareil, et les e-mails, notifications et messages en attente partent tout seuls au retour du réseau.',
+                'Prêts : photos facultatives du matériel à la sortie et au retour (rangées sur le Drive, 3 - Prêts de matériel › Photos) ; au retour, les photos de la sortie sont affichées pour comparer.',
+                'Tableau de bord : bouton « Les relancer » sur le bandeau des salariés sans prestation (message dans l\'espace, notification et e-mail, avec aperçu avant l\'envoi).',
+                'Résumé du mois en notification aux salariés le 1er du mois à 8h (prochaines sorties, billets disponibles, permanence) : désactivé au départ (Paramètres › Messagerie). Le rappel délégation du 15 part aussi à 8h.',
+                'Espace salarié 10.0 : carte « Ce que le CSE m\'a apporté » sur l\'accueil, pièces jointes et « Vu » dans les messages. Nécessite le script Google v87.',
+            ] },
             { v: 'V.9.9.1', date: '2026-11-26', items: [
                 'Messages : bouton 😊 pour ajouter des émoticônes en écrivant (dans l\'appli et dans l\'espace salarié).',
                 'Messages des salariés : quand la fenêtre est ouverte, les nouveaux messages arrivent toutes les 15 secondes et sont marqués lus tout de suite.',
@@ -47274,7 +47285,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 86;
+  var SCRIPT_ATTENDU = 87;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -47286,7 +47297,7 @@ var qrcode = function() {
     if (MS.busy || !window.__dbLoaded || seed() || !scriptOk() || !isCse()) return; if (!force && Date.now() - MS.at < 100000) return;
     MS.busy = true; MS.at = Date.now();
     try { var j = await cseScriptPost('messages-cse', {}); var avant = msNonLus(); MS.fils = j.fils || {}; MS.err = ''; if (msNonLus() > avant && avant >= 0 && !MS.open && MS.prem) say('💬 Nouveau message d\'un salarié (Messages).', 'info'); MS.prem = true; }
-    catch (e) { MS.err = /inconnue/i.test(e.message) ? 'Installez le script Google v86 (script-google-cse-v86.txt) pour la messagerie.' : e.message; }
+    catch (e) { MS.err = /inconnue/i.test(e.message) ? 'Installez le script Google v87 (script-google-cse-v87.txt) pour la messagerie.' : e.message; }
     MS.busy = false;
     if (MS.open && MS.sel && MS.fils && MS.fils[MS.sel] && MS.fils[MS.sel].nonLu) { MS.fils[MS.sel].nonLu = 0; cseScriptPost('messages-lu', { t: MS.sel }).catch(function () { }); }
     msBadge(); if (MS.open) msRender();
@@ -47306,26 +47317,54 @@ var qrcode = function() {
   window.cseMsgOuvrir = function (t) { MS.open = true; if (t) MS.sel = t; msModal().classList.remove('hidden'); msRender(); msSync(true); };
   window.cseMsgFermer = function () { MS.open = false; var m = $('v99-msg-modal'); if (m) m.classList.add('hidden'); };
   window.cseMsgSel = function (t) { MS.sel = t; MS.nouveau = false; msRender(); var f = (MS.fils || {})[t]; if (f && f.nonLu) { f.nonLu = 0; msBadge(); cseScriptPost('messages-lu', { t: t }).catch(function () { }); } };
-  window.cseMsgNouveau = function () { MS.nouveau = true; MS.sel = ''; msRender(); };
+  window.cseMsgNouveau = function () { MS.nouveau = true; MS.sel = ''; MS.dest = MS.dest || 'un'; msRender(); };
+  function msBulle(m, f) {
+    var cse = m.de === 'cse';
+    return '<div class="flex ' + (cse ? 'justify-end' : 'justify-start') + '"><div style="max-width:80%" class="rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap ' + (cse ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-800') + '">'
+      + (m.groupe ? '<div class="text-[10px] font-bold opacity-80 mb-0.5">📣 Message ' + E(m.groupe) + '</div>' : '') + E(m.texte) + pjHtml(m.pj, cse)
+      + '<div class="text-[10px] opacity-75 mt-1">' + (cse ? 'CSE' + (m.par ? ' · ' + E(m.par) : '') : E(f.nom || 'Salarié')) + ' · ' + E(hrel(m.at)) + '</div></div></div>';
+  }
+  function msVu(f) {
+    var L = f.liste || [], der = L[L.length - 1]; if (!der) return '';
+    if (der.de === 'cse' && f.vuSal && f.vuSal >= der.at) return '<div class="text-right text-[11px] text-slate-500">✓ Vu ' + E(hrel(f.vuSal)) + '</div>';
+    if (der.de === 'cse') return '<div class="text-right text-[11px] text-slate-400">Envoyé, pas encore vu</div>';
+    return '';
+  }
   function msRender() {
     var b = $('v99-msg-box'); if (!b) return;
     var F = MS.fils || {}, keys = Object.keys(F).sort(function (a, c) { return String(F[c].der || '').localeCompare(String(F[a].der || '')); });
-    var garde = $('v99-msg-txt') ? $('v99-msg-txt').value : '';
-    var list = keys.map(function (t) { var f = F[t], L = f.liste || [], der = L[L.length - 1] || {}, e = empTok(t); return '<button type="button" onclick="cseMsgSel(\'' + E(t) + '\')" class="w-full text-left px-3 py-2 border-b border-slate-100 ' + (t === MS.sel ? 'bg-indigo-50' : 'hover:bg-slate-50') + '"><div class="flex items-center gap-2"><b class="text-sm text-slate-800 flex-1 truncate">' + E(e ? nom(e) : f.nom || 'Salarié') + '</b>' + (f.nonLu ? '<span class="text-[10px] font-bold bg-rose-500 text-white rounded-full px-1.5">' + f.nonLu + '</span>' : '') + '</div><div class="text-[11px] text-slate-500 truncate">' + (der.de === 'cse' ? 'Vous : ' : '') + E(der.texte || '') + '</div><div class="text-[10px] text-slate-400">' + E(hrel(der.at)) + '</div></button>'; }).join('');
-    var droite = '';
+    var garde = $('v99-msg-txt') ? $('v99-msg-txt').value : '', gT = $('v99-msg-titre') ? $('v99-msg-titre').value : null;
+    var list = keys.map(function (t) { var f = F[t], L = f.liste || [], der = L[L.length - 1] || {}, e = empTok(t); return '<button type="button" onclick="cseMsgSel(\'' + E(t) + '\')" class="w-full text-left px-3 py-2 border-b border-slate-100 ' + (t === MS.sel ? 'bg-indigo-50' : 'hover:bg-slate-50') + '"><div class="flex items-center gap-2"><b class="text-sm text-slate-800 flex-1 truncate">' + E(e ? nom(e) : f.nom || 'Salarié') + '</b>' + (f.nonLu ? '<span class="text-[10px] font-bold bg-rose-500 text-white rounded-full px-1.5">' + f.nonLu + '</span>' : '') + '</div><div class="text-[11px] text-slate-500 truncate">' + (der.de === 'cse' ? 'Vous : ' : '') + E(der.texte || (der.pj ? '📎 ' + der.pj.nom : '')) + '</div><div class="text-[10px] text-slate-400">' + E(hrel(der.at)) + '</div></button>'; }).join('');
+    var droite = '', groupe = MS.nouveau && MS.dest !== 'un';
     if (MS.nouveau) {
-      var EM = (db.employees || []).filter(function (e) { return e.espaceToken && e.active !== false; }).sort(function (a, c) { return nom(a).localeCompare(nom(c)); });
-      droite = '<div class="p-4 space-y-2"><p class="text-sm font-bold text-slate-800">✉️ Écrire à un salarié</p><select id="v99-msg-to" class="' + INP + '"><option value="">— Choisir —</option>' + EM.map(function (e) { return '<option value="' + E(e.espaceToken) + '">' + E(nom(e)) + (e.email ? '' : ' (pas d\'e-mail : espace seulement)') + '</option>'; }).join('') + '</select><p class="text-[11px] text-slate-500">Seuls les salariés qui ont un lien d\'espace apparaissent.</p></div>';
+      var EM = msEmps(), D = MS.dest || 'un';
+      var sel = function (v, l) { return '<option value="' + v + '"' + (D === v ? ' selected' : '') + '>' + l + '</option>'; };
+      var svcs = EM.map(function (e) { return e.service || ''; }).filter(function (s, i, a) { return s && a.indexOf(s) === i; }).sort();
+      var sorties = (db.outings || []).filter(function (o) { return o.status !== 'annulee' && String(o.date || '') >= addD(today(), -60); }).sort(function (a, c) { return String(a.date).localeCompare(String(c.date)); }).slice(0, 40);
+      droite = '<div class="p-4 space-y-2 overflow-y-auto flex-1"><p class="text-sm font-bold text-slate-800">✉️ Écrire au salarié ou à plusieurs</p>'
+        + '<select class="' + INP + '" onchange="cseMsgDest(\'dest\',this.value)">' + sel('un', 'Un salarié') + sel('tous', 'Tous les salariés') + sel('service', 'Un service') + sel('sortie', 'Les inscrits d\'une sortie') + sel('elus', 'Les élus du CSE') + sel('choix', 'Choisir à la main') + (MS.liste ? sel('liste', MS.liste.nom) : '') + '</select>';
+      if (D === 'un') droite += '<select id="v99-msg-to" class="' + INP + '" onchange="cseMsgDest(\'to\',this.value)"><option value="">— Choisir —</option>' + EM.map(function (e) { return '<option value="' + E(e.espaceToken) + '"' + (MS.to === e.espaceToken ? ' selected' : '') + '>' + E(nom(e)) + (e.email ? '' : ' (pas d\'e-mail : espace seulement)') + '</option>'; }).join('') + '</select>';
+      if (D === 'service') droite += '<select class="' + INP + '" onchange="cseMsgDest(\'svc\',this.value)"><option value="">— Service —</option>' + svcs.map(function (s) { return '<option' + (MS.svc === s ? ' selected' : '') + '>' + E(s) + '</option>'; }).join('') + '</select>';
+      if (D === 'sortie') droite += '<select class="' + INP + '" onchange="cseMsgDest(\'sortie\',this.value)"><option value="">— Sortie —</option>' + sorties.map(function (o) { return '<option value="' + E(o.id) + '"' + (String(MS.sortie) === String(o.id) ? ' selected' : '') + '>' + E(fd(o.date) + ' · ' + (o.name || o.title || 'Sortie')) + '</option>'; }).join('') + '</select>';
+      if (D === 'choix') droite += '<div class="border border-slate-200 rounded-lg max-h-48 overflow-y-auto p-2 grid sm:grid-cols-2 gap-1">' + EM.map(function (e) { return '<label class="flex items-center gap-1.5 text-xs"><input type="checkbox"' + ((MS.choix || {})[e.espaceToken] ? ' checked' : '') + ' onchange="cseMsgDest(\'choix\',\'' + E(e.espaceToken) + '\',this.checked)"> ' + E(nom(e)) + '</label>'; }).join('') + '</div>';
+      if (groupe) { var R = msDest(), sm = R.filter(function (e) { return !e.email; }).length; droite += '<p class="text-xs ' + (R.length ? 'text-slate-700' : 'text-rose-700') + '"><b>' + R.length + ' destinataire(s)</b>' + (sm ? ' · ' + sm + ' sans e-mail (espace et notification seulement)' : '') + (MS.horsEsp ? ' · ' + MS.horsEsp + ' sans lien d\'espace, non joints' : '') + '</p>'
+        + '<label class="text-xs text-slate-600 block">Objet de l\'e-mail<input id="v99-msg-titre" class="' + INP + '" value="' + E(gT != null ? gT : (MS.titre || 'Message du CSE')) + '"></label>'; }
+      droite += '<p class="text-[11px] text-slate-500">Seuls les salariés qui ont un lien d\'espace peuvent recevoir un message.</p></div>';
     } else if (MS.sel && F[MS.sel]) {
       var f = F[MS.sel];
-      droite = '<div class="flex-1 overflow-y-auto p-4 space-y-2" id="v99-msg-fil">' + (f.liste || []).map(function (m) { var cse = m.de === 'cse'; return '<div class="flex ' + (cse ? 'justify-end' : 'justify-start') + '"><div style="max-width:80%" class="rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap ' + (cse ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-800') + '">' + E(m.texte) + '<div class="text-[10px] opacity-75 mt-1">' + (cse ? 'CSE' + (m.par ? ' · ' + E(m.par) : '') : E(f.nom || 'Salarié')) + ' · ' + E(hrel(m.at)) + '</div></div></div>'; }).join('') + '</div>';
+      droite = '<div class="flex-1 overflow-y-auto p-4 space-y-2" id="v99-msg-fil">' + (f.liste || []).map(function (m) { return msBulle(m, f); }).join('') + msVu(f) + '</div>';
     } else droite = '<div class="flex-1 flex items-center justify-center text-sm text-slate-400 p-6 text-center">' + (keys.length ? 'Choisissez une conversation à gauche.' : 'Aucun message pour le moment. Les salariés écrivent depuis leur espace (onglet Messages).') + '</div>';
-    var e2 = MS.sel ? empTok(MS.sel) : null, peutEcrire = MS.nouveau || (MS.sel && F[MS.sel]);
+    var e2 = MS.nouveau ? (MS.dest === 'un' || !MS.dest ? empTok(MS.to) : null) : MS.sel ? empTok(MS.sel) : null, peutEcrire = MS.nouveau || (MS.sel && F[MS.sel]);
     b.innerHTML = '<div class="flex items-center gap-2 px-4 py-3 border-b border-slate-200"><h3 class="font-extrabold text-slate-800 text-base flex-1"><i class="fa-solid fa-comments text-brand-600"></i> Messages des salariés</h3>'
-      + '<button type="button" class="' + BTN + '" onclick="cseMsgNouveau()"><i class="fa-solid fa-pen"></i> Écrire à un salarié</button><button type="button" class="' + BTN + '" onclick="cseMsgSync()"><i class="fa-solid fa-rotate' + (MS.busy ? ' fa-spin' : '') + '"></i></button><button type="button" class="text-slate-400 hover:text-slate-700 text-2xl px-2" onclick="cseMsgFermer()" aria-label="Fermer">×</button></div>'
+      + '<button type="button" class="' + BTN + '" onclick="cseMsgNouveau()"><i class="fa-solid fa-pen"></i> Écrire</button><button type="button" class="' + BTN + '" onclick="cseMsgSync()"><i class="fa-solid fa-rotate' + (MS.busy ? ' fa-spin' : '') + '"></i></button><button type="button" class="text-slate-400 hover:text-slate-700 text-2xl px-2" onclick="cseMsgFermer()" aria-label="Fermer">×</button></div>'
       + (MS.err ? '<p class="px-4 py-2 text-xs font-semibold text-amber-800 bg-amber-50">' + E(MS.err) + '</p>' : '')
       + '<div class="flex-1 flex min-h-0"><div style="width:33%;min-width:160px" class="border-r border-slate-200 overflow-y-auto">' + (list || '<p class="p-3 text-xs text-slate-400">Aucune conversation.</p>') + '</div><div class="flex-1 flex flex-col min-w-0">' + droite
-      + (peutEcrire ? '<div class="border-t border-slate-200 p-3 space-y-2"><textarea id="v99-msg-txt" rows="3" class="' + INP + '" placeholder="Votre réponse…"></textarea><div class="flex flex-wrap items-center gap-3"><button type="button" title="Ajouter une émoticône" class="' + BTN + '" style="font-size:18px;padding:4px 10px" onclick="cseEmoji(this,\'v99-msg-txt\')">😊</button><label class="text-xs text-slate-600 flex items-center gap-1"><input type="checkbox" id="v99-msg-mail" checked> Aussi par e-mail' + (e2 && e2.email ? ' (' + E(e2.email) + ')' : '') + '</label><span class="text-[11px] text-slate-500 flex-1">Il le reçoit dans son espace' + (pushPret() ? ', en notification' : '') + ' et par e-mail.</span><button type="button" id="v99-msg-go" class="' + BTNP + '" onclick="cseMsgRepondre()"><i class="fa-solid fa-paper-plane"></i> Envoyer</button></div><p id="v99-msg-msg" class="text-xs"></p></div>' : '')
+      + (peutEcrire ? '<div class="border-t border-slate-200 p-3 space-y-2"><textarea id="v99-msg-txt" rows="3" class="' + INP + '" placeholder="Votre message…"></textarea>'
+        + (MS.pj ? '<p class="text-xs text-slate-700">📎 ' + E(MS.pj.nom) + ' <button type="button" class="text-rose-600 underline" onclick="cseMsgPjOter()">retirer</button></p>' : '')
+        + '<div class="flex flex-wrap items-center gap-2"><button type="button" title="Ajouter une émoticône" class="' + BTN + '" style="font-size:18px;padding:4px 10px" onclick="cseEmoji(this,\'v99-msg-txt\')">😊</button>'
+        + '<label title="Joindre une photo ou un PDF" class="' + BTN + '" style="font-size:18px;padding:4px 10px;cursor:pointer">📎<input type="file" accept="image/*,application/pdf" style="display:none" onchange="cseMsgPj(this)"></label>'
+        + '<button type="button" title="Réponses toutes faites" class="' + BTN + '" onclick="cseMsgModeles(this)"><i class="fa-solid fa-list"></i> Modèles</button>'
+        + '<label class="text-xs text-slate-600 flex items-center gap-1"><input type="checkbox" id="v99-msg-mail" checked> Aussi par e-mail' + (e2 && e2.email ? ' (' + E(e2.email) + ')' : '') + '</label><span class="flex-1"></span><button type="button" id="v99-msg-go" class="' + BTNP + '" onclick="cseMsgRepondre()"><i class="fa-solid fa-paper-plane"></i> Envoyer' + (groupe ? ' à ' + msDest().length : '') + '</button></div><p id="v99-msg-msg" class="text-xs"></p></div>' : '')
       + '</div></div>';
     if ($('v99-msg-txt') && garde) $('v99-msg-txt').value = garde;
     var fl = $('v99-msg-fil'); if (fl) fl.scrollTop = fl.scrollHeight;
@@ -47347,18 +47386,37 @@ var qrcode = function() {
   };
   window.cseMsgSync = function () { msSync(true); msRender(); };
   window.cseMsgRepondre = async function () {
-    var t = MS.nouveau ? ($('v99-msg-to') || {}).value : MS.sel, tx = (($('v99-msg-txt') || {}).value || '').trim(), p = $('v99-msg-msg');
+    var groupe = MS.nouveau && MS.dest && MS.dest !== 'un';
+    var t = MS.nouveau ? MS.to : MS.sel, tx = (($('v99-msg-txt') || {}).value || '').trim(), p = $('v99-msg-msg');
     var dit = function (m, c) { p = $('v99-msg-msg') || p; if (p) { p.textContent = m; p.className = 'text-xs ' + (c || ''); } };
-    if (!t) return dit('Choisissez le salarié.', 'text-rose-700'); if (!tx) return dit('Écrivez le message.', 'text-rose-700');
-    var b = $('v99-msg-go'); if (b) b.disabled = true; dit('Envoi…');
+    if (!groupe && !t) return dit('Choisissez le salarié.', 'text-rose-700'); if (!tx && !MS.pj) return dit('Écrivez le message.', 'text-rose-700');
+    var R = groupe ? msDest() : null; if (groupe && !R.length) return dit('Aucun destinataire.', 'text-rose-700');
+    var titre = groupe ? (($('v99-msg-titre') || {}).value || 'Message du CSE').trim() : '', mail = !!($('v99-msg-mail') || {}).checked;
+    if (groupe) {
+      var ok = await uiConfirm('Envoyer ce message à ' + R.length + ' salarié(s) ?\n\n' + R.slice(0, 12).map(nom).join(', ') + (R.length > 12 ? '… (+' + (R.length - 12) + ')' : '') + '\n\nIl arrive dans leur espace, en notification' + (mail ? ' et par e-mail (' + R.filter(function (e) { return e.email; }).length + ' adresse(s))' : '') + '.' + (mail && R.length > 80 ? '\n\nAttention : Google limite le nombre d\'e-mails par jour ; au-delà, ils auront l\'espace et la notification seulement.' : ''));
+      if (!ok) return;
+    }
+    var b = $('v99-msg-go'); if (b) b.disabled = true; dit(MS.pj ? 'Envoi de la pièce jointe…' : 'Envoi…');
     try {
-      var sl = window.cseSigLogo ? cseSigLogo() : {};
-      var j = await cseScriptPost('message-repondre', { t: t, texte: tx, par: qui(), mail: !!($('v99-msg-mail') || {}).checked, to: (empTok(t) || {}).email || '', sig: sl.sig, logo: sl.logo });
+      var sl = window.cseSigLogo ? cseSigLogo() : {}, j;
+      if (groupe) {
+        var tos = {}; R.forEach(function (e) { if (e.email) tos[e.espaceToken] = e.email; });
+        j = await cseScriptPost('message-groupe', { liens: R.map(function (e) { return e.espaceToken; }), tos: tos, texte: tx, titre: titre, groupe: msGroupeNom(), par: qui(), mail: mail, sig: sl.sig, logo: sl.logo, pj: MS.pj || undefined });
+        if (j && j.attente) { MS.pj = null; MS.nouveau = false; if ($('v99-msg-txt')) $('v99-msg-txt').value = ''; msRender(); return dit('📴 Pas de connexion : le message partira au retour du réseau.', 'text-amber-700'); }
+        MS.fils = MS.fils || {}; Object.keys(j.messages || {}).forEach(function (k) { var f = MS.fils[k] = MS.fils[k] || { liste: [], nom: nom(empTok(k)) }; f.liste.push(j.messages[k]); f.der = j.messages[k].at; });
+        MS.pj = null; MS.nouveau = false; MS.sel = ''; if ($('v99-msg-txt')) $('v99-msg-txt').value = ''; msRender();
+        say('✔ Message envoyé à ' + j.n + ' salarié(s).', 'success');
+        dit('✔ Envoyé à ' + j.n + ' salarié(s) : ' + (j.mails || 0) + ' e-mail(s), notification sur ' + (j.push || 0) + ' téléphone(s)' + (j.sansMail ? ', ' + j.sansMail + ' sans e-mail' : '') + (j.horsQuota ? ', ' + j.horsQuota + ' e-mail(s) non partis (quota du jour)' : '') + '.', 'text-emerald-700');
+        try { logAction('Création', 'message', 'Message à ' + j.n + ' salariés (' + msGroupeNom() + ') : ' + tx.slice(0, 80)); } catch (e) { }
+        return;
+      }
+      j = await cseScriptPost('message-repondre', { t: t, texte: tx, par: qui(), mail: mail, to: (empTok(t) || {}).email || '', sig: sl.sig, logo: sl.logo, pj: MS.pj || undefined });
+      if (j && j.attente) dit('📴 Pas de connexion : le message partira au retour du réseau.', 'text-amber-700');
       MS.fils = MS.fils || {}; var f = MS.fils[t] = MS.fils[t] || { liste: [], nom: nom(empTok(t)) }; f.liste.push(j.message); f.der = j.message.at; f.nonLu = 0;
-      MS.sel = t; MS.nouveau = false; if ($('v99-msg-txt')) $('v99-msg-txt').value = ''; msRender();
-      dit('✔ Envoyé' + (j.mail ? ' (espace + e-mail)' : ' (espace)') + (j.push ? ' · notification reçue sur ' + j.push + ' téléphone(s)' : '') + '.', 'text-emerald-700');
+      MS.pj = null; MS.sel = t; MS.nouveau = false; if ($('v99-msg-txt')) $('v99-msg-txt').value = ''; msRender();
+      if (!j.attente) dit('✔ Envoyé' + (j.mail ? ' (espace + e-mail)' : ' (espace)') + (j.push ? ' · notification reçue sur ' + j.push + ' téléphone(s)' : '') + '.', 'text-emerald-700');
       try { logAction('Création', 'message', 'Message au salarié ' + (f.nom || '') + ' : ' + tx.slice(0, 80)); } catch (e) { }
-    } catch (e) { if (b) b.disabled = false; dit('Erreur : ' + (/inconnue/i.test(e.message) ? 'installez le script Google v86.' : e.message), 'text-rose-700'); }
+    } catch (e) { if (b) b.disabled = false; dit('Erreur : ' + (/inconnue/i.test(e.message) ? 'installez le script Google v87.' : e.message), 'text-rose-700'); }
   };
 
   // ---------- 15b) E-mails automatiques au salarié ----------
@@ -47471,7 +47529,7 @@ var qrcode = function() {
       }
       var r = await amEnvoyer(x, t); save();
       if (r.mail) say('📧 E-mail envoyé à ' + nom(e) + ' : ' + t.subject, 'success'); else if (r.push) say('🔔 ' + nom(e) + ' n\'a pas d\'e-mail : notification envoyée.', 'info');
-    } catch (er) { say('E-mail au salarié non envoyé : ' + er.message, 'warning'); }
+    } catch (er) { if (horsLigne(er)) { cseAmAttente(x); say('📴 Pas de connexion : l\'e-mail à ' + nom(e) + ' partira au retour du réseau.', 'warning'); } else say('E-mail au salarié non envoyé : ' + er.message, 'warning'); }
     AM.busy = false; if (AM.q.length) setTimeout(amSuivant, 800);
   }
   function amModal() {
@@ -47528,7 +47586,7 @@ var qrcode = function() {
         var f = {}; try { window.cseEspaceFicheExtra && window.cseEspaceFicheExtra(f, e); } catch (er) { } var mo = f.deleg && f.deleg.mois; if (!mo) return; var cr = Number(mo.credit) || Number(mo.base) || 0; if (!(cr > 0)) return;
         var reste = mo.reste != null ? Number(mo.reste) : cr - (Number(mo.used) || 0); if (!(reste > cr / 2)) return;
         var hh = function (n) { n = Math.round(n * 60); return Math.floor(n / 60) + ' h' + (n % 60 ? String(n % 60).padStart(2, '0') : ''); };
-        out.push({ id: 'deleg15:' + e.id + ':' + t.slice(0, 7), on: on, h: 9, t: e.espaceToken, pt: '🕒 Heures de délégation', px: 'Il vous reste ' + hh(reste) + ' sur ' + hh(cr) + ' ce mois-ci. Pensez à les poser depuis votre espace.', who: nom(e), what: '📲 Délégation (15 du mois)', subject: 'Heures de délégation', body: '' });
+        out.push({ id: 'deleg15:' + e.id + ':' + t.slice(0, 7), on: on, h: 8, t: e.espaceToken, pt: '🕒 Heures de délégation', px: 'Il vous reste ' + hh(reste) + ' sur ' + hh(cr) + ' ce mois-ci. Pensez à les poser depuis votre espace.', who: nom(e), what: '📲 Délégation (15 du mois)', subject: 'Heures de délégation', body: '' });
       });
     } catch (er) { console.warn('[deleg15]', er); }
     return out;
@@ -47605,6 +47663,204 @@ var qrcode = function() {
   // Lien « ?messages » (e-mail ou notification) : ouvre la messagerie
   if (/[?&]messages\b/.test(location.search)) { var mo0 = setInterval(function () { if (window.__dbLoaded) { clearInterval(mo0); setTimeout(function () { cseMsgOuvrir(); }, 1200); } }, 500); }
 
+  // =====================================================================
+  // 16) V.10.0 : MESSAGES À PLUSIEURS, PIÈCES JOINTES, MODÈLES DE RÉPONSE, PERMANENCE HORS LIGNE,
+  //     PHOTOS DES PRÊTS, RELANCE DES SALARIÉS SANS PRESTATION, RÉSUMÉ DU MOIS
+  // =====================================================================
+  // ---------- 16a) Destinataires ----------
+  function msEmps() { return (db.employees || []).filter(function (e) { return e.espaceToken && e.active !== false; }).sort(function (a, c) { return nom(a).localeCompare(nom(c)); }); }
+  function msDest() {
+    var EM = msEmps(), D = MS.dest || 'un', R = [];
+    if (D === 'tous') R = EM;
+    else if (D === 'elus') R = EM.filter(function (e) { try { return cseEmpIsCse(e); } catch (er) { return false; } });
+    else if (D === 'service') R = MS.svc ? EM.filter(function (e) { return (e.service || '') === MS.svc; }) : [];
+    else if (D === 'sortie') { var ids = {}; (db.registrations || []).forEach(function (r) { if (String(r.outingId) === String(MS.sortie) && !r.cancelled) ids[String(r.employeeId)] = 1; }); R = EM.filter(function (e) { return ids[String(e.id)]; }); }
+    else if (D === 'choix') R = EM.filter(function (e) { return (MS.choix || {})[e.espaceToken]; });
+    else if (D === 'liste' && MS.liste) R = EM.filter(function (e) { return MS.liste.ids[String(e.id)]; });
+    else if (D === 'un') R = EM.filter(function (e) { return e.espaceToken === MS.to; });
+    return R;
+  }
+  function msGroupeNom() {
+    var D = MS.dest; if (D === 'tous') return 'à tous les salariés'; if (D === 'elus') return 'aux élus du CSE'; if (D === 'service') return 'au service ' + (MS.svc || '');
+    if (D === 'sortie') { var o = (db.outings || []).filter(function (x) { return String(x.id) === String(MS.sortie); })[0]; return 'aux inscrits de « ' + ((o && (o.name || o.title)) || 'la sortie') + ' »'; }
+    if (D === 'liste' && MS.liste) return MS.liste.groupe || ''; return '';
+  }
+  window.cseMsgDest = function (k, v, on) {
+    if (k === 'dest') { MS.dest = v; MS.horsEsp = 0; if (v === 'liste' && MS.liste) MS.horsEsp = MS.liste.horsEsp || 0; }
+    else if (k === 'choix') { MS.choix = MS.choix || {}; if (on) MS.choix[v] = 1; else delete MS.choix[v]; }
+    else MS[k] = v;
+    msRender();
+  };
+  // ---------- 16b) Pièces jointes ----------
+  function pjLire(file) {
+    return new Promise(function (ok, ko) {
+      if (!file) return ko(new Error('Aucun fichier.'));
+      var fr = new FileReader();
+      if (/^image\//.test(file.type)) {
+        fr.onload = function () { var im = new Image(); im.onload = function () { var M = 1600, k = Math.min(1, M / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height); ok({ nom: (file.name || 'photo').replace(/\.[a-z0-9]+$/i, '') + '.jpg', type: 'image/jpeg', data: c.toDataURL('image/jpeg', 0.8) }); }; im.onerror = function () { ko(new Error('Photo illisible.')); }; im.src = fr.result; };
+      } else if (file.type === 'application/pdf') {
+        if (file.size > 5 * 1024 * 1024) return ko(new Error('PDF trop gros (5 Mo au plus).'));
+        fr.onload = function () { ok({ nom: file.name || 'document.pdf', type: 'application/pdf', data: fr.result }); };
+      } else return ko(new Error('Photo ou PDF seulement.'));
+      fr.onerror = function () { ko(new Error('Fichier illisible.')); }; fr.readAsDataURL(file);
+    });
+  }
+  window.csePjLire = pjLire;
+  function pjHtml(pj, clair) {
+    if (!pj) return ''; var u = pj.url || '#';
+    if (/^image\//.test(pj.type || '')) { var src = pj.id ? 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(pj.id) + '&sz=w600' : u; return '<a href="' + E(u) + '" target="_blank" rel="noopener" class="block my-1"><img src="' + E(src) + '" alt="' + E(pj.nom) + '" style="max-width:240px;max-height:240px;border-radius:10px;background:#fff"></a>'; }
+    return '<a href="' + E(u) + '" target="_blank" rel="noopener" class="block my-1 font-semibold underline ' + (clair ? 'text-white' : 'text-brand-700') + '">📄 ' + E(pj.nom || 'Document') + '</a>';
+  }
+  window.cseMsgPj = async function (inp) { var f = inp.files && inp.files[0]; inp.value = ''; if (!f) return; try { MS.pj = await pjLire(f); msRender(); } catch (e) { say(e.message, 'warning'); } };
+  window.cseMsgPjOter = function () { MS.pj = null; msRender(); };
+  // ---------- 16c) Réponses toutes faites ----------
+  var MD_DEF = [
+    { t: '🕐 Permanence', x: 'La permanence du CSE a lieu {permanence}. Nous vous y attendons.' },
+    { t: '🎁 Colis', x: 'Votre colis est disponible : vous pouvez le récupérer à la permanence du CSE ({permanence}).' },
+    { t: '🏖️ Chèques vacances', x: 'Pour les chèques vacances, la campagne et vos échéances sont dans votre espace CSE (onglet Chèques vacances). Pour toute question, passez à la permanence ({permanence}).' },
+    { t: '🎟️ Billets', x: 'Les billets disponibles et leurs prix sont dans votre espace CSE (onglet Billetterie). Vous pouvez les réserver depuis l\'espace et les récupérer à la permanence ({permanence}).' },
+    { t: '⛺ Prêt de matériel', x: 'Pour emprunter du matériel, faites la demande depuis votre espace CSE (onglet Matériel). Un chèque de caution de {caution} est demandé au retrait ; il vous est rendu au retour du matériel.' }];
+  function mdListe() { var c = cfg(); return Array.isArray(c.msgModeles) && c.msgModeles.length ? c.msgModeles : MD_DEF; }
+  function mdTexte(x, e) {
+    var c = cfg(), perm = c.espacePermanence == null ? 'le vendredi de 11h à 13h30' : String(c.espacePermanence || '');
+    perm = perm.charAt(0).toLowerCase() + perm.slice(1);
+    return String(x || '').replace(/\{permanence\}/g, perm).replace(/\{caution\}/g, eur(ccfg().montant)).replace(/\{prenom\}/g, e ? (e.firstname || '') : '');
+  }
+  window.cseMsgModeles = function (btn) {
+    var old = $('v100-md-pop'); if (old) { old.remove(); return; }
+    var L = mdListe(), p = document.createElement('div'); p.id = 'v100-md-pop';
+    p.style.cssText = 'position:fixed;z-index:9999;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;width:min(360px,calc(100vw - 16px));max-height:60vh;overflow:auto';
+    p.innerHTML = L.map(function (m, i) { return '<button type="button" data-i="' + i + '" style="display:block;width:100%;text-align:left;border:0;background:none;border-radius:8px;padding:8px;cursor:pointer" onmouseenter="this.style.background=\'#f1f5f9\'" onmouseleave="this.style.background=\'none\'"><b style="font-size:13px">' + E(m.t) + '</b><div style="font-size:11px;color:#64748b">' + E(mdTexte(m.x).slice(0, 110)) + '…</div></button>'; }).join('') + '<button type="button" data-r="1" style="display:block;width:100%;text-align:left;border:0;background:none;padding:8px;font-size:11px;color:#4338ca;text-decoration:underline;cursor:pointer">Modifier les modèles (Paramètres)</button>';
+    p.onclick = function (ev) {
+      var b = ev.target.closest('button'); if (!b) return; p.remove();
+      if (b.dataset.r) { cseMsgFermer(); try { settingsGo('etab'); setTimeout(function () { var c = $('v100-md-card'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 600); } catch (er) { } return; }
+      var ta = $('v99-msg-txt'); if (!ta) return; var m = L[Number(b.dataset.i)], e = MS.nouveau ? (MS.dest === 'un' ? empTok(MS.to) : null) : empTok(MS.sel);
+      var txt = mdTexte(m.x, e); ta.value = ta.value.trim() ? ta.value.replace(/\s+$/, '') + '\n\n' + txt : txt; ta.focus();
+    };
+    document.body.appendChild(p);
+    var r = btn.getBoundingClientRect(), h = p.offsetHeight, y = r.top - h - 6; if (y < 8) y = r.bottom + 6;
+    p.style.left = Math.max(8, Math.min(r.left, innerWidth - p.offsetWidth - 8)) + 'px'; p.style.top = y + 'px';
+    setTimeout(function () { document.addEventListener('pointerdown', function fe(ev) { if (!p.contains(ev.target) && ev.target !== btn) { p.remove(); document.removeEventListener('pointerdown', fe, true); } }, true); }, 0);
+  };
+  window.cseMdSet = function (i, k, v) { var c = cfg(); if (!Array.isArray(c.msgModeles) || !c.msgModeles.length) c.msgModeles = MD_DEF.map(function (m) { return { t: m.t, x: m.x }; }); if (k === 'del') c.msgModeles.splice(i, 1); else if (k === 'add') c.msgModeles.push({ t: 'Nouveau modèle', x: '' }); else if (k === 'reset') c.msgModeles = []; else c.msgModeles[i][k] = v; save(); mdCard(true); };
+  window.cseResumeSet = function (v) { cfg().resumeMois = !!v; save(); mdCard(true); };
+  function mdCard(force) {
+    var c = card('v100-md-card', 'etab', function () { return $('v99-am-card') || $('v94-rel-card'); }); if (!c) return;
+    if (!force && c.contains(document.activeElement)) return;
+    var L = mdListe();
+    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-comments text-brand-600"></i> Messagerie : réponses toutes faites et résumé du mois</h3>'
+      + '<p class="text-xs text-slate-500">Bouton « Modèles » dans la fenêtre Messages. Mots remplacés tout seuls : {permanence}, {caution}, {prenom}.</p>'
+      + L.map(function (m, i) { return '<div class="border border-slate-200 rounded-lg p-2 space-y-1"><div class="flex gap-2"><input class="' + INP + '" value="' + E(m.t) + '" onchange="cseMdSet(' + i + ',\'t\',this.value)"><button type="button" class="' + BTN + '" onclick="cseMdSet(' + i + ',\'del\')" title="Supprimer"><i class="fa-solid fa-trash"></i></button></div><textarea rows="2" class="' + INP + '" onchange="cseMdSet(' + i + ',\'x\',this.value)">' + E(m.x) + '</textarea></div>'; }).join('')
+      + '<div class="flex gap-2"><button type="button" class="' + BTN + '" onclick="cseMdSet(0,\'add\')"><i class="fa-solid fa-plus"></i> Ajouter un modèle</button>' + (Array.isArray(cfg().msgModeles) && cfg().msgModeles.length ? '<button type="button" class="' + BTN + '" onclick="cseMdSet(0,\'reset\')">Remettre les modèles de départ</button>' : '') + '</div>'
+      + '<hr class="border-slate-100"><label class="flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox"' + (cfg().resumeMois ? ' checked' : '') + ' onchange="cseResumeSet(this.checked)"> 📰 Résumé du mois en notification aux salariés (le 1er du mois, à 8h)</label>'
+      + '<p class="text-[11px] text-slate-500 pl-6">Prochaines sorties, billets disponibles et prochaine permanence. Il faut aussi les rappels en notification (Communication › Notifications). Aperçu : <i>' + E(resumeTexte()) + '</i></p>';
+    if (force || c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
+  }
+  // ---------- 16d) Résumé du mois (notification le 1er, avec les rappels de 8h) ----------
+  function resumeTexte() {
+    var t = today(), S = (db.outings || []).filter(function (o) { return o.status !== 'annulee' && String(o.date || '') >= t; }).sort(function (a, c) { return String(a.date).localeCompare(String(c.date)); });
+    var B = (db.tickets || []).filter(function (k) { return !k.archived && (Number(k.stock) || 0) > 0 && (!k.expiryDate || String(k.expiryDate) >= t); });
+    var c = cfg(), perm = c.espacePermanence == null ? 'le vendredi de 11h à 13h30' : String(c.espacePermanence || ''), pr = [];
+    if (S.length) pr.push('🎭 ' + S.slice(0, 2).map(function (o) { return (o.name || o.title || 'Sortie') + ' le ' + fd(o.date).slice(0, 5); }).join(', ') + (S.length > 2 ? ' et ' + (S.length - 2) + ' autre(s)' : ''));
+    if (B.length) pr.push('🎟️ ' + B.length + ' billet(s) disponible(s)');
+    if (perm) pr.push('🕐 Permanence ' + perm.charAt(0).toLowerCase() + perm.slice(1));
+    return pr.join(' · ');
+  }
+  (function () { var prev = window.cseRappelsExtra; window.cseRappelsExtra = function (out, PU) {
+    if (prev) { try { out = prev(out, PU) || out; } catch (er) { } }
+    try {
+      if (!PU || !cfg().resumeMois) return out; var t = today(), d1 = t.slice(0, 8) + '01'; if (t !== d1) return out;
+      var tx = resumeTexte(); if (!tx) return out;
+      msEmps().forEach(function (e) { out.push({ id: 'resume:' + e.id + ':' + t.slice(0, 7), on: d1, h: 8, t: e.espaceToken, pt: '📰 Ce mois-ci au CSE', px: tx.slice(0, 220), who: nom(e), what: '📰 Résumé du mois', subject: 'Ce mois-ci au CSE', body: '' }); });
+    } catch (er) { console.warn('[résumé du mois]', er); }
+    return out;
+  }; })();
+  // ---------- 16e) Relancer les salariés sans prestation ----------
+  window.cseRelanceNonUsers = function (rows) {
+    try {
+      if (!rows) { var m = $('modal-x-nonusers'); rows = m && !m.classList.contains('hidden') && typeof xNonUsersRows === 'function' ? xNonUsersRows() : xNonUsers(new Date().getFullYear()).list; }
+      var ids = {}, sans = 0; rows.forEach(function (x) { var e = x.e || x; if (e.espaceToken && e.active !== false) ids[String(e.id)] = 1; else sans++; });
+      var m2 = $('modal-x-nonusers'); if (m2) m2.classList.add('hidden');
+      MS.liste = { nom: 'Les salariés sans prestation (' + Object.keys(ids).length + ')', ids: ids, horsEsp: sans, groupe: '' };
+      MS.dest = 'liste'; MS.horsEsp = sans; MS.titre = 'Ce que le CSE vous propose'; MS.pj = null; var bx = $('v99-msg-box'); if (bx) bx.innerHTML = '';
+      cseMsgOuvrir(); MS.nouveau = true; MS.sel = ''; msRender();
+      var ta = $('v99-msg-txt'); if (ta && !ta.value) ta.value = mdTexte('Avez-vous pensé à profiter de votre CSE cette année ? Billets à prix réduits, sorties, chèques vacances, colis, prêt de matériel… tout est dans votre espace CSE. Passez nous voir à la permanence ({permanence}), nous vous expliquerons tout avec plaisir.');
+    } catch (e) { say(e.message, 'warning'); }
+  };
+  function relanceBoutons() {
+    var b = $('dash-x-nonusers'); if (b && b.style.display !== 'none' && !b.querySelector('.v100-rel') && b.querySelector('button[onclick="xNonUsersOpen()"]')) b.querySelector('button[onclick="xNonUsersOpen()"]').insertAdjacentHTML('beforebegin', '<button type="button" onclick="cseRelanceNonUsers()" class="v100-rel px-4 py-2 bg-white border border-amber-300 hover:bg-amber-100 text-amber-800 font-bold text-xs rounded-xl whitespace-nowrap"><i class="fa-solid fa-bullhorn"></i> Les relancer</button>');
+    var m = $('modal-x-nonusers'); if (m && !m.classList.contains('hidden') && !m.querySelector('.v100-rel')) { var x = m.querySelector('button[onclick="xNonUsersExport()"]'); if (x) x.insertAdjacentHTML('afterend', '<button type="button" onclick="cseRelanceNonUsers()" class="v100-rel px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded-xl"><i class="fa-solid fa-bullhorn"></i> Leur écrire</button>'); }
+  }
+  // ---------- 16f) Permanence sans internet : bandeau + envois en attente ----------
+  var OB_K = 'cse_envois_attente';
+  function obL() { try { return JSON.parse(localStorage.getItem(OB_K) || '[]'); } catch (e) { return []; } }
+  function obS(L) { try { localStorage.setItem(OB_K, JSON.stringify(L)); return true; } catch (e) { return false; } }
+  function horsLigne(e) { return !navigator.onLine || /failed to fetch|networkerror|load failed|network request failed|réseau|connexion/i.test(String(e && e.message || e || '')); }
+  var OB_ACT = /^(mail|push|message-repondre|message-groupe)$/;
+  ['cseScriptPost', 'cseEspacePost'].forEach(function (fn) {
+    var o = window[fn]; if (typeof o !== 'function') return;
+    var w = async function (a, p) {
+      if (!OB_ACT.test(a)) return o.apply(this, arguments);
+      try { return await o.apply(this, arguments); }
+      catch (e) { if (!horsLigne(e)) throw e; var L = obL(); L.push({ f: fn, a: a, p: p, at: new Date().toISOString() }); if (!obS(L)) throw e; obBan(); say('📴 Pas de connexion : l\'envoi partira tout seul au retour du réseau.', 'warning'); return { ok: true, attente: true, message: a === 'message-repondre' ? { id: 'att' + Date.now(), at: new Date().toISOString(), de: 'cse', texte: p.texte + ' (en attente d\'envoi)' } : undefined, messages: {} }; }
+    };
+    for (var k in o) w[k] = o[k]; window[fn] = w; window[fn].__orig = o;
+  });
+  var OB = { busy: false };
+  async function obVider() {
+    if (OB.busy || !navigator.onLine) return; var L = obL(); if (!L.length) return; OB.busy = true; var reste = [], ok = 0;
+    for (var i = 0; i < L.length; i++) { var x = L[i], f = window[x.f] && window[x.f].__orig; if (!f) { reste.push(x); continue; } try { await f(x.a, x.p); ok++; } catch (e) { if (horsLigne(e)) reste = reste.concat(L.slice(i)), i = L.length; else console.warn('[envoi en attente abandonné]', x.a, e.message); } }
+    obS(reste); OB.busy = false; obBan(); if (ok) say('✔ Connexion revenue : ' + ok + ' envoi(s) en attente parti(s).', 'success');
+  }
+  function obBan() {
+    var n = obL().length, off = !navigator.onLine, b = $('v100-off');
+    if (!off && !n) { if (b) b.remove(); return; }
+    if (!b) { b = document.createElement('div'); b.id = 'v100-off'; b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:12px;z-index:90;max-width:calc(100vw - 24px);border-radius:14px;padding:8px 14px;font-size:13px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.2)'; document.body.appendChild(b); }
+    b.style.background = off ? '#7c2d12' : '#1e3a8a'; b.style.color = '#fff';
+    var h = off ? '📴 Hors ligne : vos saisies sont gardées sur cet appareil et partiront au retour du réseau.' + (n ? ' ' + n + ' envoi(s) en attente.' : '') : '📤 ' + n + ' envoi(s) en attente… <button type="button" onclick="cseEnvoisAttente()" style="text-decoration:underline;margin-left:6px">Envoyer maintenant</button>';
+    if (b.dataset.h !== h) { b.innerHTML = h; b.dataset.h = h; }
+  }
+  window.cseEnvoisAttente = function () { obVider(); };
+  window.addEventListener('offline', obBan);
+  window.addEventListener('online', function () { obBan(); setTimeout(function () { obVider(); try { pushNow(); } catch (e) { try { liveTick(); } catch (er) { } } }, 1500); });
+  // Les e-mails automatiques non partis faute de réseau sont repris au retour de la connexion
+  var AM_K = 'cse_am_attente';
+  window.cseAmAttente = function (x) { try { var L = JSON.parse(localStorage.getItem(AM_K) || '[]'); L.push(x); localStorage.setItem(AM_K, JSON.stringify(L.slice(-100))); obBan(); } catch (e) { } };
+  window.addEventListener('online', function () { setTimeout(function () { try { var L = JSON.parse(localStorage.getItem(AM_K) || '[]'); if (!L.length) return; localStorage.removeItem(AM_K); AM.q = AM.q.concat(L); setTimeout(amSuivant, 500); } catch (e) { } }, 4000); });
+  // ---------- 16g) Photos à la sortie et au retour d'un prêt (facultatives) ----------
+  var PH = { sel: [] }, PH_K = 'cse_photos_attente';
+  function phL() { try { return JSON.parse(localStorage.getItem(PH_K) || '[]'); } catch (e) { return []; } }
+  function phBloc(l, quand) {
+    var av = quand === 'retour' ? (l.photos || []).filter(function (p) { return p.quand === 'sortie'; }) : [];
+    return '<div class="border border-slate-200 rounded-xl p-3 space-y-2" id="v100-ph"><p class="text-xs font-bold text-slate-700">📷 Photos du matériel ' + (quand === 'retour' ? 'au retour' : 'à la sortie') + ' (facultatif)</p>'
+      + (av.length ? '<p class="text-[11px] text-slate-500">Photos prises à la sortie, pour comparer :</p><div class="flex flex-wrap gap-2">' + av.map(function (p) { return p.url ? '<a href="' + E(p.url) + '" target="_blank" rel="noopener"><img src="https://drive.google.com/thumbnail?id=' + encodeURIComponent(p.id || '') + '&sz=w200" style="width:72px;height:72px;object-fit:cover;border-radius:8px;background:#f1f5f9"></a>' : '<span class="text-[11px] text-slate-400">(photo en attente d\'envoi)</span>'; }).join('') + '</div>' : '')
+      + '<label class="' + BTN + '" style="cursor:pointer"><i class="fa-solid fa-camera"></i> Prendre ou choisir des photos<input type="file" accept="image/*" capture="environment" multiple style="display:none" onchange="csePhAjout(this)"></label><div id="v100-ph-sel" class="flex flex-wrap gap-2"></div></div>';
+  }
+  function phSel() { var z = $('v100-ph-sel'); if (z) z.innerHTML = PH.sel.map(function (p, i) { return '<span style="position:relative;display:inline-block"><img src="' + p.data + '" style="width:72px;height:72px;object-fit:cover;border-radius:8px"><button type="button" onclick="csePhOter(' + i + ')" style="position:absolute;top:-6px;right:-6px;background:#e11d48;color:#fff;border-radius:999px;width:20px;height:20px;font-size:12px;line-height:20px">×</button></span>'; }).join(''); }
+  window.csePhAjout = async function (inp) { var F = [].slice.call(inp.files || []); inp.value = ''; for (var i = 0; i < F.length && PH.sel.length < 6; i++) { try { PH.sel.push(await pjLire(F[i])); } catch (e) { say(e.message, 'warning'); } } phSel(); };
+  window.csePhOter = function (i) { PH.sel.splice(i, 1); phSel(); };
+  function phInserer(id, quand) { PH.sel = []; var l = loanOf(id), ok = $('v94-sig-ok'); if (!l || !ok || $('v100-ph')) return; ok.parentNode.insertAdjacentHTML('beforebegin', phBloc(l, quand)); }
+  function phGarder(l, quand) {
+    if (!PH.sel.length) return; l.photos = Array.isArray(l.photos) ? l.photos : []; var L = phL(), e = emp(l.employeeId), Y = String(today()).slice(0, 4);
+    PH.sel.forEach(function (p, i) { var pid = uid(); l.photos.push({ pid: pid, quand: quand, at: new Date().toISOString(), url: '', id: '' }); L.push({ pid: pid, loanId: l.id, data: p.data, nom: (quand === 'retour' ? 'Retour' : 'Sortie') + ' ' + fd(today()).replace(/\//g, '-') + ' - ' + (e ? nom(e) : 'prêt') + ' - ' + (i + 1), chemin: [Y, '3 - Prêts de matériel', 'Photos'] }); });
+    try { localStorage.setItem(PH_K, JSON.stringify(L)); } catch (er) { say('Mémoire de l\'appareil pleine : photos non gardées.', 'warning'); }
+    PH.sel = []; save(); setTimeout(phEnvoyer, 800);
+  }
+  var PHB = false;
+  async function phEnvoyer() {
+    if (PHB || !navigator.onLine || !scriptOk()) return; var L = phL(); if (!L.length) return; PHB = true; var reste = [];
+    for (var i = 0; i < L.length; i++) { var x = L[i]; try { var j = await cseScriptPost('fichier', { data: x.data, type: 'image/jpeg', nom: x.nom, chemin: x.chemin }); var l = loanOf(x.loanId), p = l && (l.photos || []).filter(function (q) { return q.pid === x.pid; })[0]; if (p) { p.url = j.url; p.id = j.id; } } catch (e) { if (/inconnue/i.test(e.message) || horsLigne(e)) reste.push(x); else console.warn('[photo prêt]', e.message); } }
+    try { localStorage.setItem(PH_K, JSON.stringify(reste)); } catch (e) { } PHB = false; save();
+  }
+  window.addEventListener('online', function () { setTimeout(phEnvoyer, 3000); });
+  ['cseCautionSortie', 'cseCautionRetour'].forEach(function (fn) { var o = window[fn]; if (typeof o !== 'function') return; window[fn] = function (id) { var r = o.apply(this, arguments); try { phInserer(id, fn === 'cseCautionRetour' ? 'retour' : 'sortie'); } catch (e) { console.warn(e); } return r; }; });
+  ['cseCautionSortieOk', 'cseCautionRetourOk'].forEach(function (fn) { var o = window[fn]; if (typeof o !== 'function') return; window[fn] = async function (id) {
+    var l = loanOf(id), av = l ? (fn === 'cseCautionSortieOk' ? !!l.pickedUp : !!l.returned) : true, sel = PH.sel.slice();
+    var p = o.apply(this, arguments);
+    try { if (l && !av && (fn === 'cseCautionSortieOk' ? l.pickedUp : l.returned)) { PH.sel = sel; phGarder(l, fn === 'cseCautionSortieOk' ? 'sortie' : 'retour'); } } catch (e) { console.warn(e); }
+    return p;
+  }; });
+
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
   setInterval(function () {
@@ -47619,7 +47875,12 @@ var qrcode = function() {
     try { if ($('v94-exp-card') || $('v94-bilan-card')) budCard(); } catch (e) { }
     try { svCard(); } catch (e) { }
     try { msBadge(); } catch (e) { }
+    try { if ($('v94-rel-card')) mdCard(); } catch (e) { }
+    try { relanceBoutons(); } catch (e) { }
   }, 1500);
+  setTimeout(function () { obBan(); }, 2000);
+  setTimeout(function () { obVider(); phEnvoyer(); }, 40000);
+  setInterval(function () { obVider(); phEnvoyer(); }, 5 * 60000);
   setTimeout(function () { msSync(); budTick(); }, 40000);
   setInterval(function () { if (!document.hidden) msSync(); }, 2 * 60000);
   setInterval(function () { if (MS.open && !document.hidden) msSync(true); }, 15000);
