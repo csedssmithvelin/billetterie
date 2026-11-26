@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"y0fGC4WeSrKNdzXSPRe4CQ==","iv":"jWzw8n8bhKPSjujc","rev":"boot","lastModified":"2026-11-26T23:00:26.001Z","by":"Michaël GROSJEAN","data":"chfH1LD6IQ8nSyUFMGSBrNi9DNtex5VEiJBDr8J6NvFXm97WXrzynuu8KWU5r8kLY8mGMXNFmyldw/hZBtrzMA=="},"at":"2026-11-26T23:00:26.038Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"wLe6mdaBM+f2nBURJl9l0Q==","iv":"IpXGbos4yKTKy9sT","rev":"boot","lastModified":"2026-11-26T23:06:35.457Z","by":"Michaël GROSJEAN","data":"19wlxD4oYhjD3sGt5J1ImrMmdKiipIcYnBZBsPJcNH6h3b0erowrOAHspI5rIuf8ouFln7IhM83EMVYlCW+OxQ=="},"at":"2026-11-26T23:06:35.496Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.1";
+        const APP_VERSION = "V.10.1.1";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,10 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.1.1', date: '2026-11-27', items: [
+                'Tableau de bord : la tuile « Colis à remettre » ouvre la livraison des colis.',
+                'Tableau de bord : la tuile « Impayés » compte les billets et sorties à encaisser, comme la page « À encaisser ». Les échéances de chèques vacances n\'y sont plus ajoutées ; seules celles en retard sont signalées en dessous.'
+            ] },
             { v: 'V.10.1', date: '2026-11-26', items: [
                 'Tableau de bord : 6 grandes tuiles de couleur en haut (ventes du mois, colis à remettre, prêts en cours, messages non lus, budget utilisé, impayés). Un clic ouvre la page.',
                 'Équipes : chaque salarié a un groupe (A, B, C ou Journée), dans sa fiche ou d\'un coup avec « Répartir les salariés ». Dans Paramètres, on indique le poste de chaque groupe cette semaine ; chaque lundi le roulement avance tout seul.',
@@ -48076,16 +48080,16 @@ var qrcode = function() {
     var t = today(), M = t.slice(0, 7), V = (db.sales || []).filter(function (s) { return dIso(s.date).slice(0, 7) === M; }), vT = V.reduce(function (s, x) { return s + (Number(x.totalPaid) || 0); }, 0);
     var cb = $('nav-colis-badge'), colis = cb && cb.style.display !== 'none' ? parseInt(cb.textContent, 10) || 0 : 0;
     var pr = (db.loans || []).filter(function (l) { return l.pickedUp && !l.returned; }), prR = pr.filter(function (l) { return dIso(l.endDate) < t; }).length;
-    var msg = msNonLus(), imp = 0, impN = 0; try { dus().forEach(function (x) { imp += Number(x.montant) || 0; impN++; }); } catch (e) { }
+    var msg = msNonLus(), imp = 0, impN = 0, cvR = 0; try { dus().forEach(function (x) { if (x.kind === 'cv') { if (x.due < t) cvR += Number(x.montant) || 0; return; } imp += Number(x.montant) || 0; impN++; }); } catch (e) { }
     var bu = 0, al = 0; try { ['ASC', 'AEP'].forEach(function (env) { var r = budgetForecastCalc(env, t.slice(0, 4)); if (r && r.hasAlloc) { bu += Number(r.committed) || 0; al += Number(r.alloc) || 0; } }); } catch (e) { }
     var pc = al > 0 ? Math.round(bu / al * 100) : null;
     var T = [
       { k: 'sales-summary', ic: '🎟️', l: 'Ventes du mois', v: eur(vT), s: V.length + ' vente(s)', c: '#2563eb' },
-      { k: 'social', ic: '🎁', l: 'Colis à remettre', v: colis, s: colis ? 'à la permanence' : 'rien en attente', c: '#db2777' },
+      { k: 'fn:openDistribution', ic: '🎁', l: 'Colis à remettre', v: colis, s: colis ? 'à la permanence' : 'rien en attente', c: '#db2777' },
       { k: 'loans', ic: '⛺', l: 'Prêts en cours', v: pr.length, s: prR ? prR + ' en retard' : 'aucun retard', c: prR ? '#dc2626' : '#0d9488' },
       { k: 'fn:cseMsgOuvrir', ic: '💬', l: 'Messages non lus', v: msg, s: msg ? 'à lire' : 'tout est lu', c: msg ? '#dc2626' : '#7c3aed' },
       { k: 'budget', ic: '📊', l: 'Budget utilisé', v: pc == null ? '—' : pc + ' %', s: pc == null ? 'budget non saisi' : eur(bu) + ' / ' + eur(al), c: pc >= 100 ? '#dc2626' : pc >= 80 ? '#d97706' : '#16a34a' },
-      { k: 'receivables', ic: '💶', l: 'Impayés', v: eur(imp), s: impN + ' ligne(s)', c: impN ? '#d97706' : '#16a34a' }];
+      { k: 'receivables', ic: '💶', l: 'Impayés billets et sorties', v: eur(imp), s: (impN ? impN + ' à encaisser' : 'rien à encaisser') + (cvR ? ' · chèques vacances en retard : ' + eur(cvR) : ''), c: impN || cvR ? '#d97706' : '#16a34a' }];
     var h = T.map(function (x) { return '<button type="button" data-k="' + x.k + '" class="text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-4 hover:shadow-md transition relative overflow-hidden"><span style="position:absolute;left:0;top:0;bottom:0;width:5px;background:' + x.c + '"></span><div class="flex items-center justify-between"><span class="text-xs font-semibold text-slate-500">' + x.l + '</span><span class="text-xl">' + x.ic + '</span></div><div class="text-2xl font-extrabold mt-1" style="color:' + x.c + '">' + x.v + '</div><div class="text-[11px] text-slate-500 mt-0.5">' + E(x.s) + '</div></button>'; }).join('');
     if (d.dataset.h !== h) { d.innerHTML = h; d.dataset.h = h; }
   }
