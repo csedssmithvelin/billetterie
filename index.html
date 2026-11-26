@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"Q/ad+nVMnx3XUbfxNT0tig==","iv":"qnj/Q4ODt5TXyr/Q","rev":"boot","lastModified":"2026-11-26T21:51:58.116Z","by":"Michaël GROSJEAN","data":"zXO1Mqg9oJqw3jswbxYGJ9hAdV62nZjccMk4FzqfyBigm83HcUGfwZUu+lRuzyyPB200KDqAoInyxWTFluMNmQ=="},"at":"2026-11-26T21:51:58.159Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"k8taT43dSakzzW//NDJe1A==","iv":"1EUzfDfZDvtK60YD","rev":"boot","lastModified":"2026-11-26T21:56:13.301Z","by":"Michaël GROSJEAN","data":"ecjGPOefSWoK3TZd2FjTwQ2nJRBA99eLikxeG/gdF5rQKi35DLT9Y7ZrUdebnIzvg3gbafjiAX/yfsD+nx+cZw=="},"at":"2026-11-26T21:56:13.339Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.9.9";
+        const APP_VERSION = "V.9.9.1";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,10 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.9.9.1', date: '2026-11-26', items: [
+                'Messages des salariés : quand la fenêtre est ouverte, les nouveaux messages arrivent toutes les 15 secondes et sont marqués lus tout de suite.',
+                'L\'ancienne sauvegarde automatique de 13h45 est retirée : la synchronisation en direct envoie déjà chaque modification, et la sauvegarde de la semaine part sur le Drive (copiée sur le Synology).',
+            ] },
             { v: 'V.9.9', date: '2026-11-26', items: [
                 'Messagerie salarié ↔ CSE : le salarié écrit depuis l\'onglet « 💬 Messages » de son espace ; le message arrive ici (bouton Messages avec pastille), par e-mail dans la boîte du CSE et en notification aux élus. La réponse part dans son espace, en notification et, si la case est cochée, par e-mail. Nécessite le script Google v86.',
                 'E-mails automatiques au salarié à chaque saisie : vente de billets (avec le reçu PDF, rangé aussi dans Drive), inscription confirmée, colis récupéré, prêt sorti, prêt rendu, paiement reçu, demande acceptée ou refusée. Un interrupteur par type (Réglages › Établissement) ; le premier e-mail de chaque type vous est montré avant l\'envoi. Sans adresse e-mail : notification seulement.',
@@ -29204,7 +29208,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             appInit();
             loadDB();
             scheduleDateRefresh();
-            scheduleAutoBackup();
+            // V.9.9.1 : l'ancienne sauvegarde de 13h45 est retirée (la synchro en direct envoie déjà chaque modification).
             scheduleAutoRestore();
             liveSyncStart();
             ensureWhoAmI();
