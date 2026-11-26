@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"VhDjCrRTJHTIIwZTthVV8Q==","iv":"F1lNsAWxBuD8/18C","rev":"boot","lastModified":"2026-11-26T23:22:44.375Z","by":"Michaël GROSJEAN","data":"R0whBzJZseHSzuCxJYxCDBSs20gI/nTBmsjA1lJS8wsnkokkhKOgRlkyQV52LXZoo/zq2otNaSgfBshgKhd+lg=="},"at":"2026-11-26T23:22:44.412Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"aCRt6NByhtdPCkVfeI/j4A==","iv":"TKIoAr9ewDz8gp5Y","rev":"boot","lastModified":"2026-11-26T23:24:37.322Z","by":"Michaël GROSJEAN","data":"rt9wc2wVu1Sk1daQLY0rIHbVfGZK6DMHGyEG1ecDWQhgMp8YlxOoxv44exmW0I/kUERp1mw1YvZDjoeAgUSKDQ=="},"at":"2026-11-26T23:24:37.361Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.2";
+        const APP_VERSION = "V.10.2.1";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,9 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.2.1', date: '2026-11-27', items: [
+                'Sauvegarde dans le Drive du CSE (CSE - Sauvegardes) : chaque jour au lieu de chaque semaine, 30 jours gardés (la plus ancienne est effacée toute seule). Après chaque sauvegarde, l\'appli affiche le fichier confirmé par le Drive et sa taille.'
+            ] },
             { v: 'V.10.2', date: '2026-11-27', items: [
                 'Espace : bandeau photo « À la une » en haut de l\'accueil (prochaines sorties, billets ajoutés depuis moins de 30 jours, nouveaux bons plans). Case « ⭐ Mettre à la une » dans « Photos et catégories ».',
                 'Bons plans partenaires : nouvel onglet « Bons plans » dans Communication (commerçant, catégorie, réduction, code promo, adresse, site, conditions, date de fin, photo). Onglet « 🏷️ Bons plans » dans l\'espace, avec « Copier le code » et « Itinéraire ». Les bons plans expirés disparaissent seuls.',
@@ -45281,7 +45284,8 @@ var qrcode = function() {
   // ---------- 2) Sauvegarde chaque semaine dans le Drive du CSE (par le script Google) ----------
   var BKW = { busy: false, list: null, err: '', open: false };
   function bkLast() { return cfg().bkHebdoAt || ''; }
-  function bkDue() { var l = bkLast(); return !l || Date.now() - Date.parse(l) >= 7 * 864e5; }
+  function bkJour(x) { try { return new Date(x).toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }); } catch (e) { return String(x).slice(0, 10); } }
+  function bkDue() { var l = bkLast(); return !l || bkJour(l) !== bkJour(new Date()); }   // une fois par jour (V.10.2.1)
   function mo(n) { n = Number(n) || 0; return n > 1048576 ? (n / 1048576).toFixed(1).replace('.', ',') + ' Mo' : Math.max(1, Math.round(n / 1024)) + ' ko'; }
   window.cseBkHebdo = async function (manual) {
     if (BKW.busy) return;
@@ -45294,10 +45298,12 @@ var qrcode = function() {
       var who = qui(), copie = JSON.parse(JSON.stringify(db)); if (copie.config) delete copie.config.githubToken;
       var env = await cloudEncrypt(copie, dataPassword(), { rev: 'hebdo-' + Date.now(), lastModified: db.lastModified, by: who });
       env.appVersion = APP_VERSION;
-      var nom = 'CSE_sauvegarde_' + today() + '.json';
-      await cseScriptPost('sauvegarde', { nom: nom, contenu: JSON.stringify(env), par: who });
+      var nom = 'CSE_sauvegarde_' + bkJour(new Date()) + '.json';
+      var rj = await cseScriptPost('sauvegarde', { nom: nom, contenu: JSON.stringify(env), par: who });
+      if (!rj || !rj.id) throw new Error('le Drive n\'a pas confirmé le fichier.');
+      cfg().bkVerif = { nom: rj.nom || nom, taille: rj.taille || 0, at: new Date().toISOString(), retirees: rj.retirees || 0 };
       cfg().bkHebdoAt = new Date().toISOString(); cfg().bkHebdoBy = who; BKW.err = ''; BKW.list = null;
-      try { logAction('Synchronisation', 'settings', 'Sauvegarde de la semaine déposée dans le Drive (CSE - Sauvegardes)'); } catch (e) { }
+      try { logAction('Synchronisation', 'settings', 'Sauvegarde du jour déposée et vérifiée dans le Drive (CSE - Sauvegardes)'); } catch (e) { }
       try { saveDB(); } catch (e) { }
       if (manual) say('✔ Sauvegarde déposée dans le Drive : CSE - Sauvegardes › ' + nom, 'success');
     } catch (e) {
@@ -45326,11 +45332,11 @@ var qrcode = function() {
     var a = document.getElementById('v66-cloud-card'); if (!a) return;
     var c = document.getElementById('v92-bk-card');
     if (!c) { c = document.createElement('div'); c.id = 'v92-bk-card'; c.className = a.className; c.setAttribute('data-sg', a.getAttribute('data-sg') || ''); a.parentNode.insertBefore(c, a); }
-    var l = bkLast(), ok = l && Date.now() - Date.parse(l) < 8 * 864e5, auto = cfg().bkHebdoAuto !== false;
-    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> Sauvegarde chaque semaine dans le Drive du CSE</h3>'
-      + '<p class="text-xs text-slate-500">Une fois par semaine, l\'appli dépose une <b>copie chiffrée de toutes les données</b> dans <b>Mon Drive › CSE › CSE - Sauvegardes</b> (les 26 dernières, soit environ 6 mois). Elle passe par le script Google du CSE : personne n\'a besoin de se connecter à Google. En cas de problème, « Revenir en arrière » remet l\'appli comme à cette date.</p>'
-      + '<p class="text-[11px] ' + (ok ? 'text-emerald-700' : 'text-amber-700') + '">' + (l ? 'Dernière sauvegarde : ' + new Date(l).toLocaleString('fr-FR') + (cfg().bkHebdoBy ? ' (par ' + E(cfg().bkHebdoBy) + ')' : '') : 'Pas encore de sauvegarde.') + (BKW.err ? ' · <span class="text-rose-700">' + E(BKW.err) + '</span>' : '') + '</p>'
-      + '<label class="flex items-center gap-2 text-xs text-slate-700"><input type="checkbox" ' + (auto ? 'checked' : '') + ' onchange="cseBkAuto(this.checked)"> Sauvegarde automatique chaque semaine</label>'
+    var l = bkLast(), ok = l && Date.now() - Date.parse(l) < 2 * 864e5, auto = cfg().bkHebdoAuto !== false, vf = cfg().bkVerif;
+    var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> Sauvegarde chaque jour dans le Drive du CSE</h3>'
+      + '<p class="text-xs text-slate-500">Une fois par jour (à la première ouverture de l\'appli dans la journée), l\'appli dépose une <b>copie chiffrée de toutes les données</b> dans <b>Mon Drive › CSE › CSE - Sauvegardes</b> (les 30 dernières, soit 30 jours : la plus ancienne est effacée automatiquement). Elle passe par le script Google du CSE : personne n\'a besoin de se connecter à Google. En cas de problème, « Revenir en arrière » remet l\'appli comme à cette date.</p>'
+      + '<p class="text-[11px] ' + (ok ? 'text-emerald-700' : 'text-amber-700') + '">' + (l ? 'Dernière sauvegarde : ' + new Date(l).toLocaleString('fr-FR') + (cfg().bkHebdoBy ? ' (par ' + E(cfg().bkHebdoBy) + ')' : '') : 'Pas encore de sauvegarde.') + (vf && !BKW.err ? '<br>✔ Vérifiée sur le Drive : <b>' + E(vf.nom) + '</b> (' + mo(vf.taille) + ')' + (vf.retirees ? ' · ' + vf.retirees + ' ancienne(s) effacée(s)' : '') : '') + (BKW.err ? ' · <span class="text-rose-700">' + E(BKW.err) + '</span>' : '') + '</p>'
+      + '<label class="flex items-center gap-2 text-xs text-slate-700"><input type="checkbox" ' + (auto ? 'checked' : '') + ' onchange="cseBkAuto(this.checked)"> Sauvegarde automatique chaque jour</label>'
       + '<div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" class="' + BTNP + '"' + (BKW.busy ? ' disabled' : '') + ' onclick="cseBkHebdo(true)"><i class="fa-solid fa-cloud-arrow-up"></i> ' + (BKW.busy ? 'Sauvegarde en cours…' : 'Sauvegarder maintenant') + '</button>'
       + '<button type="button" class="' + BTN + '" onclick="cseBkListe()"><i class="fa-solid fa-rotate-left"></i> Revenir en arrière…</button></div>';
     if (BKW.open) {
@@ -47669,7 +47675,7 @@ var qrcode = function() {
       catch (e) { add(/inconnue/i.test(e.message) ? 'warn' : 'err', 'Script Google', /inconnue/i.test(e.message) ? 'ancienne version' : 'ne répond pas', /inconnue/i.test(e.message) ? 'Installez la v' + SCRIPT_ATTENDU + ' (script-google-cse-v' + SCRIPT_ATTENDU + '.txt).' : e.message); } }
     add(pushPret() ? 'ok' : 'warn', 'Notifications dans l\'appli', pushPret() ? 'réglées' : 'pas réglées', pushPret() ? '' : 'Communication › Notifications.');
     var pa = c.espacePubAt; add(pa && Date.now() - new Date(pa) < 7 * 864e5 ? 'ok' : 'warn', 'Espaces salariés publiés', pa ? hrel(pa) : 'jamais', 'Republiés tout seuls quand les données changent.');
-    var bk = c.bkHebdoAt; add(bk && Date.now() - new Date(bk) < 9 * 864e5 ? 'ok' : 'warn', 'Sauvegarde de la semaine (Drive)', bk ? hrel(bk) : 'jamais', '');
+    var bk = c.bkHebdoAt; add(bk && Date.now() - new Date(bk) < 2 * 864e5 ? 'ok' : 'warn', 'Sauvegarde du jour (Drive)', bk ? hrel(bk) : 'jamais', '');
     var lp = 0; try { lp = __liveLastPushAt; } catch (e) { } add(lp && Date.now() - lp < 3 * 3600e3 ? 'ok' : 'info', 'Dernier envoi de la synchro', lp ? hrel(new Date(lp).toISOString()) : 'pas depuis l\'ouverture', '');
     add('info', 'Version de l\'appli', typeof APP_VERSION !== 'undefined' ? APP_VERSION : '?', 'Celle de cet appareil.');
     SV.r = R; SV.at = Date.now(); SV.busy = false; svCard();
