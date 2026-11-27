@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"ynJjotkdmUdk6LOG57KA8A==","iv":"IE+tbP4Pp6Kj7Eih","rev":"boot","lastModified":"2026-11-27T09:01:44.820Z","by":"Michaël GROSJEAN","data":"AM28do0erLwko25T7pHSACvpAbrHimOiPDegtsUz4DcJQW8ZP61bKVlyBU10wLaw5VMBFiiLtmNcZ2SrHz9zQA=="},"at":"2026-11-27T09:01:44.860Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"ad9RkoKSARxEZVUREHmYgg==","iv":"q3a99IfvcdJ5ZwWq","rev":"boot","lastModified":"2026-11-27T09:59:36.462Z","by":"Michaël GROSJEAN","data":"vIOX3jdhSQbb2aVulTRHk0UmGgRtV160G/x2GPcqtpFdjoPX0H1v2zX0ShYsnJLOUHOR9mnOgsgzh96QTUTevw=="},"at":"2026-11-27T09:59:36.499Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.5.1";
+        const APP_VERSION = "V.10.5.2";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.5.2', date: '2026-11-27', items: ['Message « ancienne version du script » : indique maintenant le bon fichier (v91) au lieu de v69.', 'Espace : un seul onglet « 🎉 Événements » qui regroupe les événements de vie et les aides du CSE (l\'onglet « Aides » disparaît quand les événements sont activés). Une aide du même nom qu\'un événement s\'y ajoute (montant affiché), les autres aides sont à la suite.', 'Justificatif obligatoire, avec le document à fournir affiché pour chaque événement (modifiable dans Communication › Accueil et événements).'] },
             { v: 'V.10.5.1', date: '2026-11-27', items: [
                 'Espace : visite guidée à la première connexion (bienvenue, comment ça marche, demandes, installer l\'appli, notifications, espace personnel). On peut la revoir dans ⚙️ Réglages. Le mot de bienvenue se change dans Communication › Accueil et événements.'
             ] },
@@ -43243,7 +43244,7 @@ var qrcode = function() {
     var c = driveCfg(); if (!c) throw new Error('script Google du CSE non configuré (Budget › Banque › Liens Drive)');
     var r = await fetch(c.url, { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({ key: c.key, action: action }, payload || {})) });
     var j; try { j = await r.json(); } catch (e) { throw new Error('réponse inattendue du script Google'); }
-    if (j.error) throw new Error(/inconnue/i.test(j.error) ? 'le script Google du CSE est une ancienne version : installez « script-google-cse-v69.txt »' : j.error);
+    if (j.error) throw new Error(/inconnue/i.test(j.error) ? 'le script Google du CSE est une ancienne version : installez la dernière (« script-google-cse-v' + (window.CSE_SCRIPT_ATTENDU || 91) + '.txt ») puis Déployer › Gérer les déploiements › Nouvelle version' : j.error);
     return j;
   }
   window.cseScriptPost = post;
@@ -43730,7 +43731,7 @@ var qrcode = function() {
     else if (d.type === 'billets') h = '<div><b>' + E(x.qte) + ' x ' + E(x.titre) + '</b> · ' + eur(x.total || 0) + ' · à préparer pour la permanence</div>';
     else if (d.type === 'paiement') h = '<div>Le salarié dit avoir payé en ligne <b>' + eur(x.montant || 0) + '</b> (' + E(x.quoi || '') + '). Vérifiez la notification SumUp / le relevé, puis validez le paiement dans l\'appli.</div>';
     else if (d.type === 'aide') h = '<div>🤝 <b>' + E(x.aide || 'Aide') + '</b>' + (x.date ? ' · événement du ' + fd(x.date) : '') + (x.montant ? ' · montant prévu ' + eur(x.montant) : '') + '</div>' + (x.justificatif && x.justificatif.url ? '<div><a href="' + E(x.justificatif.url) + '" target="_blank" rel="noopener" class="text-indigo-700 underline">📎 Justificatif : ' + E(x.justificatif.nom || 'ouvrir') + '</a> <span class="text-slate-400">(rangé dans CSE - Documents › Demandes d\'aide)</span></div>' : '<div class="text-amber-700">Pas de justificatif joint.</div>');
-    else if (d.type === 'evenement') h = '<div>🎉 <b>' + E(x.evenement || 'Événement') + '</b>' + (x.date ? ' · le ' + fd(x.date) : '') + (x.cadeau ? ' · cadeau prévu : ' + E(x.cadeau) : '') + '</div>' + (x.justificatif && x.justificatif.url ? '<div><a href="' + E(x.justificatif.url) + '" target="_blank" rel="noopener" class="text-indigo-700 underline">📎 Justificatif : ' + E(x.justificatif.nom || 'ouvrir') + '</a> <span class="text-slate-400">(privé, CSE - Documents › Événements de vie)</span></div>' : '') + ((db.vieLog || []).some(function (v) { return v.demId === d.id; }) ? '<div class="text-emerald-700 font-semibold">🎁 Cadeau remis</div>' : '<div><button type="button" class="' + V59_BTN + '" onclick="cseVieCadeau(' + JSON.stringify({ id: d.id, empId: d.empId, evt: x.evt, evenement: x.evenement, date: x.date, cadeau: x.cadeau }).replace(/"/g, '&quot;') + ')">🎁 Cadeau remis</button></div>');
+    else if (d.type === 'evenement') h = '<div>🎉 <b>' + E(x.evenement || 'Événement') + '</b>' + (x.date ? ' · le ' + fd(x.date) : '') + (x.cadeau ? ' · cadeau prévu : ' + E(x.cadeau) : '') + (x.montant ? ' (' + eur(x.montant) + ')' : '') + '</div>' + (x.justificatif && x.justificatif.url ? '<div><a href="' + E(x.justificatif.url) + '" target="_blank" rel="noopener" class="text-indigo-700 underline">📎 Justificatif : ' + E(x.justificatif.nom || 'ouvrir') + '</a> <span class="text-slate-400">(privé, CSE - Documents › Événements de vie)</span></div>' : '') + ((db.vieLog || []).some(function (v) { return v.demId === d.id; }) ? '<div class="text-emerald-700 font-semibold">🎁 Cadeau remis</div>' : '<div><button type="button" class="' + V59_BTN + '" onclick="cseVieCadeau(' + JSON.stringify({ id: d.id, empId: d.empId, evt: x.evt, evenement: x.evenement, date: x.date, cadeau: x.cadeau, montant: x.montant || 0 }).replace(/"/g, '&quot;') + ')">🎁 Cadeau remis</button></div>');
     else if (d.type === 'cv') h = '<div>Montant souhaité <b>' + eur(x.montant) + '</b> · ' + E(x.format) + ' · paiement : ' + E(x.paiement) + '</div>';
     else if (d.type === 'fiche') {
       var c = x.changes || {}, lab = { address: 'Adresse', phone: 'Téléphone', email: 'E-mail' };
@@ -48483,13 +48484,15 @@ var qrcode = function() {
   // =====================================================================
   var VIE_DEF = [{ id: 'naissance', nom: 'Naissance ou adoption', conge: 'naissance', urssaf: 'naissance', cadeau: '', montant: 0 }, { id: 'mariage', nom: 'Mariage ou PACS', conge: 'mariage', urssaf: 'mariage', cadeau: '', montant: 0 }, { id: 'retraite', nom: 'Départ en retraite', conge: '', urssaf: 'retraite', cadeau: '', montant: 0 }, { id: 'deces', nom: 'Décès d\'un proche', conge: 'deces-parent', urssaf: '', cadeau: '', montant: 0 }];
   function vieL() { var c = cfg(); if (!Array.isArray(c.evtVie) || !c.evtVie.length) c.evtVie = VIE_DEF.map(function (v) { return Object.assign({}, v); }); return c.evtVie; }
+  var VIE_JUST_DEF = { naissance: 'acte de naissance, d\'adoption ou livret de famille', mariage: 'acte de mariage ou attestation de PACS', retraite: 'attestation de départ en retraite', deces: 'acte de décès ou avis de décès', rentree: 'certificat de scolarité' };
+  function vieCle(n) { return String(n || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/^(depart|annonce)\s+(en|d.un|de)\s+/, '').split(/[^a-z]+/).filter(Boolean)[0] || ''; }
   function VLOG() { db.vieLog = Array.isArray(db.vieLog) ? db.vieLog : []; return db.vieLog; }
   // ---------- 21a) Onglet « Accueil et événements » ----------
   function rAccueil() {
     var c = cfg(), V = vieL(), on = !!c.evtVieOn;
     var h = '<div class="' + BOX + '"><label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="cseVieSet(-1,\'on\',this.checked)"> 🎉 Événements de vie : le salarié les déclare depuis son espace</label>'
-      + '<p class="text-[11px] text-slate-500">La déclaration arrive dans « Demandes des salariés » (justificatif privé, rangé dans CSE - Documents › Événements de vie). Le salarié voit les jours de congé prévus et le cadeau du CSE. Quand vous remettez le cadeau, le bouton « 🎁 Cadeau remis » l\'enregistre (budget, suivi URSSAF des bons d\'achat, justificatif au salarié).</p>'
-      + '<div class="space-y-1' + (on ? '' : ' opacity-60') + '">' + V.map(function (v, i) { return '<div class="grid gap-1 items-center" style="grid-template-columns:1fr 1fr 80px auto"><input class="' + INP + '" placeholder="Événement" value="' + E(v.nom) + '" onchange="cseVieSet(' + i + ',\'nom\',this.value)"><input class="' + INP + '" placeholder="Cadeau prévu (ex. : bon de 50 €)" value="' + E(v.cadeau || '') + '" onchange="cseVieSet(' + i + ',\'cadeau\',this.value)"><input class="' + INP + '" type="number" min="0" step="5" placeholder="€" value="' + (Number(v.montant) || '') + '" onchange="cseVieSet(' + i + ',\'montant\',this.value)"><button type="button" class="' + BTN + '" onclick="cseVieSet(' + i + ',\'del\')"><i class="fa-solid fa-trash"></i></button></div>'; }).join('')
+      + '<p class="text-[11px] text-slate-500">La déclaration arrive dans « Demandes des salariés » (justificatif privé, rangé dans CSE - Documents › Événements de vie). Le salarié voit les jours de congé prévus, le cadeau du CSE et le justificatif à joindre (obligatoire). Les aides du CSE (Paramètres › Aides) sont regroupées dans le même onglet « Événements » de l\'espace : une aide qui porte le même nom qu\'un événement (ex. : Naissance) s\'y ajoute, les autres (ex. : Rentrée scolaire) apparaissent à la suite. Quand vous remettez le cadeau, le bouton « 🎁 Cadeau remis » l\'enregistre (budget, suivi URSSAF des bons d\'achat, justificatif au salarié).</p>'
+      + '<div class="space-y-1' + (on ? '' : ' opacity-60') + '">' + V.map(function (v, i) { return '<div class="grid gap-1 items-center" style="grid-template-columns:1fr 1fr 80px auto"><input class="' + INP + '" placeholder="Événement" value="' + E(v.nom) + '" onchange="cseVieSet(' + i + ',\'nom\',this.value)"><input class="' + INP + '" placeholder="Cadeau prévu (ex. : bon de 50 €)" value="' + E(v.cadeau || '') + '" onchange="cseVieSet(' + i + ',\'cadeau\',this.value)"><input class="' + INP + '" type="number" min="0" step="5" placeholder="€" value="' + (Number(v.montant) || '') + '" onchange="cseVieSet(' + i + ',\'montant\',this.value)"><button type="button" class="' + BTN + '" onclick="cseVieSet(' + i + ',\'del\')"><i class="fa-solid fa-trash"></i></button><input class="' + INP + '" style="grid-column:1/-1;margin-bottom:6px" placeholder="Justificatif demandé (ex. : ' + E(VIE_JUST_DEF[vieCle(v.nom)] || 'acte, attestation…') + ')" value="' + E(v.justif || '') + '" onchange="cseVieSet(' + i + ',\'justif\',this.value)"></div>'; }).join('')
       + '<button type="button" class="' + BTN + '" onclick="cseVieSet(0,\'add\')"><i class="fa-solid fa-plus"></i> Ajouter un événement</button></div>'
       + (VLOG().length ? '<p class="text-xs font-bold text-slate-700 pt-2">🎁 Cadeaux remis</p>' + VLOG().slice(-15).reverse().map(function (x) { return '<div class="text-xs border-t border-slate-100 pt-1">' + fd(x.date) + ' · <b>' + E(nom(emp(x.empId))) + '</b> · ' + E(x.evenement) + ' · ' + E(x.cadeau || '') + (x.montant ? ' (' + eur(x.montant) + ')' : '') + '</div>'; }).join('') : '') + '</div>';
     var nv = acNouveaux();
@@ -48510,7 +48513,7 @@ var qrcode = function() {
   // Bouton « 🎁 Cadeau remis » (depuis la demande du salarié)
   window.cseVieCadeau = function (o) {
     var e = emp(o.empId); if (!e) { say('Salarié introuvable.', 'warning'); return; }
-    var v = vieL().filter(function (x) { return x.id === o.evt; })[0] || { nom: o.evenement || 'Événement', cadeau: o.cadeau || '', montant: 0, urssaf: '' }, m = modal(), b = $('v94-sig-box');
+    var v = Object.assign({}, vieL().filter(function (x) { return x.id === o.evt; })[0] || { nom: o.evenement || 'Événement', cadeau: '', montant: 0, urssaf: '' }); if (!v.cadeau) v.cadeau = o.cadeau || ''; if (!(Number(v.montant) > 0)) v.montant = Number(o.montant) || 0; var m = modal(), b = $('v94-sig-box');
     b.innerHTML = '<div class="flex items-start justify-between"><h3 class="font-extrabold text-slate-800 text-base">🎁 Cadeau remis : ' + E(v.nom) + '</h3><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="cseSigFermer()">×</button></div><p class="text-xs text-slate-600"><b>' + E(nom(e)) + '</b> · événement du ' + fd(o.date || today()) + '</p>'
       + '<label class="text-xs text-slate-600 block">Cadeau<input id="v105-vc-cad" class="' + INP + '" value="' + E(v.cadeau || '') + '"></label><label class="text-xs text-slate-600 block">Montant (€)<input id="v105-vc-mt" type="number" min="0" step="0.01" class="' + INP + '" value="' + (Number(v.montant) || '') + '"></label>'
       + '<label class="flex items-center gap-2 text-xs"><input type="checkbox" id="v105-vc-bon"' + (v.urssaf ? ' checked' : '') + '> C\'est un bon d\'achat ou un chèque cadeau (suivi URSSAF' + (v.urssaf ? ' : événement « ' + E(v.nom) + ' »' : '') + ')</label>'
@@ -48737,7 +48740,7 @@ var qrcode = function() {
   })();
   (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
     if (prev) { try { prev(P); } catch (er) { } }
-    try { var c = cfg(); P.bienvenue = c.espaceBienvenue || ''; P.evtVie = c.evtVieOn ? vieL().filter(function (v) { return v.nom; }).map(function (v) { return { id: v.id, nom: v.nom, conge: v.conge || '', cadeau: v.cadeau || '' }; }) : null; } catch (er) { console.warn('[espace 10.5]', er); }
+    try { var c = cfg(); P.bienvenue = c.espaceBienvenue || ''; P.evtVie = c.evtVieOn ? vieL().filter(function (v) { return v.nom; }).map(function (v) { return { id: v.id, nom: v.nom, conge: v.conge || '', cadeau: v.cadeau || '', montant: Number(v.montant) || 0, justif: v.justif || '' }; }) : null; } catch (er) { console.warn('[espace 10.5]', er); }
   }; })();
 
   // ---------- Branchements ----------
