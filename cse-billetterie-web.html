@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.7";
+        const APP_VERSION = "V.11.8";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.8', date: '2026-11-28', items: ['Espace : météo de l\'usine sur l\'accueil avec alerte chaleur / grand froid et rappel des droits ; jours fériés officiels (liste de l\'État) ; boutons « Voir le programme » des cinémas (Palace Épinal, Majestic Remiremont) dans Billets. « Ce qui change » : actualités Service-public.fr en plus. Réglages dans Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace ». Nécessite le script Google v98.'] },
             { v: 'V.11.7', date: '2026-11-28', items: ['« Ce qui change » : bouton « Chercher les dernières infos officielles » (Code du travail numérique), on coche et on ajoute ; alerte dans « Aujourd\'hui » quand il y a du nouveau (vérifié chaque semaine) et rappel le 2 janvier / 2 juillet ; option « ajouter toutes seules » (coupée par défaut). Nécessite le script Google v97.'] },
             { v: 'V.11.6.1', date: '2026-11-28', items: ['Date limite des chèques vacances : on peut de nouveau taper l\'année en entier (la case ne se recharge plus pendant la saisie).'] },
             { v: 'V.11.6', date: '2026-11-28', items: ['« Mon CSE en chiffres » dans l\'espace (bénéficiaires, offert, budget ASC, billets, sorties, chèques vacances, colis, mot des élus) : coupé par défaut.', 'Médaille du travail : alerte dans « Aujourd\'hui » à 20, 30, 35 et 40 ans d\'ancienneté, 4 mois avant (coupée par défaut).', 'Rappels 3 jours avant les dates limites : inscriptions aux sorties, chèques vacances, justificatifs (coupés par défaut).', 'Tout se règle dans Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace ».'] },
@@ -46972,7 +46973,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 97;
+  var SCRIPT_ATTENDU = 98;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -49323,7 +49324,7 @@ var qrcode = function() {
       + sec('rc', '📅 Récap « Cette semaine au CSE »', V.recap.on ? 'Activé' : 'Coupé', function () {
         return sw('rc-on', V.recap.on, 'Chaque lundi, envoyer une notification aux salariés avec le programme de la semaine') + '<p class="text-xs text-slate-500">Envoyée à la première ouverture de l\'appli du lundi (ou mardi, mercredi si personne ne l\'a ouverte), seulement s\'il y a quelque chose à annoncer. La première fois, vous voyez le texte avant l\'envoi.' + (V.recap.last ? ' Dernier envoi : ' + fd(V.recap.last) + '.' : '') + '</p><div class="flex gap-2"><button type="button" class="' + BTN + '" onclick="cseV7Recap(false)"><i class="fa-solid fa-eye"></i> Aperçu de cette semaine</button></div>';
       })
-      + v8Secs(sec, sw);
+      + v8Secs(sec, sw) + v10Secs(sec);
     if (c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
   }
   // ---------- Récap du lundi ----------
@@ -49451,7 +49452,7 @@ var qrcode = function() {
     if (!scriptOk()) { V9.msg = 'Le script Google n\'est pas relié.'; v7Re(); return; }
     V9.msg = 'Recherche des dernières infos officielles…'; v7Re();
     try { var j = await cseScriptPost('actus', { frais: !!frais }); V9.L = j.items || []; V9.msg = V9.L.length ? '' : 'Aucune info trouvée' + ((j.erreurs || []).length ? ' (' + j.erreurs.join(', ') + ')' : '') + '.'; var A = v9().actus; A.last = today(); A.nouv = 0; V9.L.forEach(function (x) { A.vus[x.id] = 1; }); save(); }
-    catch (e) { V9.msg = /inconnue/i.test(e.message) ? 'Installez le script Google v97 pour chercher les infos officielles.' : 'Erreur : ' + e.message; }
+    catch (e) { V9.msg = /inconnue/i.test(e.message) ? 'Installez le script Google v98 pour chercher les infos officielles.' : 'Erreur : ' + e.message; }
     v7Re();
   };
   window.cseV9Coche = function (i, on) { V9.coche[i] = !!on; };
@@ -49462,9 +49463,9 @@ var qrcode = function() {
   window.cseV9Set = function (k, v) { var A = v9().actus; A[k] = !!v; save(); v7Re(); };
   function v9Html() {
     var A = v9().actus, L = V9.L;
-    var h = '<div class="border-t border-slate-100 pt-2 space-y-2"><div class="flex flex-wrap items-center gap-2"><button type="button" class="' + BTNP + '" onclick="cseV9Actus(true)"><i class="fa-solid fa-rotate"></i> Chercher les dernières infos officielles</button><span class="text-[11px] text-slate-500">Source : Code du travail numérique (ministère du Travail).' + (A.last ? ' Dernière recherche : ' + fd(A.last) + '.' : '') + '</span></div>'
+    var h = '<div class="border-t border-slate-100 pt-2 space-y-2"><div class="flex flex-wrap items-center gap-2"><button type="button" class="' + BTNP + '" onclick="cseV9Actus(true)"><i class="fa-solid fa-rotate"></i> Chercher les dernières infos officielles</button><span class="text-[11px] text-slate-500">Sources : Code du travail numérique et Service-public.fr (actualités).' + (A.last ? ' Dernière recherche : ' + fd(A.last) + '.' : '') + '</span></div>'
       + (V9.msg ? '<p class="text-xs text-indigo-700">' + E(V9.msg) + '</p>' : '');
-    if (L && L.length) h += '<div class="max-h-72 overflow-y-auto border border-slate-200 rounded-lg" style="max-height:18rem">' + L.map(function (it, i) { var d = v9Deja(it); return '<label class="flex gap-2 items-start text-xs px-2 py-1.5 border-b border-slate-100' + (d ? ' opacity-50' : '') + '"><input type="checkbox" class="mt-0.5"' + (d ? ' disabled checked' : '') + ' onchange="cseV9Coche(' + i + ',this.checked)"><span class="flex-1"><b class="text-slate-800">' + E(it.titre) + '</b> <span class="text-slate-500">' + (it.date ? fd(it.date) : '') + (d ? ' · déjà ajoutée' : '') + '</span>' + (it.txt ? '<span class="block text-slate-500">' + E(String(it.txt).slice(0, 160)) + '…</span>' : '') + '</span>' + (it.url ? '<a class="text-indigo-600" target="_blank" rel="noopener" href="' + E(it.url) + '" onclick="event.stopPropagation()">↗</a>' : '') + '</label>'; }).join('') + '</div><button type="button" class="' + BTNP + '" onclick="cseV9Ajouter()">Ajouter les infos cochées</button>';
+    if (L && L.length) h += '<div class="max-h-72 overflow-y-auto border border-slate-200 rounded-lg" style="max-height:18rem">' + L.map(function (it, i) { var d = v9Deja(it); return '<label class="flex gap-2 items-start text-xs px-2 py-1.5 border-b border-slate-100' + (d ? ' opacity-50' : '') + '"><input type="checkbox" class="mt-0.5"' + (d ? ' disabled checked' : '') + ' onchange="cseV9Coche(' + i + ',this.checked)"><span class="flex-1"><b class="text-slate-800">' + E(it.titre) + '</b> <span class="text-slate-500">' + (it.source ? E(it.source) + ' · ' : '') + (it.date ? fd(it.date) : '') + (d ? ' · déjà ajoutée' : '') + '</span>' + (it.txt ? '<span class="block text-slate-500">' + E(String(it.txt).slice(0, 160)) + '…</span>' : '') + '</span>' + (it.url ? '<a class="text-indigo-600" target="_blank" rel="noopener" href="' + E(it.url) + '" onclick="event.stopPropagation()">↗</a>' : '') + '</label>'; }).join('') + '</div><button type="button" class="' + BTNP + '" onclick="cseV9Ajouter()">Ajouter les infos cochées</button>';
     h += '<label class="text-xs text-slate-700 flex items-center gap-2"><input type="checkbox"' + (A.alerte !== false ? ' checked' : '') + ' onchange="cseV9Set(\'alerte\',this.checked)"> Me prévenir dans « Aujourd\'hui » quand il y a de nouvelles infos (vérifié chaque semaine) et le 2 janvier / 2 juillet</label>'
       + '<label class="text-xs text-slate-700 flex items-center gap-2"><input type="checkbox"' + (A.auto ? ' checked' : '') + ' onchange="cseV9Set(\'auto\',this.checked)"> Ajouter toutes seules les nouvelles infos officielles (sans que je les vérifie)</label>'
       + (A.auto ? '<p class="text-[11px] text-amber-700">Les nouvelles infos apparaîtront dans l\'espace à la publication suivante, sans relecture. Les plus anciennes (plus d\'un an) sont retirées toutes seules.</p>' : '') + '</div>';
@@ -49491,6 +49492,48 @@ var qrcode = function() {
     if (rap) L.push('Début ' + (m === '01' ? 'd\'année' : 'juillet') + ' : SMIC, plafonds, nouvelles lois… pensez à mettre à jour la page');
     if (L.length) G.push({ ic: '🆕', t: 'Ce qui change', l: L.concat(['<button type="button" class="underline text-slate-500" onclick="event.stopPropagation();cseV9Vu();this.closest(\'div\').remove()">C\'est fait</button>']), go: 'fn:cseV9Ouvrir', b: 'Mettre à jour' });
   } catch (e) { } return G; }; })();
+
+  // =====================================================================
+  // 34) V.11.8 : MÉTÉO DE L'USINE (alerte chaleur / froid dans l'espace), PROGRAMME DES CINÉMAS (boutons),
+  //     actualités service-public en plus dans « Ce qui change » (script v98), jours fériés officiels (espace).
+  // =====================================================================
+  function v10() { var C = v7(); C.meteo = C.meteo || { on: true, nom: '', lat: null, lon: null, chaud: 33, froid: -5 };
+    if (!C.cines) C.cines = [{ nom: 'Palace — Épinal', url: '' }, { nom: 'Majestic — Remiremont', url: '' }]; return C; }
+  var V10 = { msg: '' };
+  window.cseV10 = function (k, v) { var C = v10(), M = C.meteo;
+    if (k === 'met-on') M.on = !!v; else if (k === 'met-chaud') M.chaud = Number(v) || 33; else if (k === 'met-froid') M.froid = v === '' ? -5 : Number(v);
+    else if (k === 'cines') C.cines = String(v || '').split(/\n/).map(function (l) { var p = l.split('|'); return { nom: (p[0] || '').trim(), url: (p.slice(1).join('|') || '').trim() }; }).filter(function (x) { return x.nom || x.url; });
+    save(); if (typeof v === 'boolean' || k === 'cines') v7Re(); };
+  window.cseV10Trouver = async function () {
+    var inp = $('v10-commune'), q = inp ? inp.value.trim() : ''; if (!q) return;
+    V10.msg = 'Recherche de « ' + q + ' »…'; v7Re();
+    try {
+      var r = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(q) + '&count=1&language=fr&countryCode=FR'), j = await r.json(), g = (j.results || [])[0];
+      if (!g) { V10.msg = 'Commune introuvable. Essayez sans le code postal (ex. « Vélines » ou « Épinal »).'; v7Re(); return; }
+      var M = v10().meteo; M.nom = g.name; M.lat = Math.round(g.latitude * 100) / 100; M.lon = Math.round(g.longitude * 100) / 100; save();
+      V10.msg = '✔ ' + g.name + (g.admin2 ? ' (' + g.admin2 + ')' : '') + ' trouvée. Publiez l\'espace pour afficher la météo.';
+    } catch (e) { V10.msg = 'Pas de connexion au service météo : ' + e.message; }
+    v7Re();
+  };
+  function v10Secs(sec) {
+    var C = v10(), M = C.meteo;
+    return sec('met', '🌡️ Météo de l\'usine (accueil de l\'espace)', M.on && M.lat != null ? 'À ' + (M.nom || '?') : (M.lat == null ? 'Commune à choisir' : 'Coupé'), function () {
+      return '<label class="text-sm text-slate-700 flex items-center gap-2"><input type="checkbox"' + (M.on ? ' checked' : '') + ' onchange="cseV10(\'met-on\',this.checked)"> Afficher la météo du jour et les 2 jours suivants, avec une alerte chaleur ou grand froid</label>'
+        + '<div class="flex flex-wrap gap-2 items-end"><label class="text-xs text-slate-600 flex-1 min-w-[10rem]">Commune de l\'usine<input id="v10-commune" class="' + INP + '" value="' + E(M.nom || '') + '" placeholder="ex. Épinal" onkeydown="if(event.key===\'Enter\'){event.preventDefault();cseV10Trouver()}"></label><button type="button" class="' + BTN + '" onclick="cseV10Trouver()"><i class="fa-solid fa-location-dot"></i> Trouver</button></div>'
+        + (V10.msg ? '<p class="text-xs text-indigo-700">' + E(V10.msg) + '</p>' : (M.lat != null ? '<p class="text-[11px] text-slate-500">Position : ' + M.lat + ', ' + M.lon + '</p>' : ''))
+        + '<div class="grid grid-cols-2 gap-2"><label class="text-xs text-slate-600">Alerte chaleur à partir de (°C)<input type="number" class="' + INP + '" value="' + E(M.chaud) + '" onchange="cseV10(\'met-chaud\',this.value)"></label><label class="text-xs text-slate-600">Alerte froid en dessous de (°C)<input type="number" class="' + INP + '" value="' + E(M.froid) + '" onchange="cseV10(\'met-froid\',this.value)"></label></div>'
+        + '<p class="text-[11px] text-slate-500">Prévisions Open-Meteo (gratuit, sans compte), lues par le téléphone du salarié. L\'alerte rappelle les droits : eau fraîche, pauses, aménagement des horaires, droit de retrait en cas de danger grave.</p>';
+    })
+      + sec('cine', '🎬 Programme des cinémas (onglet Billets)', (C.cines || []).filter(function (x) { return x.url; }).length + ' lien(s)', function () {
+        return '<label class="text-xs text-slate-600 block">Un cinéma par ligne : « nom | lien de la page programme »<textarea class="' + INP + '" rows="3" onchange="cseV10(\'cines\',this.value)">' + E((C.cines || []).map(function (x) { return x.nom + ' | ' + (x.url || ''); }).join('\n')) + '</textarea></label>'
+          + '<p class="text-[11px] text-slate-500">Ouvrez le site du cinéma sur la page des séances et copiez l\'adresse. Dans l\'espace, un bouton « 🎬 Voir le programme » apparaît à côté des billets de cinéma. Sans lien, le cinéma n\'est pas affiché.</p>';
+      });
+  }
+  setTimeout(function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try { var C = v10(), M = C.meteo; P.meteo = M.on && M.lat != null ? { nom: M.nom, lat: M.lat, lon: M.lon, chaud: M.chaud, froid: M.froid } : null;
+      P.cines = (C.cines || []).filter(function (x) { return x.url && /^https?:\/\//.test(x.url); }); } catch (er) { console.warn('[météo]', er); }
+  }; }, 0);
 
   // =====================================================================
   //  BRANCHEMENTS REGROUPÉS (rangement V.11.2) : chaque bloc ajoute sa part, dans l'ordre des versions.

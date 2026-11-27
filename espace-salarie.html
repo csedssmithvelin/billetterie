@@ -358,6 +358,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         materielInfo: 'Retrait et retour le vendredi à la permanence du CSE.',
         album: [{ id: 900, titre: 'Bowling de la rentrée', date: plus(-50), photos: ['#f59e0b,#ef4444', '#6366f1,#06b6d4', '#10b981,#84cc16', '#ec4899,#8b5cf6', '#0ea5e9,#22c55e'].map(function (c, i) { var k = c.split(','); return { id: 'demo' + i, url: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + k[0] + '"/><stop offset="1" stop-color="' + k[1] + '"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><text x="200" y="230" font-size="120" text-anchor="middle">' + ['🎳', '🍕', '🏆', '📸', '🎉'][i] + '</text></svg>') }; }) }],
         paOn: true,
+        meteo: { nom: 'Épinal', lat: 48.17, lon: 6.45, chaud: 33, froid: -5, demo: { t: 4, c: 3, j: [{ d: today(), max: 6, min: -1, c: 3 }, { d: plus(1), max: 3, min: -6, c: 71 }, { d: plus(2), max: 5, min: -2, c: 1 }] } },
+        cines: [{ nom: 'Palace — Épinal', url: 'https://www.exemple.fr/palace' }, { nom: 'Majestic — Remiremont', url: 'https://www.exemple.fr/majestic' }],
         chiffres: { an: String(new Date().getFullYear()), maj: today(), nbSal: 182, nbBenef: 149, offert: 41830, moy: 281, depASC: 58420, prevuASC: 72000, parType: [['Chèques vacances', 18400], ['Billetterie', 9650], ['Sorties', 7320], ['Colis de Noël', 4100], ['Événements de vie', 2360]], dep: [['ASC · Chèques vacances', 18400], ['ASC · Sorties', 14200], ['ASC · Billetterie', 11300], ['ASC · Noël', 9600], ['ASC · Événements de vie', 2920]], billets: 612, sorties: 7, participants: 318, listeSorties: ['Europa Park (14/06)', 'Bowling de la rentrée (27/09)', 'Marché de Noël de Strasbourg (12/12)', 'Karting en famille (05/04)', 'Concert au Zénith (18/10)', 'Repas de fin d\'année (19/12)', 'Walygator (23/08)'], cv: 96, cvCse: 18400, colis: 176, prets: 31, mot: 'Merci à tous d\'avoir participé cette année. Vos idées dans la boîte à idées nous aident à choisir les prochaines sorties !' },
         ideesPub: [{ id: 'i1', texte: 'Une sortie au parc Walygator l\'été prochain', reponse: 'On regarde les prix pour juin.' }, { id: 'i2', texte: 'Des places de foot pour un match à Nancy' }, { id: 'i3', texte: 'Un atelier massage pendant la pause' }],
         quiz: { mois: today().slice(0, 7), lot: '2 places de cinéma', fin: plus(10), questions: [{ q: 'Combien de jours de congés payés gagne-t-on par mois travaillé ?', choix: ['2 jours', '2,5 jours ouvrables', '3 jours'] }, { q: 'Quel jour férié est forcément chômé ?', choix: ['Le 14 juillet', 'Le 1er mai', 'Le 25 décembre'] }, { q: 'Dès combien d\'heures de travail a-t-on droit à une pause ?', choix: ['4 heures', '6 heures', '8 heures'] }] },
@@ -2361,6 +2363,56 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   TKW.chiffres = 'chiffres bilan budget transparence depenses beneficiaires'; TIC.chiffres = '📊';
   var tbAll1 = tbAll; tbAll = function () { var TB = tbAll1(); if (D && D.pub && D.pub.chiffres) TB.splice(TB.length - 2, 0, ['chiffres', '📊 Mon CSE en chiffres']); return TB; };
 
+  // ---------- V.11.9 : météo de l'usine + alerte chaleur/froid, jours fériés officiels, programme des cinémas ----------
+  var V119 = { met: null, charge: 0 };
+  var WMO = function (c) { c = Number(c); return c === 0 ? ['☀️', 'Ensoleillé'] : c <= 2 ? ['🌤️', 'Éclaircies'] : c === 3 ? ['☁️', 'Couvert'] : c <= 48 ? ['🌫️', 'Brouillard'] : c <= 57 ? ['🌦️', 'Bruine'] : c <= 67 ? ['🌧️', 'Pluie'] : c <= 77 ? ['❄️', 'Neige'] : c <= 82 ? ['🌧️', 'Averses'] : c <= 86 ? ['🌨️', 'Averses de neige'] : ['⛈️', 'Orages']; };
+  function v119Meteo() {
+    var M = (D.pub || {}).meteo; if (!M || M.lat == null) return null;
+    var k = 'cse_v119_met_' + M.lat + '_' + M.lon;
+    if (V119.met && V119.met.k === k && V119.met.at > Date.now() - 3600e3) return V119.met.d;
+    try { var c = JSON.parse(localStorage.getItem(k) || 'null'); if (c && c.at > Date.now() - 3600e3) { V119.met = c; return c.d; } } catch (e) { }
+    if (DEMO && M.demo) { V119.met = { k: k, at: Date.now(), d: M.demo }; return M.demo; }
+    if (V119.charge > Date.now() - 60e3) return null; V119.charge = Date.now();
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=' + M.lat + '&longitude=' + M.lon + '&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FParis&forecast_days=3')
+      .then(function (r) { return r.json(); }).then(function (j) {
+        if (!j || !j.daily) return; var d = { t: j.current ? j.current.temperature_2m : null, c: j.current ? j.current.weather_code : (j.daily.weather_code || [])[0], j: (j.daily.time || []).map(function (x, i) { return { d: x, max: j.daily.temperature_2m_max[i], min: j.daily.temperature_2m_min[i], c: j.daily.weather_code[i] }; }) };
+        V119.met = { k: k, at: Date.now(), d: d }; try { localStorage.setItem(k, JSON.stringify(V119.met)); } catch (e) { }
+        if (TAB === 'accueil') { var z = $('v119-met'); if (z) z.outerHTML = v119Carte(); }
+      }).catch(function () { });
+    return null;
+  }
+  function v119Carte() {
+    var M = (D.pub || {}).meteo; if (!M || M.lat == null) return '';
+    var d = v119Meteo(); if (!d) return '<div id="v119-met"></div>';
+    var J = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'], ch = Number(M.chaud) || 33, fr = M.froid != null && M.froid !== '' ? Number(M.froid) : -5;
+    var hot = d.j.filter(function (x) { return x.max >= ch; })[0], cold = d.j.filter(function (x) { return x.min <= fr; })[0], w = WMO(d.c);
+    var h = '<div class="card v119-met" id="v119-met"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:40px;line-height:1">' + w[0] + '</span><div style="flex:1"><div class="mute" style="font-size:12px">Météo à ' + E(M.nom || 'l\'usine') + '</div><b style="font-size:26px">' + (d.t != null ? Math.round(d.t) + ' °C' : '') + '</b> <span class="mute">' + w[1] + '</span></div></div>'
+      + '<div class="v119-j">' + d.j.map(function (x, i) { var dd = new Date(x.d + 'T12:00'); return '<div><small>' + (i === 0 ? 'Aujourd\'hui' : i === 1 ? 'Demain' : J[dd.getDay()] + ' ' + dd.getDate()) + '</small><span>' + WMO(x.c)[0] + '</span><b>' + Math.round(x.max) + '°</b><small>' + Math.round(x.min) + '°</small></div>'; }).join('') + '</div>';
+    if (hot) h += '<div class="msg" style="margin-top:10px;background:#fff7ed;color:#9a3412;border-left:4px solid #f97316"><b>🥵 Forte chaleur ' + (hot.d === today() ? 'aujourd\'hui' : 'prévue le ' + fd(hot.d)) + ' : ' + Math.round(hot.max) + ' °C</b><br>L\'employeur doit mettre à disposition de l\'eau potable et fraîche et adapter le travail (horaires, pauses, aération). Buvez souvent, signalez tout malaise. En cas de danger grave et imminent, vous pouvez exercer votre droit de retrait.<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn s" onclick="cseSrDroit(\'retrait\')">⚖️ Le droit de retrait</button><a class="btn s" target="_blank" rel="noopener" href="' + v117Src('travail fortes chaleurs canicule') + '">📖 Chaleur au travail</a></div></div>';
+    if (cold) h += '<div class="msg" style="margin-top:10px;background:#eff6ff;color:#1e3a8a;border-left:4px solid #3b82f6"><b>🥶 Grand froid ' + (cold.d === today() ? 'aujourd\'hui' : 'prévu le ' + fd(cold.d)) + ' : ' + Math.round(cold.min) + ' °C</b><br>L\'employeur doit protéger les salariés du froid : locaux chauffés, vêtements adaptés, pauses au chaud, boissons chaudes. Signalez tout problème à un élu.<div style="margin-top:6px"><a class="btn s" target="_blank" rel="noopener" href="' + v117Src('travail grand froid') + '">📖 Froid au travail</a></div></div>';
+    return h + '</div>';
+  }
+  var v117Accueil0 = v117Accueil; v117Accueil = function () { var m = ''; try { m = v119Carte(); } catch (e) { } return m + v117Accueil0(); };
+  // Jours fériés : la liste officielle de l'État (calendrier.api.gouv.fr), mon calcul en secours
+  var V119F = (function () { try { return JSON.parse(localStorage.getItem('cse_v119_feries') || 'null'); } catch (e) { return null; } })();
+  if (!V119F || V119F.at < Date.now() - 30 * 864e5) { try { fetch('https://calendrier.api.gouv.fr/jours-feries/metropole.json').then(function (r) { return r.json(); }).then(function (j) { if (j && typeof j === 'object' && Object.keys(j).length > 10) { V119F = { at: Date.now(), j: j }; try { localStorage.setItem('cse_v119_feries', JSON.stringify(V119F)); } catch (e) { } } }).catch(function () { }); } catch (e) { } }
+  var feries0 = feries;
+  feries = function (y) {
+    var J = V119F && V119F.j, L = J ? Object.keys(J).filter(function (k) { return k.slice(0, 4) === String(y); }) : [];
+    if (L.length < 10) return feries0(y);
+    return L.sort().map(function (k) { var p = k.split('-'); return [new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12), J[k]]; });
+  };
+  // Programme des cinémas (liens donnés par le CSE) sur la page Billetterie
+  function v119Cines() {
+    var L = ((D.pub || {}).cines || []).filter(function (c) { return c && c.url; }); if (!L.length) return '';
+    return '<div class="card v119-cine"><h2>🎬 Au programme des cinémas</h2><p class="mute">Les films et les horaires, sur le site de chaque cinéma.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' + L.map(function (c) { return '<a class="btn" target="_blank" rel="noopener" href="' + E(c.url) + '">🎬 ' + E(c.nom || 'Programme') + '</a>'; }).join('') + '</div></div>';
+  }
+  var v113Apres0 = v113Apres; v113Apres = function () {
+    v113Apres0();
+    try { var app = $('app'); if (TAB === 'billets' && app && !app.querySelector('.v119-cine')) { var c = v119Cines(); if (c) { var f = app.querySelector('.card'); if (f) f.insertAdjacentHTML('afterend', c); else app.insertAdjacentHTML('afterbegin', c); } } } catch (e) { }
+  };
+  (function () { var st = document.createElement('style'); st.textContent = '.v119-j{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.v119-j>div{background:rgba(127,127,127,.09);border-radius:12px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:1px}.v119-j span{font-size:22px}.v119-j b{font-size:16px}.v119-j small{font-size:11.5px;opacity:.75}'; document.head.appendChild(st); })();
+
   function render() {
     AGV = {};
     var f = D.fiche, P = D.pub || {}, h = '';
@@ -2687,7 +2739,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '11.8.1', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '11.9', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
