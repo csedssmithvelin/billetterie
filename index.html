@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"ad9RkoKSARxEZVUREHmYgg==","iv":"q3a99IfvcdJ5ZwWq","rev":"boot","lastModified":"2026-11-27T09:59:36.462Z","by":"Michaël GROSJEAN","data":"vIOX3jdhSQbb2aVulTRHk0UmGgRtV160G/x2GPcqtpFdjoPX0H1v2zX0ShYsnJLOUHOR9mnOgsgzh96QTUTevw=="},"at":"2026-11-27T09:59:36.499Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"LheeYXYWmnGQ0OZFbrDXZQ==","iv":"FBWbeTTrYLblxELx","rev":"boot","lastModified":"2026-11-27T10:30:16.847Z","by":"Michaël GROSJEAN","data":"133lpJjU2Bc0hu9qfmOCWWiu1IbgONoRk0Q9/8gvAnAjwwh+YdVcTsA5EbErxCL8CkFCFtk3V+K/VZSgNU94ig=="},"at":"2026-11-27T10:30:16.885Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.5.2";
+        const APP_VERSION = "V.10.5.3";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.5.3', date: '2026-11-27', items: ['Script Google v92 : quand la limite Gmail du jour (environ 100 destinataires) est atteinte, les e-mails partent avec Brevo (300 de plus par jour, gratuit), toujours au nom du CSE et avec les réponses dans la boîte Gmail. Facultatif : il suffit de coller la clé Brevo dans le script. Le compteur « E-mails restants aujourd\'hui » (Réglages › Services en ligne) montre Gmail + Brevo.'] },
             { v: 'V.10.5.2', date: '2026-11-27', items: ['Message « ancienne version du script » : indique maintenant le bon fichier (v91) au lieu de v69.', 'Espace : un seul onglet « 🎉 Événements » qui regroupe les événements de vie et les aides du CSE (l\'onglet « Aides » disparaît quand les événements sont activés). Une aide du même nom qu\'un événement s\'y ajoute (montant affiché), les autres aides sont à la suite.', 'Justificatif obligatoire, avec le document à fournir affiché pour chaque événement (modifiable dans Communication › Accueil et événements).'] },
             { v: 'V.10.5.1', date: '2026-11-27', items: [
                 'Espace : visite guidée à la première connexion (bienvenue, comment ça marche, demandes, installer l\'appli, notifications, espace personnel). On peut la revoir dans ⚙️ Réglages. Le mot de bienvenue se change dans Communication › Accueil et événements.'
@@ -47339,7 +47340,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 91;
+  var SCRIPT_ATTENDU = 92;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -47747,7 +47748,7 @@ var qrcode = function() {
     if (SV.busy) return; SV.busy = true; svCard(); var c = cfg(), R = [];
     var add = function (st, l, v, d) { R.push({ st: st, l: l, v: v, d: d || '' }); };
     if (!scriptOk()) add('err', 'Script Google', 'non relié', 'Budget › Banque › Liens Drive : collez l\'adresse et la clé du script.');
-    else { try { var j = await cseScriptPost('version', {}); var v = Number(j.version) || 0; add(v >= SCRIPT_ATTENDU ? 'ok' : 'warn', 'Script Google', 'v' + v, v >= SCRIPT_ATTENDU ? 'À jour.' : 'Installez la v' + SCRIPT_ATTENDU + ' (script-google-cse-v' + SCRIPT_ATTENDU + '.txt).'); add(j.quota > 20 ? 'ok' : 'warn', 'E-mails restants aujourd\'hui', String(j.quota), 'Limite Google du compte du CSE.'); var T = j.declencheurs || []; add(T.indexOf('envoiRappels') >= 0 ? 'ok' : 'warn', 'Rappels automatiques', T.indexOf('envoiRappels') >= 0 ? (T.indexOf('envoiRappelsSoir') >= 0 ? '8 h et 18 h' : '8 h seulement') : 'pas encore créés', T.indexOf('envoiRappelsSoir') >= 0 ? '' : 'Ils se créent à la prochaine synchro des rappels.'); add(j.push ? 'ok' : 'warn', 'Notifications (Firebase)', j.push ? 'prêtes' : 'clé absente', j.push ? '' : 'Collez la clé Firebase dans le script (FCM_COMPTE_COLLE).'); }
+    else { try { var j = await cseScriptPost('version', {}); var v = Number(j.version) || 0; add(v >= SCRIPT_ATTENDU ? 'ok' : 'warn', 'Script Google', 'v' + v, v >= SCRIPT_ATTENDU ? 'À jour.' : 'Installez la v' + SCRIPT_ATTENDU + ' (script-google-cse-v' + SCRIPT_ATTENDU + '.txt).'); add(j.quota > 20 ? 'ok' : 'warn', 'E-mails restants aujourd\'hui', String(j.quota), j.brevo != null ? 'Gmail : ' + j.gmail + ' + Brevo : ' + j.brevo + ' (Brevo prend le relais quand Gmail est à zéro).' : 'Limite Google du compte du CSE (environ 100 par jour). Pour 300 de plus : clé Brevo dans le script (BREVO_CLE_COLLE).'); var T = j.declencheurs || []; add(T.indexOf('envoiRappels') >= 0 ? 'ok' : 'warn', 'Rappels automatiques', T.indexOf('envoiRappels') >= 0 ? (T.indexOf('envoiRappelsSoir') >= 0 ? '8 h et 18 h' : '8 h seulement') : 'pas encore créés', T.indexOf('envoiRappelsSoir') >= 0 ? '' : 'Ils se créent à la prochaine synchro des rappels.'); add(j.push ? 'ok' : 'warn', 'Notifications (Firebase)', j.push ? 'prêtes' : 'clé absente', j.push ? '' : 'Collez la clé Firebase dans le script (FCM_COMPTE_COLLE).'); }
       catch (e) { add(/inconnue/i.test(e.message) ? 'warn' : 'err', 'Script Google', /inconnue/i.test(e.message) ? 'ancienne version' : 'ne répond pas', /inconnue/i.test(e.message) ? 'Installez la v' + SCRIPT_ATTENDU + ' (script-google-cse-v' + SCRIPT_ATTENDU + '.txt).' : e.message); } }
     add(pushPret() ? 'ok' : 'warn', 'Notifications dans l\'appli', pushPret() ? 'réglées' : 'pas réglées', pushPret() ? '' : 'Communication › Notifications.');
     var pa = c.espacePubAt; add(pa && Date.now() - new Date(pa) < 7 * 864e5 ? 'ok' : 'warn', 'Espaces salariés publiés', pa ? hrel(pa) : 'jamais', 'Republiés tout seuls quand les données changent.');
