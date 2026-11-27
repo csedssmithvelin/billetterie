@@ -35,7 +35,8 @@
 .tile i{font-style:normal;font-size:26px;line-height:1}
 .tile:active{transform:scale(.97)}
 .grps.hd{display:none}
-@media(max-width:639px){.grps.hd{display:grid}}
+@media(max-width:639px){main #navdd{position:fixed;left:8px;right:8px;bottom:84px;margin:0;z-index:59;max-height:65vh;overflow:auto;border-radius:18px;animation:ddUp .18s ease-out}#navdd .grp{margin:0;box-shadow:0 -10px 40px -10px #0008}#navdd .gt{display:grid!important;grid-template-columns:repeat(3,1fr)!important;margin:0!important;padding:0!important;-webkit-mask-image:none!important;mask-image:none!important}#navdd .tile{flex:none!important}}
+@keyframes ddUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 #navdd{position:relative;z-index:40;margin:-6px 0 14px;animation:ddIn .15s ease-out}#navdd .grp{box-shadow:0 18px 40px -18px #0f172a66}
 @keyframes ddIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 @media(min-width:640px){nav#nav{flex-wrap:nowrap}nav#nav button{padding:9px 9px;font-size:12.5px}nav#nav button[data-t=reglages]{margin-left:auto}nav#nav button[data-t=reglages] .lg{display:none}nav#nav button[data-t=reglages] i{margin:0;font-size:17px}}
@@ -408,7 +409,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }).join('');
     el.querySelectorAll('button').forEach(function (b) { b.onclick = function (ev) {
       // Sur ordinateur, une rubrique ouvre un petit menu avec ses pages ; sur téléphone, sa page.
-      if (/^g-/.test(b.dataset.t) && window.matchMedia && window.matchMedia('(min-width:640px)').matches) { ev.stopPropagation(); ddOpen(b); return; }
+      if (/^g-/.test(b.dataset.t)) { ev.stopPropagation(); ddOpen(b); return; }
       ddClose(); go(b.dataset.t); }; });
     var on = el.querySelector('.on'); if (on && on.scrollIntoView && el.scrollWidth > el.clientWidth) { try { el.scrollLeft = Math.max(0, on.offsetLeft - 40); } catch (e) { } }
     var fade = function () { el.classList.toggle('end', el.scrollLeft + el.clientWidth >= el.scrollWidth - 4); }; el.onscroll = fade; fade();
@@ -612,7 +613,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function tilesHtml(open) {
     var B = grpBadges();
-    return '<div class="card" style="padding:10px 12px"><input id="tq" type="search" placeholder="🔎 Que cherchez-vous ? (billet, mutuelle, chèques vacances…)" oninput="cseTq(this.value)" style="margin:0"></div><p class="empty" id="tq-vide" style="display:none">Rien trouvé : essayez un autre mot, ou écrivez au CSE dans « Messages ».</p>'
+    return '<div class="card" style="padding:10px 12px"><input id="tq" type="search" placeholder="🔎 Rechercher (billet, mutuelle…)" oninput="cseTq(this.value)" style="margin:0"></div><p class="empty" id="tq-vide" style="display:none">Rien trouvé : essayez un autre mot, ou écrivez au CSE dans « Messages ».</p>'
       + '<div class="grps hd">' + grpListe().map(function (g) { return grpSection(g, B, false); }).join('') + '</div>';
   }
 
@@ -1127,7 +1128,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   // ---------- Heures de délégation (élus du CSE) ----------
   function dgSaison() { var d = new Date(), y = d.getMonth() >= 6 ? d.getFullYear() : d.getFullYear() - 1; return { debut: y + '-07-01', fin: (y + 1) + '-06-30', y: y }; }
   function dgHeures(L, from, to) { return (L || []).filter(function (d) { return d.statut !== 'annulée' && d.du >= from && d.du <= to; }).reduce(function (s, d) { return s + (Number(d.heures) || 0); }, 0); }
-  function hFr(n) { n = Math.round((Number(n) || 0) * 60); var h = Math.floor(n / 60), m = n % 60; return h + ' h' + (m ? String(m).padStart(2, '0') : ''); }
+  function hFr(n) { n = Math.round((Number(n) || 0) * 60); var sg = n < 0 ? '−' : ''; n = Math.abs(n); var h = Math.floor(n / 60), m = n % 60; return sg + h + ' h' + (m ? String(m).padStart(2, '0') : ''); }
   // Toutes mes heures de l'année : celles connues de l'appli du CSE + celles envoyées d'ici (pas encore reprises par l'appli)
   function dgListe() {
     var G = D.deleg || {}, F = (D.fiche.deleg || {}).entries || [], vus = {}, out = [];
@@ -1718,7 +1719,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '10.6.2', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '10.6.4', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
