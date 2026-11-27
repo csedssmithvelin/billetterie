@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"LPU1z45FRtsxjGPqoCkTXA==","iv":"IrIaZ8bgmKosVlQZ","rev":"boot","lastModified":"2026-11-27T17:33:50.924Z","by":"Michaël GROSJEAN","data":"+xuQcDRKUmgqdgSlH8nc/rdY2EfvVJ7DVGk9nVXYkwRMVvnL1SFSQ8TZ26cNSYEiroqum3DRHj3p1sc9Vqdg0Q=="},"at":"2026-11-27T17:33:50.954Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"pT9l78m63AEKj1nhH8UunQ==","iv":"eAgp3LAF6DfWeYaq","rev":"boot","lastModified":"2026-11-27T17:59:14.037Z","by":"Michaël GROSJEAN","data":"uW/HW7yTiA9VOc6NROV7fOzmiAz5VDeYh7x1q6I3sRwhNlgxyhTyAG7+jNYRf6XWcCoN4qJEGt7nb13LVzk49g=="},"at":"2026-11-27T17:59:14.068Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.6.1";
+        const APP_VERSION = "V.10.6.2";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21725,6 +21725,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.6.2', date: '2026-11-27', items: ['Réunions : nouveau type « Visite sécurité » (en plus de Réunion ordinaire, extraordinaire, CSSCT, Bureau / préparatoire).'] },
             { v: 'V.10.6.1', date: '2026-11-27', items: ['Paramètres : une carte redessinée par l\'appli (ex. « Appli en ligne sur GitHub ») s\'ouvre de nouveau d\'un clic sur son titre.'] },
             { v: 'V.10.6', date: '2026-11-27', items: ['Paramètres rangés en 10 rubriques : Le CSE, Utilisateurs et accès, Élus, Droits des salariés, Argent et caisse, E-mails et notifications, Espace salarié, Sécurité et sauvegardes, Fin d\'année, Toutes les fonctions.', 'Barre « Rechercher un réglage » (ex. caution, cinéma, e-mail) qui trouve la bonne carte dans toutes les rubriques.', 'Cartes repliées : un clic sur le titre ouvre ou ferme la carte, avec une étiquette « Activé » ou « Coupé ».', 'Page « Toutes les fonctions » : chaque fonction avec son interrupteur ON/OFF et un bouton « Régler ».', 'Rubrique Élus : planning des permanences, heures de délégation, réunions, élus affichés, comptes.', 'Rubrique Espace salarié : boutons vers chaque page de contenu (annonces, mes droits, mutuelle, baromètre…).', 'Correction : la carte « Droits et plafonds par salarié » ne s\'affiche plus dans tous les onglets.', 'Espace salarié 10.6 : accueil en rubriques (Mes avantages, Mon dossier, Parler au CSE, Infos utiles, Espace élu), barre en bas sur téléphone, recherche, page élu avec les heures du mois détaillées.'] },
             { v: 'V.10.5.8', date: '2026-11-27', items: ['Clôture de caisse sécurisée : juste après la clôture, l\'état de caisse part en PDF sur le Drive (CSE - Documents › année › 1 - Paiements et caisse › États de caisse) et l\'appli envoie tout de suite les données en ligne. Elle affiche clairement « ✔ enregistrée en ligne » ou « ⚠️ PAS encore en ligne, ne fermez pas l\'appli » avec un bouton Réessayer.', 'Après chaque permanence clôturée : sauvegarde complète (chiffrée) des données dans le Drive (CSE - Sauvegardes › CSE_sauvegarde_<date>_apres-permanence-<heure>.json), même si l\'appareil n\'arrive pas à synchroniser.'] },
@@ -31474,7 +31475,7 @@ Vous pouvez demander à consulter, corriger ou effacer vos données, ou vous opp
         function uiLastChecked(id, def) { const f = uiLastField(id); return f ? !!f.checked : !!def; }
 
         const iEsc = s => uiEsc(s);
-        const INST_TYPES = { ordinaire: 'Réunion ordinaire', extraordinaire: 'Réunion extraordinaire', cssct: 'CSSCT', bureau: 'Bureau / préparatoire' };
+        const INST_TYPES = { ordinaire: 'Réunion ordinaire', extraordinaire: 'Réunion extraordinaire', cssct: 'CSSCT', visite: 'Visite sécurité', bureau: 'Bureau / préparatoire' };
         const INST_POINT_KINDS = { information: 'Information', consultation: 'Consultation (avis)', vote: 'Vote / délibération', question: 'Question des salariés' };
         const INST_PV = { brouillon: ['Brouillon', 'pill-wait'], a_valider: ['À valider', 'pill-late'], valide: ['Validé', 'pill-ok'], diffuse: ['Diffusé', 'pill-ok'] };
         function instData() {

@@ -35,6 +35,9 @@
 .tile i{font-style:normal;font-size:26px;line-height:1}
 .tile:active{transform:scale(.97)}
 .grps.hd{display:none}
+.srow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;padding:10px 6px;border-top:1px solid var(--line);cursor:pointer;color:var(--ink);font:inherit}
+.srow:hover{background:var(--brand2);border-radius:10px}.srow .si{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:var(--brand2)}
+.srow .st{flex:1;min-width:0}.srow .st b{display:block;font-size:14px}.srow .st small{display:block;color:var(--mute);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.srow .sa{color:var(--mute);font-size:20px}
 @media(max-width:639px){main #navdd{position:fixed;left:8px;right:8px;bottom:84px;margin:0;z-index:59;max-height:65vh;overflow:auto;border-radius:18px;animation:ddUp .18s ease-out}#navdd .grp{margin:0;box-shadow:0 -10px 40px -10px #0008}#navdd .gt{display:grid!important;grid-template-columns:repeat(3,1fr)!important;margin:0!important;padding:0!important;-webkit-mask-image:none!important;mask-image:none!important}#navdd .tile{flex:none!important}}
 @keyframes ddUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 #navdd{position:relative;z-index:40;margin:-6px 0 14px;animation:ddIn .15s ease-out}#navdd .grp{box-shadow:0 18px 40px -18px #0f172a66}
@@ -575,15 +578,42 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var GC = { avantages: '#f59e0b', dossier: '#0ea5e9', cse: '#10b981', infos: '#8b5cf6', elus: '#6366f1' };
     return '<div class="card grp' + (big ? ' big' : '') + '" data-g="' + g[0] + '" style="--gc:' + (GC[g[0]] || '#64748b') + '"><div class="gh"><span class="gi">' + g[1] + '</span><b>' + E(g[2]) + '</b><span class="gn">' + L.length + '</span></div><div class="gt">' + L.map(function (t) { return t[0] === 'g-elus' ? '<button class="tile" data-k="g-elus" data-s="elu page delegation permanence reunion" onclick="cseGo(\'g-elus\')"><i>🏛️</i>Ma page élu</button>' : tileBtn(t, B); }).join('') + '</div></div>';
   }
+  // V.10.6.5 : la recherche de l'accueil cherche dans tout l'espace (pages, billets, sorties, bons plans, annonces, agenda, matériel, mes droits, FAQ, documents, achats…).
+  function srIndex() {
+    var f = D.fiche || {}, P = D.pub || {}, I = (typeof INFO === 'function' ? INFO() : {}) || {}, L = [];
+    var add = function (ic, type, t, sub, act, kw) { if (t) L.push({ ic: ic, type: type, t: String(t), sub: sub ? String(sub) : '', act: act, s: rgN([type, t, sub, kw].join(' ')) }); };
+    tbAll().forEach(function (t) { if (t[0] !== 'accueil') add(TIC[t[0]] || '📄', 'Page', String(t[1]).replace(/^[^\s]+\s/, ''), '', 'cseGo(\'' + t[0] + '\')', TKW[t[0]] || ''); });
+    if (estElu()) add('🏛️', 'Page', 'Ma page élu', 'Heures, permanences, réunions', 'cseGo(\'g-elus\')', 'elu delegation permanence reunion');
+    (P.billets || []).forEach(function (b) { add('🎟️', 'Billet', b.titre || b.nom, (b.prix != null ? 'Prix CSE ' + Number(b.prix).toFixed(2).replace('.', ',') + ' €' : '') + (b.stock > 0 ? ' · ' + b.stock + ' en stock' : b.stock === 0 ? ' · épuisé' : ''), 'cseGo(\'billets\')', b.cinema ? 'cinema' : ''); });
+    (P.sorties || []).forEach(function (o) { add('🎭', 'Sortie', o.nom || o.titre, [o.date ? fd(o.date) : '', o.lieu || ''].filter(Boolean).join(' · '), 'cseGo(\'sorties\')', o.notes || ''); });
+    (P.bonsPlans || []).forEach(function (b) { add('🏷️', 'Bon plan', b.nom, [b.reduc, b.cat].filter(Boolean).join(' · '), 'cseGo(\'bonsplans\')', (b.adresse || '') + ' ' + (b.cond || '')); });
+    (P.annonces || []).forEach(function (a) { add('📣', 'Annonce', a.titre || 'Info du CSE', String(a.texte || '').slice(0, 90), 'cseGo(\'accueil\')', a.texte || ''); });
+    (P.agenda || []).forEach(function (a) { add('📅', 'Agenda', a.titre, [a.date ? fd(a.date) : '', a.heure || ''].filter(Boolean).join(' · '), 'cseGo(\'agenda\')', (a.type || '') + ' ' + (a.texte || '')); });
+    (P.materiel || []).concat(f.materielCse || []).forEach(function (m) { add('⛺', 'Matériel', m.nom, m.qte ? m.qte + ' disponible(s) au total' : '', 'cseGo(\'materiel\')', 'pret emprunter'); });
+    try { Object.keys(FICHES).forEach(function (k) { var x = FICHES[k]; add('⚖️', 'Mes droits', String(x.t).replace(/^[^\s]+\s/, ''), 'Fiche expliquée simplement', 'cseSrDroit(\'' + k + '\')', x.k || ''); }); } catch (e) { }
+    (I.faq || []).forEach(function (q) { add('❓', 'Question fréquente', q.q, String(q.r || '').slice(0, 90), 'cseGo(\'aide\')', (q.cat || '') + ' ' + (q.r || '')); });
+    ((f.documents) || []).forEach(function (d) { add('📄', 'Mon document', d.titre, d.date ? fd(d.date) : '', 'cseGo(\'docs\')', ''); });
+    (f.achats || []).forEach(function (a) { add('🧾', 'Mon achat', a.desc, [a.date ? fd(a.date) : '', a.total != null ? Number(a.total).toFixed(2).replace('.', ',') + ' €' : '', a.regle ? 'réglé' : 'à régler'].filter(Boolean).join(' · '), 'cseGo(\'achats\')', a.mode || ''); });
+    (f.sorties || []).forEach(function (x) { add('🎭', 'Mon inscription', x.nom, x.date ? fd(x.date) : '', 'cseGo(\'sorties\')', x.lieu || ''); });
+    try { vieL().forEach(function (v) { add('🎉', 'Événement de vie', v.nom, [v.conge ? 'congé : ' + v.conge : '', v.cadeau || ''].filter(Boolean).join(' · '), 'cseGo(\'vie\')', 'declarer aide cadeau'); }); } catch (e) { }
+    (f.colis || []).forEach(function (c) { add('🎁', 'Colis', c.nom, c.date ? 'à récupérer à partir du ' + fd(c.date) : '', 'cseGo(\'accueil\')', 'colis noel cadeau'); });
+    (D.demandes || []).forEach(function (d) { add('📨', 'Ma demande', d.resume, d.statut || '', 'cseGo(\'demandes\')', d.reponse || ''); });
+    return L;
+  }
+  window.cseSrDroit = function (k) { go('droits'); setTimeout(function () { var x = FICHES[k], i = $('dr-q'), q = x ? String(x.t).replace(/^[^\s]+\s/, '') : ''; if (i) { i.value = q; } try { cseDroitsQ(q); } catch (e) { } }, 60); };
   window.cseTq = function (v) {
-    var q = rgN(v).trim(), any = false;
-    document.querySelectorAll('.grp').forEach(function (sec) {
-      var vis = 0; sec.querySelectorAll('.tile').forEach(function (t) { var ok = !q || q.split(/\s+/).every(function (w) { return (t.dataset.s || '').indexOf(w) >= 0; }); t.style.display = ok ? '' : 'none'; if (ok) vis++; });
-      sec.style.display = vis ? '' : 'none'; if (vis) any = true;
-    });
-    var m = $('tq-vide'); if (m) m.style.display = q && !any ? '' : 'none';
-    var gs = document.querySelector('.grps'); if (gs) gs.classList.toggle('hd', !q);
+    var q = rgN(v).trim(), box = $('tq-res'), m = $('tq-vide');
+    if (!box) return;
+    if (!q) { box.innerHTML = ''; if (m) m.style.display = 'none'; return; }
+    var W = q.split(/\s+/), R = srIndex().filter(function (x) { return W.every(function (w) { return x.s.indexOf(w) >= 0; }); });
+    // Les titres qui commencent par le mot cherché d'abord
+    R.sort(function (a, b) { var A = rgN(a.t).indexOf(W[0]) === 0 ? 0 : 1, B = rgN(b.t).indexOf(W[0]) === 0 ? 0 : 1; return A - B; });
+    if (m) m.style.display = R.length ? 'none' : '';
+    box.innerHTML = R.length ? '<div class="card" style="padding:6px 10px"><p class="mute" style="margin:6px 4px">' + R.length + ' résultat' + (R.length > 1 ? 's' : '') + '</p>' + R.slice(0, 40).map(function (x) {
+      return '<button class="srow" onclick="' + x.act + '"><span class="si">' + x.ic + '</span><span class="st"><b>' + E(x.t) + '</b><small>' + E(x.type) + (x.sub ? ' · ' + E(x.sub) : '') + '</small></span><span class="sa">›</span></button>';
+    }).join('') + '</div>' : '';
   };
+
   function grpPage(k) {
     var g = GRP.filter(function (x) { return x[0] === k; })[0]; if (!g) return '';
     if (k === 'elus') return eluPage();
@@ -613,7 +643,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function tilesHtml(open) {
     var B = grpBadges();
-    return '<div class="card" style="padding:10px 12px"><input id="tq" type="search" placeholder="🔎 Rechercher (billet, mutuelle…)" oninput="cseTq(this.value)" style="margin:0"></div><p class="empty" id="tq-vide" style="display:none">Rien trouvé : essayez un autre mot, ou écrivez au CSE dans « Messages ».</p>'
+    return '<div class="card" style="padding:10px 12px"><input id="tq" type="search" placeholder="🔎 Rechercher dans tout l\'espace (Europa Park, mariage, mutuelle…)" oninput="cseTq(this.value)" style="margin:0"></div><div id="tq-res"></div><p class="empty" id="tq-vide" style="display:none">Rien trouvé : essayez un autre mot, ou écrivez au CSE dans « Messages ».</p>'
       + '<div class="grps hd">' + grpListe().map(function (g) { return grpSection(g, B, false); }).join('') + '</div>';
   }
 
@@ -1719,7 +1749,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '10.6.4', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '10.6.5', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
