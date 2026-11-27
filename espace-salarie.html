@@ -34,6 +34,19 @@
 .tile{position:relative;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:10px 4px 8px;text-align:center;cursor:pointer;box-shadow:var(--sh);font:600 11.5px system-ui,sans-serif;color:var(--ink);line-height:1.2;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .tile i{font-style:normal;font-size:26px;line-height:1}
 .tile:active{transform:scale(.97)}
+.grps{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+@media(min-width:720px){.grps{grid-template-columns:1fr 1fr}.grps .grp[data-g=avantages]{grid-column:1/-1}}
+.grp{margin:0;min-width:0;padding:12px 14px 14px;border-top:3px solid var(--gc)}
+.grp.big{margin-bottom:14px}
+.grp .gh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.grp .gh b{font-size:15px;letter-spacing:-.01em}
+.grp .gi{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:color-mix(in srgb,var(--gc) 16%,transparent)}
+.grp .gn{margin-left:auto;font-size:11px;font-weight:700;color:var(--gc);background:color-mix(in srgb,var(--gc) 12%,transparent);border-radius:9px;padding:2px 8px}
+.grp .gt{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px}
+.grp .tile{min-height:0;padding:10px 4px 9px;border-radius:14px;box-shadow:none;background:color-mix(in srgb,var(--gc) 5%,var(--card));border-color:color-mix(in srgb,var(--gc) 18%,var(--line));transition:transform .12s,box-shadow .12s,border-color .12s}
+.grp .tile i{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:23px;background:color-mix(in srgb,var(--gc) 14%,transparent);margin-bottom:2px}
+.grp .tile:hover{transform:translateY(-2px);border-color:var(--gc);box-shadow:0 8px 18px -10px var(--gc)}
+@media(max-width:639px){.grp:not(.big) .gt{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;margin:0 -14px;padding:2px 14px 4px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}.grp:not(.big) .gt::-webkit-scrollbar{display:none}.grp:not(.big) .tile{flex:0 0 84px;scroll-snap-align:start}}
 .tile .n{position:absolute;top:4px;right:6px;min-width:18px;padding:0 5px;border-radius:9px;background:#ef4444;color:#fff;font-size:11px;line-height:18px}
 .tile .n.i{background:var(--brand)}
 .ph{width:100%;max-height:170px;object-fit:cover;border-radius:14px;margin:4px 0 8px;display:block;background:var(--line)}
@@ -539,7 +552,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var L = grpTabs(g[0]);
     if (g[0] === 'elus') L = [['g-elus', '🏛️ Ma page élu']].concat(L);
     if (!L.length) return '';
-    return '<div class="card grp" data-g="' + g[0] + '"' + (big ? '' : ' style="padding:12px 14px"') + '><h2' + (big ? '' : ' style="font-size:15px;margin-bottom:8px"') + '>' + g[1] + ' ' + E(g[2]) + '</h2><div class="tiles" style="margin-bottom:0">' + L.map(function (t) { return t[0] === 'g-elus' ? '<button class="tile" data-k="g-elus" data-s="elu page delegation permanence reunion" onclick="cseGo(\'g-elus\')"><i>🏛️</i>Ma page élu</button>' : tileBtn(t, B); }).join('') + '</div></div>';
+    var GC = { avantages: '#f59e0b', dossier: '#0ea5e9', cse: '#10b981', infos: '#8b5cf6', elus: '#6366f1' };
+    return '<div class="card grp' + (big ? ' big' : '') + '" data-g="' + g[0] + '" style="--gc:' + (GC[g[0]] || '#64748b') + '"><div class="gh"><span class="gi">' + g[1] + '</span><b>' + E(g[2]) + '</b><span class="gn">' + L.length + '</span></div><div class="gt">' + L.map(function (t) { return t[0] === 'g-elus' ? '<button class="tile" data-k="g-elus" data-s="elu page delegation permanence reunion" onclick="cseGo(\'g-elus\')"><i>🏛️</i>Ma page élu</button>' : tileBtn(t, B); }).join('') + '</div></div>';
   }
   window.cseTq = function (v) {
     var q = rgN(v).trim(), any = false;
@@ -579,7 +593,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function tilesHtml(open) {
     var B = grpBadges();
     return '<div class="card" style="padding:10px 12px"><input id="tq" type="search" placeholder="🔎 Que cherchez-vous ? (billet, mutuelle…)" oninput="cseTq(this.value)" style="margin:0"></div><p class="empty" id="tq-vide" style="display:none">Rien trouvé : essayez un autre mot, ou écrivez au CSE dans « Messages ».</p>'
-      + grpListe().map(function (g) { return grpSection(g, B, false); }).join('');
+      + '<div class="grps">' + grpListe().map(function (g) { return grpSection(g, B, false); }).join('') + '</div>';
   }
 
   var ALERTES = [['cinema', '🎬 Cinéma'], ['parcs', '🎢 Parcs de loisirs'], ['spectacles', '🎤 Spectacles, concerts'], ['loisirs', '🏊 Sport et loisirs'], ['sorties', '🎭 Sorties du CSE'], ['famille', '👨‍👩‍👧 Sorties en famille'], ['materiel', '⛺ Nouveau matériel à prêter'], ['bonsplans', '🏷️ Bons plans partenaires']];
@@ -1684,7 +1698,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '10.6', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '10.6.1', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
