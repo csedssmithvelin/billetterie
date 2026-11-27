@@ -34,6 +34,12 @@
 .tile{position:relative;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:10px 4px 8px;text-align:center;cursor:pointer;box-shadow:var(--sh);font:600 11.5px system-ui,sans-serif;color:var(--ink);line-height:1.2;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .tile i{font-style:normal;font-size:26px;line-height:1}
 .tile:active{transform:scale(.97)}
+.grps.hd{display:none}
+@media(max-width:639px){.grps.hd{display:grid}}
+#navdd{position:relative;z-index:40;margin:-6px 0 14px;animation:ddIn .15s ease-out}#navdd .grp{box-shadow:0 18px 40px -18px #0f172a66}
+@keyframes ddIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media(min-width:640px){nav#nav{flex-wrap:nowrap}nav#nav button{padding:9px 9px;font-size:12.5px}nav#nav button[data-t=reglages]{margin-left:auto}nav#nav button[data-t=reglages] .lg{display:none}nav#nav button[data-t=reglages] i{margin:0;font-size:17px}}
+nav button.dd{background:var(--brand2);color:var(--ink)}
 .grps{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
 @media(min-width:720px){.grps{grid-template-columns:1fr 1fr}.grps .grp[data-g=avantages]{grid-column:1/-1}}
 .grp{margin:0;min-width:0;padding:12px 14px 14px;border-top:3px solid var(--gc)}
@@ -88,7 +94,7 @@ nav button{flex:0 0 auto;border:0;background:none;padding:9px 13px;border-radius
 nav button:hover{background:#f1f4f9;color:var(--ink)}
 nav button.on{background:var(--brand);color:#fff;box-shadow:0 6px 14px -6px var(--brand)}
 nav button{position:relative}nav button i{font-style:normal;margin-right:5px}nav .sm{display:none}
-@media(max-width:639px){nav#nav{position:fixed;left:8px;right:8px;bottom:8px;z-index:60;margin:0;padding:5px;overflow:visible;flex-wrap:nowrap;justify-content:space-around;-webkit-mask-image:none;mask-image:none;box-shadow:0 -4px 22px -8px #0005;padding-bottom:calc(5px + env(safe-area-inset-bottom))}nav#nav button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0;font-size:10px;letter-spacing:-.2px}nav#nav button i{font-size:19px;margin:0}nav .lg{display:none}nav#nav button.opt{display:none}nav .sm{display:block;overflow:hidden;text-overflow:ellipsis;max-width:100%}nav#nav .n{position:absolute;top:1px;right:calc(50% - 22px);margin:0}body{padding-bottom:86px}}
+@media(max-width:639px){nav#nav{position:fixed;left:8px;right:8px;bottom:8px;z-index:60;margin:0;padding:5px;overflow:visible;flex-wrap:nowrap;justify-content:space-around;-webkit-mask-image:none;mask-image:none;box-shadow:0 -4px 22px -8px #0005;padding-bottom:calc(5px + env(safe-area-inset-bottom))}nav#nav button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 0;font-size:10px;letter-spacing:-.2px}nav#nav button i{font-size:19px;margin:0}nav .lg{display:none}nav#nav button.nbar{display:none}nav .sm{display:block;overflow:hidden;text-overflow:ellipsis;max-width:100%}nav#nav .n{position:absolute;top:1px;right:calc(50% - 22px);margin:0}body{padding-bottom:86px}}
 nav .n{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:#ef4444;color:#fff;font-size:11px;line-height:18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:14px;box-shadow:var(--sh)}
 .card h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
@@ -398,13 +404,26 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var IT = [['accueil', '🏠', 'Accueil', 'Accueil']].concat(grpListe().map(function (g) { return [g[0], g[1], g[2], g[3]]; })).concat([['reglages', '⚙️', 'Réglages', 'Réglages']]);
     el.innerHTML = IT.map(function (g) {
       var k = g[0], n = 0; if (k !== 'accueil' && k !== 'reglages') { (k === 'elus' ? ['deleg'] : grpTabs(k).map(function (t) { return t[0]; })).forEach(function (t) { n += B.nb[t] || 0; }); }
-      return '<button data-t="' + (k === 'accueil' || k === 'reglages' ? k : 'g-' + k) + '" data-l="' + E(g[2]) + '" class="' + (k === cur ? 'on' : '') + (k === 'infos' && IT.length > 6 && k !== cur ? ' opt' : '') + '"><i>' + g[1] + '</i><span class="lg">' + E(g[2]) + '</span><span class="sm">' + E(g[3]) + '</span>' + (n ? '<span class="n">' + n + '</span>' : '') + '</button>';
+      return '<button data-t="' + (k === 'accueil' || k === 'reglages' ? k : 'g-' + k) + '" data-l="' + E(g[2]) + '" class="' + (k === cur ? 'on' : '') + (k === 'infos' && IT.length > 6 && k !== cur ? ' nbar' : '') + '"><i>' + g[1] + '</i><span class="lg">' + E(g[2]) + '</span><span class="sm">' + E(g[3]) + '</span>' + (n ? '<span class="n">' + n + '</span>' : '') + '</button>';
     }).join('');
-    el.querySelectorAll('button').forEach(function (b) { b.onclick = function () { go(b.dataset.t); }; });
+    el.querySelectorAll('button').forEach(function (b) { b.onclick = function (ev) {
+      // Sur ordinateur, une rubrique ouvre un petit menu avec ses pages ; sur téléphone, sa page.
+      if (/^g-/.test(b.dataset.t) && window.matchMedia && window.matchMedia('(min-width:640px)').matches) { ev.stopPropagation(); ddOpen(b); return; }
+      ddClose(); go(b.dataset.t); }; });
     var on = el.querySelector('.on'); if (on && on.scrollIntoView && el.scrollWidth > el.clientWidth) { try { el.scrollLeft = Math.max(0, on.offsetLeft - 40); } catch (e) { } }
     var fade = function () { el.classList.toggle('end', el.scrollLeft + el.clientWidth >= el.scrollWidth - 4); }; el.onscroll = fade; fade();
   }
-  function go(t) { TAB = t; nav(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function ddClose() { var d = $('navdd'); if (d) d.remove(); document.querySelectorAll('#nav button.dd').forEach(function (x) { x.classList.remove('dd'); }); }
+  function ddOpen(b) {
+    var k = b.dataset.t.slice(2), was = b.classList.contains('dd'); ddClose(); if (was) return;
+    var g = GRP.filter(function (x) { return x[0] === k; })[0]; if (!g) return;
+    var d = document.createElement('div'); d.id = 'navdd'; d.innerHTML = grpSection(g, grpBadges(), true);
+    var nv = $('nav'); nv.parentNode.insertBefore(d, nv.nextSibling); b.classList.add('dd');
+    d.addEventListener('click', function (ev) { if (ev.target.closest('.tile')) ddClose(); });
+  }
+  document.addEventListener('click', function (ev) { if ($('navdd') && !ev.target.closest('#navdd') && !ev.target.closest('#nav')) ddClose(); });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') ddClose(); });
+  function go(t) { ddClose(); TAB = t; nav(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   window.cseGo = go;
 
   function yearsOf(list, key) {
@@ -562,6 +581,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       sec.style.display = vis ? '' : 'none'; if (vis) any = true;
     });
     var m = $('tq-vide'); if (m) m.style.display = q && !any ? '' : 'none';
+    var gs = document.querySelector('.grps'); if (gs) gs.classList.toggle('hd', !q);
   };
   function grpPage(k) {
     var g = GRP.filter(function (x) { return x[0] === k; })[0]; if (!g) return '';
@@ -592,8 +612,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   function tilesHtml(open) {
     var B = grpBadges();
-    return '<div class="card" style="padding:10px 12px"><input id="tq" type="search" placeholder="🔎 Que cherchez-vous ? (billet, mutuelle…)" oninput="cseTq(this.value)" style="margin:0"></div><p class="empty" id="tq-vide" style="display:none">Rien trouvé : essayez un autre mot, ou écrivez au CSE dans « Messages ».</p>'
-      + '<div class="grps">' + grpListe().map(function (g) { return grpSection(g, B, false); }).join('') + '</div>';
+    return '<div class="card" style="padding:10px 12px"><input id="tq" type="search" placeholder="🔎 Que cherchez-vous ? (billet, mutuelle, chèques vacances…)" oninput="cseTq(this.value)" style="margin:0"></div><p class="empty" id="tq-vide" style="display:none">Rien trouvé : essayez un autre mot, ou écrivez au CSE dans « Messages ».</p>'
+      + '<div class="grps hd">' + grpListe().map(function (g) { return grpSection(g, B, false); }).join('') + '</div>';
   }
 
   var ALERTES = [['cinema', '🎬 Cinéma'], ['parcs', '🎢 Parcs de loisirs'], ['spectacles', '🎤 Spectacles, concerts'], ['loisirs', '🏊 Sport et loisirs'], ['sorties', '🎭 Sorties du CSE'], ['famille', '👨‍👩‍👧 Sorties en famille'], ['materiel', '⛺ Nouveau matériel à prêter'], ['bonsplans', '🏷️ Bons plans partenaires']];
@@ -1698,7 +1718,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '10.6.1', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '10.6.2', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
