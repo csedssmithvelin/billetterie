@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"HHt2hpHYNHGg1E1t2ibfFw==","iv":"IjNxAil6QGyCDRM7","rev":"boot","lastModified":"2026-11-27T12:22:03.820Z","by":"Michaël GROSJEAN","data":"Hcrh8rEL2fwLI3JCdYNCTETOOs/uaSoTw/pGUIxNKzVTUi5IJHFLduYmJxksxQ/DnXFwBfh6i+4IsVZNpx8haw=="},"at":"2026-11-27T12:22:03.852Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"5yKqn1yo/BwdnS29J5gVEw==","iv":"F/le/tNsvU6Cor2x","rev":"boot","lastModified":"2026-11-27T16:09:23.913Z","by":"Michaël GROSJEAN","data":"M2JNCv/w2uTwm7qwBpVSr+6mtZpLIRPidKhYP1O7V1wylEtsxNOifCCgnbDjA51A9wJ3zuIaU7AHQRNEDNEzgQ=="},"at":"2026-11-27T16:09:23.951Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.5.6";
+        const APP_VERSION = "V.10.5.7";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21725,6 +21725,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.5.7', date: '2026-11-27', items: ['Recherche rapide (nom, prénom ou e-mail, dans n\'importe quel ordre) dans Consultations et dans la fenêtre d\'envoi des liens.', 'Communication › Consultations : bouton ✉️ sur chaque salarié qui a un e-mail pour lui envoyer son lien d\'espace (la fenêtre s\'ouvre avec lui déjà coché). Le bouton du haut s\'appelle maintenant « Envoyer les liens par e-mail ».'] },
             { v: 'V.10.5.6', date: '2026-11-27', items: ['Quota cinéma « par an » ou « par mois » (Paramètres › Droits & quotas). Exemple : 1 place par mois et par personne du foyer, avec blocage : un salarié avec conjoint et un enfant a droit à 3 places par mois. L\'espace salarié affiche les places restantes du mois.', 'Historique des envois aux salariés : Paramètres › Établissement › carte « E-mails automatiques au salarié » › 📜 Historique des envois (recherche par salarié, message complet, e-mail ou notification, justificatif joint).'] },
             { v: 'V.10.5.5', date: '2026-11-27', items: ['Demandes de prestation (œuvres sociales) : le justificatif joint part tout seul sur le Drive (CSE - Documents › année › Œuvres sociales › prestation) et apparaît dans « Mes documents » de l\'espace du salarié ; l\'appli garde le lien (données plus légères).', 'E-mails automatiques au salarié à chaque étape : demande reçue, acceptée, versée ou remise (avec justificatif PDF), refusée (avec le motif). Textes modifiables comme les autres.', 'Prestation payée en bon Swile (mot « Swile » dans le mode ou la référence) : l\'e-mail et le justificatif disent « crédité sur votre carte Swile ».'] },
             { v: 'V.10.5.4', date: '2026-11-27', items: ['E-mails automatiques au salarié : textes modifiables type par type (vente, inscription, colis, prêt, retour, paiement, virement, chèques vacances), avec des mots remplacés tout seuls ({prenom}, {montant}, {pour}…), aperçu et retour au texte d\'origine. Paramètres › carte « E-mails automatiques au salarié » › ✏️ Modifier les textes.', 'Nouveaux textes d\'origine pour un virement reçu et un versement de chèques vacances.'] },
@@ -43916,22 +43917,26 @@ var qrcode = function() {
   // ------------------------------------------------------------------
   function oldTpl() { var c = cfg(); if (c.espaceMailB && /Le CSE vous ouvre votre espace personnel\. Vous y retrouvez/.test(c.espaceMailB)) { delete c.espaceMailB; delete c.espaceMailS; } }
   var TPL_S = 'Votre espace CSE personnel est ouvert', TPL_B = 'Bonjour {prenom},\n\nLe CSE vous ouvre votre espace personnel, sur téléphone ou ordinateur. Il ne montre que VOS informations.\n\nCE QUE VOUS Y TROUVEZ\n• ce qui vous reste à régler, et ce que le CSE vous a offert cette année ;\n• vos achats de billets, vos sorties et vos chèques vacances, avec chaque paiement et s\'il a bien été reçu ;\n• les billets disponibles avec leurs prix, et le nombre qu\'il vous reste à prendre ;\n• les annonces du CSE, l\'agenda, les sondages, et vos colis à récupérer ;\n• vos documents et votre carte CSE (QR code) à montrer à la permanence ;\n• votre récapitulatif de l\'année, à enregistrer en PDF.\n\nCE QUE VOUS POUVEZ FAIRE\n• vous inscrire à une sortie, ou vous mettre en liste d\'attente ;\n• vous inscrire aux chèques vacances : montant, Papier, Connect ou Swile, et paiement en plusieurs fois ;\n• réserver du matériel : tables, bancs, chapiteaux ;\n• donner une idée ou poser une question pour la réunion ;\n• corriger votre fiche (adresse, téléphone, enfants…) ;\n• noter une sortie après y être allé.\n\nCOMMENT ÇA MARCHE\nChaque demande est envoyée au CSE, qui la valide. La réponse s\'affiche dans « Mes demandes ». Les paiements sont validés uniquement par le CSE, quand il les a reçus.\nPermanence du CSE : le vendredi de 11h à 13h30.\n\nSUR LE TÉLÉPHONE\nOuvrez le lien, puis « Installer l\'appli » ou « Ajouter à l\'écran d\'accueil ». Activez aussi les notifications pour être prévenu : réponse du CSE, place libérée, colis à récupérer, paiement reçu.\n\nVotre lien personnel (gardez-le pour vous, ne le transférez pas) :\n{lien}\n\nLe CSE';
-  window.cseEspaceLinks = function () {
+  window.cseEspaceLinks = function (preId) {
     if (!isAdmin()) return;
-    var b = v59Modal('modal-v70-links', 'Liens personnels des salariés', 'fa-link'), L = actives().sort(function (a, b) { return empName(a).localeCompare(empName(b)); });
+    var b = v59Modal('modal-v70-links', 'Liens personnels des salariés', 'fa-link'), L = actives().sort(function (a, b) { return empName(a).localeCompare(empName(b)); }), sansAcc = function (t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); };
     var withMail = L.filter(function (e) { return e.email; });
     b.innerHTML = '<p class="text-slate-600">Chaque salarié a son propre lien. <b>' + withMail.length + '</b> salarié(s) sur ' + L.length + ' ont une adresse e-mail. Pour les autres : copiez le lien ou imprimez le QR code.</p>'
       + '<label class="block space-y-1"><span class="font-semibold text-slate-600">Objet</span><input id="v70l-s" class="w-full p-2 bg-slate-50 border rounded-lg text-sm" value="' + E((oldTpl(), cfg().espaceMailS) || TPL_S) + '"></label>'
       + '<label class="block space-y-1"><span class="font-semibold text-slate-600">Message ({prenom} et {lien} sont remplacés pour chacun)</span><textarea id="v70l-b" rows="8" class="w-full p-2 bg-slate-50 border rounded-lg text-sm">' + E(cfg().espaceMailB || TPL_B) + '</textarea></label>'
       + '<div class="flex flex-wrap gap-2 items-center"><label class="flex items-center gap-1 font-semibold"><input type="checkbox" id="v70l-all"> tout cocher</label><label class="flex items-center gap-1"><input type="checkbox" id="v70l-new" checked> seulement ceux qui ne l\'ont pas encore reçu</label></div>'
+      + '<input id="v70l-q" class="w-full p-2 bg-slate-50 border rounded-lg text-sm" placeholder="🔎 Rechercher un salarié (nom, prénom ou e-mail)…" autocomplete="off">'
       + '<div class="max-h-[40vh] overflow-y-auto border rounded-xl divide-y">' + L.map(function (e) {
-        return '<div class="flex flex-wrap items-center gap-2 p-2"><label class="flex items-center gap-2 flex-1 min-w-[200px]"><input type="checkbox" data-e="' + e.id + '"' + (e.email ? '' : ' disabled') + '><span><b>' + E(empName(e)) + '</b><br><span class="text-slate-500">' + E(e.email || 'pas d\'e-mail') + (e.espaceSentAt ? ' · lien envoyé le ' + fd(e.espaceSentAt) : '') + '</span></span></label>'
+        return '<div class="flex flex-wrap items-center gap-2 p-2" data-n="' + E(sansAcc((e.firstname || '') + ' ' + (e.lastname || '') + ' ' + (e.firstname || '') + ' ' + (e.email || ''))) + '"><label class="flex items-center gap-2 flex-1 min-w-[200px]"><input type="checkbox" data-e="' + e.id + '"' + (e.email ? '' : ' disabled') + '><span><b>' + E(empName(e)) + '</b><br><span class="text-slate-500">' + E(e.email || 'pas d\'e-mail') + (e.espaceSentAt ? ' · lien envoyé le ' + fd(e.espaceSentAt) : '') + '</span></span></label>'
           + '<button type="button" class="' + V59_BTN + '" onclick="cseEspaceCopy(' + e.id + ')" title="Copier le lien"><i class="fa-solid fa-copy"></i></button><button type="button" class="' + V59_BTN + '" onclick="cseEspaceQr(' + e.id + ')" title="QR code à imprimer"><i class="fa-solid fa-qrcode"></i></button><button type="button" class="' + V59_BTN + '" onclick="cseEspaceRenew(' + e.id + ')" title="Nouveau lien (l\'ancien ne marche plus)"><i class="fa-solid fa-arrows-rotate"></i></button></div>';
       }).join('') + '</div><div id="v70l-msg" class="font-semibold"></div>'
       + '<div class="flex flex-wrap gap-2"><button type="button" id="v70l-prev" class="' + V59_BTN + '"><i class="fa-solid fa-eye"></i> Voir le message d\'un salarié</button><button type="button" id="v70l-go" class="' + V59_BTNP + '"><i class="fa-solid fa-paper-plane"></i> Envoyer aux salariés cochés</button></div>';
     var boxes = function () { return Array.prototype.slice.call(b.querySelectorAll('[data-e]:not(:disabled)')); };
-    var sync = function () { var nw = document.getElementById('v70l-new').checked, all = document.getElementById('v70l-all').checked; boxes().forEach(function (x) { var e = empById(x.getAttribute('data-e')); x.checked = all && (!nw || !e.espaceSentAt); }); };
+    var vis = function (x) { var r = x.closest('[data-n]'); return !r || r.style.display !== 'none'; };
+    document.getElementById('v70l-q').oninput = function () { var q = sansAcc(this.value).trim(); b.querySelectorAll('[data-n]').forEach(function (r) { r.style.display = !q || q.split(/\s+/).every(function (w) { return r.getAttribute('data-n').indexOf(w) >= 0; }) ? '' : 'none'; }); };
+    var sync = function () { var nw = document.getElementById('v70l-new').checked, all = document.getElementById('v70l-all').checked; boxes().filter(vis).forEach(function (x) { var e = empById(x.getAttribute('data-e')); x.checked = all && (!nw || !e.espaceSentAt); }); };
     document.getElementById('v70l-all').onchange = sync; document.getElementById('v70l-new').onchange = sync;
+    if (preId != null) { var pb = b.querySelector('[data-e="' + preId + '"]'); if (pb && !pb.disabled) { pb.checked = true; try { pb.scrollIntoView({ block: 'center' }); } catch (er) { } } }
     function text(e) { var s = document.getElementById('v70l-s').value, bd = document.getElementById('v70l-b').value; return { to: e.email, subject: s, body: bd.replace(/\{prenom\}/g, e.firstname || '').replace(/\{lien\}/g, cseEspaceLink(e)) }; }
     document.getElementById('v70l-prev').onclick = function () { var x = boxes().filter(function (z) { return z.checked; })[0] || boxes()[0]; if (!x) return; var t = text(empById(x.getAttribute('data-e'))); uiConfirm('À : ' + t.to + '\nObjet : ' + t.subject + '\n\n' + t.body); };
     document.getElementById('v70l-go').onclick = async function () {
@@ -43948,7 +43953,7 @@ var qrcode = function() {
         catch (er) { msg.textContent = 'Erreur : ' + er.message; break; }
       }
       await saveDB();
-      msg.textContent = '✔ ' + ok + ' lien(s) envoyé(s).' + (rest ? ' Limite Gmail du jour atteinte : relancez demain pour les ' + (sel.length - ok) + ' autres.' : '');
+      msg.textContent = '✔ ' + ok + ' lien(s) envoyé(s).' + (rest ? ' Limite d\'envoi du jour atteinte (Gmail + Brevo) : relancez demain pour les ' + (sel.length - ok) + ' autres.' : '');
       try { logAction('Envoi', 'employee', 'Liens « Mon espace CSE » envoyés à ' + ok + ' salarié(s)'); } catch (er) { }
     };
   };
@@ -44344,7 +44349,7 @@ var qrcode = function() {
   };
 
   // ---------- Statistiques de consultation ----------
-  var VIS = null, VF = 'jamais';
+  var VIS = null, VF = 'jamais', VQ = '';
   function rStats() {
     var body = document.getElementById('v85-body');
     if (!VIS) { body.innerHTML = '<p class="text-xs text-slate-500">Chargement des consultations…</p>'; cseCommVis(); return; }
@@ -44359,16 +44364,19 @@ var qrcode = function() {
       + '<div class="h-3 bg-slate-100 rounded-full overflow-hidden"><div class="h-3 bg-emerald-500" style="width:' + pc + '%"></div></div>'
       + '<p class="text-[11px] text-slate-500">' + tot + ' ouverture(s) au total (une ouverture = une visite, comptée au plus une fois par demi-heure). Les comptes démarrent avec la mise à jour V.8.6 du script Google : les visites d\'avant ne sont pas connues.</p>'
       + '<div class="flex flex-wrap gap-2 items-center">' + [['jamais', 'Jamais ouvert (' + never.length + ')'], ['ouvert', 'Ont ouvert (' + open.length + ')'], ['tous', 'Tous']].map(function (f) { return '<button type="button" data-vf="' + f[0] + '" class="px-3 py-1.5 rounded-lg text-xs font-bold border ' + (VF === f[0] ? 'bg-slate-800 text-white' : 'bg-white text-slate-600') + '">' + f[1] + '</button>'; }).join('')
-      + '<button type="button" class="' + V59_BTN + '" onclick="cseCommVis()"><i class="fa-solid fa-rotate"></i></button>' + (never.length ? '<button type="button" class="' + V59_BTN + '" onclick="cseEspaceLinks()"><i class="fa-solid fa-paper-plane"></i> Renvoyer les liens</button>' : '') + '</div>';
-    var show = rows.filter(function (r) { return VF === 'tous' || (VF === 'jamais' ? !r.v : !!r.v); }).sort(function (a, b) { return VF === 'ouvert' ? (a.j - b.j) : 0; });
+      + '<button type="button" class="' + V59_BTN + '" onclick="cseCommVis()"><i class="fa-solid fa-rotate"></i></button>' + (never.length ? '<button type="button" class="' + V59_BTN + '" onclick="cseEspaceLinks()"><i class="fa-solid fa-paper-plane"></i> Envoyer les liens par e-mail</button>' : '') + '</div>';
+    var vq = String(VQ || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    var show = rows.filter(function (r) { return (VF === 'tous' || (VF === 'jamais' ? !r.v : !!r.v)) && (!vq || vq.split(/\s+/).every(function (w) { return ((r.e.firstname || '') + ' ' + (r.e.lastname || '') + ' ' + (r.e.firstname || '') + ' ' + (r.e.email || '')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(w) >= 0; })); }).sort(function (a, b) { return VF === 'ouvert' ? (a.j - b.j) : 0; });
+    h += '<input id="v1057-vq" class="w-full p-2 bg-slate-50 border rounded-lg text-sm" placeholder="🔎 Rechercher un salarié…" autocomplete="off" value="' + E(VQ) + '">';
     h += '<div class="border rounded-xl divide-y max-h-[45vh] overflow-y-auto bg-white">' + (show.length ? show.map(function (r) {
       var st = r.v ? (r.j === 0 ? 'aujourd\'hui' : r.j === 1 ? 'hier' : 'il y a ' + r.j + ' jours') : '';
       return '<div class="flex items-center gap-2 p-2 text-xs"><div class="flex-1"><b>' + E(nm(r.e)) + '</b><div class="text-slate-500">' + (r.v ? 'Dernière visite ' + st + ' · ' + r.v.n + ' visite(s) · 1re le ' + fd(String(r.v.premier).slice(0, 10)) : (r.e.espaceSentAt ? 'Lien envoyé le ' + fd(String(r.e.espaceSentAt).slice(0, 10)) + ', jamais ouvert' : (r.e.email ? 'Lien pas encore envoyé' : 'Pas d\'e-mail : donnez-lui le lien ou le QR code'))) + '</div></div>'
         + (r.e.espaceToken && VIS.ab && VIS.ab[r.e.espaceToken] ? '<span title="Notifications activées">📲</span>' : '') + '<span class="px-2 py-0.5 rounded-full font-bold ' + (r.v ? (r.j < 30 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700') : 'bg-rose-100 text-rose-700') + '">' + (r.v ? (r.j < 30 ? 'Actif' : 'Ancien') : 'Jamais') + '</span>'
-        + (r.v ? '' : '<button type="button" class="' + V59_BTN + '" title="Copier son lien" onclick="cseEspaceCopy(' + r.e.id + ')"><i class="fa-solid fa-copy"></i></button><button type="button" class="' + V59_BTN + '" title="QR code" onclick="cseEspaceQr(' + r.e.id + ')"><i class="fa-solid fa-qrcode"></i></button>') + '</div>';
+        + (r.v ? '' : (r.e.email ? '<button type="button" class="' + V59_BTN + '" title="Envoyer son lien par e-mail" onclick="cseEspaceLinks(' + r.e.id + ')"><i class="fa-solid fa-envelope"></i></button>' : '') + '<button type="button" class="' + V59_BTN + '" title="Copier son lien" onclick="cseEspaceCopy(' + r.e.id + ')"><i class="fa-solid fa-copy"></i></button><button type="button" class="' + V59_BTN + '" title="QR code" onclick="cseEspaceQr(' + r.e.id + ')"><i class="fa-solid fa-qrcode"></i></button>') + '</div>';
     }).join('') : '<p class="p-3 text-xs text-slate-500">Personne dans cette liste.</p>') + '</div>';
     body.innerHTML = h;
     body.querySelectorAll('[data-vf]').forEach(function (x) { x.onclick = function () { VF = x.dataset.vf; rStats(); }; });
+    var vqi = document.getElementById('v1057-vq'); if (vqi) { vqi.oninput = function () { VQ = this.value; clearTimeout(window.__vqT); window.__vqT = setTimeout(function () { rStats(); var i = document.getElementById('v1057-vq'); if (i) { i.focus(); i.selectionStart = i.selectionEnd = i.value.length; } }, 250); }; }
   }
   window.cseCommVis = async function () {
     try { var j = await cseEspacePost('visites', {}); VIS = { v: j.visites || {}, ab: j.abonnes || {}, push: !!j.push }; }
