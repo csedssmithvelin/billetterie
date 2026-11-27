@@ -44,7 +44,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"/RKiiqlAlAk/MEIItt+ajQ==","iv":"Ze8uTI2E4fdQdhzQ","rev":"boot","lastModified":"2026-11-27T19:31:11.149Z","by":"Michaël GROSJEAN","data":"Ethrx0RNuD1X8F11qajnwVv4GAoht80XtO3YTRyksgzXjb/jaEIzn+rPjLMGJsRlUXl5VPml9mdG4rGzwlKWKA=="},"at":"2026-11-27T19:31:11.189Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"aljvvtJHlGuucjR5V6jSHw==","iv":"U4rS2kPKNi4Fr3aX","rev":"boot","lastModified":"2026-11-27T19:49:55.521Z","by":"Michaël GROSJEAN","data":"FYnTge5Nr21PedjS0qhD244X/MsCOXO3sQI1A0o1zFtUVIev3X/nZWTnpcbmay43PYhOYzPMdPZN6Y7EaI1Ipw=="},"at":"2026-11-27T19:49:55.564Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6946,11 +6946,11 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
             try {
                 const c = healthNetCache();
                 const hasToken = (() => { try { return !!localStorage.getItem(TOKEN_STORAGE_KEY); } catch (e) { return false; } })();
-                const R = await healthRun(hasToken && navigator.onLine && (!c || hHours(c.at) > 12));
+                const R = await healthRun(hasToken && navigator.onLine);
                 const { err } = healthSummary(R);
                 if (err) toast(`Santé du système : ${pluralFr(err, 'problème')} détecté(s). <button onclick="switchTab('health')" class="underline font-bold">Voir</button>`, 'error', { html: true, ms: 10000 });
             } catch (e) { console.warn('Santé du système', e); }
-        }, 8000));
+        }, 5 * 60000)); // V.11.3 : test complet une seule fois, 5 min après l'ouverture (le démarrage reste léger)
 
         // ---------- Mise en route ----------
         document.addEventListener('DOMContentLoaded', () => {
@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.2";
+        const APP_VERSION = "V.11.3";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.3', date: '2026-11-27', items: ['Accueil : les bulles « Ma journée » s\'ouvrent d\'un appui (Impayés, Délégations…), le bloc concerné s\'allume.', 'État du système : test complet une seule fois, 5 min après l\'ouverture.', 'Sorties : bouton « Image » à côté de « Affiche » (image prête pour un e-mail ou WhatsApp, avec le QR code).', 'Impayés : bouton « Relancer les N salarié(s) en un clic » dans Aujourd\'hui, avec aperçu du message ; texte et objet de la relance modifiables dans Paramètres (carte Relances des impayés).', 'Script Google v94 : agenda du CSE en abonnement pour le téléphone des salariés.'] },
             { v: 'V.11.2', date: '2026-11-27', items: ['Rangement du code (rien ne change à l\'écran) : sommaire par thème en tête du fichier, code qui ne servait plus retiré (ancien import Excel des chèques vacances, anciennes fonctions de rappel et de graphique…), branchements vers l\'espace salarié et vers « Aujourd\'hui » regroupés au même endroit.', 'Ouverture plus rapide (sw.js et espace-sw.js à publier) : l\'appli et l\'espace s\'affichent tout de suite avec la copie gardée sur l\'appareil, sans attendre GitHub ; s\'il y a une nouvelle version, le bandeau « mettre à jour » apparaît quelques secondes après.'] },
             { v: 'V.11.1', date: '2026-11-27', items: ['Menu en grands espaces : Accueil, Salariés, Activités, Argent et bilans (avec les statistiques et rapports), Élus et réunions, Communication, Administration.', '« Santé du système » rejoint « Sauvegardes et santé » et Paramètres › Sécurité.', 'Rappel des obligations du CSE sur le téléphone des élus 30 jours et 7 jours avant, puis en cas de retard (Paramètres › Élus, activé par défaut, avec les rappels en notification).', 'Notes de réunion dictées : majuscule et point ajoutés tout seuls ; elles forment le compte rendu (bouton Aperçu du compte rendu).', 'Espace 11.1 : cloche des nouveautés, rond avec les initiales (Mon compte), partager un billet, ajouter une réunion à l\'agenda, langues turc et arabe.'] },
             { v: 'V.11.0', date: '2026-11-27', items: ['Appli plus légère (7,5 → 5,2 Mo) : les outils Excel et PDF sont dans lib-xlsx.js, lib-pdf.js et lib-pdf-worker.js, à publier à côté de l\'appli (sinon ils viennent d\'Internet). Excel se charge juste après l\'ouverture, le lecteur PDF seulement à l\'import SumUp.', 'Voyant en haut : « ☁️ Tout est en ligne », « ⏳ 2 saisies pas encore envoyées » ou « 📴 Hors ligne ». Un clic : dernier envoi, copie Drive, Envoyer maintenant, Versions précédentes.', 'Versions précédentes : bouton « 🔍 Ce qui a changé » (ajouts, modifications, suppressions et journal entre deux versions).', 'Espace salarié : code personnel à 4 chiffres choisi par le salarié, demandé seulement sur un nouvel appareil ; e-mail au CSE si le lien s\'ouvre sur un 3e appareil ; Paramètres › Espace salarié › « Code personnel » pour voir qui en a un et effacer un code oublié. Script Google v93.', 'Communication devient un vrai onglet (menu › Communication), avec les messages des salariés et l\'espace.', 'Menu : ⭐ favoris (étoile au survol d\'une ligne, 6 maximum, par utilisateur), rubriques renommées (Salariés, Argent, Élus et réunions).', 'Tableau de bord : bonjour, date, fête du jour et « Ma journée ».', 'Mode présentation du bilan du mois (plein écran, flèches du clavier, choix du mois).', 'Sorties : bouton « Affiche » = affiche A4 avec QR code pour s\'inscrire depuis l\'espace.', 'Réunions : 🎙️ dictée des notes (Chrome, Edge, Safari).', 'Obligations du CSE en retard ou à moins de 30 jours dans « Aujourd\'hui ».', 'Le réglage « réduire les animations » du téléphone ou du PC est respecté.'] },
@@ -45495,22 +45496,23 @@ var qrcode = function() {
     var L = Array.isArray(cfg().payLinks) ? cfg().payLinks : [];
     return L.filter(function (l) { if (!l || !/^https:\/\//.test(l.url || '')) return false; var k = l.kinds && l.kinds.length ? l.kinds : ['all']; return k.indexOf('all') >= 0 || kinds.some(function (x) { return k.indexOf(x) >= 0; }); });
   }
+  var RL_OBJ = 'Rappel du CSE : {total} à régler', RL_TXT = 'Bonjour {prenom},\n\nSauf erreur de notre part, il reste à régler au CSE :\n{liste}\n\nTotal : {total}\n\n{paiement}\n\nSi vous avez déjà réglé, merci de ne pas tenir compte de ce message.';
   function mailRelance(e, items) {
     var tot = items.reduce(function (s, x) { return s + (x.montant || 0); }, 0), kinds = items.map(function (x) { return x.kind; }), P = liens(kinds);
-    var corps = 'Bonjour ' + (e.firstname || '') + ',\n\nSauf erreur de notre part, il reste à régler au CSE :\n'
-      + items.map(function (x) { return '- ' + x.lib + ' : ' + eur(x.montant) + ' (échéance du ' + fd(x.due) + ')'; }).join('\n')
-      + '\n\nTotal : ' + eur(tot) + '\n\nVous pouvez régler à la permanence du CSE' + (P.length ? ' ou en ligne :\n' + P.map(function (l) { return '- ' + l.label + ' : ' + l.url; }).join('\n') : '.')
-      + '\n\nSi vous avez déjà réglé, merci de ne pas tenir compte de ce message.';
+    var lst = items.map(function (x) { return '- ' + x.lib + ' : ' + eur(x.montant) + ' (échéance du ' + fd(x.due) + ')'; }).join('\n');
+    var pay = 'Vous pouvez régler à la permanence du CSE' + (P.length ? ' ou en ligne :\n' + P.map(function (l) { return '- ' + l.label + ' : ' + l.url; }).join('\n') : '.');
+    var rem = function (t) { return String(t).replace(/\{prenom\}/g, e.firstname || '').replace(/\{nom\}/g, e.lastname || '').replace(/\{liste\}/g, lst).replace(/\{total\}/g, eur(tot)).replace(/\{paiement\}/g, pay); };
+    var corps = rem(cfg().relanceTexte || RL_TXT);
     var sl = window.cseSigLogo ? cseSigLogo() : {};
-    return { to: e.email || '', subject: 'Rappel du CSE : ' + eur(tot) + ' à régler', body: corps + '\n\nCordialement,' + (sl.sig ? '\n\n' + sl.sig : ''), sig: sl.sig, logo: sl.logo, total: tot };
+    return { to: e.email || '', subject: rem(cfg().relanceObjet || RL_OBJ), body: corps + '\n\nCordialement,' + (sl.sig ? '\n\n' + sl.sig : ''), sig: sl.sig, logo: sl.logo, total: tot };
   }
   function parSalarie(L) { var G = {}; L.forEach(function (x) { (G[x.empId] = G[x.empId] || []).push(x); }); return G; }
   var RLS = { busy: false, msg: '', apercu: null };
-  window.cseRelEnvoyer = async function (auto, tous) {
+  window.cseRelEnvoyer = async function (auto, tous, deja) {
     if (RLS.busy) return; var R = rcfg(), L = aRelancer(!!tous); if (!L.length) { if (!auto) say('Aucune relance à envoyer aujourd\'hui.', 'info'); return; }
     if (!scriptOk()) { if (!auto) say('Le script Google n\'est pas relié : les relances partent depuis la boîte du CSE.', 'warning'); return; }
     var G = parSalarie(L), ids = Object.keys(G);
-    if (!auto && !(await uiConfirm('Envoyer ' + ids.length + ' relance(s) maintenant (' + L.length + ' somme(s) due(s)) ?', { title: 'Relances des impayés', okLabel: 'Envoyer' }))) return;
+    if (!auto && !deja && !(await uiConfirm('Envoyer ' + ids.length + ' relance(s) maintenant (' + L.length + ' somme(s) due(s)) ?', { title: 'Relances des impayés', okLabel: 'Envoyer' }))) return;
     RLS.busy = true; RLS.msg = 'Envoi des relances…'; relCard();
     var n = 0, err = 0;
     for (var i = 0; i < ids.length; i++) {
@@ -45528,6 +45530,8 @@ var qrcode = function() {
     var c = cfg();
     if (k === 'on') c.relanceOn = !!v; else if (k === 'mail') c.relanceMail = !!v; else if (k === 'push') c.relancePush = !!v;
     else if (k === 'j') { var J = String(v).split(/[^0-9]+/).map(Number).filter(function (n) { return n > 0 && n < 120; }); c.relanceJ = J.length ? J.slice(0, 4) : [3, 10]; }
+    else if (k === 'objet') { v = String(v || '').trim(); if (v && v !== RL_OBJ) c.relanceObjet = v; else delete c.relanceObjet; }
+    else if (k === 'texte') { v = String(v || '').replace(/\s+$/, ''); if (v && v !== RL_TXT) c.relanceTexte = v; else delete c.relanceTexte; }
     else if (/^q:/.test(k)) { c.relanceQuoi = Object.assign({ sales: true, registrations: true, cv: true }, c.relanceQuoi || {}); c.relanceQuoi[k.slice(2)] = !!v; }
     save(); relCard();
   };
@@ -45542,6 +45546,11 @@ var qrcode = function() {
       + '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' + ck('mail', R.mail, 'Par e-mail') + ck('push', R.push, 'Par notification (si le salarié les a activées)')
       + ck('q:sales', R.quoi.sales !== false, 'Billets non réglés') + ck('q:registrations', R.quoi.registrations !== false, 'Sorties non payées') + ck('q:cv', R.quoi.cv !== false, 'Échéances chèques vacances')
       + '<label class="text-xs text-slate-600">Jours après l\'échéance<input class="' + INP + '" value="' + E(R.j.join(', ')) + '" onchange="cseRelSet(\'j\',this.value)"></label></div>'
+      + '<details class="text-xs"' + (cfg().relanceTexte || cfg().relanceObjet ? ' open' : '') + '><summary class="cursor-pointer font-bold text-slate-700">✏️ Texte du message de relance' + (cfg().relanceTexte || cfg().relanceObjet ? ' (modifié)' : '') + '</summary><div class="mt-2 space-y-2">'
+      + '<label class="block text-slate-600">Objet<input class="' + INP + '" value="' + E(cfg().relanceObjet || RL_OBJ) + '" onchange="cseRelSet(\'objet\',this.value)"></label>'
+      + '<label class="block text-slate-600">Message<textarea rows="9" class="' + INP + '" style="font-family:inherit" onchange="cseRelSet(\'texte\',this.value)">' + E(cfg().relanceTexte || RL_TXT) + '</textarea></label>'
+      + '<p class="text-slate-500">Mots remplacés tout seuls : <b>{prenom}</b>, <b>{nom}</b>, <b>{liste}</b> (les sommes dues), <b>{total}</b>, <b>{paiement}</b> (où et comment régler). La signature du CSE est ajoutée à la fin.</p>'
+      + ((cfg().relanceTexte || cfg().relanceObjet) ? '<button type="button" class="' + BTN + '" onclick="cseRelSet(\'texte\',\'\');cseRelSet(\'objet\',\'\')">↩️ Remettre le texte d\'origine</button>' : '') + '</div></details>'
       + '<p class="text-xs text-slate-700"><b>' + auj.length + '</b> somme(s) à relancer aujourd\'hui' + (L.length > auj.length ? ' · <b>' + (L.length - auj.length) + '</b> plus ancienne(s), à relancer à la main' : '') + ' · ' + Object.keys(G).length + ' salarié(s)' + (sent ? ' · dernière relance le ' + E(new Date(sent.at).toLocaleDateString('fr-FR')) : '') + '</p>'
       + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTN + '" onclick="cseRelApercu()"><i class="fa-solid fa-eye"></i> Voir un exemple d\'e-mail</button>'
       + '<button type="button" class="' + BTN + '" onclick="cseRelEnvoyer(false,true)"' + (L.length && !RLS.busy ? '' : ' disabled') + '><i class="fa-solid fa-paper-plane"></i> Envoyer les relances maintenant</button></div>'
@@ -46958,7 +46967,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 93;
+  var SCRIPT_ATTENDU = 94;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -48908,7 +48917,7 @@ var qrcode = function() {
     var J = []; document.querySelectorAll('#v94-today > div').forEach(function (c) { var t = (c.querySelector('h4,.font-bold,b') || {}).textContent || ''; if (t && J.length < 6) J.push(t.trim().slice(0, 40)); });
     var h = '<div class="v11-hero"><div class="v11-hero-t"><div class="v11-hero-h">' + (hr < 5 ? '🌙 Bonsoir' : hr < 12 ? '🌅 Bonjour' : hr < 18 ? '☀️ Bon après-midi' : '🌆 Bonsoir') + (pr ? ' ' + E(pr) : '') + '</div>'
       + '<div class="v11-hero-d">' + E(dd.charAt(0).toUpperCase() + dd.slice(1)) + ' · <span title="Fête du jour">' + fe.e + ' ' + E(fe.t) + '</span></div>'
-      + (J.length ? '<div class="v11-hero-j"><b>Ma journée :</b> ' + J.map(function (x) { return '<span>' + E(x) + '</span>'; }).join('') + '</div>' : '<div class="v11-hero-j">✨ Rien d\'urgent aujourd\'hui.</div>') + '</div>'
+      + (J.length ? '<div class="v11-hero-j"><b>Ma journée :</b> ' + J.map(function (x, i) { return '<button type="button" onclick="cseV11Jour(' + i + ')" title="Voir le détail">' + E(x) + '</button>'; }).join('') + '</div>' : '<div class="v11-hero-j">✨ Rien d\'urgent aujourd\'hui.</div>') + '</div>'
       + '<div class="v11-hero-b"><button type="button" class="' + BTN + '" onclick="csePresenter()">📽️ Présenter le bilan du mois</button><button type="button" class="' + BTN + '" onclick="switchTab(\'obligations\')">📋 Obligations</button></div></div>';
     if (el.innerHTML !== h) el.innerHTML = h;
   }
@@ -48964,6 +48973,7 @@ var qrcode = function() {
   };
   function afficheBtn() {
     var a = $('outing-edit-btn'); if (!a || $('v11-affiche-btn')) return;
+    a.insertAdjacentHTML('afterend', '<button type="button" id="v113-img-btn" onclick="cseAfficheImage(currentOutingId)" class="px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-xs" title="La même affiche en image, à envoyer par e-mail ou WhatsApp"><i class="fa-solid fa-image"></i> Image</button>');
     a.insertAdjacentHTML('afterend', '<button type="button" id="v11-affiche-btn" onclick="cseAfficheSortie(currentOutingId)" class="px-3 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-xs" title="Affiche A4 avec QR code, à punaiser au panneau du CSE"><i class="fa-solid fa-qrcode"></i> Affiche</button>');
   }
   // ---------- 27d) Dictée des notes de réunion ----------
@@ -49031,6 +49041,62 @@ var qrcode = function() {
   window.cseV11OblPush = function (v) { cfg().oblPush = !!v; save(); say(v ? 'Les élus seront prévenus des obligations.' : 'Rappel des obligations coupé.', 'success'); };
   // Notes dictées : majuscule au début et point à la fin quand la dictée s'arrête
   function joli(ta) { var v = String(ta.value || '').replace(/\s+/g, ' ').trim(); if (!v) return; v = v.charAt(0).toUpperCase() + v.slice(1); v = v.replace(/([.!?]\s+)([a-zà-ÿ])/g, function (m, a, b) { return a + b.toUpperCase(); }); if (!/[.!?…]$/.test(v)) v += '.'; if (v !== ta.value) { ta.value = v; ta.dispatchEvent(new Event('input', { bubbles: true })); } }
+
+  // =====================================================================
+  // 29) V.11.3 : bulles « Ma journée » cliquables, affiche en image, relancer tous les impayés
+  // =====================================================================
+  window.cseV11Jour = function (i) {
+    try { if (typeof window.todoTab === 'function') window.todoTab('today'); } catch (e) { }
+    var c = document.querySelectorAll('#v94-today > div')[i]; if (!c) return;
+    c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    c.classList.remove('v113-flash'); void c.offsetWidth; c.classList.add('v113-flash'); setTimeout(function () { c.classList.remove('v113-flash'); }, 1800);
+  };
+  // Relancer tous les impayés d'un clic (aperçu du message avant l'envoi)
+  window.cseV113Relancer = async function () {
+    var L = aRelancer(true), G = parSalarie(L), ids = Object.keys(G);
+    if (!ids.length) { say('Aucun impayé à relancer en ce moment.', 'info'); return; }
+    if (!scriptOk()) { say('Le script Google n\'est pas relié : les relances partent depuis la boîte du CSE.', 'warning'); return; }
+    var m = mailRelance(emp(ids[0]), G[ids[0]]), tot = L.reduce(function (s, x) { return s + (x.montant || 0); }, 0);
+    var html = '<p><b>' + ids.length + '</b> salarié(s) vont recevoir un rappel, pour <b>' + eur(tot) + '</b> au total. Exemple du premier message :</p>'
+      + '<div style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;font-size:12px;max-height:46vh;overflow:auto;margin-top:8px"><div><b>À :</b> ' + E(m.to || '(pas d\'e-mail : notification seulement)') + '</div><div><b>Objet :</b> ' + E(m.subject) + '</div><div style="white-space:pre-wrap;margin-top:6px">' + E(m.body) + '</div></div>'
+      + '<p style="font-size:12px;color:#64748b;margin-top:8px">Le texte se modifie dans Paramètres › Argent et caisse › Relances des impayés.</p>';
+    if (!(await uiConfirm('', { title: '📨 Relancer tous les impayés', html: html, okLabel: 'Envoyer les ' + ids.length + ' rappel(s)' }))) return;
+    cseRelEnvoyer(false, true, true);
+  };
+  // Affiche de la sortie en image (pour un e-mail, WhatsApp, l'écran de l'accueil…)
+  window.cseAfficheImage = async function (id) {
+    var o = (db.outings || []).filter(function (x) { return String(x.id) === String(id); })[0]; if (!o) { say('Choisissez d\'abord une sortie.', 'warning'); return; }
+    var W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d');
+    var g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#312e81'); g.addColorStop(.55, '#4f46e5'); g.addColorStop(1, '#7c3aed'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.fillStyle = '#ffffff14'; [[930, 140, 260], [120, 1180, 220], [1000, 900, 140]].forEach(function (c) { x.beginPath(); x.arc(c[0], c[1], c[2], 0, 7); x.fill(); });
+    var F = function (w, s) { return w + ' ' + s + 'px Inter, "Segoe UI", Helvetica, Arial, sans-serif'; };
+    var wrap = function (t, mx) { var m = String(t || '').split(/\s+/), L = [], l = ''; m.forEach(function (w) { var k = l ? l + ' ' + w : w; if (x.measureText(k).width > mx && l) { L.push(l); l = w; } else l = k; }); if (l) L.push(l); return L; };
+    var logo = (window.cseSigLogo && cseSigLogo().logo) || '', y = 90;
+    if (logo) { try { var im = new Image(); await new Promise(function (r) { im.onload = r; im.onerror = r; im.src = logo; }); if (im.width) { x.fillStyle = '#fff'; x.beginPath(); x.roundRect(80, 70, 120, 120, 28); x.fill(); var s = Math.min(96 / im.width, 96 / im.height); x.drawImage(im, 140 - im.width * s / 2, 130 - im.height * s / 2, im.width * s, im.height * s); } } catch (e) { } }
+    x.fillStyle = '#fff'; x.font = F(700, 40); x.fillText(String(cfg().cseName || 'CSE'), logo ? 230 : 80, 145);
+    y = 300; x.font = F(700, 34); x.fillStyle = '#c7d2fe'; x.fillText('SORTIE DU CSE', 80, y);
+    x.font = F(800, 92); x.fillStyle = '#fff'; var T = wrap(o.name || 'Sortie', W - 160).slice(0, 3); T.forEach(function (l) { y += 104; x.fillText(l, 80, y); });
+    var d = dIso(o.date); y += 70; x.font = F(600, 40); x.fillStyle = '#e0e7ff';
+    if (d) { x.fillText('📅 ' + new Date(d + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), 80, y); y += 58; }
+    if (o.location || o.lieu) { wrap('📍 ' + (o.location || o.lieu), W - 160).slice(0, 2).forEach(function (l) { x.fillText(l, 80, y); y += 54; }); }
+    var bx = 60, by = Math.max(y + 30, 760), bh = H - by - 60; x.fillStyle = '#fff'; x.beginPath(); x.roundRect(bx, by, W - 120, bh, 44); x.fill();
+    var url = espUrl() + '#sortie=' + encodeURIComponent(o.id), qs = Math.min(bh - 170, 340), qx = bx + 50, qy = by + 50;
+    try { var q = qrcode(0, 'M'); q.addData(url); q.make(); var n = q.getModuleCount(), c = qs / n; x.fillStyle = '#0f172a'; for (var r = 0; r < n; r++) for (var k = 0; k < n; k++) if (q.isDark(r, k)) x.fillRect(qx + k * c, qy + r * c, Math.ceil(c), Math.ceil(c)); } catch (e) { }
+    x.fillStyle = '#4338ca'; x.font = F(700, 28); x.fillText('📱 Scannez pour vous inscrire', qx, qy + qs + 46);
+    var px = function (v) { return v == null || v === '' ? '' : eur(v); }, tx = qx + qs + 60, ty = qy + 50;
+    [['Salarié', px(o.priceEmployee)], ['Invité adulte', px(o.priceAdultGuest != null && o.priceAdultGuest !== '' ? o.priceAdultGuest : o.priceAdult)], ['Enfant', px(o.priceChild)]].filter(function (z) { return z[1]; }).forEach(function (z) {
+      x.fillStyle = '#64748b'; x.font = F(600, 30); x.fillText(z[0], tx, ty); x.fillStyle = '#0f172a'; x.font = F(800, 54); x.fillText(z[1], tx, ty + 58); ty += 120;
+    });
+    if (o.registrationDeadline || o.limite) { x.fillStyle = '#b45309'; x.font = F(800, 32); x.fillText('⏳ Inscriptions jusqu\'au ' + fd(dIso(o.registrationDeadline || o.limite)), qx, by + bh - 40); }
+    var nom = 'Affiche - ' + String(o.name || 'sortie').replace(/[\\/:*?"<>|]+/g, ' ').trim() + '.png';
+    var blob = await new Promise(function (r) { cv.toBlob(r, 'image/png'); }); if (!blob) { say('Image impossible à créer sur cet appareil.', 'warning'); return; }
+    var f = null; try { f = new File([blob], nom, { type: 'image/png' }); } catch (e) { }
+    if (f && navigator.canShare && /Android|iPhone|iPad/i.test(navigator.userAgent) && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f], title: o.name || 'Sortie du CSE' }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    say('🖼️ Image de l\'affiche enregistrée (« ' + nom + ' ») : à joindre à un e-mail ou à envoyer sur WhatsApp.', 'success');
+  };
+  (function () { var st = document.createElement('style'); st.textContent = '.v11-hero-j button{background:#ffffff26;border:1px solid #ffffff33;border-radius:999px;padding:3px 10px;font-weight:600;color:inherit;cursor:pointer;transition:background .15s,transform .15s}.v11-hero-j button:hover{background:#ffffff40;transform:translateY(-1px)}'
+    + '.v113-flash{animation:v113fl 1.6s ease-out}@keyframes v113fl{0%,30%{box-shadow:0 0 0 4px #6366f1}100%{box-shadow:0 0 0 0 #6366f100}}'; document.head.appendChild(st); })();
 
   // =====================================================================
   //  BRANCHEMENTS REGROUPÉS (rangement V.11.2) : chaque bloc ajoute sa part, dans l'ordre des versions.
@@ -49106,6 +49172,8 @@ var qrcode = function() {
     var L = []; [oblYear, oblYear + 1].forEach(function (y) { oblList(y).forEach(function (it) { var s = oblStatus(y, it); if (!s.done && (s.key === 'late' || (s.key === 'soon' && s.left <= 30))) L.push({ t: it.t, s: s }); }); });
     if (L.length) G.push({ ic: '📋', t: 'Obligations du CSE', l: L.slice(0, 3).map(function (x) { return '<b class="' + (x.s.key === 'late' ? 'text-rose-700' : 'text-amber-700') + '">' + E(x.t) + '</b> : ' + E(x.s.label); }).concat(L.length > 3 ? ['… et ' + (L.length - 3) + ' autre(s)'] : []), go: 'obligations', b: 'Voir', warn: L.some(function (x) { return x.s.key === 'late'; }) });
   } catch (e) { } return G; }; })();
+
+  (function () { var prev = window.cseTodayExtra; window.cseTodayExtra = function (G) { G = (prev ? prev(G) : G) || G; try { var g = G.filter(function (x) { return x.t === 'Impayés'; })[0], n = Object.keys(parSalarie(aRelancer(true))).length; if (g && n) g.l.push('<button type="button" onclick="event.stopPropagation();cseV113Relancer()" class="mt-1 self-start px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px]">📨 Relancer les ' + n + ' salarié(s) en un clic</button>'); } catch (e) { } return G; }; })();
 
   // ---------- cseRappelsExtra : rappels et notifications automatiques ----------
   (function () { var prev = window.cseRappelsExtra; window.cseRappelsExtra = function (out, PU) {

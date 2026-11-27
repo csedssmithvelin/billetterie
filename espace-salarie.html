@@ -247,6 +247,33 @@ button.hc{cursor:pointer}button.hc:hover{background:#ffffff3d}
 @keyframes sc-loupe{0%,100%{transform:translate(-14px,4px)}50%{transform:translate(14px,-4px)}}
 @keyframes sc-zz{0%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(10px,-22px);opacity:0}}
 html.v11-calme .v11sc *,html.v11-calme #v11-avion{animation:none!important}
+/* V.11.3.5 : économies, quota, agenda, finitions */
+.v113-eco{display:inline-flex;align-items:center;gap:6px;margin-top:6px;background:#dcfce7;color:#166534;font-weight:800;font-size:13px;padding:4px 10px;border-radius:999px}
+html.dark .v113-eco{background:#14532d;color:#bbf7d0}
+.v113-q{display:flex;align-items:center;gap:10px;margin-top:6px}.v113-q svg{width:44px;height:44px;flex:0 0 auto}
+.v113-q .fd{fill:none;stroke:var(--line);stroke-width:6}.v113-q .av{fill:none;stroke:var(--brand,#1d4ed8);stroke-width:6;stroke-linecap:round;stroke-dasharray:var(--v) var(--c);animation:v113ring 1s cubic-bezier(.2,.8,.2,1)}.v113-q .av.plein{stroke:var(--bad,#dc2626)}
+.v113-q text{font:800 10.5px system-ui,sans-serif;fill:var(--ink)}
+@keyframes v113ring{from{stroke-dasharray:0 var(--c)}}
+.v113-abo{display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--brand) 8%,var(--card))}.v113-abo .e{font-size:30px}
+.v113-cadeau{background:linear-gradient(120deg,var(--card) 55%,#fef3c7)}
+html.dark .v113-cadeau{background:linear-gradient(120deg,var(--card) 55%,#78350f)}
+.v113-cadeau .g{font-size:1.35em;display:inline-block;animation:v113gift 2.2s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes v113gift{0%,60%,100%{transform:rotate(0)}65%{transform:rotate(-14deg) scale(1.08)}72%{transform:rotate(12deg) scale(1.08)}79%{transform:rotate(-8deg)}86%{transform:rotate(5deg)}}
+#une{position:relative}.v113-neige{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit;z-index:2}
+.v113-neige i{position:absolute;top:-14px;color:#fff;font-style:normal;opacity:.85;text-shadow:0 0 4px #0003;animation:v113flo 6s linear infinite}
+@keyframes v113flo{to{transform:translate(18px,240px) rotate(240deg)}}
+/* Cartes en cascade, effet ressort, onglet qui glisse */
+#app.pg-f>*,#app.pg-b>*{animation:v113up .42s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 45ms)}
+@keyframes v113up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.btn,.tile,.chip,.srow,nav button,.it{transition:transform .35s cubic-bezier(.34,1.8,.5,1),background .15s,color .15s,box-shadow .15s}
+.btn:active,.tile:active,.chip:active,.srow:active,nav button:active,.it:active{transform:scale(.94);transition-duration:.08s}
+#nav-ind{position:absolute;left:0;top:0;border-radius:12px;background:var(--brand);box-shadow:0 6px 14px -6px var(--brand);transition:transform .38s cubic-bezier(.34,1.4,.5,1),width .38s cubic-bezier(.34,1.4,.5,1),opacity .2s;pointer-events:none;z-index:0;opacity:0}
+nav.v113n button{z-index:1}nav.v113n button.on{background:transparent!important;box-shadow:none!important}
+/* En-tête : bulles en verre dépoli, dégradé qui respire doucement */
+#h-chips .hc{backdrop-filter:blur(10px) saturate(1.4);-webkit-backdrop-filter:blur(10px) saturate(1.4);background:#ffffff26!important;border-color:#ffffff4d!important;box-shadow:inset 0 1px 0 #ffffff40,0 6px 16px -10px #0006}
+header{background-size:180% 180%!important;animation:v113ciel 18s ease-in-out infinite alternate}
+@keyframes v113ciel{from{background-position:0% 40%}to{background-position:100% 60%}}
+html.v11-calme header,html.v11-calme .v113-cadeau .g,html.v11-calme .v113-neige,html.v11-calme #app>*{animation:none!important}html.v11-calme .v113-neige{display:none}
 /* Avion en papier à l'envoi */
 #v11-avion{position:fixed;left:0;top:0;z-index:9998;pointer-events:none;width:58px;height:58px;animation:sc-vol 1.6s cubic-bezier(.45,.05,.55,.95) forwards}
 @keyframes sc-vol{0%{transform:translate(-70px,70vh) rotate(-20deg)}45%{transform:translate(45vw,40vh) rotate(-8deg)}70%{transform:translate(70vw,30vh) rotate(10deg) scale(.9)}100%{transform:translate(110vw,-10vh) rotate(-30deg) scale(.6)}}
@@ -822,7 +849,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       return '<div class="card"><div class="bp">' + (u ? '<img src="' + E(u) + '" alt="">' : '<div class="ic">' + E(String(p.cat || '🏷️').split(' ')[0]) + '</div>') + '<div style="flex:1;min-width:0"><b style="font-size:16px">' + E(p.nom) + '</b>' + (p.nouveau ? ' <span class="tag info">Nouveau</span>' : '') + '<div class="mute">' + E(p.cat || '') + (p.fin ? ' · jusqu\'au ' + fd(p.fin) : '') + '</div>' + (p.reduc ? '<div style="font-weight:800;color:var(--brand);margin-top:4px">' + E(p.reduc) + '</div>' : '')
         + (p.code ? '<div><span class="code">' + E(p.code) + '</span><button class="btn s" onclick="cseBpCopier(this,\'' + E(p.code).replace(/'/g, '') + '\')">📋 Copier le code</button></div>' : '')
         + (p.cond ? '<p class="mute" style="margin:6px 0 0">' + E(p.cond) + '</p>' : '') + (p.adresse ? '<p style="margin:6px 0 0">📍 ' + E(p.adresse) + '</p>' : '')
-        + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">' + (p.adresse ? '<a class="btn s" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(p.adresse) + '">🧭 Itinéraire</a>' : '') + (p.site ? '<a class="btn s" target="_blank" rel="noopener" href="' + E(p.site) + '">🌐 Site</a>' : '') + '</div></div></div></div>';
+        + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">' + v113BpBtn(p) + (p.adresse ? '<a class="btn s" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(p.adresse) + '">🧭 Itinéraire</a>' : '') + (p.site ? '<a class="btn s" target="_blank" rel="noopener" href="' + E(p.site) + '">🌐 Site</a>' : '') + '</div></div></div></div>';
     }).join('');
     return h;
   }
@@ -1243,7 +1270,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var ch = []; document.querySelectorAll('input[name="sv-' + sid + '"]:checked').forEach(function (x) { ch.push(Number(x.value)); });
     if (!ch.length) return say('sv-msg-' + sid, 'Choisissez une réponse.', 'bad');
     say('sv-msg-' + sid, 'Envoi…', 'info');
-    try { await api('POST', { action: 'vote', sid: sid, choix: ch }); if (!DEMO) { try { D = await api('GET'); } catch (e) { } } else { D.votes = D.votes || {}; D.votes[sid] = ch; } render(); say('sv-msg-' + sid, (DEMO ? '(Exemple) ' : '') + '✔ Merci, votre vote est enregistré.', 'ok'); }
+    try { await api('POST', { action: 'vote', sid: sid, choix: ch }); if (!DEMO) { try { D = await api('GET'); } catch (e) { } } else { D.votes = D.votes || {}; D.votes[sid] = ch; } render(); say('sv-msg-' + sid, (DEMO ? '(Exemple) ' : '') + '✔ Merci, votre vote est enregistré.', 'ok'); try { cseConfetti('🗳️ Merci pour votre vote !'); } catch (e) { } }
     catch (e) { say('sv-msg-' + sid, e.message, 'bad'); }
   };
   // ---------- Heures de délégation (élus du CSE) ----------
@@ -1393,7 +1420,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var b = $('sg-ok'); if (b) b.disabled = true; say('sg-msg', 'Envoi de la signature…', 'info');
     try {
       await api('POST', { action: 'signature', id: c.dataset.id, sig: o.toDataURL('image/png'), nom: (D.fiche || {}).nom || '' });
-      SGP.fait[c.dataset.id] = 1; say('sg-msg', (DEMO ? '(Exemple) ' : '') + '✔ Merci, le document est signé.', 'ok'); setTimeout(render, 1500);
+      SGP.fait[c.dataset.id] = 1; say('sg-msg', (DEMO ? '(Exemple) ' : '') + '✔ Merci, le document est signé.', 'ok'); try { cseConfetti('✍️ Document signé, merci !'); } catch (e) { } setTimeout(render, 1500);
     } catch (e) { say('sg-msg', e.message, 'bad'); if (b) b.disabled = false; }
   };
   // Signature au doigt (ou à la souris), gardée dans le profil
@@ -1870,6 +1897,65 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   window.cseV11PartB = function (id) { var b = (window.__v11B || {})[id]; if (b) cseV11Partager('Billet CSE : ' + b.titre, '🎟️ ' + b.titre + ' à ' + eur(b.prix) + ' au CSE' + (b.prixPublic ? ' (au lieu de ' + eur(b.prixPublic) + ')' : '') + (b.expire ? ', valable jusqu\'au ' + fd(b.expire) : '') + '. On y va ?'); };
 
+  // ---------- V.11.3.5 : économies, anneau de quota, agenda en abonnement, bons plans à partager, finitions ----------
+  function v113Anneau(pris, tot, lib) {
+    tot = Math.max(0, tot || 0); pris = Math.min(Math.max(0, pris || 0), tot || 0); var C = 2 * Math.PI * 18, p = tot ? pris / tot : 0, reste = tot - pris;
+    return '<div class="v113-q"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18" class="fd"/><circle cx="22" cy="22" r="18" class="av' + (reste ? '' : ' plein') + '" style="--c:' + C.toFixed(1) + ';--v:' + (C * p).toFixed(1) + '" transform="rotate(-90 22 22)"/><text x="22" y="26" text-anchor="middle">' + pris + '/' + tot + '</text></svg><span class="mute">' + E(lib) + ' : <b>' + reste + ' restant' + (reste > 1 ? 's' : '') + '</b> sur ' + tot + '</span></div>';
+  }
+  function v113Eco(b) { var d = (Number(b.prixPublic) || 0) - (Number(b.prix) || 0); return d > 0.004 ? '<div class="v113-eco">💚 Vous économisez ' + eur(d) + ' grâce au CSE</div>' : ''; }
+  // Agenda du CSE en abonnement (iPhone, Android / Google Agenda)
+  function v113Ics() { return /^https:\/\/script\.google(usercontent)?\.com\//.test(URLS || '') ? URLS + '?action=ics' : ''; }
+  function v113AboCarte() {
+    return '<div class="card v113-abo"><span class="e">📅</span><div style="flex:1;min-width:0"><b>Tout l\'agenda du CSE dans mon téléphone</b><div class="mute">Permanences, réunions et sorties s\'ajoutent toutes seules et se mettent à jour.</div></div><button class="btn s" onclick="cseV113Abo()">S\'abonner</button></div>';
+  }
+  window.cseV113Abo = function () {
+    var u = v113Ics();
+    if (!u) { sheet(head('📅 Agenda du CSE', 'Abonnement') + '<p class="mute">' + (DEMO ? '(Exemple) Sur votre vrai espace, ce bouton ajoute l\'agenda du CSE à votre téléphone.' : 'Ouvrez d\'abord votre espace avec le lien reçu du CSE.') + '</p>'); return; }
+    var wc = u.replace(/^https:/, 'webcal:'), g = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(wc);
+    var ios = /iPhone|iPad|Macintosh/i.test(navigator.userAgent) && 'ontouchend' in document;
+    sheet(head('📅 Agenda du CSE', 'Une seule fois, et c\'est automatique') + '<p class="mute">Les dates du CSE (permanences, réunions, sorties) apparaîtront dans l\'agenda de votre téléphone, comme vos autres rendez-vous. Rien de personnel n\'y figure.</p><div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">'
+      + '<a class="btn' + (ios ? '' : ' s') + '" href="' + E(wc) + '">🍎 iPhone / iPad (Calendrier)</a>'
+      + '<a class="btn' + (ios ? ' s' : '') + '" target="_blank" rel="noopener" href="' + E(g) + '">🤖 Android / Google Agenda</a>'
+      + '<button class="btn s" onclick="cseV113AboCopier(this)">📋 Copier l\'adresse de l\'agenda</button></div>'
+      + '<p class="mute" style="margin-top:10px;font-size:12.5px">Sur Android, Google Agenda s\'ouvre : appuyez sur « Ajouter ». La mise à jour se fait toute seule, toutes les quelques heures.</p>');
+  };
+  window.cseV113AboCopier = function (b) { var u = v113Ics(); try { navigator.clipboard.writeText(u).then(function () { b.textContent = '✔ Adresse copiée'; }); } catch (e) { prompt('Adresse de l\'agenda :', u); } };
+  // Bons plans à partager (sans le lien personnel ni le code de réduction)
+  window.__v113P = {};
+  function v113BpBtn(p) { window.__v113P[String(p.id)] = p; return '<button class="btn s" onclick="cseV113PartP(\'' + E(String(p.id)).replace(/'/g, '') + '\')">📲 Partager</button>'; }
+  window.cseV113PartP = function (id) { var p = window.__v113P[id]; if (!p) return; cseV11Partager('Bon plan CSE : ' + p.nom, '🏷️ Bon plan du CSE : ' + p.nom + (p.reduc ? ' — ' + p.reduc : '') + (p.adresse ? '\n📍 ' + p.adresse : '') + (p.site ? '\n' + p.site : '') + (p.code ? '\nLe code de réduction est dans l\'espace CSE.' : '')); };
+  // Barre de navigation : l'onglet actif glisse d'un bouton à l'autre
+  var V113N = { l: null, w: null };
+  function v113Indic() {
+    var n = $('nav'); if (!n || n.hidden) return; var on = n.querySelector('button.on'); var ind = $('nav-ind');
+    if (!on) { if (ind) ind.style.opacity = '0'; return; }
+    if (getComputedStyle(n).position === 'static') n.style.position = 'relative';
+    if (!ind) { ind = document.createElement('span'); ind.id = 'nav-ind'; ind.setAttribute('aria-hidden', 'true'); n.insertBefore(ind, n.firstChild); }
+    n.classList.add('v113n');
+    var L = on.offsetLeft, T = on.offsetTop, W = on.offsetWidth, H = on.offsetHeight;
+    if (V113N.l != null && !v11Calme() && (V113N.l !== L || V113N.w !== W)) { ind.style.transition = 'none'; ind.style.transform = 'translate(' + V113N.l + 'px,' + T + 'px)'; ind.style.width = V113N.w + 'px'; void ind.offsetWidth; ind.style.transition = ''; }
+    ind.style.opacity = '1'; ind.style.transform = 'translate(' + L + 'px,' + T + 'px)'; ind.style.width = W + 'px'; ind.style.height = H + 'px';
+    V113N.l = L; V113N.w = W;
+  }
+  window.addEventListener('resize', function () { V113N.l = null; try { v113Indic(); } catch (e) { } });
+  // Colis qui attend : petit cadeau qui bouge sur l'accueil ; décembre : flocons sur « À la une »
+  function v113Fetes(app) {
+    if (TAB !== 'accueil') return;
+    [].forEach.call(app.querySelectorAll('.card > h2'), function (h) { var c = h.parentNode; if (c.dataset.v113 || !/^🎁/.test(h.textContent) || !/à récupérer/.test(c.textContent)) return; c.dataset.v113 = '1'; c.classList.add('v113-cadeau'); h.innerHTML = h.innerHTML.replace('🎁', '<span class="g">🎁</span>'); });
+    var u = $('une'); if (u && new Date().getMonth() === 11 && v11Pref('saison', true) && !u.querySelector('.v113-neige')) {
+      var s = ''; for (var i = 0; i < 16; i++) s += '<i style="left:' + (i * 6.3 + 2) % 100 + '%;animation-delay:' + (-(i * 0.73) % 6).toFixed(2) + 's;animation-duration:' + (5 + (i % 5)) + 's;font-size:' + (9 + (i % 4) * 3) + 'px">❄</i>';
+      u.insertAdjacentHTML('beforeend', '<div class="v113-neige" aria-hidden="true">' + s + '</div>');
+    }
+  }
+  function v113Apres() {
+    var app = $('app'); if (!app) return;
+    try { v113Fetes(app); } catch (e) { }
+    try { v113Indic(); } catch (e) { }
+    if (TAB === 'agenda' && !app.querySelector('.v113-abo')) { var c = app.querySelectorAll('.card'); var t = [].filter.call(c, function (x) { return /Agenda du CSE/.test((x.querySelector('h2') || {}).textContent || ''); })[0]; if (t) t.insertAdjacentHTML('beforebegin', v113AboCarte()); }
+    // cartes en cascade quand on change de page
+    if (app.classList.contains('pg-f') || app.classList.contains('pg-b')) { [].forEach.call(app.children, function (el, i) { if (i < 10) el.style.setProperty('--i', i); }); }
+  }
+
   // ---------- Après chaque affichage ----------
   var V11D = { dir: '' };
   function v11Apres() {
@@ -1885,6 +1971,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!V11D.lien) { V11D.lien = 1; var ml = /(^|[#&])sortie=([^&]+)/.exec(location.hash); if (ml) { var sid = decodeURIComponent(ml[2]), id = /^\d+$/.test(sid) ? Number(sid) : sid; setTimeout(function () { go('sorties'); var o = ((D.pub || {}).sorties || []).filter(function (x) { return String(x.id) === String(sid); })[0], deja = ((D.fiche || {}).sorties || []).some(function (x) { return String(x.outingId) === String(sid); }); if (o && !deja) setTimeout(function () { try { cseSortie(id); } catch (e) { } }, 350); }, 50); } }
     document.querySelectorAll('#nav button').forEach(function (b) { if (!b.getAttribute('aria-label')) b.setAttribute('aria-label', b.dataset.l || b.textContent.trim()); });
     try { v11Haut(); } catch (e) { }
+    try { v113Apres(); } catch (e) { }
   }
   function v11Squelette() { return '<div class="sk-wrap" aria-busy="true" aria-label="Chargement de votre espace"><div class="sk sk-h"></div><div class="sk sk-c"></div><div class="sk sk-c" style="height:120px"></div><div class="sk-row"><div class="sk sk-t"></div><div class="sk sk-t"></div><div class="sk sk-t"></div><div class="sk sk-t"></div></div></div>'; }
 
@@ -2155,8 +2242,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           + '<p class="mute" style="margin-top:8px">À titre d\'information : le CSE vérifie à la vente. Votre foyer est calculé d\'après votre fiche (onglet « Ma fiche »).</p></div>';
         h += '<div class="card"><h2>🎫 Billets disponibles au CSE</h2>' + (B.length ? B.map(function (b) {
           var deja = pris[b.id] || 0, reste = b.cinema ? resteCine : Math.max(0, limStd - deja);
-          return (b.photo ? '<img class="ph" loading="lazy" src="' + E(phUrl(b.photo)) + '" alt="">' : '') + '<div class="row"' + (b.photo ? ' style="border-top:0;padding-top:0"' : '') + '><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + (b.prixPublic ? '<s>' + eur(b.prixPublic) + '</s> ' : '') + '<b style="color:var(--ink)">' + eur(b.prix) + '</b>' + (b.expire ? ' · valable jusqu\'au ' + fd(b.expire) : '') + '</div>'
-            + '<div class="mute">Votre quota : ' + (deja ? deja + ' pris · ' : '') + '<b>' + reste + ' restant(s)</b>' + (b.cinema ? ' (cinéma)' : '') + '</div>' + v11BilletBtn(b) + '</div>'
+          return (b.photo ? '<img class="ph" loading="lazy" src="' + E(phUrl(b.photo)) + '" alt="">' : '') + '<div class="row"' + (b.photo ? ' style="border-top:0;padding-top:0"' : '') + '><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + (b.prixPublic ? '<s>' + eur(b.prixPublic) + '</s> ' : '') + '<b style="color:var(--ink)">' + eur(b.prix) + '</b>' + (b.expire ? ' · valable jusqu\'au ' + fd(b.expire) : '') + '</div>' + v113Eco(b)
+            + (b.cinema ? v113Anneau(limCine - resteCine, limCine, 'Mon quota cinéma') : v113Anneau(deja, limStd, 'Mon quota pour ce billet')) + v11BilletBtn(b) + '</div>'
             + '<div class="r">' + (b.stock > 0 ? '<span class="tag ' + (b.stock <= 5 ? 'warn' : 'ok') + '">' + (b.stock <= 5 ? 'Plus que ' + b.stock : b.stock + ' en stock') + '</span>' : '<span class="tag bad">Épuisé</span>')
             + (b.stock > 0 && reste > 0 && !PUBLIC ? '<br><button class="btn s p" style="margin-top:6px" onclick="cseBillet(\'' + E(String(b.id)) + '\')">Réserver</button>' : '') + '</div></div>';
         }).join('') : (vieux ? '<p class="empty">La liste des billets apparaîtra dès la prochaine mise à jour des informations par le CSE.</p>' : '<p class="empty">Aucun billet disponible en ce moment.</p>'))
@@ -2255,7 +2342,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '11.4', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '11.5', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
