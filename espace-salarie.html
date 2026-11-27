@@ -12,6 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mon CSE">
 <title>Mon espace CSE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
 <style>
 [hidden]{display:none!important}
 :root{--bg:#f3f5fa;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e8ecf3;--brand:#1d4ed8;--brand-d:#1e3a8a;--brand2:#e0e9ff;--ok:#047857;--okb:#d1fae5;--warn:#b45309;--warnb:#fef3c7;--bad:#b91c1c;--badb:#fee2e2;--sh:0 1px 2px #0f172a0a,0 10px 28px -14px #0f172a26}
@@ -176,13 +177,101 @@ footer .brandmark img{width:18px;height:18px;object-fit:contain;border-radius:4p
 .qrbox{background:#fff;border-radius:16px;padding:12px;display:inline-block;margin:6px auto}.qrbox svg{display:block;width:230px;height:230px}
 #recap{display:none}
 @media print{body.printing>*:not(#recap){display:none!important}body.printing #recap{display:block!important;color:#000;background:#fff;font:13px system-ui,sans-serif}#recap h1{font-size:20px;margin:0}#recap h2{font-size:15px;margin:18px 0 6px;border-bottom:2px solid #1e3a8a;color:#1e3a8a}#recap table{width:100%;border-collapse:collapse}#recap td,#recap th{border-bottom:1px solid #ddd;padding:4px 6px;text-align:left}#recap .m{text-align:right;white-space:nowrap}#recap .tot td{font-weight:800}#recap .hd{display:flex;align-items:center;gap:12px}#recap .hd img{width:54px;height:54px;object-fit:contain}}
+/* V.11 : en-tête vivant, saisons, accueil en trois temps, transitions, squelette, confettis, histoire « Mon année » */
+header{isolation:isolate}#h-saison{position:absolute;inset:0;pointer-events:none;z-index:0}header .in,.hchips{z-index:1}
+.hchips{position:relative;max-width:880px;margin:12px auto 0;display:flex;gap:6px;flex-wrap:wrap}
+.hc{display:inline-flex;align-items:center;gap:5px;background:#ffffff26;color:#fff;border:1px solid #ffffff33;border-radius:999px;padding:4px 11px;font:600 12.5px system-ui,sans-serif;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+button.hc{cursor:pointer}button.hc:hover{background:#ffffff3d}
+@media(max-width:639px){.hchips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}.hchips::-webkit-scrollbar{display:none}.hc{flex:0 0 auto;max-width:none}}
+.v11-sec{margin:0 0 6px}.v11-st{display:flex;align-items:center;gap:8px;margin:18px 2px 10px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mute)}
+.v11-st span{font-size:16px}.v11-st::after{content:"";flex:1;height:1px;background:var(--line)}
+.v11-sec.faire .v11-st{color:#c2410c}html.dark .v11-sec.faire .v11-st{color:#fdba74}
+.v11-annee{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;background:linear-gradient(135deg,#1e3a8a,#7c3aed);color:#fff;border:0;font:inherit}
+.v11-annee>span:first-child{font-size:34px;animation:v11bob 2.4s ease-in-out infinite}.v11-annee .mute{color:#ffffffcc}.v11-annee .sa{margin-left:auto;font-size:26px}
+.v11-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.v11-ring{display:flex;align-items:center;gap:16px}.v11-ring svg{flex:0 0 auto;color:var(--ink)}
+.v11-arc{animation:v11arc 1.1s cubic-bezier(.2,.8,.2,1)}@keyframes v11arc{from{stroke-dashoffset:var(--L)}}
+.v11-pin{text-align:center;max-width:420px;margin:20px auto}.v11-pin h2{justify-content:center}.v11-pin .btn{display:block;margin:0 auto}
+.v11-sw{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line);cursor:pointer}.v11-sw:first-of-type{border-top:0}
+.v11-sw input{width:auto;margin:3px 0 0}.v11-sw b{display:block;font-size:14px}.v11-sw small{display:block;color:var(--mute);font-size:12.5px}
+.v11-mic{margin:-4px 0 10px}.v11-mic.rec{background:#fee2e2;color:#b91c1c;border-color:#fecaca;animation:v11pul 1s ease-in-out infinite}
+.v11-ecoute{margin:0 0 10px}
+@keyframes v11pul{50%{opacity:.55}}@keyframes v11bob{50%{transform:translateY(-4px) rotate(-6deg)}}
+#h-act{margin-left:auto;display:flex;gap:8px;align-items:center}#h-act #h-aa{margin-left:0!important}
+#h-cloche,#h-moi{position:relative;background:rgba(255,255,255,.18);color:inherit;border:0;border-radius:12px;height:34px;min-width:38px;padding:0 9px;font:700 15px system-ui;cursor:pointer}
+#h-moi{border-radius:50%;width:36px;height:36px;min-width:36px;padding:0;font-size:13px;letter-spacing:.02em;background:#fff;color:var(--brand)}
+#h-cloche span{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:#ef4444;color:#fff;font-size:11px;line-height:18px;padding:0 4px;border:2px solid var(--brand)}
+#h-cloche:hover{animation:v11wig .5s}
+.srow .st small{white-space:normal}
+/* Emojis qui bougent */
+.tile:hover i,.tile:focus-visible i{animation:v11wig .5s ease}nav#nav button:hover i{animation:v11wig .5s ease}
+@keyframes v11wig{20%{transform:rotate(-12deg) scale(1.12)}40%{transform:rotate(10deg) scale(1.12)}60%{transform:rotate(-6deg)}80%{transform:rotate(3deg)}}
+/* Transitions entre pages */
+#app.pg-f{animation:v11f .28s ease-out}#app.pg-b{animation:v11b .28s ease-out}
+@keyframes v11f{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}@keyframes v11b{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+/* Chargement en douceur */
+.sk{border-radius:16px;background:linear-gradient(90deg,var(--line) 25%,color-mix(in srgb,var(--line) 40%,var(--card)) 50%,var(--line) 75%);background-size:300% 100%;animation:v11sk 1.3s linear infinite;margin-bottom:12px}
+.sk-h{height:54px}.sk-c{height:88px}.sk-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.sk-t{height:74px;margin:0}
+@keyframes v11sk{from{background-position:100% 0}to{background-position:0 0}}
+/* Pages vides plus parlantes */
+#app .empty::before{content:"📭";display:block;font-size:36px;margin-bottom:6px;animation:v11bob 3s ease-in-out infinite}
+/* V.11.3 : scènes animées */
+#app .empty[data-sc]::before{content:none}
+.v11sc{display:block;width:132px;height:96px;margin:0 auto 8px}
+.v11sc .b{fill:var(--brand,#1d4ed8)}.v11sc .bl{fill:color-mix(in srgb,var(--brand,#1d4ed8) 18%,var(--card,#fff))}.v11sc .ln{stroke:var(--mute,#64748b);stroke-width:2.5;fill:none;stroke-linecap:round}.v11sc .y{fill:#f59e0b}.v11sc .g{fill:#10b981}.v11sc .r{fill:#ef4444}.v11sc .w{fill:var(--card,#fff)}.v11sc .gr{fill:color-mix(in srgb,var(--mute,#64748b) 30%,var(--card,#fff))}
+.v11sc .a1{animation:sc-tombe 3.2s ease-in infinite;transform-box:fill-box}
+.v11sc .a2{animation:sc-drapeau 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:0 100%}
+.v11sc .a3{animation:sc-balance 3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+.v11sc .a4{animation:sc-brille 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.v11sc .a4.d{animation-delay:.9s}
+.v11sc .a5{animation:sc-leve 4s ease-in-out infinite;transform-box:fill-box}
+.v11sc .a6{animation:sc-nuage 7s linear infinite}
+.v11sc .a7{animation:sc-sort 2.6s ease-in-out infinite;transform-box:fill-box}
+.v11sc .a8{animation:sc-tour 4s linear infinite;transform-box:view-box;transform-origin:66px 50px}
+.v11sc .a8.v{animation-duration:48s}
+.v11sc .a9{animation:sc-roule 3.4s ease-in-out infinite}
+.v11sc .a10{animation:sc-tour 1.1s linear infinite;transform-box:fill-box;transform-origin:center}
+.v11sc .a11{animation:sc-couvercle 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:0 100%}
+.v11sc .a12{animation:sc-loupe 3s ease-in-out infinite}
+.v11sc .a13{animation:sc-zz 2.6s ease-in-out infinite;transform-box:fill-box}.v11sc .a13.d{animation-delay:1.3s}
+@keyframes sc-tombe{0%{transform:translateY(-40px);opacity:0}25%{opacity:1}55%,100%{transform:translateY(0);opacity:1}70%,100%{opacity:0}}
+@keyframes sc-drapeau{0%,50%{transform:rotate(0)}62%,90%{transform:rotate(-80deg)}100%{transform:rotate(0)}}
+@keyframes sc-balance{50%{transform:rotate(-7deg)}0%,100%{transform:rotate(7deg)}}
+@keyframes sc-brille{0%,100%{transform:scale(.3);opacity:.2}50%{transform:scale(1.1);opacity:1}}
+@keyframes sc-leve{0%,100%{transform:translateY(8px)}50%{transform:translateY(-4px)}}
+@keyframes sc-nuage{from{transform:translateX(-30px)}to{transform:translateX(150px)}}
+@keyframes sc-sort{0%,100%{transform:translateY(10px)}50%{transform:translateY(-8px)}}
+@keyframes sc-tour{to{transform:rotate(360deg)}}
+@keyframes sc-roule{0%{transform:translateX(-26px)}50%{transform:translateX(26px)}100%{transform:translateX(-26px)}}
+@keyframes sc-couvercle{0%,40%,100%{transform:rotate(0)}55%{transform:rotate(-28deg)}70%{transform:rotate(-8deg)}}
+@keyframes sc-loupe{0%,100%{transform:translate(-14px,4px)}50%{transform:translate(14px,-4px)}}
+@keyframes sc-zz{0%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(10px,-22px);opacity:0}}
+html.v11-calme .v11sc *,html.v11-calme #v11-avion{animation:none!important}
+/* Avion en papier à l'envoi */
+#v11-avion{position:fixed;left:0;top:0;z-index:9998;pointer-events:none;width:58px;height:58px;animation:sc-vol 1.6s cubic-bezier(.45,.05,.55,.95) forwards}
+@keyframes sc-vol{0%{transform:translate(-70px,70vh) rotate(-20deg)}45%{transform:translate(45vw,40vh) rotate(-8deg)}70%{transform:translate(70vw,30vh) rotate(10deg) scale(.9)}100%{transform:translate(110vw,-10vh) rotate(-30deg) scale(.6)}}
+/* Message réussi */
+.msg.ok{animation:sc-pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes sc-pop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+/* Petit message (confettis) */
+#v11-toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-30px);opacity:0;z-index:10000;background:#0f172a;color:#fff;border-radius:999px;padding:10px 18px;font:700 14px system-ui,sans-serif;box-shadow:0 12px 30px -10px #0008;transition:.3s cubic-bezier(.2,.8,.2,1);pointer-events:none;max-width:90vw;text-align:center}
+#v11-toast.on{opacity:1;transform:translate(-50%,0)}
+/* « Mon année CSE » */
+#v11-story{position:fixed;inset:0;z-index:9000;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 24px;transition:background .5s;user-select:none}
+#v11-story .bars{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:4px}#v11-story .bars i{flex:1;height:3px;border-radius:3px;background:#ffffff4d;overflow:hidden}#v11-story .bars b{display:block;height:100%;width:0;background:#fff}
+#v11-story .x{position:absolute;top:22px;right:14px;background:none;border:0;color:#fff;font-size:34px;cursor:pointer;line-height:1}
+#v11-story .sl{max-width:520px;animation:v11f .4s ease-out}#v11-story .e{font-size:84px;margin-bottom:18px;animation:v11bob 2.6s ease-in-out infinite}
+#v11-story .t{font:800 clamp(30px,8vw,54px)/1.1 system-ui,sans-serif;letter-spacing:-.02em}#v11-story .s{font-size:17px;opacity:.9;margin-top:12px}
+#v11-story .btns{display:flex;flex-direction:column;gap:8px;margin-top:26px}#v11-story .btns .btn{background:#ffffff26;color:#fff;border:1px solid #ffffff4d}
+h1,h2,.v11-st{font-family:"Bricolage Grotesque",system-ui,sans-serif}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <header><div class="in"><div class="who"><div class="logo"><img id="h-logo" src="icon-192.png" alt="Logo du CSE" onerror="this.parentNode.style.display='none'"></div><div><small id="h-cse">CSE</small><h1 id="h-nom">Mon espace CSE</h1><div class="sub" id="h-sub"></div></div></div><button id="h-aa" type="button" onclick="cseAffichage()" aria-label="Taille du texte et affichage" style="margin-left:auto;background:rgba(255,255,255,.18);color:inherit;border:0;border-radius:12px;padding:6px 11px;font:700 15px system-ui;cursor:pointer">Aa</button></div></header>
 <main>
   <nav id="nav" hidden></nav>
-  <div id="app"><div class="card loading">Chargement de votre espace…</div></div>
+  <div id="app"><div class="sk-wrap" aria-busy="true" aria-label="Chargement de votre espace"><div class="sk sk-h"></div><div class="sk sk-c"></div><div class="sk sk-c" style="height:120px"></div><div class="sk-row"><div class="sk sk-t"></div><div class="sk sk-t"></div><div class="sk sk-t"></div><div class="sk sk-t"></div></div></div></div>
   <footer id="foot"></footer>
 </main>
 <div id="overlay"><div id="sheet"></div></div>
@@ -260,6 +349,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (method === 'POST' && body.action === 'deleg') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true, deleg: Object.assign({ id: 'n' + Date.now(), at: new Date().toISOString(), le: today(), statut: 'envoyée', vu: null, par: body.data && body.data.sansEnvoi ? 'ancienne' : 'espace' }, body.data) }; }
       if (method === 'POST' && body.action === 'message') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true, message: { id: 'n' + Date.now(), at: new Date().toISOString(), de: 'sal', texte: body.texte, pj: body.pj ? { nom: body.pj.nom, type: body.pj.type, url: body.pj.data, id: '' } : null } }; }
       if (method === 'POST' && body.action === 'messages-vus') return { ok: true };
+      if (method === 'POST' && body.action === 'code-choisir') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true, code: { actif: true, appareils: 1 } }; }
       if (method === 'POST' && body.action === 'signalement') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true, code: 'EXEMPLE' + String(Date.now()).slice(-3) }; }
       if (method === 'POST' && body.action === 'signalement-suivi') return { ok: true, liste: (body.codes || []).map(function (c, i) { return { code: c, at: new Date().toISOString(), cat: 'Sécurité', statut: i ? 'nouveau' : 'en cours', texte: 'Exemple de signalement', anonyme: true, reponses: i ? [] : [{ at: new Date().toISOString(), texte: 'Merci, nous avons transmis au responsable sécurité. Le carter sera remis cette semaine.' }] }; }) };
       if (method === 'POST' && body.action === 'prefs') { await new Promise(function (r) { setTimeout(r, 300); }); return { ok: true }; }
@@ -272,10 +362,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
     if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(URLS) || (!T && !(PUBLIC && method === 'POST'))) throw new Error('Lien incomplet. Ouvrez le lien reçu par e-mail du CSE.');
     var r = method === 'GET'
-      ? await fetch(URLS + '?action=moi&t=' + encodeURIComponent(T), { redirect: 'follow', cache: 'no-store' })
-      : await fetch(URLS, { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({ action: 'demande', t: T || '' }, body)) });
+      ? await fetch(URLS + '?action=moi&t=' + encodeURIComponent(T) + '&dv=' + encodeURIComponent(v11Dv()) + (PIN.v ? '&pin=' + encodeURIComponent(PIN.v) : ''), { redirect: 'follow', cache: 'no-store' })
+      : await fetch(URLS, { method: 'POST', redirect: 'follow', body: JSON.stringify(Object.assign({ action: 'demande', t: T || '', dv: v11Dv() }, PIN.v ? { pin: PIN.v } : {}, body)) });
     var j; try { j = await r.json(); } catch (e) { throw new Error('Le service du CSE ne répond pas. Réessayez dans un moment.'); }
-    if (j.error) throw new Error(j.error);
+    if (j.error) { var er = new Error(j.error); if (j.code) { er.code = true; PIN.v = ''; } throw er; }
     return j;
   }
 
@@ -306,6 +396,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (C && TOUCHE > t0) return;   // la personne écrit déjà : on ne réaffiche pas (les nouvelles infos servent au prochain écran)
       affiche();
     } catch (e) {
+      if (e && e.code) { vieuxOff(); v11CodeEcran(/demandé/.test(e.message) ? '' : e.message); return; }
       if (C) { vieuxBan(C.at, e.message); return; }
       $('app').innerHTML = '<div class="card"><h2>⚠️ Impossible d\'ouvrir votre espace</h2><p>' + E(e.message) + '</p><p class="mute">Si le problème continue, contactez le CSE.</p><button class="btn" onclick="location.reload()">Réessayer</button></div>';
     }
@@ -314,8 +405,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     try {
       var f = D.fiche, P = D.pub || {};
       $('h-cse').textContent = (P.cse && P.cse.nom) || 'CSE';
-      $('h-nom').textContent = 'Bonjour ' + (f.prenom || f.nom || '');
-      theme(P); try { var dd = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }); $('h-sub').textContent = dd.charAt(0).toUpperCase() + dd.slice(1); } catch (e) { }
+      theme(P); try { v11Entete(); } catch (e) { $('h-nom').textContent = 'Bonjour ' + (f.prenom || f.nom || ''); }
       document.title = 'Mon espace CSE · ' + (f.prenom || '');
       if (DEMO && !$('demo-ban')) $('nav').insertAdjacentHTML('beforebegin', '<div id="demo-ban" class="msg warn" style="margin:0 0 10px">👀 Exemple avec un salarié fictif : rien n\'est envoyé au CSE.</div>');
       $('foot').innerHTML = '<div class="brandmark"><img src="' + E($('h-logo').src) + '" alt="">' + E((P.cse && P.cse.nom) || 'CSE') + '</div><div>Informations mises à jour le ' + E(fd(String(D.le || '').slice(0, 10))) + '. Cette page est personnelle : ne partagez pas son lien.</div><div style="opacity:.7;margin-top:4px">Version ' + E(typeof PAGE_VERSION !== 'undefined' ? PAGE_VERSION : '') + '</div>';
@@ -427,7 +517,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
   document.addEventListener('click', function (ev) { if ($('navdd') && !ev.target.closest('#navdd') && !ev.target.closest('#nav')) ddClose(); });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') ddClose(); });
-  function go(t) { ddClose(); TAB = t; nav(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function go(t) { ddClose(); V11D.dir = (t === 'accueil' || (/^g-/.test(t) && !/^g-/.test(TAB))) ? 'b' : 'f'; TAB = t; nav(); render(); v11Vibre(8); window.scrollTo({ top: 0, behavior: v11Calme() ? 'auto' : 'smooth' }); }
   window.cseGo = go;
 
   function yearsOf(list, key) {
@@ -635,7 +725,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
     h += permCards();
     var RE = ((D.fiche || {}).reunions || []), tR = today(), fut = RE.filter(function (r) { return r.date >= tR; }).sort(function (a, b) { return a.date.localeCompare(b.date); }), pas = RE.filter(function (r) { return r.date < tR && r.pv; }).sort(function (a, b) { return b.date.localeCompare(a.date); });
-    if (fut.length || pas.length) h += '<div class="card"><h2>📅 Réunions du CSE</h2>' + fut.slice(0, 2).map(function (r) { return '<div class="row"><div class="l"><b>' + fd(r.date) + (r.heure ? ' à ' + E(r.heure) : '') + ' · ' + E(r.titre || 'Réunion') + '</b><div class="mute">' + E(r.lieu || '') + (r.points && r.points.length ? ' · ' + r.points.length + ' point(s) à l\'ordre du jour' : '') + '</div></div><div class="r">' + (r.odj && r.odj.url ? '<a href="' + E(r.odj.url) + '" target="_blank" rel="noopener">Ordre du jour</a>' : '<span class="tag info">à venir</span>') + '</div></div>'; }).join('')
+    if (fut.length || pas.length) h += '<div class="card"><h2>📅 Réunions du CSE</h2>' + fut.slice(0, 2).map(function (r) { return '<div class="row"><div class="l"><b>' + fd(r.date) + (r.heure ? ' à ' + E(r.heure) : '') + ' · ' + E(r.titre || 'Réunion') + '</b><div class="mute">' + E(r.lieu || '') + (r.points && r.points.length ? ' · ' + r.points.length + ' point(s) à l\'ordre du jour' : '') + '</div><div class="v11-act">' + agBtn({ t: (r.type ? r.type + ' : ' : '') + (r.titre || 'Réunion du CSE'), d: r.date, h: /^\d{1,2}[:h]\d{2}/.test(r.heure || '') ? String(r.heure).replace('h', ':').slice(0, 5).padStart(5, '0') : '', lieu: r.lieu || '' }) + '</div></div><div class="r">' + (r.odj && r.odj.url ? '<a href="' + E(r.odj.url) + '" target="_blank" rel="noopener">Ordre du jour</a>' : '<span class="tag info">à venir</span>') + '</div></div>'; }).join('')
       + pas.slice(0, 1).map(function (r) { return '<div class="row"><div class="l"><b>Compte rendu du ' + fd(r.date) + '</b></div><div class="r">' + (r.pv.url ? '<a href="' + E(r.pv.url) + '" target="_blank" rel="noopener">Ouvrir</a>' : '<span class="mute">envoyé par e-mail</span>') + '</div></div>'; }).join('')
       + (D.deleg ? '<button class="btn s" style="margin-top:8px" onclick="cseGo(\'deleg\')">Toutes les réunions</button>' : '') + '</div>';
     if ((D.fiche || {}).membreCse) h += '<div class="card"><h2>⚡ Raccourci</h2><a class="btn p" href="./" target="_blank" rel="noopener">🖥️ Ouvrir l\'appli CSE Gestion</a><p class="mute" style="margin-top:6px">Demandes à valider, signalements, messages des salariés : tout se gère dans l\'appli.</p></div>';
@@ -710,6 +800,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   window.cseBvFin = function () { try { localStorage.setItem(bvKey(), new Date().toISOString()); } catch (e) { } var o = $('bv'); if (o) o.remove(); };
   function reglagesPage() {
     var h = '<div class="card"><h2>⚙️ Réglages</h2><p class="mute">Tout se règle ici, pour ce téléphone. Rien n\'est changé pour les autres salariés.</p><button class="btn" onclick="cseBienvenue()">👋 Revoir la visite guidée</button></div>';
+    h += v11Reglages();
     h += alertesCard();
     var pc = pushCard(); h += pc || '<div class="card"><h2>🔔 Notifications</h2><p class="mute">Le CSE n\'a pas encore activé les notifications.</p></div>';
     var z = function (n, l) { return '<button class="btn' + (AFF.z === n ? ' p' : '') + '" style="flex:1;font-size:' + (14 * n) + 'px" onclick="cseAffSet(\'z\',' + n + ')">' + l + '</button>'; };
@@ -1426,6 +1517,425 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       + '<label style="display:flex;gap:10px;align-items:center;font-weight:600"><input type="checkbox" style="width:auto;margin:0"' + (AFF.simple ? ' checked' : '') + ' onchange="cseAffichage(\'simple\',this.checked)"> Mode simplifié</label><p class="mute">L\'accueil n\'affiche que l\'essentiel : documents à signer, colis, à régler, messages, permanence. Tout le reste reste dans les onglets.</p><button class="btn" onclick="cseClose()">Fermer</button>');
   };
   affApplique();
+  // =====================================================================
+  // V.11 : espace plus vivant et plus complet
+  //   - bonjour selon l'heure, date, fête du jour, compte à rebours (sortie, Noël), anniversaire (si accepté)
+  //   - thème de saison (neige en décembre, feuilles en automne, œufs à Pâques), confettis, montants qui défilent,
+  //     anneau des heures de délégation, transitions entre pages, chargement en douceur, petites vibrations
+  //   - accueil en trois temps (À faire / Nouveau / Pour vous), partager une sortie, ajouter à l'agenda,
+  //     dicter un message, écouter une page, langue (anglais, portugais), « Mon année CSE », code personnel
+  // =====================================================================
+  var FETES = [
+    "*Jour de l'An|Basile|Geneviève|Odilon|Édouard|Mélaine|Raymond|Lucien|Alix|Guillaume|Paulin|Tatiana|Yvette|Nina|Rémi|Marcel|Roseline|Prisca|Marius|Sébastien|Agnès|Vincent|Barnard|François de Sales|Paul|Paule|Angèle|Thomas d'Aquin|Gildas|Martine|Marcelle",
+    "Ella|*Chandeleur|Blaise|Véronique|Agathe|Gaston|Eugénie|Jacqueline|Apolline|Arnaud|Notre-Dame de Lourdes|Félix|Béatrice|*Saint-Valentin|Claude|Julienne|Alexis|Bernadette|Gabin|Aimée|Pierre Damien|Isabelle|Lazare|Modeste|Roméo|Nestor|Honorine|Romain|Auguste",
+    "Aubin|Charles le Bon|Guénolé|Casimir|Olive|Colette|Félicité|Jean de Dieu|Françoise|Vivien|Rosine|Justine|Rodrigue|Mathilde|Louise|Bénédicte|Patrice|Cyrille|Joseph|Herbert|Clémence|Léa|Victorien|Catherine de Suède|Humbert|Larissa|Habib|Gontran|Gwladys|Amédée|Benjamin",
+    "Hugues|Sandrine|Richard|Isidore|Irène|Marcellin|Jean-Baptiste de la Salle|Julie|Gautier|Fulbert|Stanislas|Jules|Ida|Maxime|Paterne|Benoît-Joseph|Anicet|Parfait|Emma|Odette|Anselme|Alexandre|Georges|Fidèle|Marc|Alida|Zita|Valérie|Catherine de Sienne|Robert",
+    "*Fête du Travail|Boris|Philippe et Jacques|Sylvain|Judith|Prudence|Gisèle|*Victoire de 1945|Pacôme|Solange|Estelle|Achille|Rolande|Matthias|Denise|Honoré|Pascal|Éric|Yves|Bernardin|Constantin|Émile|Didier|Donatien|Sophie|Bérenger|Augustin|Germain|Aymar|Ferdinand|Perrine",
+    "Justin|Blandine|Kévin|Clotilde|Igor|Norbert|Gilbert|Médard|Diane|Landry|Barnabé|Guy|Antoine de Padoue|Élisée|Germaine|Jean-François Régis|Hervé|Léonce|Romuald|Silvère|Rodolphe|Alban|Audrey|Jean-Baptiste|Prosper|Anthelme|Fernand|Irénée|Pierre et Paul|Martial",
+    "Thierry|Martinien|Thomas|Florent|Antoine|Mariette|Raoul|Thibaut|Amandine|Ulrich|Benoît|Olivier|Henri et Joël|*Fête nationale|Donald|Notre-Dame du Mont-Carmel|Charlotte|Frédéric|Arsène|Marina|Victor|Marie-Madeleine|Brigitte|Christine|Jacques|Anne et Joachim|Nathalie|Samson|Marthe|Juliette|Ignace de Loyola",
+    "Alphonse|Julien Eymard|Lydie|Jean-Marie Vianney|Abel|Transfiguration|Gaétan|Dominique|Amour|Laurent|Claire|Clarisse|Hippolyte|Evrard|*Assomption|Armel|Hyacinthe|Hélène|Jean Eudes|Bernard|Christophe|Fabrice|Rose de Lima|Barthélemy|Louis|Natacha|Monique|Augustin|Sabine|Fiacre|Aristide",
+    "Gilles|Ingrid|Grégoire|Rosalie|Raïssa|Bertrand|Reine|Adrien|Alain|Inès|Adelphe|Apollinaire|Aimé|Croix glorieuse|Roland|Édith|Renaud|Nadège|Émilie|Davy|Matthieu|Maurice|Constant|Thècle|Hermann|Côme et Damien|Vincent de Paul|Venceslas|Michel, Gabriel et Raphaël|Jérôme",
+    "Thérèse de l'Enfant-Jésus|Léger|Gérard|François d'Assise|Fleur|Bruno|Serge|Pélagie|Denis|Ghislain|Firmin|Wilfried|Géraud|Juste|Thérèse d'Avila|Edwige|Baudouin|Luc|René|Adeline|Céline|Élodie|Jean de Capistran|Florentin|Crépin|Dimitri|Émeline|Simon et Jude|Narcisse|Bienvenue|Quentin",
+    "*Toussaint|*Commémoration des défunts|Hubert|Charles|Sylvie|Bertille|Carine|Geoffroy|Théodore|Léon|*Armistice de 1918|Christian|Brice|Sidoine|Albert|Marguerite|Élisabeth|Aude|Tanguy|Edmond|Présentation de Marie|Cécile|Clément|Flora|Catherine|Delphine|Séverin|Jacques de la Marche|Saturnin|André",
+    "Florence|Viviane|François-Xavier|Barbara|Gérald|Nicolas|Ambroise|Immaculée Conception|Pierre Fourier|Romaric|Daniel|Jeanne-Françoise de Chantal|Lucie|Odile|Ninon|Alice|Gaël|Gatien|Urbain|Théophile|Pierre Canisius|Françoise-Xavière|Armand|Adèle|*Noël|Étienne|Jean|Innocents|David|Roger|Sylvestre"
+  ].map(function (m) { return m.split('|'); });
+  function v11Jour(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12); }
+  function v11Ecart(a, b) { return Math.round((v11Jour(b) - v11Jour(a)) / 864e5); }
+  function v11Dim(y, m, n) { var d = new Date(y, m, 1, 12); while (d.getDay() !== 0) d.setDate(d.getDate() + 1); d.setDate(d.getDate() + 7 * (n - 1)); return d; }
+  function v11DernierDim(y, m) { var d = new Date(y, m + 1, 0, 12); while (d.getDay() !== 0) d.setDate(d.getDate() - 1); return d; }
+  // Fête du jour : { t: texte court, e: emoji, ev: vrai si c'est un événement (pas un prénom) }
+  function feteDuJour(d) {
+    d = d || new Date(); var y = d.getFullYear(), P = paques(y), e = v11Ecart(P, d);
+    if (e === 0) return { t: 'Joyeuses Pâques', e: '🐣', ev: 1 };
+    if (e === 1) return { t: 'Lundi de Pâques', e: '🐣', ev: 1 };
+    if (e === 39) return { t: 'Ascension', e: '☁️', ev: 1 };
+    if (e === 49) return { t: 'Pentecôte', e: '🕊️', ev: 1 };
+    var fm = v11DernierDim(y, 4); if (v11Ecart(P, fm) === 49) fm = v11Dim(y, 5, 1);
+    if (v11Ecart(fm, d) === 0) return { t: 'Bonne fête à toutes les mamans', e: '💐', ev: 1 };
+    if (v11Ecart(v11Dim(y, 5, 3), d) === 0) return { t: 'Bonne fête à tous les papas', e: '👔', ev: 1 };
+    var n = FETES[d.getMonth()][d.getDate() - 1] || '';
+    if (n.charAt(0) === '*') { var ev = n.slice(1); return { t: ev, e: { 'Noël': '🎄', "Jour de l'An": '🥂', 'Saint-Valentin': '💘', 'Chandeleur': '🥞', 'Fête nationale': '🇫🇷', 'Fête du Travail': '🌿', 'Toussaint': '🕯️' }[ev] || '📅', ev: 1 }; }
+    return { t: 'On fête les ' + n, e: '🌼', n: n };
+  }
+  window.cseFete = feteDuJour;
+  function v11Bonjour(h) { return h < 5 ? 'Bonsoir' : h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir'; }
+  function v11Pref(k, def) { try { var v = localStorage.getItem('cse_v11_' + k); return v == null ? def : v === '1'; } catch (e) { return def; } }
+  function v11SetPref(k, v) { try { localStorage.setItem('cse_v11_' + k, v ? '1' : '0'); } catch (e) { } }
+  function v11Calme() { try { return !v11Pref('anim', true) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } }
+  function v11Anniv() { var a = (D && D.fiche && D.fiche.anniv) || ''; if (!a || !v11Pref('anniv', false)) return false; return a === today().slice(5, 10); }
+  function v11Vibre(ms) { try { if (!v11Calme() && navigator.vibrate) navigator.vibrate(ms || 18); } catch (e) { } }
+
+  // ---------- En-tête : bonjour, date, fête, petits rendez-vous ----------
+  function v11Entete() {
+    var f = D.fiche || {}, P = D.pub || {}, now = new Date(), pr = f.prenom || f.nom || '';
+    $('h-nom').textContent = (v11Anniv() ? 'Joyeux anniversaire' : v11Bonjour(now.getHours())) + (pr ? ' ' + pr : '') + (v11Anniv() ? ' 🎂' : '');
+    var dd = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }), fe = feteDuJour(now);
+    $('h-sub').textContent = dd.charAt(0).toUpperCase() + dd.slice(1);
+    var C = [];
+    C.push('<span class="hc" title="Fête du jour">' + fe.e + ' ' + E(fe.t) + '</span>');
+    var T = today(), nx = (f.sorties || []).filter(function (x) { return x.date && x.date >= T; }).sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); })[0];
+    if (nx) { var j = v11Ecart(new Date(), new Date(nx.date + 'T12:00')); C.push('<button class="hc" onclick="cseGo(\'sorties\')">🎭 ' + E(String(nx.nom || 'Sortie').slice(0, 28)) + ' ' + (j === 0 ? 'aujourd\'hui !' : j === 1 ? 'demain' : 'dans ' + j + ' j') + '</button>'); }
+    if (P.permanence && !PUBLIC) C.push('<span class="hc">🕚 ' + E(String(P.permanence).replace(/^le\s+/i, '').slice(0, 42)) + '</span>');
+    if (now.getMonth() === 11 && now.getDate() < 25) { var nj = 25 - now.getDate(); C.push('<span class="hc">🎄 Noël dans ' + nj + ' jour' + (nj > 1 ? 's' : '') + '</span>'); }
+    var hc = $('h-chips'); if (!hc) { var inr = document.querySelector('header .in'); if (!inr) return; inr.insertAdjacentHTML('afterend', '<div id="h-chips" class="hchips"></div>'); hc = $('h-chips'); }
+    hc.innerHTML = C.join('');
+    v11Saison();
+    if (v11Anniv() && !sessionStorage.getItem('cse_anniv_fete')) { try { sessionStorage.setItem('cse_anniv_fete', '1'); } catch (e) { } setTimeout(function () { cseConfetti('🎂 Joyeux anniversaire de la part du CSE !'); }, 900); }
+  }
+
+  // ---------- Thème de saison (dessiné dans l'en-tête) ----------
+  var SAI = { raf: 0, p: [], k: '' };
+  function v11SaisonK(d) {
+    var y = d.getFullYear(), m = d.getMonth(), j = d.getDate(), e = v11Ecart(paques(y), d);
+    if (v11Anniv()) return 'anniv';
+    if ((m === 11) || (m === 0 && j <= 6)) return 'neige';
+    if (e >= -3 && e <= 1) return 'paques';
+    if (m === 9 && j === 31) return 'halloween';
+    if ((m === 9 && j >= 10) || (m === 10 && j <= 20)) return 'automne';
+    if ((m === 5 && j >= 21) || m === 6 || m === 7) return 'ete';
+    if ((m === 2 && j >= 20) || m === 3 || (m === 4 && j <= 15)) return 'printemps';
+    return '';
+  }
+  function v11Saison() {
+    var hd = document.querySelector('header'); if (!hd) return;
+    var k = v11Pref('saison', true) ? (window.__v11Saison || v11SaisonK(new Date())) : '', cv = $('h-saison');
+    if (!k || v11Calme()) { if (cv) cv.remove(); cancelAnimationFrame(SAI.raf); SAI.k = ''; return; }
+    if (cv && SAI.k === k) return;
+    if (!cv) { cv = document.createElement('canvas'); cv.id = 'h-saison'; cv.setAttribute('aria-hidden', 'true'); hd.insertBefore(cv, hd.firstChild); }
+    SAI.k = k; cancelAnimationFrame(SAI.raf);
+    var EM = { paques: ['🥚', '🐣', '🌷'], halloween: ['🎃', '🦇', '🍬'], automne: ['🍂', '🍁', '🍂'], ete: ['☀️', '🌻', '🍉'], printemps: ['🌸', '🌼', '🦋'], anniv: ['🎈', '🎉', '🎂'] }[k];
+    var W = 0, H = 0, ctx = cv.getContext('2d'), dpr = Math.min(2, window.devicePixelRatio || 1), N = k === 'neige' ? 46 : 12, t0 = performance.now();
+    function taille() { W = hd.clientWidth; H = hd.clientHeight; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    taille(); window.addEventListener('resize', taille);
+    SAI.p = []; for (var i = 0; i < N; i++) SAI.p.push({ x: Math.random() * W, y: Math.random() * H, r: k === 'neige' ? 1 + Math.random() * 2.6 : 13 + Math.random() * 9, v: k === 'neige' ? .25 + Math.random() * .6 : .2 + Math.random() * .35, o: Math.random() * 6.28, e: EM ? EM[i % EM.length] : '', a: Math.random() * 6.28 });
+    function pas(t) {
+      if (!document.body.contains(cv)) return;
+      ctx.clearRect(0, 0, W, H);
+      SAI.p.forEach(function (q) {
+        q.y += q.v; q.o += .012; q.x += Math.sin(q.o) * (k === 'neige' ? .35 : .5); q.a += .01;
+        if (q.y > H + 20) { q.y = -20; q.x = Math.random() * W; }
+        if (k === 'neige') { ctx.globalAlpha = .85; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 6.28); ctx.fill(); }
+        else { ctx.globalAlpha = .55; ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(Math.sin(q.a) * .5); ctx.font = q.r + 'px serif'; ctx.fillText(q.e, -q.r / 2, q.r / 2); ctx.restore(); }
+      });
+      ctx.globalAlpha = 1;
+      // Pour la batterie : animation 40 s, puis image figée
+      if (t - t0 < 40000 && !document.hidden) SAI.raf = requestAnimationFrame(pas);
+    }
+    SAI.raf = requestAnimationFrame(pas);
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && SAI.k) { var k = SAI.k; SAI.k = ''; var c = $('h-saison'); if (c) c.remove(); try { v11Saison(); } catch (e) { } } });
+
+  // ---------- Confettis ----------
+  window.cseConfetti = function (msg) {
+    if (msg) { var t = $('v11-toast'); if (!t) { t = document.createElement('div'); t.id = 'v11-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); } t.textContent = msg; t.classList.remove('on'); void t.offsetWidth; t.classList.add('on'); clearTimeout(t.__t); t.__t = setTimeout(function () { t.classList.remove('on'); }, 3200); }
+    v11Vibre(30);
+    if (v11Calme()) return;
+    var cv = document.createElement('canvas'), ctx = cv.getContext('2d'), W = innerWidth, H = innerHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999'; cv.width = W * dpr; cv.height = H * dpr; ctx.scale(dpr, dpr); document.body.appendChild(cv);
+    var br = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim() || '#1d4ed8', COL = [br, '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#facc15'];
+    var P = []; for (var i = 0; i < 150; i++) P.push({ x: W / 2 + (Math.random() - .5) * W * .3, y: H * .35, vx: (Math.random() - .5) * 13, vy: -6 - Math.random() * 11, w: 6 + Math.random() * 6, h: 4 + Math.random() * 6, c: COL[i % COL.length], a: Math.random() * 6.28, va: (Math.random() - .5) * .3 });
+    var t0 = performance.now();
+    (function pas(t) {
+      var dt = t - t0; ctx.clearRect(0, 0, W, H);
+      P.forEach(function (p) { p.vy += .32; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.a += p.va; ctx.save(); ctx.globalAlpha = Math.max(0, 1 - dt / 2800); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore(); });
+      if (dt < 2800) requestAnimationFrame(pas); else cv.remove();
+    })(t0);
+  };
+
+  // ---------- Montants qui défilent ----------
+  var CNT = {};
+  function v11Compte(root) {
+    if (v11Calme()) return;
+    (root || document).querySelectorAll('.kpi b, [data-cnt]').forEach(function (b, i) {
+      var txt = b.textContent, m = /^(-?[\d\s  ]+(?:,\d{2})?)\s*€$/.exec(txt.trim()); if (!m) return;
+      var v = parseFloat(m[1].replace(/[\s  ]/g, '').replace(',', '.')); if (!(v > 0)) return;
+      var key = TAB + ':' + i + ':' + v; if (CNT[key]) return; CNT[key] = 1;
+      var t0 = performance.now(), dur = 900;
+      (function pas(t) { var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); b.textContent = eur(v * e); if (k < 1) requestAnimationFrame(pas); else b.textContent = txt; })(t0);
+    });
+  }
+
+  // ---------- Anneau des heures de délégation ----------
+  function v11Anneau() {
+    if (!D.deleg) return '';
+    var c; try { c = dgCompteur(); } catch (e) { return ''; }
+    var cr = c.base || c.credit || 0, max = Math.max(c.plafond || cr, cr, .01), mo = c.mo || 0, R = 46, L = 2 * Math.PI * R;
+    var part = Math.min(1, mo / max), col = mo <= cr + 1e-9 ? 'var(--ok)' : mo <= max + 1e-9 ? '#ea580c' : 'var(--bad)', crPart = Math.min(1, cr / max);
+    return '<div class="card v11-ring"><svg viewBox="0 0 120 120" width="132" height="132" role="img" aria-label="' + E(hFr(mo) + ' utilisées sur ' + hFr(cr) + ' ce mois') + '">'
+      + '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="var(--line)" stroke-width="12"/>'
+      + '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="color-mix(in srgb,#ea580c 22%,transparent)" stroke-width="12" stroke-dasharray="' + (L * (1 - crPart)).toFixed(1) + ' ' + L.toFixed(1) + '" stroke-dashoffset="' + (-L * crPart).toFixed(1) + '" transform="rotate(-90 60 60)"/>'
+      + '<circle class="v11-arc" cx="60" cy="60" r="' + R + '" fill="none" stroke="' + col + '" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + L.toFixed(1) + '" stroke-dashoffset="' + (L * (1 - part)).toFixed(1) + '" style="--L:' + L.toFixed(1) + '" transform="rotate(-90 60 60)"/>'
+      + '<text x="60" y="58" text-anchor="middle" font-size="19" font-weight="800" fill="currentColor">' + E(hFr(mo)) + '</text><text x="60" y="76" text-anchor="middle" font-size="10" fill="var(--mute)">sur ' + E(hFr(cr)) + '</text></svg>'
+      + '<div><h2 style="margin:0 0 4px">🕒 Ce mois-ci</h2><p class="mute" style="margin:0 0 6px">' + (mo <= cr + 1e-9 ? '✅ Il reste <b>' + E(hFr(cr - mo)) + '</b> sur le crédit du mois.' : mo <= max + 1e-9 ? '🟠 Crédit dépassé : <b>' + E(hFr(mo - cr)) + '</b> prises sur le report.' : '🔴 Au-delà du maximum (' + E(hFr(max)) + ').') + '</p>'
+      + '<p class="mute" style="margin:0;font-size:12px">Vert : crédit du mois · orange : report des mois d\'avant (maximum ' + E(hFr(max)) + ').</p></div></div>';
+  }
+
+  // ---------- Accueil en trois temps ----------
+  function v11Sec(ic, t, html, cls) { return html && html.replace(/\s/g, '') ? '<section class="v11-sec ' + (cls || '') + '"><h3 class="v11-st"><span>' + ic + '</span>' + E(t) + '</h3>' + html + '</section>' : ''; }
+  function v11Accueil(A, N, I) {
+    var f = D.fiche || {}, x = '';
+    if (!PUBLIC && D.pub && D.pub.codePropose !== false && !(D.code && D.code.actif) && !v11Pref('codeplustard', false)) A = '<div class="card v11-code"><h2>🔒 Protégez votre espace</h2><p class="mute">Choisissez un code à 4 chiffres : si votre lien part par erreur chez quelqu\'un d\'autre, il ne pourra pas ouvrir votre espace. Ce téléphone, lui, reste ouvert.</p><button class="btn p" onclick="cseV11Code()">Choisir mon code</button> <button class="btn" onclick="cseV11CodePlusTard()">Plus tard</button></div>' + A;
+    var m = new Date().getMonth();
+    if ((m === 11 || m === 0) && !PUBLIC && ((f.offert || []).length || (f.sorties || []).length || (f.achats || []).length)) N = '<button class="card v11-annee" onclick="cseMonAnnee()"><span>🎁</span><div><b>Mon année ' + (m === 0 ? new Date().getFullYear() - 1 : new Date().getFullYear()) + ' avec le CSE</b><div class="mute">Votre récap en 5 images, à partager.</div></div><span class="sa">›</span></button>' + N;
+    x += v11Sec('📌', 'À faire', A, 'faire') + v11Sec('✨', 'Nouveau', N, 'nouv') + v11Sec('💙', 'Pour vous', I, 'info');
+    return x;
+  }
+  window.cseV11CodePlusTard = function () { v11SetPref('codeplustard', true); render(); };
+
+  // ---------- Code personnel ----------
+  function v11Dv() { try { var d = localStorage.getItem('cse_dv'); if (!d) { d = Date.now().toString(36) + Math.random().toString(36).slice(2, 12); localStorage.setItem('cse_dv', d); } return d; } catch (e) { return ''; } }
+  var PIN = { v: '' };
+  function v11CodeEcran(msg) {
+    $('nav').hidden = true;
+    $('app').innerHTML = '<div class="card v11-pin"><div style="font-size:44px">🔒</div><h2>Votre code personnel</h2><p class="mute">Cet appareil n\'a encore jamais ouvert votre espace. Entrez le code à 4 chiffres que vous avez choisi.</p>'
+      + '<input id="pin-in" inputmode="numeric" autocomplete="one-time-code" maxlength="4" pattern="[0-9]*" aria-label="Code à 4 chiffres" style="font-size:30px;letter-spacing:14px;text-align:center;max-width:200px;margin:8px auto;display:block">'
+      + (msg ? '<div class="msg bad">' + E(msg) + '</div>' : '') + '<button class="btn p" id="pin-ok" style="width:100%;max-width:240px">Ouvrir mon espace</button>'
+      + '<p class="mute" style="margin-top:14px">Code oublié ? Demandez au CSE de l\'effacer, puis rouvrez votre lien.</p></div>';
+    var i = $('pin-in'), ok = function () { if (!/^\d{4}$/.test(i.value)) { i.focus(); return; } PIN.v = i.value; $('app').innerHTML = v11Squelette(); load(); };
+    $('pin-ok').onclick = ok; i.onkeydown = function (e) { if (e.key === 'Enter') ok(); }; i.oninput = function () { if (/^\d{4}$/.test(i.value)) ok(); };
+    setTimeout(function () { try { i.focus(); } catch (e) { } }, 50);
+  }
+  window.cseV11Code = function () {
+    sheet(head('🔒 Mon code personnel', D.code && D.code.actif ? 'Vous avez déjà un code : vous pouvez le changer.' : 'Il sera demandé seulement sur un nouvel appareil.')
+      + '<label>Nouveau code (4 chiffres)</label><input id="c1" inputmode="numeric" maxlength="4" pattern="[0-9]*" style="font-size:22px;letter-spacing:10px;text-align:center">'
+      + '<label>Encore une fois</label><input id="c2" inputmode="numeric" maxlength="4" pattern="[0-9]*" style="font-size:22px;letter-spacing:10px;text-align:center">'
+      + '<div id="c-msg"></div><button class="btn p" id="c-ok" onclick="cseV11CodeOk()">Enregistrer mon code</button>'
+      + '<p class="mute">Le code n\'est jamais envoyé en clair au CSE. Ce téléphone reste ouvert sans le code. Évitez 1234 ou votre date de naissance.</p>');
+  };
+  window.cseV11CodeOk = async function () {
+    var a = ($('c1') || {}).value || '', b = ($('c2') || {}).value || '';
+    if (!/^\d{4}$/.test(a)) { say('c-msg', 'Le code doit faire 4 chiffres.', 'bad'); return; }
+    if (a !== b) { say('c-msg', 'Les deux codes ne sont pas identiques.', 'bad'); return; }
+    if (/^(\d)\1{3}$|^1234$|^0000$/.test(a)) { say('c-msg', 'Code trop facile à deviner : choisissez-en un autre.', 'bad'); return; }
+    $('c-ok').disabled = true; say('c-msg', 'Enregistrement…', 'info');
+    try { var j = await api('POST', { action: 'code-choisir', nouveau: a }); D.code = j.code || { actif: true, appareils: 1 }; cachePut(D); say('c-msg', (DEMO ? '(Exemple) ' : '') + '✔ Code enregistré.', 'ok'); v11Vibre(25); setTimeout(function () { closeSheet(); render(); }, 1300); }
+    catch (e) { say('c-msg', /inconnue/i.test(e.message) ? 'Le CSE doit d\'abord mettre à jour son service (script v93).' : e.message, 'bad'); $('c-ok').disabled = false; }
+  };
+
+  // ---------- Partager, agenda ----------
+  window.cseV11Partager = async function (titre, texte) {
+    var t = texte + '\n\n(Info du CSE)';
+    try { if (navigator.share) { await navigator.share({ title: titre, text: t }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    sheet(head('📲 Partager', E(titre)) + '<p class="mute">Envoyez l\'info à votre conjoint ou à un collègue :</p><div style="display:flex;flex-direction:column;gap:8px">'
+      + '<a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(t) + '">💬 WhatsApp</a>'
+      + '<a class="btn" href="sms:?&body=' + encodeURIComponent(t) + '">✉️ SMS</a>'
+      + '<a class="btn" href="mailto:?subject=' + encodeURIComponent(titre) + '&body=' + encodeURIComponent(t) + '">📧 E-mail</a>'
+      + '<button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(' + E(JSON.stringify(t)) + ').then(function(){cseConfetti(\'📋 Copié\')})">📋 Copier le texte</button></div>');
+  };
+  function v11SortieTxt(o) { return '🎭 ' + o.nom + (o.date ? ' — ' + fd(o.date) : '') + (o.lieu ? ' — ' + o.lieu : '') + (o.prix && o.prix.adulte != null ? '\nPrix invité adulte : ' + eur(o.prix.adulte) + (o.prix.enfant != null ? ', enfant : ' + eur(o.prix.enfant) : '') : '') + (o.limite ? '\nInscriptions jusqu\'au ' + fd(o.limite) : '') + '\nOn y va ?'; }
+  function v11SortieBtns(o) {
+    var k = 's' + o.id; window.__v11S = window.__v11S || {}; window.__v11S[k] = o;
+    return '<div class="v11-act"><button class="btn s" type="button" onclick="cseV11PartS(\'' + k + '\')">📲 Partager</button>' + (o.date ? agBtn({ t: 'Sortie CSE : ' + o.nom, d: o.date, lieu: o.lieu || '', desc: o.notes || '' }) : '') + '</div>';
+  }
+  window.cseV11PartS = function (k) { var o = (window.__v11S || {})[k]; if (o) cseV11Partager('Sortie CSE : ' + o.nom, v11SortieTxt(o)); };
+
+  // ---------- Dicter et écouter ----------
+  var REC = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function v11Micros(root) {
+    if (!REC) return;
+    root.querySelectorAll('textarea').forEach(function (ta) {
+      if (ta.dataset.v11mic) return; ta.dataset.v11mic = '1';
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn s v11-mic'; b.innerHTML = '🎙️ Dicter'; b.setAttribute('aria-label', 'Dicter le texte à voix haute');
+      b.onclick = function () {
+        if (b.__r) { b.__r.stop(); return; }
+        var r = new REC(); r.lang = 'fr-FR'; r.interimResults = true; r.continuous = true; var base = ta.value ? ta.value.replace(/\s*$/, ' ') : '';
+        r.onresult = function (ev) { var s = ''; for (var i = 0; i < ev.results.length; i++) s += ev.results[i][0].transcript; ta.value = base + s; ta.dispatchEvent(new Event('input', { bubbles: true })); };
+        r.onend = function () { b.__r = null; b.innerHTML = '🎙️ Dicter'; b.classList.remove('rec'); };
+        r.onerror = function () { r.onend(); };
+        try { r.start(); b.__r = r; b.innerHTML = '⏹️ Arrêter'; b.classList.add('rec'); v11Vibre(12); } catch (e) { }
+      };
+      ta.insertAdjacentElement('afterend', b);
+    });
+  }
+  window.cseV11Ecouter = function (btn) {
+    var s = window.speechSynthesis; if (!s) return;
+    if (s.speaking) { s.cancel(); if (btn) btn.innerHTML = '🔊 Écouter cette page'; return; }
+    var a = $('app').cloneNode(true); a.querySelectorAll('button,input,select,textarea,.v11-ecoute,script').forEach(function (x) { x.remove(); });
+    var txt = a.innerText.replace(/\s+\n/g, '\n').slice(0, 6000), u = new SpeechSynthesisUtterance(txt);
+    u.lang = 'fr-FR'; u.rate = .98; u.onend = function () { if (btn) btn.innerHTML = '🔊 Écouter cette page'; };
+    s.speak(u); if (btn) btn.innerHTML = '⏹️ Arrêter la lecture';
+  };
+  window.addEventListener('pagehide', function () { try { speechSynthesis.cancel(); } catch (e) { } });
+
+  // V.11.2 : pas de traduction (demande du CSE)
+  var LANG = 'fr'; try { localStorage.removeItem('cse_lang'); document.documentElement.removeAttribute('dir'); } catch (e) { }
+  function v11Trad() { }
+
+  // ---------- « Mon année CSE » : récap en 5 images ----------
+  window.cseMonAnnee = function () {
+    var f = D.fiche || {}, now = new Date(), Y = String(now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear()), inY = function (d) { return String(d || '').slice(0, 4) === Y; };
+    var off = (f.offert || []).filter(function (o) { return inY(o.date); }), tot = off.reduce(function (s, o) { return s + (Number(o.montant) || 0); }, 0);
+    var S = (f.sorties || []).filter(function (x) { return inY(x.date); }), B = (f.achats || []).filter(function (a) { return inY(a.date); }), nB = 0; B.forEach(function (a) { nB += Number(a.qte || a.quantite || 1) || 1; });
+    var colis = (f.colis || []).filter(function (c) { return (c.moi && c.moi.remis) || (c.enfants || []).some(function (e) { return e.remis; }); }).length, cv = (f.cv || []).filter(function (c) { return String(c.annee) === Y || String(c.annee) === String(Number(Y) + 1); }).length;
+    var top = {}; off.forEach(function (o) { var k = o.type || 'Autre'; top[k] = (top[k] || 0) + (Number(o.montant) || 0); }); var topK = Object.keys(top).sort(function (a, b) { return top[b] - top[a]; })[0];
+    var pr = f.prenom || '';
+    var SL = [
+      { bg: 'linear-gradient(160deg,#1e3a8a,#7c3aed)', e: '🎁', t: pr + ', voici votre année ' + Y + ' avec le CSE', s: 'Touchez pour avancer' },
+      { bg: 'linear-gradient(160deg,#047857,#10b981)', e: '💶', t: eur(tot), s: 'offerts par le CSE cette année' + (topK ? ', surtout en « ' + topK + ' »' : ''), cnt: tot },
+      { bg: 'linear-gradient(160deg,#b45309,#f59e0b)', e: '🎭', t: S.length + ' sortie' + (S.length > 1 ? 's' : ''), s: S.length ? S.slice(0, 3).map(function (x) { return x.nom; }).join(' · ') : 'Et si 2027 était l\'année de la première ?' },
+      { bg: 'linear-gradient(160deg,#be185d,#ec4899)', e: '🎟️', t: nB + ' billet' + (nB > 1 ? 's' : ''), s: (colis ? colis + ' colis récupéré' + (colis > 1 ? 's' : '') + ' · ' : '') + (cv ? 'chèques vacances ✔' : 'cinéma, parcs, spectacles…') },
+      { bg: 'linear-gradient(160deg,#0f172a,#1d4ed8)', e: '💙', t: 'Merci ' + pr + ' !', s: 'Le CSE prépare déjà ' + (Number(Y) + 1) + '. Une idée ? Dites-le-nous.', fin: 1 }
+    ];
+    var o = document.createElement('div'); o.id = 'v11-story'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', 'Mon année avec le CSE');
+    o.innerHTML = '<div class="bars">' + SL.map(function () { return '<i><b></b></i>'; }).join('') + '</div><button class="x" aria-label="Fermer">×</button><div class="sl"></div>';
+    document.body.appendChild(o); var i = 0, tm = 0;
+    function montre() {
+      var s = SL[i]; o.style.background = s.bg;
+      o.querySelectorAll('.bars i b').forEach(function (b, k) { b.style.transition = 'none'; b.style.width = k < i ? '100%' : '0'; });
+      o.querySelector('.sl').innerHTML = '<div class="e">' + s.e + '</div><div class="t">' + E(s.t) + '</div><div class="s">' + E(s.s) + '</div>'
+        + (s.fin ? '<div class="btns"><button class="btn" id="st-part">📲 Partager</button><button class="btn" id="st-img">🖼️ Enregistrer l\'image</button><button class="btn" id="st-idee">💡 Donner une idée</button></div>' : '');
+      if (s.cnt && !v11Calme()) { var el = o.querySelector('.t'), t0 = performance.now(); (function p(t) { var k = Math.min(1, (t - t0) / 1200); el.textContent = eur(s.cnt * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(p); })(t0); }
+      var bar = o.querySelectorAll('.bars i b')[i]; setTimeout(function () { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 30);
+      clearTimeout(tm); if (!s.fin) tm = setTimeout(suiv, 5000); else if (!v11Calme()) cseConfetti();
+      if (s.fin) {
+        $('st-part').onclick = function (ev) { ev.stopPropagation(); cseV11Partager('Mon année CSE ' + Y, '🎁 Mon année ' + Y + ' avec le CSE : ' + eur(tot) + ' offerts, ' + S.length + ' sortie(s), ' + nB + ' billet(s). Merci le CSE !'); };
+        $('st-img').onclick = function (ev) { ev.stopPropagation(); v11Image(Y, pr, tot, S.length, nB, colis); };
+        $('st-idee').onclick = function (ev) { ev.stopPropagation(); ferme(); cseGo('idees'); };
+      }
+    }
+    function suiv() { if (i < SL.length - 1) { i++; montre(); } }
+    function ferme() { clearTimeout(tm); o.remove(); document.removeEventListener('keydown', kd); }
+    function kd(ev) { if (ev.key === 'Escape') ferme(); if (ev.key === 'ArrowRight') suiv(); if (ev.key === 'ArrowLeft' && i > 0) { i--; montre(); } }
+    o.addEventListener('click', function (ev) { if (ev.target.closest('.x')) { ferme(); return; } if (ev.target.closest('.btns')) return; if (ev.clientX < innerWidth * .3 && i > 0) { i--; montre(); } else suiv(); });
+    document.addEventListener('keydown', kd); montre();
+  };
+  function v11Image(Y, pr, tot, nS, nB, nC) {
+    var c = document.createElement('canvas'); c.width = 1080; c.height = 1350; var x = c.getContext('2d');
+    var g = x.createLinearGradient(0, 0, 1080, 1350); g.addColorStop(0, '#1e3a8a'); g.addColorStop(1, '#7c3aed'); x.fillStyle = g; x.fillRect(0, 0, 1080, 1350);
+    x.fillStyle = '#fff'; x.textAlign = 'center'; x.font = '120px serif'; x.fillText('🎁', 540, 250);
+    x.font = 'bold 64px system-ui,sans-serif'; x.fillText('Mon année ' + Y, 540, 380); x.font = '44px system-ui,sans-serif'; x.globalAlpha = .85; x.fillText('avec le CSE' + (pr ? ' · ' + pr : ''), 540, 450); x.globalAlpha = 1;
+    [['💶', eur(tot), 'offerts'], ['🎭', String(nS), 'sortie(s)'], ['🎟️', String(nB), 'billet(s)'], ['🎄', String(nC), 'colis']].forEach(function (r, k) {
+      var y = 600 + k * 170; x.fillStyle = 'rgba(255,255,255,.12)'; x.beginPath(); if (x.roundRect) x.roundRect(160, y - 90, 760, 140, 36); else x.rect(160, y - 90, 760, 140); x.fill();
+      x.fillStyle = '#fff'; x.textAlign = 'left'; x.font = '70px serif'; x.fillText(r[0], 200, y + 5); x.font = 'bold 66px system-ui,sans-serif'; x.fillText(r[1], 320, y + 5); x.font = '40px system-ui,sans-serif'; x.globalAlpha = .85; x.fillText(r[2], 320 + x.measureText(r[1]).width * 1.65 + 30, y + 5); x.globalAlpha = 1; x.textAlign = 'center';
+    });
+    c.toBlob(function (b) {
+      var fl = new File([b], 'mon-annee-cse-' + Y + '.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [fl] })) { navigator.share({ files: [fl], title: 'Mon année CSE ' + Y }).catch(function () { }); return; }
+      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = fl.name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    }, 'image/png');
+  }
+
+  // ---------- Réglages ajoutés ----------
+  function v11Reglages() {
+    var sw = function (k, def, lab, sub) { return '<label class="v11-sw"><input type="checkbox"' + (v11Pref(k, def) ? ' checked' : '') + ' onchange="cseV11Pref(\'' + k + '\',this.checked)"><span><b>' + lab + '</b><small>' + sub + '</small></span></label>'; };
+    var h = '<div class="card"><h2>✨ Animations et saisons</h2>'
+      + sw('anim', true, 'Animations', 'Confettis, montants qui défilent, transitions. Coupées aussi si le téléphone demande de « réduire les animations ».')
+      + sw('saison', true, 'Thème de saison', 'Neige en décembre, feuilles en automne, œufs à Pâques, en haut de l\'écran.')
+      + sw('anniv', false, 'Fêter mon anniversaire', 'Un petit message le jour J, seulement sur votre écran (rien n\'est affiché aux autres).') + '</div>';
+    if (!PUBLIC) h += '<div class="card"><h2>🔒 Mon code personnel</h2><p class="mute">' + (D.code && D.code.actif ? '✔ Vous avez un code. Il est demandé seulement sur un nouvel appareil (' + (D.code.appareils || 1) + ' appareil(s) déjà ouverts).' : 'Pas encore de code : votre lien suffit pour ouvrir l\'espace.') + '</p><button class="btn' + (D.code && D.code.actif ? '' : ' p') + '" onclick="cseV11Code()">' + (D.code && D.code.actif ? 'Changer mon code' : 'Choisir mon code') + '</button></div>';
+    return h;
+  }
+  window.cseV11Pref = function (k, v) { v11SetPref(k, v); if (k === 'saison' || k === 'anim' || k === 'anniv') { try { v11Entete(); } catch (e) { } } };
+
+  // ---------- V.11.1 : cloche des nouveautés et rond avec les initiales ----------
+  function v11VusK() { return 'cse_v11_vus_' + (DEMO ? 'demo' : String(T || '').slice(0, 10)); }
+  function v11Nouv() {
+    var f = D.fiche || {}, P = D.pub || {}, L = [], add = function (k, ic, t, go) { L.push({ k: k, ic: ic, t: t, go: go }); };
+    (P.billets || []).forEach(function (b) { if (b.stock > 0) add('b:' + b.id, '🎟️', 'Billet : ' + b.titre + (b.prix != null ? ' · ' + eur(b.prix) : ''), 'billets'); });
+    (P.sorties || []).forEach(function (o) { add('s:' + o.id, '🎭', 'Sortie : ' + o.nom + (o.date ? ' · ' + fd(o.date) : ''), 'sorties'); });
+    (P.bonsPlans || []).forEach(function (b) { add('p:' + (b.id || b.nom), '🏷️', 'Bon plan : ' + b.nom, 'bonsplans'); });
+    (P.annonces || []).forEach(function (a) { add('a:' + (a.id || a.titre), '📣', a.titre || 'Info du CSE', 'accueil'); });
+    (f.messages || []).forEach(function (a) { add('pm:' + (a.id || a.titre), '✉️', a.titre || 'Message du CSE pour vous', 'accueil'); });
+    (P.agenda || []).forEach(function (a) { add('g:' + (a.id || a.date + a.titre), '📅', (a.titre || 'Date') + ' · ' + fd(a.date), 'agenda'); });
+    (D.messages || []).forEach(function (m) { if (m.de === 'cse') add('m:' + m.id, '💬', 'Le CSE vous a écrit', 'messages'); });
+    (D.demandes || []).forEach(function (d) { if (d.statut !== 'en attente') add('r:' + d.id + d.statut, d.statut === 'acceptée' ? '✅' : '❌', 'Réponse : ' + d.resume, 'demandes'); });
+    (f.documents || []).forEach(function (d) { add('d:' + (d.id || d.url || d.titre), '📄', 'Document : ' + (d.titre || ''), 'docs'); });
+    var V = null; try { V = JSON.parse(localStorage.getItem(v11VusK()) || 'null'); } catch (e) { }
+    if (!V) { V = {}; L.forEach(function (x) { V[x.k] = 1; }); try { localStorage.setItem(v11VusK(), JSON.stringify(V)); } catch (e) { } }
+    return { tout: L, nv: L.filter(function (x) { return !V[x.k]; }) };
+  }
+  function v11Initiales() { var f = D.fiche || {}; return ((String(f.prenom || '').charAt(0) + String(f.nom || '').charAt(0)) || '🙂').toUpperCase(); }
+  function v11Haut() {
+    var aa = $('h-aa'); if (!aa || PUBLIC) return;
+    var box = $('h-act'); if (!box) { box = document.createElement('div'); box.id = 'h-act'; aa.parentNode.insertBefore(box, aa); box.appendChild(aa); }
+    var N = v11Nouv().nv.length;
+    var h = '<button id="h-cloche" type="button" aria-label="Nouveautés' + (N ? ' : ' + N + ' nouvelle(s)' : '') + '" onclick="cseV11Cloche()">🔔' + (N ? '<span>' + (N > 9 ? '9+' : N) + '</span>' : '') + '</button>'
+      + '<button id="h-moi" type="button" aria-label="Mon compte : fiche, documents, réglages" onclick="cseV11Moi()">' + E(v11Initiales()) + '</button>';
+    var cur = box.querySelectorAll('#h-cloche,#h-moi'); cur.forEach(function (x) { x.remove(); });
+    box.insertAdjacentHTML('beforeend', h); box.appendChild(aa);
+  }
+  window.cseV11Cloche = function () {
+    var R = v11Nouv(), V = {}; R.tout.forEach(function (x) { V[x.k] = 1; });
+    sheet(head('🔔 Nouveautés', R.nv.length ? R.nv.length + ' depuis votre dernière visite' : 'Rien de nouveau depuis votre dernière visite')
+      + (R.nv.length ? R.nv.map(function (x) { return '<button class="srow" onclick="cseClose();cseGo(\'' + x.go + '\')"><span class="si">' + x.ic + '</span><span class="st"><b>' + E(x.t) + '</b></span><span class="sa">›</span></button>'; }).join('') : '<p class="empty">Tout est vu 👍</p>'));
+    try { localStorage.setItem(v11VusK(), JSON.stringify(V)); } catch (e) { } v11Haut();
+  };
+  window.cseV11Moi = function () {
+    var f = D.fiche || {}, it = [['fiche', '👤', 'Ma fiche', 'Adresse, téléphone, famille'], ['docs', '📄', 'Mes documents', 'Reçus, attestations'], ['demandes', '📨', 'Mes demandes', 'Réponses du CSE'], ['achats', '🧾', 'Mes achats', 'À régler, reçus'], ['reglages', '⚙️', 'Réglages', 'Notifications, affichage, langue, code']];
+    sheet(head(v11Initiales() + ' · ' + ((f.prenom || '') + ' ' + (f.nom || '')).trim(), 'Mon compte')
+      + it.map(function (x) { return '<button class="srow" onclick="cseClose();cseGo(\'' + x[0] + '\')"><span class="si">' + x[1] + '</span><span class="st"><b>' + x[2] + '</b><small>' + x[3] + '</small></span><span class="sa">›</span></button>'; }).join('')
+      + '<button class="srow" onclick="cseClose();cseV11Code()"><span class="si">🔒</span><span class="st"><b>Mon code personnel</b><small>' + (D.code && D.code.actif ? 'Actif' : 'Pas encore choisi') + '</small></span><span class="sa">›</span></button>');
+    if (LANG !== 'fr') v11Trad($('sheet'));
+  };
+  function v11BilletBtn(b) {
+    window.__v11B = window.__v11B || {}; window.__v11B[b.id] = b;
+    return '<div class="v11-act"><button class="btn s" type="button" onclick="cseV11PartB(\'' + E(String(b.id)) + '\')">📲 Partager</button></div>';
+  }
+  window.cseV11PartB = function (id) { var b = (window.__v11B || {})[id]; if (b) cseV11Partager('Billet CSE : ' + b.titre, '🎟️ ' + b.titre + ' à ' + eur(b.prix) + ' au CSE' + (b.prixPublic ? ' (au lieu de ' + eur(b.prixPublic) + ')' : '') + (b.expire ? ', valable jusqu\'au ' + fd(b.expire) : '') + '. On y va ?'); };
+
+  // ---------- Après chaque affichage ----------
+  var V11D = { dir: '' };
+  function v11Apres() {
+    var app = $('app'); if (!app) return;
+    if (TAB === 'accueil') v11Compte(app);
+    if (TAB === 'offert' || TAB === 'achats') v11Compte(app);
+    if ((TAB === 'g-elus' || TAB === 'deleg') && D.deleg && !app.querySelector('.v11-ring')) { var c1 = app.querySelector('.card'); var r = v11Anneau(); if (r) { if (c1 && TAB === 'g-elus') c1.insertAdjacentHTML('afterend', r); else app.insertAdjacentHTML('afterbegin', r); } }
+    if (/^(droits|mutuelle|aide|vie|aides|cv|fiche|docs)$/.test(TAB) && window.speechSynthesis && !app.querySelector('.v11-ecoute')) app.insertAdjacentHTML('afterbegin', '<button class="btn s v11-ecoute" onclick="cseV11Ecouter(this)">🔊 Écouter cette page</button>');
+    v11Micros(app);
+    if (V11D.dir && !v11Calme()) { app.classList.remove('pg-f', 'pg-b'); void app.offsetWidth; app.classList.add(V11D.dir === 'b' ? 'pg-b' : 'pg-f'); }
+    V11D.dir = '';
+    if (TAB === 'accueil') { try { var ok = newReplies().filter(function (d) { return d.statut === 'acceptée'; }); var k = ok.map(function (d) { return d.id; }).join(','); if (ok.length && sessionStorage.getItem('cse_v11_ok') !== k) { sessionStorage.setItem('cse_v11_ok', k); setTimeout(function () { cseConfetti('✅ Le CSE a accepté votre demande'); }, 700); } } catch (e) { } }
+    if (!V11D.lien) { V11D.lien = 1; var ml = /(^|[#&])sortie=([^&]+)/.exec(location.hash); if (ml) { var sid = decodeURIComponent(ml[2]), id = /^\d+$/.test(sid) ? Number(sid) : sid; setTimeout(function () { go('sorties'); var o = ((D.pub || {}).sorties || []).filter(function (x) { return String(x.id) === String(sid); })[0], deja = ((D.fiche || {}).sorties || []).some(function (x) { return String(x.outingId) === String(sid); }); if (o && !deja) setTimeout(function () { try { cseSortie(id); } catch (e) { } }, 350); }, 50); } }
+    document.querySelectorAll('#nav button').forEach(function (b) { if (!b.getAttribute('aria-label')) b.setAttribute('aria-label', b.dataset.l || b.textContent.trim()); });
+    try { v11Haut(); } catch (e) { }
+    if (LANG !== 'fr') { v11Trad(app); v11Trad($('nav')); v11Trad(document.querySelector('header')); }
+  }
+  function v11Squelette() { return '<div class="sk-wrap" aria-busy="true" aria-label="Chargement de votre espace"><div class="sk sk-h"></div><div class="sk sk-c"></div><div class="sk sk-c" style="height:120px"></div><div class="sk-row"><div class="sk sk-t"></div><div class="sk sk-t"></div><div class="sk sk-t"></div><div class="sk sk-t"></div></div></div>'; }
+
+  // ---------- V.11.3 : scènes animées (pages vides, envoi) ----------
+  var V11SC = {
+    courrier: '<rect x="56" y="46" width="6" height="44" rx="2" class="gr"/><path d="M34 30h40a14 14 0 0 1 14 14v18H34z" class="b"/><path d="M34 30a14 14 0 0 0-14 14v18h28V44a14 14 0 0 0-14-14z" class="bl"/><rect x="84" y="28" width="3" height="20" class="gr"/><g class="a2"><rect x="87" y="28" width="12" height="8" rx="1" class="r"/></g><g class="a1"><rect x="40" y="12" width="26" height="17" rx="2" class="w" stroke="#94a3b8" stroke-width="1.5"/><path d="M40 13l13 9 13-9" class="ln" style="stroke-width:1.5"/></g>',
+    billet: '<g class="a3"><path d="M30 26h72v14a8 8 0 0 0 0 16v14H30V56a8 8 0 0 0 0-16z" class="b"/><path d="M78 30v36" stroke="#fff" stroke-width="2" stroke-dasharray="4 4"/><rect x="40" y="38" width="30" height="5" rx="2" fill="#fff"/><rect x="40" y="50" width="20" height="4" rx="2" fill="#ffffffaa"/></g><path class="y a4" d="M18 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path class="y a4 d" d="M112 64l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>',
+    sortie: '<g class="a5"><circle cx="66" cy="58" r="20" class="y"/></g><path d="M0 74q30-26 60-6t72-8v36H0z" class="g"/><path d="M0 84q40-18 80-4t52 0v16H0z" fill="#059669"/><g class="a6"><path d="M10 28a8 8 0 0 1 15-3 6 6 0 0 1 8 6H8a5 5 0 0 1 2-3z" class="w" stroke="#cbd5e1"/></g>',
+    doc: '<path d="M26 34h28l6 6h46v42H26z" class="b"/><g class="a7"><rect x="40" y="22" width="44" height="50" rx="3" class="w" stroke="#cbd5e1" stroke-width="1.5"/><path d="M48 34h28M48 42h28M48 50h18" class="ln" style="stroke-width:2"/></g><path d="M22 48h88l-6 34H26z" class="bl" stroke="var(--brand,#1d4ed8)" stroke-width="1.5"/>',
+    heure: '<circle cx="66" cy="50" r="34" class="w" stroke="var(--brand,#1d4ed8)" stroke-width="5"/><g fill="var(--mute,#64748b)"><circle cx="66" cy="22" r="2"/><circle cx="94" cy="50" r="2"/><circle cx="66" cy="78" r="2"/><circle cx="38" cy="50" r="2"/></g><g class="a8 v"><path d="M66 50V34" stroke="var(--brand,#1d4ed8)" stroke-width="4" stroke-linecap="round"/></g><g class="a8"><path d="M66 50V24" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/></g><circle cx="66" cy="50" r="4" class="b"/>',
+    panier: '<g class="a9"><path d="M36 30h8l8 32h40l8-24H48" class="ln" style="stroke:var(--brand,#1d4ed8);stroke-width:4;stroke-linejoin:round"/><rect x="58" y="22" width="14" height="14" rx="2" class="y a3"/><g transform="translate(58 74)"><g class="a10"><circle r="6" class="b"/><path d="M-4 0h8" stroke="#fff" stroke-width="2"/></g></g><g transform="translate(88 74)"><g class="a10"><circle r="6" class="b"/><path d="M-4 0h8" stroke="#fff" stroke-width="2"/></g></g></g><path d="M8 84h116" class="ln"/>',
+    boite: '<rect x="34" y="44" width="64" height="40" rx="3" class="bl" stroke="var(--brand,#1d4ed8)" stroke-width="2"/><path d="M60 44v14h12V44" class="b"/><g class="a11"><rect x="30" y="34" width="72" height="12" rx="3" class="b"/></g><path class="y a4" d="M66 10l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+    recherche: '<rect x="22" y="20" width="88" height="62" rx="6" class="bl"/><path d="M34 36h50M34 48h64M34 60h40" class="ln" style="opacity:.5"/><g class="a12"><circle cx="66" cy="46" r="15" fill="#ffffff66" stroke="var(--brand,#1d4ed8)" stroke-width="5"/><path d="M77 57l14 14" stroke="var(--brand,#1d4ed8)" stroke-width="7" stroke-linecap="round"/></g>',
+    calme: '<path d="M20 80h92" class="ln"/><rect x="36" y="56" width="60" height="24" rx="10" class="bl"/><circle cx="54" cy="52" r="12" class="y"/><path d="M48 52h4M57 52h4" stroke="#7c2d12" stroke-width="2" stroke-linecap="round"/><text x="74" y="40" class="a13" font-size="14" font-weight="800" fill="var(--brand,#1d4ed8)">z</text><text x="84" y="30" class="a13 d" font-size="11" font-weight="800" fill="var(--brand,#1d4ed8)">z</text>'
+  };
+  function v11ScPour(t) {
+    t = String(t || '').toLowerCase();
+    if (/rien trouv/.test(t)) return 'recherche';
+    if (/message|demande|aide|écri/.test(t)) return 'courrier';
+    if (/billet/.test(t)) return 'billet';
+    if (/sortie|prévu|agenda|inscrit/.test(t)) return 'sortie';
+    if (/document|reçu|dossier|attestation/.test(t)) return 'doc';
+    if (/heure|délégation|élus/.test(t)) return 'heure';
+    if (/achat|enregistr|chèque/.test(t)) return 'panier';
+    if (/matériel|enfant|personne/.test(t)) return 'boite';
+    return 'calme';
+  }
+  function v11Scenes() {
+    try { document.documentElement.classList.toggle('v11-calme', v11Calme()); } catch (e) { }
+    var app = $('app'); if (!app) return;
+    app.querySelectorAll('.empty:not([data-sc])').forEach(function (p) {
+      var k = v11ScPour(p.textContent); p.setAttribute('data-sc', k);
+      p.insertAdjacentHTML('afterbegin', '<svg class="v11sc" viewBox="0 0 132 96" aria-hidden="true">' + V11SC[k] + '</svg>');
+    });
+  }
+  window.__v11Scenes = v11Scenes;
+  (function () {
+    var f = 0; function go() { if (f) return; f = requestAnimationFrame(function () { f = 0; v11Scenes(); }); }
+    function arm() { var app = $('app'); if (!app) return setTimeout(arm, 300); new MutationObserver(go).observe(app, { childList: true, subtree: true }); go(); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arm); else arm();
+  })();
+  window.cseV11Avion = function () {
+    if (v11Calme()) return; var o = $('v11-avion'); if (o) o.remove();
+    document.body.insertAdjacentHTML('beforeend', '<svg id="v11-avion" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 30L60 6 46 58 30 40z" fill="#fff" stroke="#1d4ed8" stroke-width="2.5" stroke-linejoin="round"/><path d="M60 6L30 40l-4 16 10-12" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2.5" stroke-linejoin="round"/></svg>');
+    setTimeout(function () { var a = $('v11-avion'); if (a) a.remove(); }, 1800);
+  };
+
   function render() {
     AGV = {};
     var f = D.fiche, P = D.pub || {}, h = '';
@@ -1444,45 +1954,47 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         var due = (f.achats || []).filter(function (a) { return !a.regle; }).reduce(function (s, a) { return s + a.total; }, 0) + (f.sorties || []).reduce(function (s, x) { return s + (x.aRegler || 0); }, 0);
         var cvDue = 0; (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut !== 'payé' && e.statut !== 'reçu') cvDue += e.montant || 0; }); });
         var open = (P.sorties || []).filter(function (o) { return !(f.sorties || []).some(function (x) { return x.outingId === o.id; }); });
-        h += signCards();
-        h += baroCard();
-        h += uneHtml(open);
-        if (f.equipe && f.equipe.texte) h += '<div class="msg" style="margin:0 0 10px">👷 Cette semaine, vous êtes en <b>' + E(({ matin: 'équipe du matin', 'apres-midi': 'équipe d\'après-midi', nuit: 'équipe de nuit', journee: 'journée' })[f.equipe.poste] || f.equipe.texte) + (/\(/.test(f.equipe.texte) ? ' ' + E(f.equipe.texte.replace(/^[^(]*/, '')) : '') + '</b>.</div>';
+        var A = '', N = '', I = '';
+        A += signCards();
+        A += baroCard();
+        N += uneHtml(open);
+        if (f.equipe && f.equipe.texte) I += '<div class="msg" style="margin:0 0 10px">👷 Cette semaine, vous êtes en <b>' + E(({ matin: 'équipe du matin', 'apres-midi': 'équipe d\'après-midi', nuit: 'équipe de nuit', journee: 'journée' })[f.equipe.poste] || f.equipe.texte) + (/\(/.test(f.equipe.texte) ? ' ' + E(f.equipe.texte.replace(/^[^(]*/, '')) : '') + '</b>.</div>';
         h += tilesHtml(open);
-        if ((f.prets || []).some(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }) && cautionTxt(true)) h += '<div class="card"><h2>⛺ Matériel à retirer</h2>' + (f.prets || []).filter(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }).map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div></div>'; }).join('') + cautionTxt(true) + '</div>';
-        if (!SIMPLE) h += annCards();
-        h += colisCards();
-        if (!SIMPLE) h += avisCards();
-        if (!SIMPLE) h += ficheCard();
-        h += dgCard();
-        h += apportCard();
-        if (msgNew()) h += '<div class="card" style="border-left:4px solid var(--brand);cursor:pointer" onclick="cseGo(\'messages\')"><h2>💬 Le CSE vous a répondu</h2><p class="mute">' + E(((D.messages || []).filter(function (m) { return m.de === 'cse'; }).pop() || {}).texte || '').slice(0, 160) + '</p><button class="btn p">Lire et répondre</button></div>';
+        if ((f.prets || []).some(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }) && cautionTxt(true)) A += '<div class="card"><h2>⛺ Matériel à retirer</h2>' + (f.prets || []).filter(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }).map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div></div>'; }).join('') + cautionTxt(true) + '</div>';
+        if (!SIMPLE) N += annCards();
+        A += colisCards();
+        if (!SIMPLE) I += avisCards();
+        if (!SIMPLE) A += ficheCard();
+        I += dgCard();
+        I += apportCard();
+        if (msgNew()) A += '<div class="card" style="border-left:4px solid var(--brand);cursor:pointer" onclick="cseGo(\'messages\')"><h2>💬 Le CSE vous a répondu</h2><p class="mute">' + E(((D.messages || []).filter(function (m) { return m.de === 'cse'; }).pop() || {}).texte || '').slice(0, 160) + '</p><button class="btn p">Lire et répondre</button></div>';
         var NV = newReplies();
-        if (NV.length) h += '<div class="card" style="border-left:4px solid var(--ok)"><h2>🔔 Le CSE a répondu</h2>' + NV.map(function (d) { var ok = d.statut === 'acceptée'; return '<div class="row"><div class="l"><b>' + E(d.resume) + '</b>' + (d.reponse ? '<div class="mute">💬 ' + E(d.reponse) + '</div>' : '') + '</div><div class="r"><span class="tag ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✅ acceptée' : '❌ ' + E(d.statut)) + '</span></div></div>'; }).join('') + '<button class="btn s" onclick="cseGo(\'demandes\')">Voir mes demandes</button></div>';
+        if (NV.length) A += '<div class="card" style="border-left:4px solid var(--ok)"><h2>🔔 Le CSE a répondu</h2>' + NV.map(function (d) { var ok = d.statut === 'acceptée'; return '<div class="row"><div class="l"><b>' + E(d.resume) + '</b>' + (d.reponse ? '<div class="mute">💬 ' + E(d.reponse) + '</div>' : '') + '</div><div class="r"><span class="tag ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✅ acceptée' : '❌ ' + E(d.statut)) + '</span></div></div>'; }).join('') + '<button class="btn s" onclick="cseGo(\'demandes\')">Voir mes demandes</button></div>';
         var PAY = [];
         (f.cv || []).forEach(function (c) { (c.echeances || []).forEach(function (e) { if (e.statut !== 'payé' && e.statut !== 'reçu') PAY.push({ d: e.date, l: 'Chèques vacances ' + c.annee + ' · échéance' + (/ch[eè]que/i.test(e.mode || '') ? ' (chèque à remettre)' : ''), m: e.montant || 0, late: e.statut === 'en retard', t: 'cv' }); }); });
         (f.sorties || []).forEach(function (x) { if (x.aRegler > 0) PAY.push({ d: x.date, l: 'Sortie : ' + x.nom, m: x.aRegler, late: x.date < today(), t: 'sorties' }); });
         (f.achats || []).forEach(function (a) { if (!a.regle) PAY.push({ d: a.date, l: 'Billets : ' + a.desc, m: a.total || 0, late: true, t: 'achats' }); });
         PAY.sort(function (a, b) { return String(a.d).localeCompare(String(b.d)); });
-        if (PAY.length) h += '<div class="card" style="border-left:4px solid var(--warn)"><h2>💶 À régler</h2>' + PAY.map(function (x) { return '<div class="row" style="cursor:pointer" onclick="cseGo(\'' + x.t + '\')"><div class="l"><b>' + E(x.l) + '</b><div class="mute">' + (x.d ? (x.t === 'achats' ? 'Achat du ' : x.t === 'sorties' ? 'Sortie le ' : 'Avant le ') + fd(x.d) : 'Date à voir avec le CSE') + '</div></div><div class="r">' + eur(x.m) + '<br>' + (x.late ? '<span class="tag bad">' + (x.t === 'cv' ? 'en retard' : 'à régler') + '</span>' : '<span class="tag warn">à venir</span>') + (payLinkFor(x) ? '<br><a class="btn s p" style="margin-top:6px" href="' + E(payLinkFor(x).url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">💳 Payer en ligne</a>' : '') + '</div></div>'; }).join('')
+        if (PAY.length) A += '<div class="card" style="border-left:4px solid var(--warn)"><h2>💶 À régler</h2>' + PAY.map(function (x) { return '<div class="row" style="cursor:pointer" onclick="cseGo(\'' + x.t + '\')"><div class="l"><b>' + E(x.l) + '</b><div class="mute">' + (x.d ? (x.t === 'achats' ? 'Achat du ' : x.t === 'sorties' ? 'Sortie le ' : 'Avant le ') + fd(x.d) : 'Date à voir avec le CSE') + '</div></div><div class="r">' + eur(x.m) + '<br>' + (x.late ? '<span class="tag bad">' + (x.t === 'cv' ? 'en retard' : 'à régler') + '</span>' : '<span class="tag warn">à venir</span>') + (payLinkFor(x) ? '<br><a class="btn s p" style="margin-top:6px" href="' + E(payLinkFor(x).url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">💳 Payer en ligne</a>' : '') + '</div></div>'; }).join('')
           + '<div class="row"><div class="l"><b>Total</b><div class="mute">Billets, sorties et chèques vacances · à régler à la permanence du CSE' + (payLinksFor(PAY).length ? ' ou en ligne' : '') + '</div></div><div class="r">' + eur(PAY.reduce(function (a, x) { return a + x.m; }, 0)) + '</div></div>' + payButtons(PAY) + '</div>';
-        h += permCards();
-        if (!SIMPLE) h += sondCards();
-        if (!SIMPLE && !D.prefs && !DEMO_PREFS_VU()) h += alertesCard(true);
-        h += pushCard();
-        h += permCard();
-        if (!SIMPLE) h += '<div class="kpis">'
+        A += permCards();
+        if (!SIMPLE) A += sondCards();
+        if (!SIMPLE && !D.prefs && !DEMO_PREFS_VU()) A += alertesCard(true);
+        I += pushCard();
+        I += permCard();
+        if (!SIMPLE) I += '<div class="kpis">'
           + '<div class="kpi" onclick="cseGo(\'offert\')"><span>Vos subventions CSE en ' + new Date().getFullYear() + '</span><b>' + eur(offY) + '</b></div>'
           + '<div class="kpi" onclick="cseGo(\'achats\')"><span>Reste à régler</span><b style="color:' + (due ? 'var(--bad)' : 'var(--ok)') + '">' + eur(due) + '</b></div>'
           + '<div class="kpi" onclick="cseGo(\'cv\')"><span>Chèques vacances : à payer</span><b>' + eur(cvDue) + '</b></div>'
           + '<div class="kpi" onclick="cseGo(\'sorties\')"><span>Sorties ouvertes</span><b>' + open.length + '</b></div></div>';
-        if (open.length && !SIMPLE) h += '<div class="card" style="margin-top:12px"><h2>🎭 Sorties où vous pouvez vous inscrire</h2>' + open.slice(0, 4).map(outingRow).join('') + '</div>';
-        if (!SIMPLE) h += cvCard('🏖️ Chèques vacances');
-        if (!SIMPLE) h += '<div class="card"><h2>💡 Une idée, une question pour la réunion ?</h2><p class="mute">Boîte à idées, idée de sortie, question à poser à la prochaine réunion du CSE.</p><button class="btn p" onclick="cseGo(\'idees\')">Donner mon idée</button></div>';
-        if (!SIMPLE) h += swileCard();
-        h += installCard();
-        h += '<div class="card"><h2>💬 Une question ?</h2><p class="mute">Écrivez au CSE directement d\'ici, ou par e-mail.</p><button class="btn" onclick="cseMsg()">Écrire au CSE</button> '
+        if (open.length && !SIMPLE) N += '<div class="card" style="margin-top:12px"><h2>🎭 Sorties où vous pouvez vous inscrire</h2>' + open.slice(0, 4).map(outingRow).join('') + '</div>';
+        if (!SIMPLE) I += cvCard('🏖️ Chèques vacances');
+        if (!SIMPLE) I += '<div class="card"><h2>💡 Une idée, une question pour la réunion ?</h2><p class="mute">Boîte à idées, idée de sortie, question à poser à la prochaine réunion du CSE.</p><button class="btn p" onclick="cseGo(\'idees\')">Donner mon idée</button></div>';
+        if (!SIMPLE) I += swileCard();
+        I += installCard();
+        I += '<div class="card"><h2>💬 Une question ?</h2><p class="mute">Écrivez au CSE directement d\'ici, ou par e-mail.</p><button class="btn" onclick="cseMsg()">Écrire au CSE</button> '
           + (P.cse && P.cse.email ? '<a class="btn" href="mailto:' + E(P.cse.email) + '">✉️ ' + E(P.cse.email) + '</a>' : '') + '</div>';
+        h += v11Accueil(A, N, I);
       },
       achats: function () {
         var L = f.achats || [], ys = yearsOf(L, 'date'), Y = L.filter(function (a) { return String(a.date).slice(0, 4) === YEAR; });
@@ -1648,7 +2160,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         h += '<div class="card"><h2>🎫 Billets disponibles au CSE</h2>' + (B.length ? B.map(function (b) {
           var deja = pris[b.id] || 0, reste = b.cinema ? resteCine : Math.max(0, limStd - deja);
           return (b.photo ? '<img class="ph" loading="lazy" src="' + E(phUrl(b.photo)) + '" alt="">' : '') + '<div class="row"' + (b.photo ? ' style="border-top:0;padding-top:0"' : '') + '><div class="l"><b>' + E(b.titre) + '</b><div class="mute">' + (b.prixPublic ? '<s>' + eur(b.prixPublic) + '</s> ' : '') + '<b style="color:var(--ink)">' + eur(b.prix) + '</b>' + (b.expire ? ' · valable jusqu\'au ' + fd(b.expire) : '') + '</div>'
-            + '<div class="mute">Votre quota : ' + (deja ? deja + ' pris · ' : '') + '<b>' + reste + ' restant(s)</b>' + (b.cinema ? ' (cinéma)' : '') + '</div></div>'
+            + '<div class="mute">Votre quota : ' + (deja ? deja + ' pris · ' : '') + '<b>' + reste + ' restant(s)</b>' + (b.cinema ? ' (cinéma)' : '') + '</div>' + v11BilletBtn(b) + '</div>'
             + '<div class="r">' + (b.stock > 0 ? '<span class="tag ' + (b.stock <= 5 ? 'warn' : 'ok') + '">' + (b.stock <= 5 ? 'Plus que ' + b.stock : b.stock + ' en stock') + '</span>' : '<span class="tag bad">Épuisé</span>')
             + (b.stock > 0 && reste > 0 && !PUBLIC ? '<br><button class="btn s p" style="margin-top:6px" onclick="cseBillet(\'' + E(String(b.id)) + '\')">Réserver</button>' : '') + '</div></div>';
         }).join('') : (vieux ? '<p class="empty">La liste des billets apparaîtra dès la prochaine mise à jour des informations par le CSE.</p>' : '<p class="empty">Aucun billet disponible en ce moment.</p>'))
@@ -1677,6 +2189,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     $('app').innerHTML = h;
     if (TAB === 'deleg' && D.deleg) { try { cseDgCalc(); sigInit(); } catch (e) { } }
     if (TAB === 'accueil') { try { sgInit(); } catch (e) { } }
+    try { v11Apres(); } catch (e) { console.warn('[v11]', e); }
   }
 
   var ITYPES = { idee: '💡 Idée', sortie: '🎭 Idée de sortie', question: '❓ Question pour la prochaine réunion du CSE', message: '✉️ Message aux membres du CSE' };
@@ -1731,7 +2244,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       + '<a class="btn s" href="https://play.google.com/store/apps/details?id=hr.lunc.client" target="_blank" rel="noopener">🤖 Android (Google Play)</a>'
       + '<a class="btn s" href="https://apps.apple.com/fr/app/swile/id1190612035" target="_blank" rel="noopener">🍏 iPhone (App Store)</a></div></div>';
   }
-  function outingRow(o) {
+  function outingRow(o) { return outingRow0(o).replace('</div><div class="r">', v11SortieBtns(o) + '</div><div class="r">'); }
+  function outingRow0(o) {
     var full = o.places != null && o.restantes <= 0, late = o.limite && o.limite < today();
     return (o.photo ? '<img class="ph" loading="lazy" src="' + E(phUrl(o.photo)) + '" alt="">' : '') + '<div class="row"' + (o.photo ? ' style="border-top:0;padding-top:0"' : '') + '><div class="l"><b>' + E(o.nom) + '</b><div class="mute">' + fd(o.date) + (o.lieu ? ' · ' + E(o.lieu) : '') + '</div>'
       + '<div class="mute">Vous : ' + eur(o.prix.salarie) + ' · invité adulte : ' + eur(o.prix.adulte) + ' · enfant : ' + eur(o.prix.enfant) + '</div>'
@@ -1749,7 +2263,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '10.6.5', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '11.3', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
@@ -1817,13 +2331,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function swReg() { return navigator.serviceWorker.register(swUrl(), { scope: 'espace-salarie.html' }); }
   // (enregistré après le chargement de l'espace, avec la configuration des notifications)
 
-  function say(id, m, cl) { var el = $(id); if (el) el.innerHTML = '<div class="msg ' + (cl || 'info') + '">' + E(m) + '</div>'; }
+  function say(id, m, cl) { var el = $(id); if (el) el.innerHTML = '<div class="msg ' + (cl || 'info') + '">' + E(m) + '</div>'; if (cl === 'ok' && /envoy/i.test(m)) try { cseV11Avion(); } catch (e) { } }
 
   async function send(type, data, resume, msgId, btnId) {
     var b = $(btnId); if (b) b.disabled = true; say(msgId, 'Envoi…', 'info');
     try {
       await api('POST', { type: type, data: data, resume: resume });
       say(msgId, (DEMO ? '(Exemple) ' : '') + '✔ Demande envoyée au CSE. Vous recevrez la réponse par e-mail et dans « Mes demandes ».', 'ok');
+      try { setTimeout(function () { cseConfetti('🎉 Demande envoyée au CSE'); }, 900); } catch (e) { }
       var j = await api('GET'); D = j; nav();
       setTimeout(function () { closeSheet(); }, 2200);
     } catch (e) { say(msgId, e.message, 'bad'); if (b) b.disabled = false; }
