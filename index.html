@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"5yKqn1yo/BwdnS29J5gVEw==","iv":"F/le/tNsvU6Cor2x","rev":"boot","lastModified":"2026-11-27T16:09:23.913Z","by":"Michaël GROSJEAN","data":"M2JNCv/w2uTwm7qwBpVSr+6mtZpLIRPidKhYP1O7V1wylEtsxNOifCCgnbDjA51A9wJ3zuIaU7AHQRNEDNEzgQ=="},"at":"2026-11-27T16:09:23.951Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"LTHc+GIJzTROoRtFmygl+w==","iv":"CqlL6UpJmwNs4R5V","rev":"boot","lastModified":"2026-11-27T17:29:49.418Z","by":"Michaël GROSJEAN","data":"7liEdy29DGhPDcP3W33V6UIhJKMEt+FzTcVW8BgTFv8Px37wHVLcV+gThw/4vdVroNIYHFaESKl6Q/BZ1MbPsg=="},"at":"2026-11-27T17:29:49.448Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.5.7";
+        const APP_VERSION = "V.10.6";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21725,6 +21725,8 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.6', date: '2026-11-27', items: ['Paramètres rangés en 10 rubriques : Le CSE, Utilisateurs et accès, Élus, Droits des salariés, Argent et caisse, E-mails et notifications, Espace salarié, Sécurité et sauvegardes, Fin d\'année, Toutes les fonctions.', 'Barre « Rechercher un réglage » (ex. caution, cinéma, e-mail) qui trouve la bonne carte dans toutes les rubriques.', 'Cartes repliées : un clic sur le titre ouvre ou ferme la carte, avec une étiquette « Activé » ou « Coupé ».', 'Page « Toutes les fonctions » : chaque fonction avec son interrupteur ON/OFF et un bouton « Régler ».', 'Rubrique Élus : planning des permanences, heures de délégation, réunions, élus affichés, comptes.', 'Rubrique Espace salarié : boutons vers chaque page de contenu (annonces, mes droits, mutuelle, baromètre…).', 'Correction : la carte « Droits et plafonds par salarié » ne s\'affiche plus dans tous les onglets.', 'Espace salarié 10.6 : accueil en rubriques (Mes avantages, Mon dossier, Parler au CSE, Infos utiles, Espace élu), barre en bas sur téléphone, recherche, page élu avec les heures du mois détaillées.'] },
+            { v: 'V.10.5.8', date: '2026-11-27', items: ['Clôture de caisse sécurisée : juste après la clôture, l\'état de caisse part en PDF sur le Drive (CSE - Documents › année › 1 - Paiements et caisse › États de caisse) et l\'appli envoie tout de suite les données en ligne. Elle affiche clairement « ✔ enregistrée en ligne » ou « ⚠️ PAS encore en ligne, ne fermez pas l\'appli » avec un bouton Réessayer.', 'Après chaque permanence clôturée : sauvegarde complète (chiffrée) des données dans le Drive (CSE - Sauvegardes › CSE_sauvegarde_<date>_apres-permanence-<heure>.json), même si l\'appareil n\'arrive pas à synchroniser.'] },
             { v: 'V.10.5.7', date: '2026-11-27', items: ['Recherche rapide (nom, prénom ou e-mail, dans n\'importe quel ordre) dans Consultations et dans la fenêtre d\'envoi des liens.', 'Communication › Consultations : bouton ✉️ sur chaque salarié qui a un e-mail pour lui envoyer son lien d\'espace (la fenêtre s\'ouvre avec lui déjà coché). Le bouton du haut s\'appelle maintenant « Envoyer les liens par e-mail ».'] },
             { v: 'V.10.5.6', date: '2026-11-27', items: ['Quota cinéma « par an » ou « par mois » (Paramètres › Droits & quotas). Exemple : 1 place par mois et par personne du foyer, avec blocage : un salarié avec conjoint et un enfant a droit à 3 places par mois. L\'espace salarié affiche les places restantes du mois.', 'Historique des envois aux salariés : Paramètres › Établissement › carte « E-mails automatiques au salarié » › 📜 Historique des envois (recherche par salarié, message complet, e-mail ou notification, justificatif joint).'] },
             { v: 'V.10.5.5', date: '2026-11-27', items: ['Demandes de prestation (œuvres sociales) : le justificatif joint part tout seul sur le Drive (CSE - Documents › année › Œuvres sociales › prestation) et apparaît dans « Mes documents » de l\'espace du salarié ; l\'appli garde le lien (données plus légères).', 'E-mails automatiques au salarié à chaque étape : demande reçue, acceptée, versée ou remise (avec justificatif PDF), refusée (avec le motif). Textes modifiables comme les autres.', 'Prestation payée en bon Swile (mot « Swile » dans le mode ou la référence) : l\'e-mail et le justificatif disent « crédité sur votre carte Swile ».'] },
@@ -45323,7 +45325,7 @@ var qrcode = function() {
   function bkJour(x) { try { return new Date(x).toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }); } catch (e) { return String(x).slice(0, 10); } }
   function bkDue() { var l = bkLast(); return !l || bkJour(l) !== bkJour(new Date()); }   // une fois par jour (V.10.2.1)
   function mo(n) { n = Number(n) || 0; return n > 1048576 ? (n / 1048576).toFixed(1).replace('.', ',') + ' Mo' : Math.max(1, Math.round(n / 1024)) + ' ko'; }
-  window.cseBkHebdo = async function (manual) {
+  window.cseBkHebdo = async function (manual, tag) {
     if (BKW.busy) return;
     if (!scriptOk()) { if (manual) say('Le script Google du CSE n\'est pas réglé (Budget › Banque › Liens Drive).', 'warning'); return; }
     if (typeof dataPassword !== 'function' || !dataPassword()) { if (manual) say('Le mot de passe des données doit être enregistré sur cet appareil (Paramètres › Sécurité › Protection des données).', 'warning'); return; }
@@ -45334,12 +45336,12 @@ var qrcode = function() {
       var who = qui(), copie = JSON.parse(JSON.stringify(db)); if (copie.config) delete copie.config.githubToken;
       var env = await cloudEncrypt(copie, dataPassword(), { rev: 'hebdo-' + Date.now(), lastModified: db.lastModified, by: who });
       env.appVersion = APP_VERSION;
-      var nom = 'CSE_sauvegarde_' + bkJour(new Date()) + '.json';
+      var nom = 'CSE_sauvegarde_' + bkJour(new Date()) + (tag ? '_' + String(tag).replace(/[^\w-]+/g, '-') : '') + '.json';
       var rj = await cseScriptPost('sauvegarde', { nom: nom, contenu: JSON.stringify(env), par: who });
       if (!rj || !rj.id) throw new Error('le Drive n\'a pas confirmé le fichier.');
       cfg().bkVerif = { nom: rj.nom || nom, taille: rj.taille || 0, at: new Date().toISOString(), retirees: rj.retirees || 0 };
       cfg().bkHebdoAt = new Date().toISOString(); cfg().bkHebdoBy = who; BKW.err = ''; BKW.list = null;
-      try { logAction('Synchronisation', 'settings', 'Sauvegarde du jour déposée et vérifiée dans le Drive (CSE - Sauvegardes)'); } catch (e) { }
+      try { logAction('Synchronisation', 'settings', (tag ? 'Sauvegarde après la permanence' : 'Sauvegarde du jour') + ' déposée et vérifiée dans le Drive (CSE - Sauvegardes › ' + nom + ')'); } catch (e) { }
       try { saveDB(); } catch (e) { }
       if (manual) say('✔ Sauvegarde déposée dans le Drive : CSE - Sauvegardes › ' + nom, 'success');
     } catch (e) {
@@ -48871,6 +48873,236 @@ var qrcode = function() {
   window.csePrestUpload = prUpload;
   setInterval(function () { if (!document.hidden && Date.now() - PRU.at > 60000) prUpload(); }, 20000);
   if (typeof window.saveDB === 'function') { var sdP = window.saveDB, sdPW = function () { var r = sdP.apply(this, arguments); setTimeout(prUpload, 2500); return r; }; for (var kP in sdP) sdPW[kP] = sdP[kP]; window.saveDB = sdPW; }
+
+  // =====================================================================
+  // 24) V.10.5.8 : CLÔTURE DE CAISSE SÉCURISÉE
+  // Juste après une clôture faite sur cet appareil : (1) l'état de caisse part en PDF sur le Drive
+  // (CSE - Documents › année › 1 - Paiements et caisse › États de caisse) ; (2) l'appli envoie tout de suite
+  // les données en ligne et le dit clairement : ✔ en ligne, ou ⚠ PAS en ligne (ne pas fermer l'appli).
+  // =====================================================================
+  var CCV = { vu: {}, base: null };
+  function ccSale() { try { return syncIsDirty(); } catch (e) { return false; } }
+  function ccRaison() {
+    try { if (!liveSyncEnabled()) return 'l\'enregistrement automatique est désactivé sur cet appareil'; } catch (e) { }
+    try { if (!dataPassword()) return 'le mot de passe des données n\'est pas enregistré sur cet appareil'; } catch (e) { }
+    try { if (!liveToken()) return 'cet appareil n\'a pas le jeton GitHub'; } catch (e) { }
+    if (!navigator.onLine) return 'pas de connexion Internet';
+    return '';
+  }
+  function ccModal(ok, c, info) {
+    var m = amModal(), b = $('v99-am-box');
+    b.innerHTML = ok
+      ? '<h3 class="font-extrabold text-emerald-700 text-base">✔ Clôture n° ' + E(c.number) + ' enregistrée en ligne</h3><p class="text-sm text-slate-700">Les autres élus la voient sur leurs appareils.' + (info ? ' ' + E(info) : '') + '</p><button type="button" class="' + BTNP + '" onclick="document.getElementById(\'v99-am-modal\').classList.add(\'hidden\')">OK</button>'
+      : '<h3 class="font-extrabold text-rose-700 text-base">⚠️ Clôture n° ' + E(c.number) + ' PAS encore en ligne</h3><p class="text-sm text-slate-700">Elle est enregistrée <b>seulement sur cet appareil</b>' + (info ? ' (' + E(info) + ')' : '') + '. <b>Ne fermez pas l\'appli</b> avant d\'avoir vu « ✔ en ligne », sinon les autres élus ne la verront pas.</p>'
+        + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" onclick="cseCcEnvoyer(\'' + E(c.id) + '\')"><i class="fa-solid fa-cloud-arrow-up"></i> Réessayer l\'envoi</button><button type="button" class="' + BTN + '" onclick="document.getElementById(\'v99-am-modal\').classList.add(\'hidden\')">Fermer</button></div><p id="v1058-cc-msg" class="text-xs"></p>';
+    m.classList.remove('hidden');
+  }
+  window.cseCcEnvoyer = async function (id) {
+    var c = (db.cashClosures || []).filter(function (x) { return String(x.id) === String(id); })[0]; if (!c) return;
+    var z = $('v1058-cc-msg'); if (z) z.textContent = 'Envoi en cours…';
+    try { if (window.cseEnvoiMaintenant) await cseEnvoiMaintenant(true); } catch (e) { }
+    for (var i = 0; i < 15 && ccSale(); i++) await new Promise(function (r) { setTimeout(r, 1000); });
+    var dr = (c.driveUrl ? 'Copie PDF sur le Drive (États de caisse).' : '') + (CCV.bk ? ' Sauvegarde complète déposée dans le Drive (CSE - Sauvegardes › ' + CCV.bk + ').' : '');
+    if (!ccSale()) ccModal(true, c, dr); else ccModal(false, c, (ccRaison() || 'envoi en attente') + (CCV.bk ? ' ; une sauvegarde complète est quand même déposée dans le Drive : ' + CCV.bk : ''));
+  };
+  async function ccDrive(c) {
+    if (c.driveUrl || !scriptOk() || typeof buildCashReportSheet !== 'function') return;
+    var css = ''; try { [].forEach.call(document.styleSheets, function (sh) { var R; try { R = sh.cssRules; } catch (e) { return; } [].forEach.call(R || [], function (q) { if (q.selectorText && /\.ps-/.test(q.selectorText) && !/html\.dark/.test(q.selectorText)) css += q.cssText + '\n'; }); }); } catch (e) { }
+    var html = '<div class="ps-sheet no-dark" style="width:700px;background:#fff;color:#0f172a;box-shadow:none"><style>' + css + '</style>' + buildCashReportSheet(c.id) + '</div>';
+    var pl = { fichier: 'État de caisse ' + c.number + ' du ' + fd(c.date).replace(/\//g, '-') + (c.employeeName ? ' - ' + c.employeeName : ''), chemin: [String(c.year || String(c.date).slice(0, 4)), '1 - Paiements et caisse', 'États de caisse'], drive: true, mail: false };
+    try { pl.pdf = await pdfDe(html); } catch (e) { pl.html = html; }
+    var j = await cseScriptPost('document', pl);
+    if (j && j.url) { c.driveUrl = j.url; db.docLog = Array.isArray(db.docLog) ? db.docLog : []; db.docLog.push({ id: uid(), at: new Date().toISOString(), doc: 'cashreport', ref: 'caisse:' + c.id, titre: 'État de caisse ' + c.number, fichier: pl.fichier, url: j.url, dossier: pl.chemin.join(' › '), par: qui() }); save(); }
+  }
+  async function ccApres(c) {
+    try { await ccDrive(c); } catch (e) { console.warn('[état de caisse Drive]', e); }
+    // V.10.5.8 : sauvegarde complète (chiffrée) des données dans le Drive après chaque permanence
+    try { if (window.cseBkHebdo) { var t0 = Date.now(), d = new Date(); await cseBkHebdo(false, 'apres-permanence-' + String(d.getHours()).padStart(2, '0') + 'h' + String(d.getMinutes()).padStart(2, '0')); var v = cfg().bkVerif; if (v && Date.parse(v.at) >= t0 - 1000) CCV.bk = v.nom; else CCV.bk = ''; } } catch (e) { CCV.bk = ''; }
+    await cseCcEnvoyer(c.id);
+  }
+  function ccScan() {
+    if (!window.__dbLoaded || seed()) return;
+    var L = db.cashClosures || [];
+    if (!CCV.base) { CCV.base = {}; L.forEach(function (c) { if (!c.closedAt || Date.now() - Date.parse(c.closedAt) > 180000) CCV.base[c.id] = 1; }); }
+    L.forEach(function (c) {
+      if (CCV.base[c.id]) return; CCV.base[c.id] = 1;
+      if (CCV.vu[c.id] || !c.closedAt || Date.now() - Date.parse(c.closedAt) > 180000 || Date.now() - AM.last > 60000 || (c.closedBy && qui() && c.closedBy !== qui())) return;
+      CCV.vu[c.id] = 1; setTimeout(function () { ccApres(c); }, 2500);
+    });
+  }
+  if (typeof window.livePull === 'function') { var lpC = window.livePull; window.livePull = async function () { try { return await lpC.apply(this, arguments); } finally { try { (db.cashClosures || []).forEach(function (c) { if (CCV.base) CCV.base[c.id] = 1; }); } catch (e) { } } }; }
+  if (typeof window.saveDB === 'function') { var sdC = window.saveDB, sdCW = function () { var r = sdC.apply(this, arguments); try { ccScan(); } catch (e) { } return r; }; for (var kC in sdC) sdCW[kC] = sdC[kC]; window.saveDB = sdCW; }
+  setTimeout(function w() { if (window.__dbLoaded) ccScan(); else setTimeout(w, 1000); }, 1500);
+
+  // =====================================================================
+  // 25) V.10.6 : PARAMÈTRES RANGÉS — 10 rubriques (dont Élus), recherche, cartes repliables,
+  //     page « Toutes les fonctions » (interrupteurs ON/OFF) et liens vers les réglages de Communication.
+  // =====================================================================
+  var RG_RUB = [
+    ['cse', 'fa-building', 'Le CSE', 'Qui vous êtes et comment l\'appli s\'affiche : identité, logo, couleur, équipes.'],
+    ['acces', 'fa-user-shield', 'Utilisateurs et accès', 'Qui peut se connecter, avec quels droits.'],
+    ['elus', 'fa-landmark', 'Élus', 'Élus, permanences, heures de délégation et réunions.'],
+    ['droits', 'fa-scale-balanced', 'Droits des salariés', 'Quotas, quotient familial, chèques vacances, caution des prêts.'],
+    ['argent', 'fa-coins', 'Argent et caisse', 'Paiements, SumUp, espèces, relances, export comptable, budget.'],
+    ['mails', 'fa-envelope', 'E-mails et notifications', 'E-mails automatiques, textes, historique, alertes, boîte mail du CSE.'],
+    ['espace', 'fa-id-card', 'Espace salarié', 'Tout ce que voient les salariés dans leur espace.'],
+    ['securite', 'fa-shield-halved', 'Sécurité et sauvegardes', 'Mot de passe, RGPD, mise en ligne, sauvegardes, corbeille, journal.'],
+    ['annee', 'fa-calendar-check', 'Fin d\'année', 'Bilan annuel et clôture de l\'exercice.'],
+    ['fonctions', 'fa-toggle-on', 'Toutes les fonctions', 'Chaque fonction qui s\'active ou se coupe, sur une seule page.']];
+  var RG_ID = { 'ent-settings-card': 'droits', 'autolock-card': 'securite', 'rgpd-card': 'securite', 'v66-deploy-card': 'securite', 'v94-pub-card': 'securite', 'v66-install-card': 'securite',
+    'v94-veille-card': 'elus', 'v94-bil-card': 'mails', 'v99-am-card': 'mails', 'v100-md-card': 'mails', 'v101-cfg-card': 'cse', 'v94-rel-card': 'argent', 'v94-caution-card': 'droits',
+    'v94-sumup-card': 'argent', 'v94-dv-card': 'argent', 'v94-cash-card': 'argent', 'v92-bk-card': 'securite', 'v66-cloud-card': 'securite', 'v69-auto-card': 'mails',
+    'v70-espace-card': 'espace', 'v94-exp-card': 'argent', 'v94-bilan-card': 'annee', 'v99-bud-card': 'argent' };
+  var RG_RE = [[/Utilisateurs|Code d'accès/i, 'acces'], [/plafonds|Quotient|Chèques vacances|Quotas|Caution/i, 'droits'], [/Logo|Identité|Couleur|Équipes/i, 'cse'],
+    [/Verrouillage|Protection des données|RGPD|Jeton|plusieurs en même temps|en ligne sur GitHub|Publier la nouvelle|Installer l'appli|Sauvegarde|Synology|Corbeille|Journal/i, 'securite'],
+    [/Paiement|SumUp|espèces|Double validation|Relances|expert-comptable|Budget/i, 'argent'], [/E-mail|Messagerie|Alertes|Boîte mail|Notification/i, 'mails'],
+    [/Rappels de la permanence|élus|délégation/i, 'elus'], [/Espace salarié/i, 'espace'], [/Bilan annuel|Clôture d'exercice/i, 'annee']];
+  var RG_OLD = { etab: 'cse', users: 'acces', sauvegardes: 'securite', cloture: 'annee' };
+  var RG = { q: '', ouverts: {} };
+  try { RG.ouverts = JSON.parse(sessionStorage.getItem('cse_rg_ouverts') || '{}') || {}; } catch (e) { }
+  function rgNorm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' '); }
+  function rgKeys() { return RG_RUB.map(function (r) { return r[0]; }); }
+  function rgCards() {
+    var tab = $('tab-settings'), out = []; if (!tab) return out;
+    tab.querySelectorAll('h3').forEach(function (h) {
+      var c = h.closest('.rounded-2xl'); if (!c || out.indexOf(c) >= 0 || c.id === 'v106-head' || c.closest('#v106-head')) return;
+      if (c.parentElement !== tab && c.parentElement.parentElement !== tab) return;
+      if (c.querySelectorAll('h3').length > 1 && !c.id) return;
+      out.push(c);
+    });
+    return out;
+  }
+  function rgTitre(c) { var h = c.querySelector('h3'); if (!h) return ''; var t = ''; h.childNodes.forEach(function (n) { if (!(n.classList && n.classList.contains('v106-st'))) t += n.textContent; }); return t.replace(/\s+/g, ' ').trim(); }
+  function rgTag() {
+    rgCards().forEach(function (c) {
+      if (c.dataset.v106virt) return;
+      if (!c.dataset.sg0) c.dataset.sg0 = c.dataset.sg || '';
+      var t = rgTitre(c), k = RG_ID[c.id];
+      if (!k) { var hit = RG_RE.filter(function (r) { return r[0].test(t); })[0]; k = hit ? hit[1] : (RG_OLD[c.dataset.sg0] || c.dataset.sg0 || 'cse'); }
+      if (rgKeys().indexOf(k) < 0) k = 'cse';
+      c.dataset.sg = k;
+      rgFold(c);
+    });
+  }
+  // Interrupteur principal d'une carte : 1re case à cocher dont le libellé parle d'activer / envoyer / autoriser…
+  function rgMaster(c) {
+    var L = [].slice.call(c.querySelectorAll('input[type=checkbox]'));
+    for (var i = 0; i < L.length; i++) {
+      var lab = L[i].closest('label'), txt = rgNorm((lab ? lab.textContent : '') || (L[i].parentElement || {}).textContent || '');
+      if (/activ|autoris|envoyer|obligatoire|utiliser|proposer|demander|rappel|relanc|sauvegard|copie|verrouill|mettre/.test(txt)) return { el: L[i], txt: (lab ? lab.textContent : L[i].parentElement.textContent).replace(/\s+/g, ' ').trim() };
+    }
+    return null;
+  }
+  function rgFold(c) {
+    var h = c.querySelector('h3'); if (!h || c.dataset.v106fold) return;
+    var head = h; while (head.parentElement && head.parentElement !== c) head = head.parentElement;
+    if (head.parentElement !== c) return;
+    var rest = [].slice.call(c.children).filter(function (x) { return x !== head; });
+    if (!rest.length) return;
+    c.dataset.v106fold = '1';
+    var bar = document.createElement('span'); bar.className = 'v106-st ml-auto flex items-center gap-2 shrink-0';
+    h.classList.add('cursor-pointer', 'select-none'); h.appendChild(bar);
+    h.addEventListener('click', function (ev) { if (ev.target.closest('button,a,input,select,label')) return; var k = rgTitre(c).slice(0, 40); RG.ouverts[k] = !RG.ouverts[k]; try { sessionStorage.setItem('cse_rg_ouverts', JSON.stringify(RG.ouverts)); } catch (e) { } rgApplyFold(c); });
+    rgApplyFold(c);
+  }
+  function rgApplyFold(c) {
+    var h = c.querySelector('h3'); if (!h || !c.dataset.v106fold) return;
+    var head = h; while (head.parentElement && head.parentElement !== c) head = head.parentElement;
+    var open = !!RG.q || !!RG.ouverts[rgTitre(c).slice(0, 40)];
+    [].slice.call(c.children).forEach(function (x) { if (x !== head) x.classList.toggle('v106-hide', !open); });
+    var m = rgMaster(c), bar = h.querySelector('.v106-st');
+    if (bar) bar.innerHTML = (m ? '<span class="text-[11px] font-bold px-2 py-0.5 rounded-lg ' + (m.el.checked ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500') + '">' + (m.el.checked ? 'Activé' : 'Coupé') + '</span>' : '')
+      + '<i class="fa-solid fa-chevron-' + (open ? 'up' : 'down') + ' text-slate-400 text-xs"></i>';
+  }
+  function rgHead() {
+    var tab = $('tab-settings'); if (!tab) return null;
+    var hd = $('v106-head');
+    if (!hd) {
+      hd = document.createElement('div'); hd.id = 'v106-head'; hd.className = 'max-w-5xl space-y-2';
+      hd.innerHTML = '<div class="relative"><i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i><input id="v106-q" type="search" autocomplete="off" placeholder="Rechercher un réglage… (ex. caution, cinéma, e-mail, sauvegarde)" class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm"></div><div id="v106-intro"></div>';
+      tab.insertBefore(hd, tab.firstChild);
+      $('v106-q').addEventListener('input', function () { RG.q = this.value.trim(); rgApply(); });
+    }
+    return hd;
+  }
+  function rgVirt(id, k, html) {
+    var tab = $('tab-settings'), el = $(id); if (!tab) return;
+    if (!el) { el = document.createElement('div'); el.id = id; el.dataset.v106virt = '1'; el.className = 'bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3 max-w-5xl'; var hd = $('v106-head'); tab.insertBefore(el, hd ? hd.nextSibling : tab.firstChild); }
+    el.dataset.sg = k; el.innerHTML = html;
+  }
+  function rgBtn(onclick, ic, t, sub) { return '<button type="button" onclick="' + onclick + '" class="text-left p-3 rounded-xl border border-slate-200 hover:border-brand-400 hover:bg-slate-50 flex items-start gap-3"><i class="fa-solid ' + ic + ' text-brand-600 mt-0.5 w-4 text-center"></i><span><span class="block text-sm font-semibold text-slate-800">' + t + '</span><span class="block text-[11px] text-slate-500">' + sub + '</span></span></button>'; }
+  function rgVirtuels() {
+    rgVirt('v106-elus', 'elus', '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-landmark text-indigo-600"></i> Élus du CSE</h3><p class="text-xs text-slate-500">Tout ce qui concerne les élus, au même endroit. Les élus retrouvent aussi leurs heures détaillées, leurs permanences et les réunions dans la rubrique « Élu » de leur espace.</p>'
+      + '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">'
+      + rgBtn("cseElus && cseElus()", 'fa-calendar-week', 'Planning des élus et permanences', 'Qui tient quelle permanence, absences, remplissage automatique.')
+      + rgBtn("switchTab('delegation')", 'fa-clock', 'Heures de délégation', 'Crédit d\'heures, détail des heures de chaque élu, récap RH.')
+      + rgBtn("switchTab('meetings')", 'fa-people-group', 'Réunions du CSE', 'Convocations, ordre du jour, PV publiés aux élus.')
+      + rgBtn("cseComm && cseComm('contacts')", 'fa-address-book', 'Élus affichés aux salariés', 'Photos, rôles et contacts visibles dans l\'espace.')
+      + rgBtn("settingsGo('acces')", 'fa-user-shield', 'Comptes des élus dans l\'appli', 'Qui peut se connecter à CSE Gestion et avec quels droits.')
+      + '</div>');
+    var C = [['annonces', 'fa-bullhorn', 'Annonces et messages', 'Les annonces affichées à l\'accueil.'], ['agenda', 'fa-calendar-days', 'Agenda', 'Les dates affichées aux salariés.'], ['sondages', 'fa-square-poll-vertical', 'Sondages', 'Questions posées aux salariés.'],
+      ['bonsplans', 'fa-tags', 'Bons plans', 'Réductions chez les partenaires.'], ['droits', 'fa-scale-balanced', 'Mes droits', 'Fiches du Code du travail et calculs.'], ['contacts', 'fa-address-book', 'Contacts', 'Élus, référents, numéros utiles.'],
+      ['affichage', 'fa-thumbtack', 'Affichage obligatoire', 'Documents et PV publiés.'], ['faq', 'fa-circle-question', 'Questions fréquentes', 'Réponses toutes prêtes.'], ['mutuelle', 'fa-notes-medical', 'Mutuelle et prévoyance', 'Garanties, contacts, documents.'],
+      ['signal', 'fa-triangle-exclamation', 'Signalements', 'Problèmes signalés par les salariés.'], ['accueil', 'fa-hand-holding-heart', 'Accueil et événements de vie', 'Livret d\'accueil, naissances, mariages…'], ['sst', 'fa-helmet-safety', 'Santé-sécurité', 'Suivi des actions.'],
+      ['baro', 'fa-chart-simple', 'Baromètre anonyme', 'Questionnaire sur les conditions de travail.'], ['avis', 'fa-star', 'Avis sur les sorties', 'Notes laissées par les salariés.'], ['stats', 'fa-chart-line', 'Consultations', 'Qui a ouvert son espace, envoi des liens.']];
+    rgVirt('v106-espace', 'espace', '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-id-card text-brand-600"></i> Contenu de l\'espace salarié</h3><p class="text-xs text-slate-500">Chaque bouton ouvre la page qui règle ce que les salariés voient. Une page laissée vide ou coupée n\'apparaît pas dans l\'espace.</p><div class="grid grid-cols-1 sm:grid-cols-3 gap-2">'
+      + C.map(function (x) { return rgBtn("cseComm && cseComm('" + x[0] + "')", x[1], x[2], x[3]); }).join('') + '</div>');
+    rgVirt('v106-mails', 'mails', '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-mobile-screen text-brand-600"></i> Notifications sur téléphone</h3><p class="text-xs text-slate-500">Les notifications envoyées aux salariés qui ont activé l\'espace sur leur téléphone.</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">'
+      + rgBtn("cseComm && cseComm('push')", 'fa-bell', 'Réglages des notifications', 'Activer, tester, rappels envoyés par notification.') + '</div>');
+  }
+  function rgFonctions() {
+    var L = [];
+    rgCards().forEach(function (c) { if (c.dataset.v106virt) return; var m = rgMaster(c); if (m) L.push({ c: c, m: m, k: c.dataset.sg, t: rgTitre(c) }); });
+    var nom = {}; RG_RUB.forEach(function (r) { nom[r[0]] = r; });
+    var html = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-list-check text-brand-600"></i> Liste des fonctions</h3><p class="text-xs text-slate-500">Activez ou coupez chaque fonction ici. « Régler » ouvre la carte complète avec ses options. Les relances et l\'export comptable restent coupés tant que vous ne les activez pas.</p>'
+      + '<div class="divide-y divide-slate-100 border border-slate-200 rounded-xl">' + L.map(function (x, i) {
+        var r = nom[x.k] || nom.cse;
+        return '<div class="flex flex-wrap items-center gap-3 px-3 py-2.5"><i class="fa-solid ' + r[1] + ' text-slate-400 w-4 text-center"></i><div class="flex-1 min-w-[200px]"><div class="text-sm font-semibold text-slate-800">' + E(x.t) + '</div><div class="text-[11px] text-slate-500">' + E(r[2]) + ' · ' + E(x.m.txt.slice(0, 90)) + '</div></div>'
+          + '<button type="button" onclick="cseRgOuvrir(' + i + ')" class="text-xs text-brand-700 font-semibold px-2">Régler</button>'
+          + '<button type="button" role="switch" aria-checked="' + x.m.el.checked + '" title="' + (x.m.el.checked ? 'Activé : cliquer pour couper' : 'Coupé : cliquer pour activer') + '" onclick="cseRgBascule(' + i + ')" style="position:relative;width:44px;height:24px;border-radius:12px;border:0;flex:0 0 auto;background:' + (x.m.el.checked ? '#10b981' : '#cbd5e1') + '"><span style="position:absolute;top:2px;' + (x.m.el.checked ? 'right:2px' : 'left:2px') + ';width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003"></span></button></div>';
+      }).join('') + '</div><p class="text-[11px] text-slate-500">Les pages de l\'espace salarié (Mes droits, Mutuelle, Baromètre…) se règlent dans la rubrique « Espace salarié ».</p>';
+    RG.fn = L;
+    rgVirt('v106-fonctions', 'fonctions', html);
+  }
+  window.cseRgBascule = function (i) { var x = (RG.fn || [])[i]; if (!x) return; try { x.m.el.click(); } catch (e) { } setTimeout(function () { rgFonctions(); rgApply(); }, 250); };
+  window.cseRgOuvrir = function (i) { var x = (RG.fn || [])[i]; if (!x) return; RG.ouverts[rgTitre(x.c).slice(0, 40)] = true; settingsGo(x.k); setTimeout(function () { rgApplyFold(x.c); try { x.c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { } }, 80); };
+  function rgPills() {
+    var nav = $('subnav-settings'); if (!nav || nav.dataset.v106) return;
+    nav.dataset.v106 = '1';
+    [].slice.call(nav.querySelectorAll('[data-sg]')).forEach(function (b) { b.remove(); });
+    var health = $('nav-health');
+    RG_RUB.forEach(function (r) { var b = document.createElement('button'); b.type = 'button'; b.className = 'subnav-pill'; b.dataset.sg = r[0]; b.innerHTML = '<i class="fa-solid ' + r[1] + '"></i> ' + E(r[2]); b.onclick = function () { RG.q = ''; var q = $('v106-q'); if (q) q.value = ''; settingsGo(r[0]); }; nav.insertBefore(b, health || null); });
+  }
+  function rgApply() {
+    var tab = $('tab-settings'); if (!tab) return;
+    var q = rgNorm(RG.q), g = (typeof settingsGroup !== 'undefined' ? settingsGroup : 'cse'), n = 0;
+    rgCards().forEach(function (c) {
+      var vis = q ? (c.dataset.sg !== 'fonctions' && rgNorm(c.textContent).indexOf(q) >= 0) : c.dataset.sg === g;
+      c.classList.toggle('sg-hidden', !vis); if (vis) n++;
+      if (!c.dataset.v106virt) rgApplyFold(c);
+    });
+    var r = RG_RUB.filter(function (x) { return x[0] === g; })[0] || RG_RUB[0], intro = $('v106-intro');
+    var sub = $('page-subtitle'); if (sub) sub.innerText = 'Réglages de l\'appli et de l\'espace salarié, rangés par rubrique';
+    document.querySelectorAll('#subnav-settings [data-sg]').forEach(function (b) { b.classList.toggle('is-active', !q && b.dataset.sg === g); });
+    var act = document.querySelector('#subnav-settings .is-active'); if (act && act.scrollIntoView) { try { act.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) { } }
+    if (intro) intro.innerHTML = q ? '<p class="text-sm text-slate-600 px-1">' + (n ? n + ' réglage(s) trouvé(s) pour « ' + E(RG.q) + ' » :' : 'Aucun réglage ne correspond à « ' + E(RG.q) + ' ».') + '</p>'
+      : '<div class="px-1"><h2 class="text-lg font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid ' + r[1] + ' text-brand-600"></i> ' + E(r[2]) + '</h2><p class="text-xs text-slate-500">' + E(r[3]) + (g !== 'fonctions' ? ' Cliquez sur un titre pour ouvrir ou fermer la carte.' : '') + '</p></div>';
+  }
+  (function () { var st = document.createElement('style'); st.textContent = '.v106-hide{display:none!important} #tab-settings h3 .v106-st{margin-left:auto}'; document.head.appendChild(st); })();
+  (function () {
+    try { if (typeof SETTINGS_GROUPS !== 'undefined') { SETTINGS_GROUPS.length = 0; rgKeys().forEach(function (k) { SETTINGS_GROUPS.push(k); }); } } catch (e) { }
+    try { if (typeof settingsGroup !== 'undefined' && rgKeys().indexOf(settingsGroup) < 0) settingsGroup = RG_OLD[settingsGroup] || 'cse'; } catch (e) { }
+    var show0 = window.settingsShowGroup;
+    if (typeof show0 !== 'function') return;
+    window.settingsShowGroup = function (g) {
+      if (RG_OLD[g]) g = RG_OLD[g];
+      try { rgPills(); rgHead(); rgVirtuels(); rgTag(); if (g === 'fonctions') rgFonctions(); } catch (e) { console.warn('[v106]', e); }
+      show0(g);
+      try { rgApply(); } catch (e) { console.warn('[v106]', e); }
+    };
+    var go0 = window.settingsGo;
+    if (typeof go0 === 'function') window.settingsGo = function (g) { return go0(RG_OLD[g] || g); };
+  })();
 
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
