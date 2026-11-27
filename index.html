@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"gwvamd4xx8H+G5egKloKEw==","iv":"vdkFUZceCOGTz2mZ","rev":"boot","lastModified":"2026-11-27T12:03:15.039Z","by":"Michaël GROSJEAN","data":"e6jgp9ZQrhfhiXN5fU1PWp0VZKHzCNOMhUGqvUHYnr30QeWgWa01DWLGdB7au4C3+Tv+tnorOXlU242a4NxHZQ=="},"at":"2026-11-27T12:03:15.070Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"HHt2hpHYNHGg1E1t2ibfFw==","iv":"IjNxAil6QGyCDRM7","rev":"boot","lastModified":"2026-11-27T12:22:03.820Z","by":"Michaël GROSJEAN","data":"Hcrh8rEL2fwLI3JCdYNCTETOOs/uaSoTw/pGUIxNKzVTUi5IJHFLduYmJxksxQ/DnXFwBfh6i+4IsVZNpx8haw=="},"at":"2026-11-27T12:22:03.852Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -3875,8 +3875,8 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
                                 <label class="flex items-start gap-2 text-[11px] text-slate-600 mt-2"><input type="checkbox" id="cfg-quota-std-foyer" class="w-4 h-4 mt-0.5 rounded border-slate-300"> <span><b>Par personne du foyer</b> : ce nombre de billets par an <b>pour chaque</b> salarié, enfant et conjoint (ex. 2 × 4 personnes = 8 billets de chaque type)</span></label>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Quota places Cinéma / an</label>
-                                <input type="number" min="0" id="cfg-quota-cinema" class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm" placeholder="10">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Quota places Cinéma</label>
+                                <div class="flex gap-2"><input type="number" min="0" id="cfg-quota-cinema" class="w-full p-2.5 bg-slate-50 border rounded-xl text-sm" placeholder="10"><select id="cfg-quota-cine-periode" class="p-2.5 bg-slate-50 border rounded-xl text-sm"><option value="an">par an</option><option value="mois">par mois</option></select></div>
                                 <p class="text-[11px] text-slate-500 mt-1">Toutes les places de cinéma comptent ensemble (Épinal, Remiremont…).</p>
                                 <label class="flex items-start gap-2 text-[11px] text-slate-600 mt-2"><input type="checkbox" id="cfg-quota-cine-foyer" class="w-4 h-4 mt-0.5 rounded border-slate-300"> <span><b>Par personne du foyer</b> (salarié, enfants, conjoint)</span></label>
                                 <label class="flex items-start gap-2 text-[11px] text-slate-600 mt-2"><input type="checkbox" id="cfg-quota-cine-block" class="w-4 h-4 mt-0.5 rounded border-slate-300 text-rose-600"> <span><b>Bloquer</b> la vente si le plafond cinéma est dépassé (sinon, message d'avertissement seulement)</span></label>
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.5.5";
+        const APP_VERSION = "V.10.5.6";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -12871,6 +12871,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
             const foyer = empQ ? 1 + (empQ.children || []).filter(c => c && (c.name || '').trim()).length + (empQ.spouse && empQ.spouse.name ? 1 : 0) : 1;
             const stdFoyer = !(db.config && db.config.quotaStdPerFoyer === false), cineFoyer = !!(db.config && db.config.quotaCinePerFoyer);
             const quotaCinema = cineFoyer ? quotaCinema0 * foyer : quotaCinema0;
+            const cineMois = !!(db.config && db.config.quotaCinemaPeriode === 'mois'), cinePer = cineMois ? 'par mois' : 'par an', saleYM = saleDateVal.slice(0, 7);
             const foyerTxt = `${foyer} personne${foyer > 1 ? 's' : ''} dans le foyer`;
 
             let grandTotal = 0;
@@ -12946,13 +12947,13 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
                             cineChecked = true;
                             const isCineId = id => { const t = db.tickets.find(x => x.id === id); const ti = ((t && t.title) || '').toLowerCase(); return ti.includes('cinéma') || ti.includes('cinema'); };
                             const isCineItem = i => isCineId(i.ticketId) || /cin[ée]ma/i.test(i.ticketTitle || '');
-                            const pastCinemaQty = pastSales.reduce((sum, s) => {
+                            const pastCinemaQty = pastSales.filter(s => !cineMois || String(s.date || '').slice(0, 7) === saleYM).reduce((sum, s) => {
                                 if (s.items && Array.isArray(s.items)) return sum + s.items.filter(isCineItem).reduce((a, i) => a + (i.qty || 0), 0);
                                 return isCineId(s.ticketId) ? sum + (s.qty || 0) : sum;
                             }, 0);
                             const currentCartQty = cartItems.filter(ci => ci.ticketId && isCineId(ci.ticketId)).reduce((sum, ci) => sum + (parseInt(ci.qty) || 0), 0);
                             if (pastCinemaQty + currentCartQty > quotaCinema) {
-                                warningMessages.push(`⚠️ PLAFOND CINÉMA : ${pastCinemaQty + currentCartQty}/${quotaCinema} places de cinéma par an (tous cinémas confondus)${cineFoyer ? ` (${quotaCinema0} par personne × ${foyerTxt})` : ''}.`);
+                                warningMessages.push(`⚠️ PLAFOND CINÉMA : ${pastCinemaQty + currentCartQty}/${quotaCinema} places de cinéma ${cinePer}${cineMois ? ' (' + saleYM.slice(5) + '/' + saleYM.slice(0, 4) + ')' : ''} (tous cinémas confondus)${cineFoyer ? ` (${quotaCinema0} par personne × ${foyerTxt})` : ''}.`);
                                 cineExceeded = true;
                             }
                         }
@@ -21163,7 +21164,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             db.config.quotaStandardPerYear = parseInt(document.getElementById('cfg-quota-standard').value) || 2;
             db.config.quotaCinemaPerYear = parseInt(document.getElementById('cfg-quota-cinema').value) || 10;
             db.config.quotaBlocking = document.getElementById('cfg-quota-blocking').checked;
-            { const f1 = document.getElementById('cfg-quota-std-foyer'), f2 = document.getElementById('cfg-quota-cine-foyer'); if (f1) db.config.quotaStdPerFoyer = f1.checked; if (f2) db.config.quotaCinePerFoyer = f2.checked; const f3 = document.getElementById('cfg-quota-cine-block'); if (f3) db.config.quotaCinemaBlocking = f3.checked; }
+            { const f1 = document.getElementById('cfg-quota-std-foyer'), f2 = document.getElementById('cfg-quota-cine-foyer'); if (f1) db.config.quotaStdPerFoyer = f1.checked; if (f2) db.config.quotaCinePerFoyer = f2.checked; const f3 = document.getElementById('cfg-quota-cine-block'); if (f3) db.config.quotaCinemaBlocking = f3.checked; const f4 = document.getElementById('cfg-quota-cine-periode'); if (f4) db.config.quotaCinemaPeriode = f4.value; }
             const tokenInput = document.getElementById('cfg-github-token').value.trim();
             if (tokenInput) localStorage.setItem(TOKEN_STORAGE_KEY, tokenInput);
             logAction('Modification', 'settings', 'Paramètres CSE mis à jour');
@@ -21724,6 +21725,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.5.6', date: '2026-11-27', items: ['Quota cinéma « par an » ou « par mois » (Paramètres › Droits & quotas). Exemple : 1 place par mois et par personne du foyer, avec blocage : un salarié avec conjoint et un enfant a droit à 3 places par mois. L\'espace salarié affiche les places restantes du mois.', 'Historique des envois aux salariés : Paramètres › Établissement › carte « E-mails automatiques au salarié » › 📜 Historique des envois (recherche par salarié, message complet, e-mail ou notification, justificatif joint).'] },
             { v: 'V.10.5.5', date: '2026-11-27', items: ['Demandes de prestation (œuvres sociales) : le justificatif joint part tout seul sur le Drive (CSE - Documents › année › Œuvres sociales › prestation) et apparaît dans « Mes documents » de l\'espace du salarié ; l\'appli garde le lien (données plus légères).', 'E-mails automatiques au salarié à chaque étape : demande reçue, acceptée, versée ou remise (avec justificatif PDF), refusée (avec le motif). Textes modifiables comme les autres.', 'Prestation payée en bon Swile (mot « Swile » dans le mode ou la référence) : l\'e-mail et le justificatif disent « crédité sur votre carte Swile ».'] },
             { v: 'V.10.5.4', date: '2026-11-27', items: ['E-mails automatiques au salarié : textes modifiables type par type (vente, inscription, colis, prêt, retour, paiement, virement, chèques vacances), avec des mots remplacés tout seuls ({prenom}, {montant}, {pour}…), aperçu et retour au texte d\'origine. Paramètres › carte « E-mails automatiques au salarié » › ✏️ Modifier les textes.', 'Nouveaux textes d\'origine pour un virement reçu et un versement de chèques vacances.'] },
             { v: 'V.10.5.3', date: '2026-11-27', items: ['Script Google v92 : quand la limite Gmail du jour (environ 100 destinataires) est atteinte, les e-mails partent avec Brevo (300 de plus par jour, gratuit), toujours au nom du CSE et avec les réponses dans la boîte Gmail. Facultatif : il suffit de coller la clé Brevo dans le script. Le compteur « E-mails restants aujourd\'hui » (Réglages › Services en ligne) montre Gmail + Brevo.'] },
@@ -23234,7 +23236,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
                 document.getElementById('cfg-quota-standard').value = db.config.quotaStandardPerYear || 2;
                 document.getElementById('cfg-quota-cinema').value = db.config.quotaCinemaPerYear || 10;
                 document.getElementById('cfg-quota-blocking').checked = !!db.config.quotaBlocking;
-                { const f1 = document.getElementById('cfg-quota-std-foyer'), f2 = document.getElementById('cfg-quota-cine-foyer'); if (f1) f1.checked = db.config.quotaStdPerFoyer !== false; if (f2) f2.checked = !!db.config.quotaCinePerFoyer; const f3 = document.getElementById('cfg-quota-cine-block'); if (f3) f3.checked = typeof db.config.quotaCinemaBlocking === 'boolean' ? db.config.quotaCinemaBlocking : !!db.config.quotaBlocking; }
+                { const f1 = document.getElementById('cfg-quota-std-foyer'), f2 = document.getElementById('cfg-quota-cine-foyer'); if (f1) f1.checked = db.config.quotaStdPerFoyer !== false; if (f2) f2.checked = !!db.config.quotaCinePerFoyer; const f3 = document.getElementById('cfg-quota-cine-block'); if (f3) f3.checked = typeof db.config.quotaCinemaBlocking === 'boolean' ? db.config.quotaCinemaBlocking : !!db.config.quotaBlocking; const f4 = document.getElementById('cfg-quota-cine-periode'); if (f4) f4.value = db.config.quotaCinemaPeriode === 'mois' ? 'mois' : 'an'; }
             }
             const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
             if (storedToken) {
@@ -43594,7 +43596,7 @@ var qrcode = function() {
     // Quotas billetterie de l'année (à titre d'information dans l'espace)
     if (empIsCse(e)) { f.membreCse = true; f.materielCse = (db.equipment || []).filter(function (q) { return q.espaceHidden; }).map(function (q) { return matMap(q, today()); }); }
     var yq = String(new Date().getFullYear()); f.foyer = 1 + (e.children || []).filter(function (k) { return k && String(k.name || '').trim(); }).length + (e.spouse && e.spouse.name ? 1 : 0); f.pris = {}; f.cinePris = 0;
-    (db.sales || []).forEach(function (s) { if (s.employeeId !== id || String(iso(s.date)).slice(0, 4) !== yq) return; (s.items || []).forEach(function (i) { f.pris[i.ticketId] = (f.pris[i.ticketId] || 0) + (i.qty || 0); if (/cin[ée]ma/i.test(i.ticketTitle || '') || isCine(i.ticketId)) f.cinePris += i.qty || 0; }); });
+    (db.sales || []).forEach(function (s) { if (s.employeeId !== id || String(iso(s.date)).slice(0, 4) !== yq) return; (s.items || []).forEach(function (i) { f.pris[i.ticketId] = (f.pris[i.ticketId] || 0) + (i.qty || 0); if ((/cin[ée]ma/i.test(i.ticketTitle || '') || isCine(i.ticketId)) && (db.config.quotaCinemaPeriode !== 'mois' || String(iso(s.date)).slice(0, 7) === (new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0')))) f.cinePris += i.qty || 0; }); });
     var byD = function (a, b) { return String(b.date || b.debut).localeCompare(String(a.date || a.debut)); };
     f.achats.sort(byD); f.offert.sort(byD); f.sorties.sort(byD); f.prets.sort(byD); f.cv.sort(function (a, b) { return b.annee.localeCompare(a.annee); });
     return f;
@@ -43643,7 +43645,7 @@ var qrcode = function() {
     return { logo: espLogo, couleur: (function () { try { return brandRgbToHex(brandScale(brandState.hex)[600]); } catch (e) { return (typeof brandState !== 'undefined' && brandState && brandState.hex) || ''; } })(), cse: { nom: c.cseName || 'CSE', email: typeof CSE_SENDER_EMAIL !== 'undefined' ? CSE_SENDER_EMAIL : '' }, appUrl: /^https:/.test(location.protocol) ? location.origin + location.pathname : '',
       sorties: sorties, materiel: materiel, materielInfo: c.espaceMatInfo || '', permanence: c.espacePermanence == null ? 'Le vendredi de 11h à 13h30' : c.espacePermanence, docs: docsChosen().map(function (d) { return { titre: d.titre, date: d.date, url: d.url }; }),
       billets: (db.tickets || []).filter(function (t) { return t && !t.archived && !t.espaceHidden && (!t.expiryDate || iso(t.expiryDate) >= T); }).map(function (t) { return { id: t.id, titre: t.title, prix: t.price, prixPublic: t.publicPrice != null && t.publicPrice > t.price ? t.publicPrice : null, stock: Math.max(0, t.stock || 0), expire: iso(t.expiryDate), cinema: /cin[ée]ma/i.test(t.title || '') }; }).sort(function (a, b) { return String(a.titre).localeCompare(String(b.titre)); }),
-      quotas: { std: c.quotaStandardPerYear || 2, stdFoyer: c.quotaStdPerFoyer !== false, cine: c.quotaCinemaPerYear || 10, cineFoyer: !!c.quotaCinePerFoyer },
+      quotas: { std: c.quotaStandardPerYear || 2, stdFoyer: c.quotaStdPerFoyer !== false, cine: c.quotaCinemaPerYear || 10, cineFoyer: !!c.quotaCinePerFoyer, cineMois: c.quotaCinemaPeriode === 'mois' },
       swile: c.espaceSwileOn ? { url: c.espaceSwileUrl || '', texte: c.espaceSwileText || '' } : null,
       cv: { ouvert: !!c.espaceCvOpen, texte: c.espaceCvText || '', annee: cvCampYear() },
       reponses: (db.ideas || []).filter(function (x) { return x.publier && x.reponse && !x.deleted; }).sort(function (a, b) { return String(b.repAt || b.at).localeCompare(String(a.repAt || a.at)); }).slice(0, 40).map(function (x) { return { date: String(x.repAt || x.at).slice(0, 10), type: x.type, texte: x.texte, reponse: x.reponse }; }) };
@@ -47594,6 +47596,24 @@ var qrcode = function() {
     if (k === 'vente') ex.ref = ((db.sales || [])[(db.sales || []).length - 1] || {}).id; if (k === 'inscription') ex.ref = ((db.registrations || [])[0] || {}).id; if (k === 'colis') ex.ref = ((db.distributions || [])[0] || {}).id; if (k === 'pret' || k === 'retour') ex.ref = ((db.loans || [])[0] || {}).id;
     return ex;
   }
+  // V.10.5.6 : historique des e-mails envoyés aux salariés (automatiques + documents envoyés par e-mail)
+  var AMH = { q: '' };
+  function amHistoL() {
+    var lab = {}; AM_TYPES.forEach(function (k) { lab[k[0]] = k[1]; }); AM_TPL.forEach(function (k) { lab[k[0]] = k[1]; });
+    var L = amLog().map(function (x) { return { at: x.at, emp: x.empId, to: x.to, push: x.push, pdf: x.pdf, sujet: x.sujet || '', type: lab[x.cle || x.type] || x.type, corps: x.corps || '' }; });
+    (db.docLog || []).forEach(function (d) { if (d.to && !amLog().some(function (a) { return a.sujet && Math.abs(new Date(a.at) - new Date(d.at)) < 120000 && String(a.empId) === String(d.emp); })) L.push({ at: d.at, emp: d.emp, to: d.to, pdf: true, sujet: d.titre || d.fichier || 'Document', type: '📄 Document', corps: '', url: d.url }); });
+    return L.sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
+  }
+  window.cseAmHisto = function (q) {
+    if (q != null) AMH.q = q; var m = amModal(), b = $('v99-am-box'), Q = AMH.q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    var L = amHistoL().filter(function (x) { return !Q || (nom(emp(x.emp)) + ' ' + x.sujet + ' ' + x.type + ' ' + (x.to || '')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(Q) >= 0; });
+    var rows = L.slice(0, 300).map(function (x) { return '<details class="border-t border-slate-100 py-1"><summary class="text-xs cursor-pointer"><span class="text-slate-400">' + E((function () { var d = new Date(x.at); return isNaN(d) ? String(x.at || '') : d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); })()) + '</span> · <b>' + E(nom(emp(x.emp))) + '</b> · ' + E(x.sujet) + ' <span class="text-slate-400">' + (x.to ? '📧' : '') + (x.push ? '🔔' : '') + (x.pdf ? '📎' : '') + '</span></summary><div class="text-[11px] text-slate-600 pl-3 pt-1">' + E(x.type) + (x.to ? ' · envoyé à ' + E(x.to) : x.push ? ' · notification sur le téléphone (pas d\'e-mail)' : ' · rien envoyé (ni e-mail ni espace)') + (x.url ? ' · <a class="text-indigo-700 underline" target="_blank" rel="noopener" href="' + E(x.url) + '">ouvrir le document</a>' : '') + (x.corps ? '<pre class="whitespace-pre-wrap bg-slate-50 border border-slate-200 rounded-lg p-2 mt-1">' + E(x.corps) + '</pre>' : '') + '</div></details>'; }).join('');
+    b.innerHTML = '<div class="flex items-start justify-between"><h3 class="font-extrabold text-slate-800 text-base">📜 Historique des envois aux salariés</h3><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="document.getElementById(\'v99-am-modal\').classList.add(\'hidden\')">×</button></div>'
+      + '<p class="text-xs text-slate-600">E-mails automatiques (ventes, paiements, chèques vacances, prestations…) et documents envoyés par e-mail. 📧 e-mail · 🔔 notification · 📎 justificatif joint. Cliquez sur une ligne pour voir le message.</p>'
+      + '<input class="' + INP + '" placeholder="🔎 Chercher un salarié, un objet…" value="' + E(AMH.q) + '" oninput="clearTimeout(window.__amhT);var v=this.value;window.__amhT=setTimeout(function(){cseAmHisto(v);var i=document.querySelector(\'#v99-am-box input\');if(i){i.focus();i.selectionStart=i.selectionEnd=i.value.length;}},300)">'
+      + '<p class="text-[11px] text-slate-500">' + L.length + ' envoi(s)' + (L.length > 300 ? ', les 300 derniers affichés' : '') + '.</p><div>' + (rows || '<p class="text-xs text-slate-400">Aucun envoi pour l\'instant.</p>') + '</div>';
+    m.classList.remove('hidden');
+  };
   var AMT = { k: 'vente' };
   window.cseAmTextes = function (k) {
     if (k) AMT.k = k; var c = cfg(), T = (c.amTxt || {})[AMT.k] || {}, ex = amExemple(AMT.k), d = amTexte0(ex), m = amModal(), b = $('v99-am-box');
@@ -47689,7 +47709,7 @@ var qrcode = function() {
     if (e && !e.email && e.espaceToken && pushPret()) {
       try { await cseEspacePost('push', { cibles: [e.espaceToken], titre: t.subject, texte: t.body.replace(/^Bonjour[^\n]*\n\n/, '').slice(0, 300) }); res.push = true; } catch (er) { }
     }
-    amLog().push({ at: new Date().toISOString(), type: x.type, empId: x.empId, to: res.mail ? e.email : '', push: res.push, pdf: !!pd, sujet: t.subject }); if (amLog().length > 600) db.amLog = amLog().slice(-600);
+    amLog().push({ at: new Date().toISOString(), type: x.type, empId: x.empId, to: res.mail ? e.email : '', push: res.push, pdf: !!pd, cle: amCle(x), corps: String(t.body || '').slice(0, 1500), sujet: t.subject }); if (amLog().length > 600) db.amLog = amLog().slice(-600);
     return res;
   }
   // Le premier e-mail de chaque type est montré en entier avant de partir (ensuite c'est automatique).
@@ -47748,7 +47768,7 @@ var qrcode = function() {
     var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-envelope-circle-check text-brand-600"></i> E-mails automatiques au salarié</h3>'
       + '<label class="flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="cseAmSet(\'on\',this.checked)"> Envoyer un e-mail au salarié à chaque saisie faite sur cet appareil</label>'
       + '<div class="grid sm:grid-cols-2 gap-1 pl-6' + (on ? '' : ' opacity-50') + '">' + AM_TYPES.map(function (k) { return '<div class="flex items-center gap-2 text-xs"><label class="flex items-center gap-2 flex-1"><input type="checkbox"' + (amOn(k[0]) ? ' checked' : '') + (on ? '' : ' disabled') + ' onchange="cseAmSet(\'' + k[0] + '\',this.checked)"> ' + E(k[1]) + '</label>' + (k[0] !== 'demande' ? '<button type="button" class="text-indigo-700 underline" onclick="cseAmApercu(\'' + k[0] + '\')">aperçu</button>' : '') + '</div>'; }).join('') + '</div>'
-      + '<p class="text-[11px] text-slate-500">Depuis la boîte du CSE, avec votre signature et le logo. Le premier e-mail de chaque type vous est montré en entier avant de partir. <button type="button" class="text-indigo-700 underline font-semibold" onclick="cseAmTextes()">✏️ Modifier les textes</button>' + (Object.keys(C.amTxt || {}).length ? ' (' + Object.keys(C.amTxt).length + ' modifié' + (Object.keys(C.amTxt).length > 1 ? 's' : '') + ')' : '') + '. Sans adresse e-mail dans la fiche : notification sur son téléphone seulement. ' + (n30 ? n30 + ' envoi(s) ces 30 derniers jours.' : '') + '</p>'
+      + '<p class="text-[11px] text-slate-500">Depuis la boîte du CSE, avec votre signature et le logo. Le premier e-mail de chaque type vous est montré en entier avant de partir. <button type="button" class="text-indigo-700 underline font-semibold" onclick="cseAmTextes()">✏️ Modifier les textes</button> · <button type="button" class="text-indigo-700 underline font-semibold" onclick="cseAmHisto()">📜 Historique des envois</button>' + (Object.keys(C.amTxt || {}).length ? ' (' + Object.keys(C.amTxt).length + ' modifié' + (Object.keys(C.amTxt).length > 1 ? 's' : '') + ')' : '') + '. Sans adresse e-mail dans la fiche : notification sur son téléphone seulement. ' + (n30 ? n30 + ' envoi(s) ces 30 derniers jours.' : '') + '</p>'
       + '<label class="flex items-center gap-2 text-xs text-slate-700' + (on ? '' : ' opacity-50') + '"><input type="checkbox"' + (C.justifOn !== false ? ' checked' : '') + ' onchange="cseAmSet(\'justif\',this.checked)"> 📎 Joindre un justificatif PDF à chaque opération, rangé sur le Drive et dans « Mes documents » du salarié (même sans e-mail). Pas de doublon : le prêt, le retour et les espèces ont déjà leur document signé.</label>'
       + '<hr class="border-slate-100"><label class="flex items-center gap-2 text-xs text-slate-700"><input type="checkbox"' + (C.delegMiMois !== false ? ' checked' : '') + ' onchange="cseAmSet(\'deleg15\',this.checked)"> 🕒 Délégation : notification aux élus le 15 du mois s\'il leur reste plus de la moitié de leur crédit</label>';
     if (force || c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
