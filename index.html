@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"LheeYXYWmnGQ0OZFbrDXZQ==","iv":"FBWbeTTrYLblxELx","rev":"boot","lastModified":"2026-11-27T10:30:16.847Z","by":"Michaël GROSJEAN","data":"133lpJjU2Bc0hu9qfmOCWWiu1IbgONoRk0Q9/8gvAnAjwwh+YdVcTsA5EbErxCL8CkFCFtk3V+K/VZSgNU94ig=="},"at":"2026-11-27T10:30:16.885Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"V2YteBEe7wL/2qsTErWvLA==","iv":"ygtKNWalY9VHH6NL","rev":"boot","lastModified":"2026-11-27T11:33:11.247Z","by":"Michaël GROSJEAN","data":"5n1mk7cxz40npA+MGtEcwsr+WA1xfPYhuo6Jj4rA5mnnPM+TuLGZ/hqSL1+AuJbfGh1W6e+HGwVO/ankrFfKhg=="},"at":"2026-11-27T11:33:11.285Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.5.3";
+        const APP_VERSION = "V.10.5.4";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.5.4', date: '2026-11-27', items: ['E-mails automatiques au salarié : textes modifiables type par type (vente, inscription, colis, prêt, retour, paiement, virement, chèques vacances), avec des mots remplacés tout seuls ({prenom}, {montant}, {pour}…), aperçu et retour au texte d\'origine. Paramètres › carte « E-mails automatiques au salarié » › ✏️ Modifier les textes.', 'Nouveaux textes d\'origine pour un virement reçu et un versement de chèques vacances.'] },
             { v: 'V.10.5.3', date: '2026-11-27', items: ['Script Google v92 : quand la limite Gmail du jour (environ 100 destinataires) est atteinte, les e-mails partent avec Brevo (300 de plus par jour, gratuit), toujours au nom du CSE et avec les réponses dans la boîte Gmail. Facultatif : il suffit de coller la clé Brevo dans le script. Le compteur « E-mails restants aujourd\'hui » (Réglages › Services en ligne) montre Gmail + Brevo.'] },
             { v: 'V.10.5.2', date: '2026-11-27', items: ['Message « ancienne version du script » : indique maintenant le bon fichier (v91) au lieu de v69.', 'Espace : un seul onglet « 🎉 Événements » qui regroupe les événements de vie et les aides du CSE (l\'onglet « Aides » disparaît quand les événements sont activés). Une aide du même nom qu\'un événement s\'y ajoute (montant affiché), les autres aides sont à la suite.', 'Justificatif obligatoire, avec le document à fournir affiché pour chaque événement (modifiable dans Communication › Accueil et événements).'] },
             { v: 'V.10.5.1', date: '2026-11-27', items: [
@@ -47340,7 +47341,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 92;
+  var SCRIPT_ATTENDU = 91;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -47518,7 +47519,7 @@ var qrcode = function() {
     ev = ev.filter(function (x) { return amOn(x.type) && emp(x.empId); });
     if (ev.length) { AM.q = AM.q.concat(ev); setTimeout(amSuivant, 1500); }
   }
-  function amTexte(x) {
+  function amTexte0(x) {
     var e = emp(x.empId), pr = (e && e.firstname) || '', c = cfg(), perm = c.espacePermanence ? ' (' + String(c.espacePermanence).charAt(0).toLowerCase() + String(c.espacePermanence).slice(1) + ')' : '';
     var bj = 'Bonjour ' + pr + ',\n\n', fin = '\n\nVous retrouvez tout dans votre espace CSE.', s, r, o, l, items;
     if (x.type === 'vente') {
@@ -47543,9 +47544,59 @@ var qrcode = function() {
         ? { subject: 'Prêt de matériel du CSE', body: bj + 'Vous avez emprunté au CSE le ' + fd(today()) + ' :\n' + items + '\n\nÀ rendre le ' + fd(l.endDate) + ', complet et en bon état, à la permanence du CSE' + perm + '.' + fin }
         : { subject: 'Matériel rendu au CSE', body: bj + 'Le CSE a bien reçu le matériel que vous aviez emprunté :\n' + items + '\n\nMerci !' + fin };
     }
-    if (x.type === 'paiement') return { subject: 'Paiement reçu par le CSE', body: bj + 'Le CSE a bien reçu votre paiement de ' + eur(x.montant || 0) + ' pour : ' + (x.lib || 'votre achat') + '.\n\nMerci !' + fin };
+    if (x.type === 'paiement') { var mk = amCle(x), mdp = modePaie(x.ref); if (mk === 'paiement-cv') return { subject: 'Chèques vacances : versement reçu', body: bj + 'Le CSE a bien reçu votre versement de ' + eur(x.montant || 0) + (mdp ? ' (' + String(mdp).toLowerCase() + ')' : '') + ' pour : ' + (x.lib || 'vos chèques vacances') + '.\n\nMerci !' + fin };
+      if (mk === 'paiement-virement') return { subject: 'Virement reçu par le CSE', body: bj + 'Le CSE a bien reçu votre virement de ' + eur(x.montant || 0) + ' pour : ' + (x.lib || 'votre achat') + '.\n\nMerci !' + fin };
+      return { subject: 'Paiement reçu par le CSE', body: bj + 'Le CSE a bien reçu votre paiement de ' + eur(x.montant || 0) + (mdp ? ' (' + String(mdp).toLowerCase() + ')' : '') + ' pour : ' + (x.lib || 'votre achat') + '.\n\nMerci !' + fin }; }
     return { subject: 'CSE', body: bj };
   }
+  // V.10.5.4 : textes des e-mails modifiables, type par type ({prenom}, {montant}…)
+  var AM_TPL = [['vente', '🎟️ Vente de billets'], ['inscription', '🎭 Inscription à une sortie'], ['colis', '🎁 Colis récupéré'], ['pret', '⛺ Matériel prêté'], ['retour', '⛺ Matériel rendu'], ['paiement', '💶 Paiement reçu (CB, espèces, chèque…)'], ['paiement-virement', '🏦 Virement reçu'], ['paiement-cv', '🏖️ Chèques vacances : versement reçu']];
+  var AM_VARS = [['prenom', 'prénom du salarié'], ['nom', 'nom complet'], ['montant', 'montant'], ['pour', 'ce qui est payé'], ['mode', 'mode de paiement'], ['details', 'liste (billets, matériel…)'], ['sortie', 'nom de la sortie'], ['date_sortie', 'date de la sortie'], ['lieu', 'lieu'], ['rendre', 'date de retour du matériel'], ['colis', 'nom du colis'], ['date', 'date du jour'], ['permanence', 'horaires de permanence']];
+  function amCle(x) { if (x.type !== 'paiement') return x.type; var r = String(x.ref || ''), m = modePaie(r); if (r.indexOf('c:') === 0) return 'paiement-cv'; if (/virement/i.test(m)) return 'paiement-virement'; return 'paiement'; }
+  function amVars(x) {
+    var e = emp(x.empId) || {}, c = cfg(), V = { prenom: e.firstname || '', nom: nom(e), montant: x.montant ? eur(x.montant) : '', pour: x.lib || '', mode: String(modePaie(x.ref) || '').toLowerCase(), details: '', sortie: '', date_sortie: '', lieu: '', rendre: '', colis: '', date: fd(today()), permanence: c.espacePermanence || '' };
+    try {
+      if (x.type === 'vente') { var s = (db.sales || []).filter(function (y) { return String(y.id) === String(x.ref); })[0] || { items: [] }; V.details = (s.items || []).map(function (i) { return '- ' + (i.qty || 1) + ' × ' + (i.ticketTitle || 'billet'); }).join('\n'); V.montant = eur(s.totalPaid || 0); V.mode = String(s.paymentMethod || '').toLowerCase(); }
+      if (x.type === 'inscription') { var r = (db.registrations || []).filter(function (y) { return String(y.id) === String(x.ref); })[0] || {}, o = sortieDe(r.outingId) || {}, m = regAmount(r); V.sortie = o.name || ''; V.date_sortie = o.date ? fd(o.date) : ''; V.lieu = o.location || ''; V.montant = m > 0 ? eur(m) : ''; V.details = 'vous' + ((r.guests || []).length ? ' + ' + r.guests.map(function (g) { return g.name; }).filter(Boolean).join(', ') : ''); }
+      if (x.type === 'colis') { var d = (db.distributions || []).filter(function (y) { return String(y.id) === String(x.ref); })[0] || {}; V.colis = (d.name || 'colis du CSE') + (x.enfant ? ' de ' + x.enfant : ''); }
+      if (x.type === 'pret' || x.type === 'retour') { var l = (db.loans || []).filter(function (y) { return String(y.id) === String(x.ref); })[0] || {}; V.details = (l.items || []).map(function (i) { return '- ' + (i.qty || 1) + ' × ' + (i.equipmentName || 'matériel'); }).join('\n'); V.rendre = l.endDate ? fd(l.endDate) : ''; }
+    } catch (er) { }
+    return V;
+  }
+  function amRemplir(t, V) { return String(t || '').replace(/\{([a-z_]+)\}/g, function (a, k) { return V[k] != null ? V[k] : a; }).replace(/ \(\s*\)/g, '').replace(/ +([.,])/g, '$1'); }
+  function amTexte(x) {
+    var t = amTexte0(x), k = amCle(x), T = (cfg().amTxt || {})[k];
+    if (!T && k.indexOf('paiement-') === 0) T = (cfg().amTxt || {}).paiement;
+    if (!T || !(T.subject || T.body)) return t;
+    var V = amVars(x); return { subject: T.subject ? amRemplir(T.subject, V) : t.subject, body: T.body ? amRemplir(T.body, V) : t.body };
+  }
+  function amExemple(k) {
+    var e = (db.employees || []).filter(function (x) { return x.active !== false; })[0] || { id: 0, firstname: 'Camille' }, ty = k.indexOf('paiement') === 0 ? 'paiement' : k;
+    var ex = { type: ty, empId: e.id, ref: '', lib: k === 'paiement-cv' ? 'Chèques vacances 2027 : échéance 2' : 'Sortie : exemple du 12/12', montant: 25 };
+    if (k === 'paiement-cv') { var cv = (db.chequesVacances || [])[0]; ex.ref = 'c:' + (cv ? cv.id : 'x') + ':0'; }
+    if (k === 'paiement-virement') ex.ref = 'z:virement';
+    if (k === 'vente') ex.ref = ((db.sales || [])[(db.sales || []).length - 1] || {}).id; if (k === 'inscription') ex.ref = ((db.registrations || [])[0] || {}).id; if (k === 'colis') ex.ref = ((db.distributions || [])[0] || {}).id; if (k === 'pret' || k === 'retour') ex.ref = ((db.loans || [])[0] || {}).id;
+    return ex;
+  }
+  var AMT = { k: 'vente' };
+  window.cseAmTextes = function (k) {
+    if (k) AMT.k = k; var c = cfg(), T = (c.amTxt || {})[AMT.k] || {}, ex = amExemple(AMT.k), d = amTexte0(ex), m = amModal(), b = $('v99-am-box');
+    b.innerHTML = '<div class="flex items-start justify-between"><h3 class="font-extrabold text-slate-800 text-base">✏️ Textes des e-mails au salarié</h3><button type="button" class="text-slate-400 hover:text-slate-700 text-xl" onclick="document.getElementById(\'v99-am-modal\').classList.add(\'hidden\')">×</button></div>'
+      + '<p class="text-xs text-slate-600">Choisissez le type d\'e-mail, changez l\'objet ou le message, puis Enregistrer. Laissez vide pour garder le texte d\'origine. Les mots entre accolades sont remplacés automatiquement.</p>'
+      + '<select class="' + INP + '" onchange="cseAmTextes(this.value)">' + AM_TPL.map(function (t) { var perso = (c.amTxt || {})[t[0]] && ((c.amTxt[t[0]].subject || c.amTxt[t[0]].body)); return '<option value="' + t[0] + '"' + (t[0] === AMT.k ? ' selected' : '') + '>' + E(t[1]) + (perso ? ' ✏️ (modifié)' : '') + '</option>'; }).join('') + '</select>'
+      + '<label class="text-xs text-slate-600 block">Objet<input id="v1054-sub" class="' + INP + '" placeholder="' + E(d.subject) + '" value="' + E(T.subject || '') + '"></label>'
+      + '<label class="text-xs text-slate-600 block">Message<textarea id="v1054-body" rows="9" class="' + INP + '" placeholder="' + E(d.body) + '">' + E(T.body || '') + '</textarea></label>'
+      + '<div class="flex flex-wrap gap-1">' + AM_VARS.map(function (v) { return '<button type="button" class="text-[11px] px-2 py-0.5 rounded-full border border-slate-300 bg-slate-50" title="' + E(v[1]) + '" onclick="cseAmVar(\'' + v[0] + '\')">{' + v[0] + '}</button>'; }).join('') + '</div>'
+      + '<p class="text-[11px] text-slate-500">Cliquez sur un mot pour l\'insérer. Votre signature et le logo sont ajoutés à la fin. Pour un justificatif PDF, la phrase « Vous trouverez le justificatif en pièce jointe » est ajoutée toute seule.</p>'
+      + '<div id="v1054-ap" class="text-xs whitespace-pre-wrap bg-slate-50 border border-slate-200 rounded-lg p-3" style="display:none"></div>'
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" onclick="cseAmTxtSave()"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button><button type="button" class="' + BTN + '" onclick="cseAmTxtAp()">👁️ Aperçu</button><button type="button" class="' + BTN + '" onclick="cseAmTxtCopie()">📋 Partir du texte d\'origine</button><button type="button" class="' + BTN + '" onclick="cseAmTxtReset()">↺ Revenir au texte d\'origine</button></div><p id="v1054-msg" class="text-xs"></p>';
+    m.classList.remove('hidden');
+  };
+  window.cseAmVar = function (v) { var a = document.activeElement && /v1054-(sub|body)/.test(document.activeElement.id) ? document.activeElement : $('v1054-body'), p = a.selectionStart != null ? a.selectionStart : a.value.length; a.value = a.value.slice(0, p) + '{' + v + '}' + a.value.slice(a.selectionEnd != null ? a.selectionEnd : p); a.focus(); a.selectionStart = a.selectionEnd = p + v.length + 2; };
+  window.cseAmTxtCopie = function () { var d = amTexte0(amExemple(AMT.k)), V = amVars(amExemple(AMT.k)), tpl = function (s) { var o = String(s); ['details', 'pour', 'montant', 'sortie', 'colis', 'rendre', 'date_sortie', 'lieu'].forEach(function (k) { if (V[k] && String(V[k]).length > 2) o = o.split(V[k]).join('{' + k + '}'); }); if (V.prenom) o = o.replace('Bonjour ' + V.prenom + ',', 'Bonjour {prenom},'); return o; }; $('v1054-sub').value = tpl(d.subject); $('v1054-body').value = tpl(d.body); };
+  window.cseAmTxtSave = function () { var c = cfg(); c.amTxt = c.amTxt || {}; var s = $('v1054-sub').value.trim(), bd = $('v1054-body').value.trim(); if (s || bd) c.amTxt[AMT.k] = { subject: s, body: bd }; else delete c.amTxt[AMT.k]; save(); cseAmTextes(); $('v1054-msg').textContent = '✔ Enregistré. Les prochains e-mails de ce type utiliseront ce texte.'; $('v1054-msg').className = 'text-xs text-emerald-700'; amCard(true); };
+  window.cseAmTxtReset = function () { var c = cfg(); if (c.amTxt) delete c.amTxt[AMT.k]; save(); cseAmTextes(); $('v1054-msg').textContent = 'Texte d\'origine remis.'; amCard(true); };
+  window.cseAmTxtAp = function () { var ex = amExemple(AMT.k), V = amVars(ex), d = amTexte0(ex), s = $('v1054-sub').value.trim(), bd = $('v1054-body').value.trim(), z = $('v1054-ap'); z.style.display = ''; z.textContent = 'Objet : ' + (s ? amRemplir(s, V) : d.subject) + '\n\n' + (bd ? amRemplir(bd, V) : d.body); };
   async function amPdfVente(x) {
     var s = (db.sales || []).filter(function (y) { return String(y.id) === String(x.ref); })[0]; if (!s || typeof dgBuildTicketReceipt !== 'function') return null;
     var r = dgBuildTicketReceipt({ sale: s.id, emp: s.employeeId, expiry: true }); if (!r || !r.html) return null;
@@ -47676,7 +47727,7 @@ var qrcode = function() {
     var h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-envelope-circle-check text-brand-600"></i> E-mails automatiques au salarié</h3>'
       + '<label class="flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="cseAmSet(\'on\',this.checked)"> Envoyer un e-mail au salarié à chaque saisie faite sur cet appareil</label>'
       + '<div class="grid sm:grid-cols-2 gap-1 pl-6' + (on ? '' : ' opacity-50') + '">' + AM_TYPES.map(function (k) { return '<div class="flex items-center gap-2 text-xs"><label class="flex items-center gap-2 flex-1"><input type="checkbox"' + (amOn(k[0]) ? ' checked' : '') + (on ? '' : ' disabled') + ' onchange="cseAmSet(\'' + k[0] + '\',this.checked)"> ' + E(k[1]) + '</label>' + (k[0] !== 'demande' ? '<button type="button" class="text-indigo-700 underline" onclick="cseAmApercu(\'' + k[0] + '\')">aperçu</button>' : '') + '</div>'; }).join('') + '</div>'
-      + '<p class="text-[11px] text-slate-500">Depuis la boîte du CSE, avec votre signature et le logo. Le premier e-mail de chaque type vous est montré en entier avant de partir. Sans adresse e-mail dans la fiche : notification sur son téléphone seulement. ' + (n30 ? n30 + ' envoi(s) ces 30 derniers jours.' : '') + '</p>'
+      + '<p class="text-[11px] text-slate-500">Depuis la boîte du CSE, avec votre signature et le logo. Le premier e-mail de chaque type vous est montré en entier avant de partir. <button type="button" class="text-indigo-700 underline font-semibold" onclick="cseAmTextes()">✏️ Modifier les textes</button>' + (Object.keys(C.amTxt || {}).length ? ' (' + Object.keys(C.amTxt).length + ' modifié' + (Object.keys(C.amTxt).length > 1 ? 's' : '') + ')' : '') + '. Sans adresse e-mail dans la fiche : notification sur son téléphone seulement. ' + (n30 ? n30 + ' envoi(s) ces 30 derniers jours.' : '') + '</p>'
       + '<label class="flex items-center gap-2 text-xs text-slate-700' + (on ? '' : ' opacity-50') + '"><input type="checkbox"' + (C.justifOn !== false ? ' checked' : '') + ' onchange="cseAmSet(\'justif\',this.checked)"> 📎 Joindre un justificatif PDF à chaque opération, rangé sur le Drive et dans « Mes documents » du salarié (même sans e-mail). Pas de doublon : le prêt, le retour et les espèces ont déjà leur document signé.</label>'
       + '<hr class="border-slate-100"><label class="flex items-center gap-2 text-xs text-slate-700"><input type="checkbox"' + (C.delegMiMois !== false ? ' checked' : '') + ' onchange="cseAmSet(\'deleg15\',this.checked)"> 🕒 Délégation : notification aux élus le 15 du mois s\'il leur reste plus de la moitié de leur crédit</label>';
     if (force || c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
@@ -47748,7 +47799,7 @@ var qrcode = function() {
     if (SV.busy) return; SV.busy = true; svCard(); var c = cfg(), R = [];
     var add = function (st, l, v, d) { R.push({ st: st, l: l, v: v, d: d || '' }); };
     if (!scriptOk()) add('err', 'Script Google', 'non relié', 'Budget › Banque › Liens Drive : collez l\'adresse et la clé du script.');
-    else { try { var j = await cseScriptPost('version', {}); var v = Number(j.version) || 0; add(v >= SCRIPT_ATTENDU ? 'ok' : 'warn', 'Script Google', 'v' + v, v >= SCRIPT_ATTENDU ? 'À jour.' : 'Installez la v' + SCRIPT_ATTENDU + ' (script-google-cse-v' + SCRIPT_ATTENDU + '.txt).'); add(j.quota > 20 ? 'ok' : 'warn', 'E-mails restants aujourd\'hui', String(j.quota), j.brevo != null ? 'Gmail : ' + j.gmail + ' + Brevo : ' + j.brevo + ' (Brevo prend le relais quand Gmail est à zéro).' : 'Limite Google du compte du CSE (environ 100 par jour). Pour 300 de plus : clé Brevo dans le script (BREVO_CLE_COLLE).'); var T = j.declencheurs || []; add(T.indexOf('envoiRappels') >= 0 ? 'ok' : 'warn', 'Rappels automatiques', T.indexOf('envoiRappels') >= 0 ? (T.indexOf('envoiRappelsSoir') >= 0 ? '8 h et 18 h' : '8 h seulement') : 'pas encore créés', T.indexOf('envoiRappelsSoir') >= 0 ? '' : 'Ils se créent à la prochaine synchro des rappels.'); add(j.push ? 'ok' : 'warn', 'Notifications (Firebase)', j.push ? 'prêtes' : 'clé absente', j.push ? '' : 'Collez la clé Firebase dans le script (FCM_COMPTE_COLLE).'); }
+    else { try { var j = await cseScriptPost('version', {}); var v = Number(j.version) || 0; add(v >= SCRIPT_ATTENDU ? 'ok' : 'warn', 'Script Google', 'v' + v, v >= SCRIPT_ATTENDU ? 'À jour.' : 'Installez la v' + SCRIPT_ATTENDU + ' (script-google-cse-v' + SCRIPT_ATTENDU + '.txt).'); add(j.quota > 20 ? 'ok' : 'warn', 'E-mails restants aujourd\'hui', String(j.quota), 'Limite Google du compte du CSE.'); var T = j.declencheurs || []; add(T.indexOf('envoiRappels') >= 0 ? 'ok' : 'warn', 'Rappels automatiques', T.indexOf('envoiRappels') >= 0 ? (T.indexOf('envoiRappelsSoir') >= 0 ? '8 h et 18 h' : '8 h seulement') : 'pas encore créés', T.indexOf('envoiRappelsSoir') >= 0 ? '' : 'Ils se créent à la prochaine synchro des rappels.'); add(j.push ? 'ok' : 'warn', 'Notifications (Firebase)', j.push ? 'prêtes' : 'clé absente', j.push ? '' : 'Collez la clé Firebase dans le script (FCM_COMPTE_COLLE).'); }
       catch (e) { add(/inconnue/i.test(e.message) ? 'warn' : 'err', 'Script Google', /inconnue/i.test(e.message) ? 'ancienne version' : 'ne répond pas', /inconnue/i.test(e.message) ? 'Installez la v' + SCRIPT_ATTENDU + ' (script-google-cse-v' + SCRIPT_ATTENDU + '.txt).' : e.message); } }
     add(pushPret() ? 'ok' : 'warn', 'Notifications dans l\'appli', pushPret() ? 'réglées' : 'pas réglées', pushPret() ? '' : 'Communication › Notifications.');
     var pa = c.espacePubAt; add(pa && Date.now() - new Date(pa) < 7 * 864e5 ? 'ok' : 'warn', 'Espaces salariés publiés', pa ? hrel(pa) : 'jamais', 'Republiés tout seuls quand les données changent.');
