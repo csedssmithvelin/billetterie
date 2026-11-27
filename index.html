@@ -1,6 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr" class="h-full bg-slate-50">
 <head>
+<!--
+  ======================================================================
+  SOMMAIRE DE L'APPLI CSE (rangé en V.11.2)
+  Les blocs <script> restent dans l'ordre de chargement : les plus récents
+  complètent les plus anciens, il ne faut donc pas les déplacer.
+  Chercher l'id indiqué (ex. id="sumup-js") pour aller au bon endroit.
+  ======================================================================
+  BASE
+    coeur-appli ........... cœur : données, salariés, billetterie, caisse, prêts, réunions, paramètres, synchro Gist
+    modules-v3 ............ modules V.3.3 à V.3.8 regroupés par domaine
+    app-extensions-js ..... petits ajouts d'interface (bouton « + Nouveau »…)
+    v11-libs .............. chargement d'Excel et du lecteur PDF (lib-*.js)
+    qrcode-generator-inline, v89-jsqr ... bibliothèques QR (création / lecture)
+  CAISSE, PAIEMENTS, TRÉSORERIE
+    sumup-js, v68-sumup-pc, v68-sumup-plus ... paiements carte SumUp
+    swile-js .............. Swile
+    v59-tresorier ......... outils du trésorier
+    v94-outils §7 à §10, §24 ... caution, rapprochement SumUp, double validation, espèces signées, clôture
+  STATISTIQUES ET BILANS
+    charts-v438, stats5-js, pilotage-v441 (+ -docs, -ui) ... graphiques, statistiques, rapports
+    v94-outils §5, §14 .... export comptable, bilan annuel ASC
+  EN LIGNE, GOOGLE, SAUVEGARDES
+    v66-enligne-drive, v67-drive-catalogue, v68-ameliorations ... Gist, Google Drive, documents
+    v69-mail-agenda-rappels, v92-ameliorations, v93-documents ... script Google : e-mails, agenda, mises à jour, PDF
+    v66-mobile-install, v94-index, v89-retour ... appli installée, touche retour
+    v94-outils §1, §26 .... publication GitHub, voyant en ligne, ce qui a changé
+  ESPACE SALARIÉ ET COMMUNICATION
+    v70-espace-salaries, v71-boite-idees, v85-communication, v89-plus ... espace, idées, annonces, carte CSE
+    v94-outils §4, §6, §11, §15 à §23 ... signature, documents, messagerie, e-mails, droits, aide, événements de vie
+  ÉLUS
+    v94-outils §27, §28 ... tableau de bord, présentation, affiche QR, obligations
+  RÉGLAGES ET MENU
+    v94-outils §25, §26e, §28 ... paramètres en 10 rubriques, favoris, menu en grands espaces
+  v94-outils, fin : BRANCHEMENTS REGROUPÉS (publication vers l'espace, « Aujourd'hui », rappels)
+  ======================================================================
+-->
     <meta charset="UTF-8">
     <script id="v94-index">/* Appli installée « CSE Gestion » : elle vit sur index.html, pour que « Mon espace CSE » (espace-salarie.html) s'installe à part. */
     (function () { try { if (/^https:/.test(location.protocol) && /\/$/.test(location.pathname)) location.replace(location.pathname + 'index.html' + location.search + location.hash); } catch (e) { } })();</script>
@@ -8,7 +44,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"oyuX0Oeugs4zGd8FMJ6KLg==","iv":"NCHLRFGUwHaK0VSC","rev":"boot","lastModified":"2026-11-27T19:11:41.337Z","by":"Michaël GROSJEAN","data":"aYTPMni3MLjyVotpPIZaWfcyj6Uq8Z4ePRSEzxstkkuJdG7xd2yTrpa9dz/Xu1uDMvlQ2LxN1mq5ClSXTVKJVQ=="},"at":"2026-11-27T19:11:41.378Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"91QdzSNEhmy7ITMpU2ApmQ==","iv":"hkhqkMOorGsNC3zx","rev":"boot","lastModified":"2026-11-27T19:25:50.383Z","by":"Michaël GROSJEAN","data":"lO/Nsna4o/Iheh8tyQV3Cgo09RFJF4HymFc6dwmEN7xtFH0ZPepCvmeC5FUm+dai4ITGgIDtcL9U4bifSSACsQ=="},"at":"2026-11-27T19:25:50.425Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6142,7 +6178,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
     <!-- Zone utilisée uniquement à l'impression des feuilles types -->
     <div id="print-sheet-root"></div>
 
-    <script>
+    <script id="coeur-appli">
         // =====================================================================
         //  INTERFACE : boîtes de dialogue modernes, notifications (toasts), thème clair / sombre,
         //  surlignage des recherches, badges de stock, versions locales des données.
@@ -6945,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.1";
+        const APP_VERSION = "V.11.2";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -7175,9 +7211,6 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
             return null;
         }
 
-        async function fetchCloudData() {
-            try { return (await cloudRead({ askPassword: false })).data; } catch (e) { return null; }
-        }
 
         function showDataWarning(html) {
             const b = document.getElementById('data-warning-banner');
@@ -11305,79 +11338,6 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // Import « e-mails seulement » : rapproche chaque ligne du fichier d'un salarié EXISTANT (matricule, puis nom + prénom,
         // dans n'importe quel ordre) et n'écrit que l'adresse e-mail. Ne crée jamais de salarié (pas de doublon possible),
         // et demande confirmation avec un récapitulatif avant d'appliquer quoi que ce soit.
-        function importEmailsOnly(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const input = e.target;
-            const reader = new FileReader();
-            reader.onload = async function (evt) {
-                try {
-                    const bytes = new Uint8Array(evt.target.result);
-                    let workbook;
-                    if (/\.(csv|txt)$/i.test(file.name)) {
-                        // CSV : l'Excel français les enregistre souvent en Windows-1252 (pas en UTF-8) → on décode nous-mêmes pour garder les accents.
-                        let text;
-                        try { text = new TextDecoder('utf-8', { fatal: true }).decode(bytes); } catch (_) { text = new TextDecoder('windows-1252').decode(bytes); }
-                        workbook = XLSX.read(text.replace(/^\uFEFF/, ''), { type: 'string' });
-                    } else {
-                        workbook = XLSX.read(bytes, { type: 'array' });
-                    }
-                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: '' });
-                    if (!rows.length) { alert('Fichier vide.'); return; }
-                    const hn = (t) => normalizeName(t).replace(/[\u2019`]/g, "'").replace(/[^a-z0-9' ]/g, ' ').replace(/\s+/g, ' ').trim();
-                    const headers = Object.keys(rows[0]);
-                    const find = (pred) => headers.find(k => pred(hn(k)));
-                    const cEmail = find(h => h.includes('mail') || h.includes('courriel'));
-                    if (!cEmail) { alert("Aucune colonne d'adresse e-mail trouvée.\nColonnes lues : " + headers.join(', ') + "\n\nAjoutez une colonne intitulée « Email » (ou « E-mail », « Mail », « Courriel »)."); return; }
-                    const cMat = find(h => h === 'matricule' || h === 'mat' || h.includes('matricule'));
-                    const cNom = find(h => ['nom', 'lastname', 'nom de famille'].includes(h));
-                    const cPre = find(h => ['prenom', 'firstname'].includes(h));
-                    const cFull = find(h => ['nom complet', 'nom prenom', 'nom et prenom', 'prenom nom', 'salarie', 'collaborateur', 'identite', 'nom prenom salarie'].includes(h));
-                    if (!cMat && !(cNom && cPre) && !cFull) { alert("Impossible d'identifier les salariés : il faut soit une colonne « Matricule », soit les colonnes « Nom » et « Prénom », soit une colonne « Nom complet ».\nColonnes lues : " + headers.join(', ')); return; }
-
-                    const tokens = (t) => hn(t).split(' ').filter(Boolean).sort().join(' ');
-                    const empKey = (emp) => tokens(`${emp.lastname || ''} ${emp.firstname || ''}`);
-                    const changes = [], notFound = [], ambiguous = [], invalid = [];
-                    let same = 0, noMail = 0;
-                    rows.forEach((row, i) => {
-                        const label = (cFull ? String(row[cFull]) : `${cNom ? row[cNom] : ''} ${cPre ? row[cPre] : ''}`).trim() || (cMat ? String(row[cMat]).trim() : '') || `ligne ${i + 2}`;
-                        const raw = String(row[cEmail] == null ? '' : row[cEmail]).trim();
-                        if (!raw) { noMail++; return; }
-                        const mail = (raw.split(/[;,\s]+/).find(p => p.includes('@')) || '').toLowerCase().replace(/^mailto:/, '');
-                        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) { invalid.push(`${label} (${raw})`); return; }
-                        let matches = [];
-                        const mat = cMat ? String(row[cMat]).trim() : '';
-                        if (mat) matches = db.employees.filter(emp => emp.matricule && normalizeName(String(emp.matricule)) === normalizeName(mat));
-                        if (!matches.length) {
-                            const key = cFull ? tokens(String(row[cFull])) : tokens(`${cNom ? row[cNom] : ''} ${cPre ? row[cPre] : ''}`);
-                            if (key) matches = db.employees.filter(emp => empKey(emp) === key);
-                        }
-                        if (matches.length === 0) { notFound.push(label); return; }
-                        if (matches.length > 1) { ambiguous.push(label); return; }
-                        const emp = matches[0];
-                        if ((emp.email || '').trim().toLowerCase() === mail) { same++; return; }
-                        changes.push({ emp, mail, old: (emp.email || '').trim() });
-                    });
-
-                    const adds = changes.filter(c => !c.old).length, repl = changes.length - adds;
-                    const list = (arr) => arr.slice(0, 12).join(', ') + (arr.length > 12 ? ` … (+${arr.length - 12})` : '');
-                    let msg = `Import des e-mails — récapitulatif\n\n• À ajouter : ${adds}\n• À remplacer (adresse différente déjà enregistrée) : ${repl}\n• Déjà à jour : ${same}\n• Salarié introuvable : ${notFound.length}`;
-                    if (notFound.length) msg += `\n   ${list(notFound)}`;
-                    if (ambiguous.length) msg += `\n• Ignorés car plusieurs salariés portent ce nom (utilisez le matricule) : ${ambiguous.length}\n   ${list(ambiguous)}`;
-                    if (invalid.length) msg += `\n• Adresses invalides ignorées : ${invalid.length}\n   ${list(invalid)}`;
-                    if (noMail) msg += `\n• Lignes sans e-mail : ${noMail}`;
-                    if (!changes.length) { alert(msg + '\n\nAucune modification à appliquer.'); return; }
-                    if (!(await uiConfirm(msg + `\n\nAppliquer ${changes.length} modification(s) ?`))) return;
-
-                    changes.forEach(c => { c.emp.email = c.mail; });
-                    logAction('Import', 'employee', `Import e-mails : ${adds} ajouté(s), ${repl} remplacé(s)`);
-                    saveDB();
-                    alert(`E-mails importés : ${adds} ajouté(s), ${repl} remplacé(s).`);
-                } catch (err) { alert("Erreur d'import : " + err.message); }
-                finally { input.value = ''; }
-            };
-            reader.readAsArrayBuffer(file);
-        }
 
         function downloadSampleEmployeesExcel() {
             const sample = [{ "Nom": "DUPONT", "Prénom": "Marc", "Matricule": "10452", "Service": "Production", "Statut professionnel": "Ouvrier", "Poste": "Conducteur Bobst", "Date d'entrée": "15/03/2016", "Date de sortie": "", "Adresse": "12 rue des Lilas, 69000 Lyon", "Email": "marc.dupont@exemple.fr", "Téléphone": "06 12 34 56 78" }];
@@ -12072,257 +12032,8 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // Un dossier par ligne. Anti-doublon : un salarié n'a qu'UN dossier par année. Si le salarié
         // en possède déjà un cette année (ou apparaît deux fois dans le fichier), la ligne est ignorée
         // et jamais fusionnée : les statuts de paiement déjà saisis ne sont donc jamais écrasés.
-        function triggerExcelCV() { document.getElementById('excel-cv-input').click(); }
 
-        function downloadSampleCVExcel() {
-            const d = new Date(); d.setMonth(d.getMonth() + 1); d.setDate(15);
-            const dueSample = `15/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-            const sample = [
-                { "Nom": "EXEMPLE", "Prénom": "Marie", "Chèque Vacances Papier (€)": 0, "Chèque Vacances Connect (€)": 300, "Vacances Swile (€)": 0, "Participation CSE (€)": 100, "Nombre d'échéances": 4, "Mode de paiement": "Carte Bancaire", "Date 1ère échéance": dueSample },
-                { "Nom": "EXEMPLE", "Prénom": "Paul", "Chèque Vacances Papier (€)": 150, "Chèque Vacances Connect (€)": 0, "Vacances Swile (€)": 100, "Participation CSE (€)": 50, "Nombre d'échéances": 1, "Mode de paiement": "Chèque", "Date 1ère échéance": "" }
-            ];
-            const ws = XLSX.utils.json_to_sheet(sample);
-            ws['!cols'] = [{ wch: 18 }, { wch: 16 }, { wch: 26 }, { wch: 27 }, { wch: 19 }, { wch: 20 }, { wch: 18 }, { wch: 18 }, { wch: 18 }];
-            const help = [
-                ["Consignes d'import — Chèques Vacances"],
-                [""],
-                ["Une ligne = un dossier (un salarié). Supprimez les 2 lignes « EXEMPLE » avant d'importer (elles sont de toute façon ignorées)."],
-                ["Nom, Prénom : doivent correspondre à la fiche salarié (accents et majuscules sans importance, « Nom Prénom » ou « Prénom Nom » acceptés). Une colonne « Matricule » peut être ajoutée pour départager des homonymes."],
-                ["Montants (€) : Papier, Connect, Swile. Renseignez au moins un des trois ; laissez 0 ou vide pour les autres. La valeur totale est calculée."],
-                ["Participation CSE (€) : ne peut pas dépasser la valeur totale. Le reste à payer par le salarié = total − participation."],
-                ["Nombre d'échéances : de 1 à 12 (1 par défaut). Le reste à payer est réparti en parts égales."],
-                ["Mode de paiement : Carte Bancaire, Chèque, Virement ou Espèces (Carte Bancaire par défaut)."],
-                ["Date 1ère échéance : JJ/MM/AAAA (facultatif). Les échéances suivantes sont datées de mois en mois."],
-                ["Toutes les échéances importées arrivent au statut « Non reçu » : vous les passez en Reçu / Payé dans l'application au fil des règlements."],
-                [""],
-                ["ANTI-DOUBLON : si le salarié a déjà un dossier Chèques Vacances cette année, sa ligne est ignorée (rien n'est modifié ni écrasé). Il en va de même s'il figure deux fois dans le fichier. Vous pouvez donc réimporter le même fichier sans risque."]
-            ];
-            const wsHelp = XLSX.utils.aoa_to_sheet(help);
-            wsHelp['!cols'] = [{ wch: 130 }];
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Chèques Vacances");
-            XLSX.utils.book_append_sheet(wb, wsHelp, "Consignes");
-            XLSX.writeFile(wb, "Modele_Import_ChequesVacances_CSE.xlsx");
-        }
 
-        function importCVExcel(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const input = e.target;
-            if (rbacEnabled() && rbacLevel('chequesVacances') < 2) {
-                alert("⛔ Votre rôle ne permet pas de modifier les Chèques Vacances.");
-                input.value = '';
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = async function (evt) {
-                try {
-                    const bytes = new Uint8Array(evt.target.result);
-                    let workbook;
-                    if (/\.(csv|txt)$/i.test(file.name)) {
-                        // CSV : souvent en Windows-1252 avec l'Excel français → on décode nous-mêmes pour garder les accents.
-                        let text;
-                        try { text = new TextDecoder('utf-8', { fatal: true }).decode(bytes); } catch (_) { text = new TextDecoder('windows-1252').decode(bytes); }
-                        workbook = XLSX.read(text.replace(/^\uFEFF/, ''), { type: 'string' });
-                    } else {
-                        workbook = XLSX.read(bytes, { type: 'array' });
-                    }
-                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: '' });
-                    if (!rows.length) { alert("Le fichier est vide."); return; }
-                    if (!(db.employees || []).length) { alert("Aucun salarié dans l'application : importez d'abord les salariés."); return; }
-
-                    // --- Repérage des colonnes (insensible aux accents, à la casse et à la ponctuation) ---
-                    const hn = (t) => normalizeName(t).replace(/[\u2019`]/g, "'").replace(/[^a-z0-9' ]/g, ' ').replace(/\s+/g, ' ').trim();
-                    const headers = Object.keys(rows[0]);
-                    const find = (pred) => headers.find(k => pred(hn(k)));
-                    const cMat = find(h => h.includes('matricule'));
-                    const cNom = find(h => ['nom', 'lastname', 'nom de famille'].includes(h));
-                    const cPre = find(h => ['prenom', 'firstname'].includes(h));
-                    const cFull = find(h => ['nom complet', 'nom prenom', 'nom et prenom', 'prenom nom', 'salarie', 'collaborateur', 'beneficiaire', 'identite'].includes(h));
-                    const cPaper = find(h => h.includes('papier'));
-                    const cConnect = find(h => h.includes('connect'));
-                    const cSwile = find(h => h.includes('swile'));
-                    const cCse = find(h => h.includes('participation') || h === 'cse' || h === 'part cse' || h === 'montant cse');
-                    const cNb = find(h => (h.includes('nombre') || h.startsWith('nb')) && h.includes('ech') && !h.includes('regl'));
-                    const cMethod = find(h => h.includes('paiement') || h.includes('mode') || h.includes('reglement'));
-                    const cDate = find(h => h.includes('date'));
-                    if (!cMat && !(cNom && cPre) && !cFull) {
-                        alert("Impossible d'identifier les salariés : il faut les colonnes « Nom » et « Prénom » (ou « Nom complet », ou « Matricule »).\nColonnes lues : " + headers.join(', ') + "\n\nTéléchargez le « Modèle » pour voir le format attendu.");
-                        return;
-                    }
-                    if (!cPaper && !cConnect && !cSwile) {
-                        alert("Aucune colonne de montant trouvée : il faut au moins « Chèque Vacances Papier (€) », « Chèque Vacances Connect (€) » ou « Vacances Swile (€) ».\nColonnes lues : " + headers.join(', ') + "\n\nTéléchargez le « Modèle » pour voir le format attendu.");
-                        return;
-                    }
-
-                    // --- Conversions ---
-                    const num = (v) => {
-                        if (typeof v === 'number') return isFinite(v) ? v : 0;
-                        let s = String(v == null ? '' : v).replace(/[€\s\u00a0]/g, '');
-                        if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
-                        const n = parseFloat(s);
-                        return isNaN(n) ? 0 : n;
-                    };
-                    const money = (v) => Math.round(Math.max(0, num(v)) * 100) / 100;
-                    const parseDue = (raw) => {
-                        if (typeof raw === 'number' && raw > 20000 && raw < 80000) {
-                            const p = XLSX.SSF.parse_date_code(raw);
-                            if (p) return `${p.y}-${String(p.m).padStart(2, '0')}-${String(p.d).padStart(2, '0')}`;
-                        }
-                        if (typeof raw === 'string' && raw.trim()) {
-                            const s = raw.trim();
-                            const m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
-                            if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
-                            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-                        }
-                        return '';
-                    };
-                    const addMonths = (iso, n) => {
-                        const [y, m, d] = iso.split('-').map(Number);
-                        const t = new Date(y, m - 1 + n, 1);
-                        const last = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
-                        return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(Math.min(d, last)).padStart(2, '0')}`;
-                    };
-                    const normMethod = (raw) => {
-                        const s = normalizeName(raw);
-                        if (!s) return { method: CV_PAYMENT_METHODS[0], known: true };
-                        if (s.includes('cheque')) return { method: 'Chèque', known: true };
-                        if (s.includes('carte') || s === 'cb') return { method: 'Carte Bancaire', known: true };
-                        if (s.includes('virement')) return { method: 'Virement', known: true };
-                        if (s.includes('espece') || s.includes('cash')) return { method: 'Espèces', known: true };
-                        return { method: CV_PAYMENT_METHODS[0], known: false };
-                    };
-                    const buildInstallments = (remaining, n, method, firstDue) => {
-                        remaining = Math.round(remaining * 100) / 100;
-                        if (remaining <= 0) return [];
-                        n = Math.max(1, Math.min(n, Math.floor(remaining * 100))); // jamais d'échéance à 0 €
-                        const base = Math.floor((remaining / n) * 100) / 100;
-                        let allocated = 0;
-                        const out = [];
-                        for (let i = 0; i < n; i++) {
-                            let amount = base;
-                            if (i === n - 1) amount = Math.round((remaining - allocated) * 100) / 100; // le dernier absorbe l'arrondi
-                            allocated += amount;
-                            out.push({ method, amount, dueDate: firstDue ? addMonths(firstDue, i) : '', status: 'attente', paidDate: '', receivedDate: '' });
-                        }
-                        return out;
-                    };
-
-                    // --- Rapprochement salarié (même logique que l'import des e-mails) ---
-                    const tokens = (t) => hn(t).split(' ').filter(Boolean).sort().join(' ');
-                    const empKey = (emp) => tokens(`${emp.lastname || ''} ${emp.firstname || ''}`);
-                    const year = new Date().getFullYear();
-
-                    // Dossiers déjà présents cette année (clé anti-doublon : salarié + année)
-                    const existingByEmp = new Map();
-                    (db.chequesVacances || []).forEach(cv => {
-                        if (cvDossierYear(cv) === year && !existingByEmp.has(cv.employeeId)) existingByEmp.set(cv.employeeId, cv);
-                    });
-                    const seenInFile = new Set();
-
-                    const toCreate = [], notFound = [], ambiguous = [], invalid = [], blockedCap = [], warnCap = [], badMethod = [];
-                    const dupSame = [], dupDiff = [], dupFile = [];
-                    const eq = (a, b) => Math.abs((a || 0) - (b || 0)) < 0.005;
-
-                    rows.forEach((row, i) => {
-                        const label = (cFull ? String(row[cFull]) : `${cNom ? row[cNom] : ''} ${cPre ? row[cPre] : ''}`).trim() || (cMat ? String(row[cMat]).trim() : '') || `ligne ${i + 2}`;
-                        const paper = cPaper ? money(row[cPaper]) : 0;
-                        const connect = cConnect ? money(row[cConnect]) : 0;
-                        const swile = cSwile ? money(row[cSwile]) : 0;
-                        const total = Math.round((paper + connect + swile) * 100) / 100;
-                        const cse = cCse ? money(row[cCse]) : 0;
-
-                        const rawName = normalizeName(cNom ? row[cNom] : label);
-                        if (rawName === 'exemple') return;                               // lignes d'exemple du modèle
-                        if (/^ligne \d+$/.test(label) && total === 0) return; // ligne vide
-                        if (total === 0 && !cse && !String(row[cNb] || '').trim()) return; // salarié listé sans aucune demande
-
-                        // Salarié
-                        let matches = [];
-                        const mat = cMat ? String(row[cMat]).trim() : '';
-                        if (mat) matches = db.employees.filter(emp => emp.matricule && normalizeName(String(emp.matricule)) === normalizeName(mat));
-                        if (!matches.length) {
-                            const key = cFull ? tokens(String(row[cFull])) : tokens(`${cNom ? row[cNom] : ''} ${cPre ? row[cPre] : ''}`);
-                            if (key) matches = db.employees.filter(emp => empKey(emp) === key);
-                            if (matches.length > 1) { const act = matches.filter(emp => emp.active !== false); if (act.length >= 1) matches = act; }
-                        }
-                        if (matches.length === 0) { notFound.push(label); return; }
-                        if (matches.length > 1) { ambiguous.push(label); return; }
-                        const emp = matches[0];
-
-                        // Montants
-                        if (total <= 0) { invalid.push(`${label} (aucun montant)`); return; }
-                        if (cse > total + 0.000001) { invalid.push(`${label} (participation CSE ${formatEuro(cse)} > valeur ${formatEuro(total)})`); return; }
-
-                        // ---- ANTI-DOUBLON ----
-                        if (seenInFile.has(emp.id)) { dupFile.push(label); return; }
-                        const existing = existingByEmp.get(emp.id);
-                        if (existing) {
-                            const f = existing.formats || {};
-                            const same = eq(f.paper, paper) && eq(f.connect, connect) && eq(f.swile, swile) && eq(existing.cseAmount, cse);
-                            if (same) dupSame.push(label);
-                            else dupDiff.push(`${label} (fichier : ${formatEuro(total)}, déjà enregistré : ${formatEuro(existing.totalValue || 0)})`);
-                            seenInFile.add(emp.id);
-                            return;
-                        }
-
-                        // Droits & plafonds (même règle que la saisie manuelle)
-                        let chk = null;
-                        try { chk = entCheck(emp.id, 'cv', { qty: 1, amount: cse }, year); } catch (_) { chk = null; }
-                        if (chk && chk.over && chk.mode === 'block') { blockedCap.push(label); return; }
-                        if (chk && chk.over) warnCap.push(label);
-
-                        // Échéancier
-                        const nbRaw = cNb ? parseInt(String(row[cNb]).replace(/[^\d]/g, ''), 10) : NaN;
-                        const nb = Math.max(1, Math.min(12, isNaN(nbRaw) ? 1 : nbRaw));
-                        const mm = normMethod(cMethod ? row[cMethod] : '');
-                        if (!mm.known) badMethod.push(label);
-                        const firstDue = cDate ? parseDue(row[cDate]) : '';
-
-                        seenInFile.add(emp.id);
-                        toCreate.push({
-                            id: null, employeeId: emp.id, empLabel: label,
-                            totalValue: total, cseAmount: cse,
-                            formats: { paper, connect, swile },
-                            installments: buildInstallments(total - cse, nb, mm.method, firstDue)
-                        });
-                    });
-
-                    // --- Récapitulatif + confirmation ---
-                    const list = (arr) => arr.slice(0, 12).join(', ') + (arr.length > 12 ? ` … (+${arr.length - 12})` : '');
-                    const nbDup = dupSame.length + dupDiff.length + dupFile.length;
-                    let msg = `Import Chèques Vacances — récapitulatif\n\n• Dossiers à créer : ${toCreate.length}\n• Doublons ignorés (déjà un dossier cette année) : ${nbDup}`;
-                    if (dupSame.length) msg += `\n   – identiques à l'existant : ${dupSame.length} (${list(dupSame)})`;
-                    if (dupDiff.length) msg += `\n   – montants différents de l'existant, NON modifiés : ${dupDiff.length}\n     ${list(dupDiff)}\n     (à corriger à la main via la fiche du dossier si besoin)`;
-                    if (dupFile.length) msg += `\n   – présents plusieurs fois dans le fichier : ${dupFile.length} (${list(dupFile)})`;
-                    if (notFound.length) msg += `\n• Salarié introuvable : ${notFound.length}\n   ${list(notFound)}`;
-                    if (ambiguous.length) msg += `\n• Ignorés car plusieurs salariés portent ce nom (ajoutez une colonne « Matricule ») : ${ambiguous.length}\n   ${list(ambiguous)}`;
-                    if (invalid.length) msg += `\n• Lignes invalides ignorées : ${invalid.length}\n   ${list(invalid)}`;
-                    if (blockedCap.length) msg += `\n• Refusés : plafond « Chèques Vacances » atteint (règle en mode Bloquer) : ${blockedCap.length}\n   ${list(blockedCap)}`;
-                    if (warnCap.length) msg += `\n• ⚠️ Créés malgré un plafond dépassé (règle en mode Avertir) : ${warnCap.length}\n   ${list(warnCap)}`;
-                    if (badMethod.length) msg += `\n• Mode de paiement non reconnu → « ${CV_PAYMENT_METHODS[0]} » appliqué : ${badMethod.length}\n   ${list(badMethod)}`;
-                    if (!toCreate.length) { alert(msg + "\n\nAucun dossier à créer."); return; }
-                    if (!(await uiConfirm(msg + `\n\nCréer ${toCreate.length} dossier(s) ?`))) return;
-
-                    // --- Application ---
-                    toCreate.forEach(c => {
-                        db.chequesVacances.push({
-                            id: generateUniqueId(),
-                            employeeId: c.employeeId,
-                            totalValue: c.totalValue,
-                            cseAmount: c.cseAmount,
-                            formats: c.formats,
-                            installments: c.installments
-                        });
-                    });
-                    logAction('Import', 'cv', `Import Excel Chèques Vacances : ${toCreate.length} dossier(s) créé(s), ${nbDup} doublon(s) ignoré(s)`);
-                    saveDB();
-                    alert(`Import terminé : ${toCreate.length} dossier(s) créé(s), ${nbDup} doublon(s) ignoré(s).`);
-                } catch (err) { alert("Erreur d'import : " + err.message); }
-                finally { input.value = ''; }
-            };
-            reader.readAsArrayBuffer(file);
-        }
 
         function exportLoansExcel() {
             if (!db.loans || db.loans.length === 0) return alert("Aucun prêt enregistré.");
@@ -20272,7 +19983,6 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             return p ? p.y * 10000 + p.m * 100 + p.d : 0;
         }
 
-        function reminderSignature() { return mailSignatureText(); }
 
         // ---------- Signature des mails (propre à chaque utilisateur de l'appli) ----------
         // mode 'text'    : l'appli ajoute la signature en texte en bas de chaque mail.
@@ -21729,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.2', date: '2026-11-27', items: ['Rangement du code (rien ne change à l\'écran) : sommaire par thème en tête du fichier, code qui ne servait plus retiré (ancien import Excel des chèques vacances, anciennes fonctions de rappel et de graphique…), branchements vers l\'espace salarié et vers « Aujourd\'hui » regroupés au même endroit.'] },
             { v: 'V.11.1', date: '2026-11-27', items: ['Menu en grands espaces : Accueil, Salariés, Activités, Argent et bilans (avec les statistiques et rapports), Élus et réunions, Communication, Administration.', '« Santé du système » rejoint « Sauvegardes et santé » et Paramètres › Sécurité.', 'Rappel des obligations du CSE sur le téléphone des élus 30 jours et 7 jours avant, puis en cas de retard (Paramètres › Élus, activé par défaut, avec les rappels en notification).', 'Notes de réunion dictées : majuscule et point ajoutés tout seuls ; elles forment le compte rendu (bouton Aperçu du compte rendu).', 'Espace 11.1 : cloche des nouveautés, rond avec les initiales (Mon compte), partager un billet, ajouter une réunion à l\'agenda, langues turc et arabe.'] },
             { v: 'V.11.0', date: '2026-11-27', items: ['Appli plus légère (7,5 → 5,2 Mo) : les outils Excel et PDF sont dans lib-xlsx.js, lib-pdf.js et lib-pdf-worker.js, à publier à côté de l\'appli (sinon ils viennent d\'Internet). Excel se charge juste après l\'ouverture, le lecteur PDF seulement à l\'import SumUp.', 'Voyant en haut : « ☁️ Tout est en ligne », « ⏳ 2 saisies pas encore envoyées » ou « 📴 Hors ligne ». Un clic : dernier envoi, copie Drive, Envoyer maintenant, Versions précédentes.', 'Versions précédentes : bouton « 🔍 Ce qui a changé » (ajouts, modifications, suppressions et journal entre deux versions).', 'Espace salarié : code personnel à 4 chiffres choisi par le salarié, demandé seulement sur un nouvel appareil ; e-mail au CSE si le lien s\'ouvre sur un 3e appareil ; Paramètres › Espace salarié › « Code personnel » pour voir qui en a un et effacer un code oublié. Script Google v93.', 'Communication devient un vrai onglet (menu › Communication), avec les messages des salariés et l\'espace.', 'Menu : ⭐ favoris (étoile au survol d\'une ligne, 6 maximum, par utilisateur), rubriques renommées (Salariés, Argent, Élus et réunions).', 'Tableau de bord : bonjour, date, fête du jour et « Ma journée ».', 'Mode présentation du bilan du mois (plein écran, flèches du clavier, choix du mois).', 'Sorties : bouton « Affiche » = affiche A4 avec QR code pour s\'inscrire depuis l\'espace.', 'Réunions : 🎙️ dictée des notes (Chrome, Edge, Safari).', 'Obligations du CSE en retard ou à moins de 30 jours dans « Aujourd\'hui ».', 'Le réglage « réduire les animations » du téléphone ou du PC est respecté.'] },
             { v: 'V.10.6.2', date: '2026-11-27', items: ['Réunions : nouveau type « Visite sécurité » (en plus de Réunion ordinaire, extraordinaire, CSSCT, Bureau / préparatoire).'] },
@@ -25054,7 +24765,6 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         function supSupplier(id) { return (db.suppliers || []).find(s => String(s.id) === String(id)) || null; }
         function supInvoice(id) { return (db.supplierInvoices || []).find(i => String(i.id) === String(id)) || null; }
         // Facture « sans fournisseur » (note de frais, avance d'un collègue) : supplierId vide + bénéficiaire libre (payee).
-        function supIsNoSupplier(inv) { return !!inv && !inv.supplierId; }
         function supPartyName(inv) {
             if (!inv) return '';
             if (!inv.supplierId) return inv.payee || 'Sans fournisseur';
@@ -27780,7 +27490,6 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
             });
             return res;
         }
-        function clsToggle(key) { clsState.open[key] = !clsState.open[key]; clsRender(); }
         function clsSelect(y, m, cat) { clsState.year = y; clsState.month = m; clsState.cat = cat; const s = document.getElementById('cls-search'); if (s) s.value = ''; clsRender(); }
         function clsYearClick(y) { const sel = clsState.year === y && !clsState.month && !clsState.cat; clsState.open[y] = sel ? !clsState.open[y] : true; clsSelect(y, null, null); }
         function clsMonthClick(y, m) { const k = `${y}-${m}`, sel = clsState.year === y && clsState.month === m && !clsState.cat; clsState.open[k] = sel ? !clsState.open[k] : true; clsSelect(y, m, null); }
@@ -29366,7 +29075,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
     if(!(await uiConfirm('Retirer « '+x.title+' » de la liste ? Le fichier reste sur Google Drive.')))return;d.items=d.items.filter(function(i){return i.id!==id;});cdSave(tab,'Document « '+x.title+' » retiré');};
 })();
     </script>
-    <script>
+    <script id="modules-v3">
         // =====================================================================
         //  MODULES AJOUTÉS (V.3.3 à V.3.8), regroupés par domaine.
         //  Ils ne remplacent aucune fonction : le code d'origine les appelle
@@ -29538,18 +29247,6 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         const SUBNAV_GROUPS = { meetings: ['meetings', 'consultations', 'delegation'], documents: ['documents', 'csedocs', 'legaldocs', 'otherdocs'], ticketing: ['ticketing', 'swile', 'sales-summary'], receivables: ['receivables', 'encontrol', 'cash', 'sumup'], settings: ['settings', 'health'] };
         const SETTINGS_GROUPS = ['etab', 'users', 'droits', 'securite', 'sauvegardes', 'cloture'];
         let settingsGroup = (() => { try { const g = sessionStorage.getItem('CSE_SETTINGS_GROUP'); return SETTINGS_GROUPS.includes(g) ? g : 'etab'; } catch (e) { return 'etab'; } })();
-        function settingsTagCards() {
-            const tab = document.getElementById('tab-settings'); if (!tab) return;
-            const rules = [[/Utilisateurs|Code d'accès/i, 'users'], [/Droits .*plafonds|Quotas/i, 'droits'], [/Logo|Identité|Couleur de l'interface/i, 'etab'],
-                [/Protection des données|Jeton|RGPD/i, 'securite'], [/Sauvegarde|Corbeille|Journal/i, 'sauvegardes'], [/Clôture/i, 'cloture']];
-            tab.querySelectorAll('h3').forEach(h => {
-                const card = h.closest('.rounded-2xl'); if (!card || card.dataset.sg) return;
-                if (card.parentElement !== tab && card.parentElement.parentElement !== tab) return;
-                const txt = h.textContent.replace(/\s+/g, ' ');
-                const hit = rules.find(([re]) => re.test(txt));
-                card.dataset.sg = hit ? hit[1] : 'etab';
-            });
-        }
         function settingsShowGroup(g) {
             if (!SETTINGS_GROUPS.includes(g)) g = 'etab';
             settingsGroup = g;
@@ -30552,12 +30249,6 @@ Vous pouvez demander à consulter, corriger ou effacer vos données, ou vous opp
         }
         function cvRuleUseSmic() { const s = b2Num(document.getElementById('cvr-smic').value) || CV_RULE_DEFAULT.smic; document.getElementById('cvr-cap').value = (Math.round(s * 30) / 100).toFixed(2); }
 
-        function payLinkSave() {
-            const v = document.getElementById('cfg-paylink').value.trim();
-            if (v && !/^https:\/\/\S+$/i.test(v)) { toast('Le lien doit commencer par https://', 'warning'); return; }
-            if (v) db.config.payLink = v; else delete db.config.payLink;
-            logAction('Modification', 'settings', v ? 'Lien de paiement en ligne enregistré' : 'Lien de paiement en ligne retiré'); saveDB(); toast('Enregistré.', 'success');
-        }
 
         // =====================================================================
         //  SORTIES : tirage au sort, transport, import de formulaire
@@ -30838,7 +30529,6 @@ Vous pouvez demander à consulter, corriger ou effacer vos données, ou vous opp
         // ---------- Menu « Plus d'actions » générique ----------
         // Les boutons d'origine restent dans la page (masqués) : leurs règles d'affichage, de droits
         // et de libellé continuent de fonctionner ; le menu les recopie à chaque ouverture.
-        function ovfVisible(b) { return !b.classList.contains('hidden') && !b.classList.contains('rbac-hide') && !b.disabled && getComputedStyle(b).display !== 'none'; }
         function ovfSyncTrigger(trig, holder) { const any = [...holder.querySelectorAll('button')].some(b => !b.classList.contains('hidden') && !b.classList.contains('rbac-hide')); trig.classList.toggle('hidden', !any); }
         function ovfClose() { const m = document.getElementById('ovf-menu'); if (m) { m.__trig && m.__trig.setAttribute('aria-expanded', 'false'); m.remove(); } document.removeEventListener('click', ovfOutside, true); document.removeEventListener('keydown', ovfKey, true); window.removeEventListener('scroll', ovfClose, true); }
         function ovfOutside(e) { const m = document.getElementById('ovf-menu'); if (m && !m.contains(e.target)) ovfClose(); }
@@ -37287,42 +36977,6 @@ function todoRestoreAll() { var n = Object.keys(db.todoDismissed || {}).length; 
     rows.forEach(function(r,i){var l=C*r.v/tot;g+='<circle r="'+R+'" cx="80" cy="80" fill="none" stroke="'+(r.c||COL[i%COL.length])+'" stroke-width="28" stroke-dasharray="'+l+' '+(C-l)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 80 80)"><title>'+esc(r.n)+' : '+eur(r.v)+'</title></circle>';off+=l;});
     return '<div class="flex items-center gap-4 flex-wrap"><svg viewBox="0 0 160 160" style="width:150px;height:150px">'+g+'<text x="80" y="78" text-anchor="middle" font-size="10" fill="#64748b">Total</text><text x="80" y="94" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">'+eur(tot)+'</text></svg><div class="flex-1 min-w-[140px]">'+rows.map(function(r,i){return '<div class="flex justify-between text-[11px] mb-1"><span class="inline-flex items-center gap-1"><span style="width:10px;height:10px;border-radius:2px;background:'+(r.c||COL[i%COL.length])+';display:inline-block"></span>'+esc(r.n)+'</span><span class="font-bold">'+eur(r.v)+' · '+Math.round(r.v/tot*100)+'%</span></div>';}).join('')+'</div></div>';
   }
-  function buildOld(year){
-    var y=String(year),inc=new Array(12).fill(0),exp=new Array(12).fill(0),cat={},sales=new Array(12).fill(0),pay={};
-    (db.budgetEntries||[]).forEach(function(e){
-      if(yr(e.date)!==y||e.status==='prevu')return; var m=mo(e.date); if(m<0)return; var a=Number(e.amount)||0;
-      if(e.type==='income')inc[m]+=a; else if(e.type==='expense'){exp[m]+=a;var c=e.category||'Sans catégorie';cat[c]=(cat[c]||0)+a;}
-    });
-    (db.sales||[]).forEach(function(s){
-      if(yr(s.date)!==y)return; var m=mo(s.date),a=Number(s.totalPaid)||0; if(m>=0)sales[m]+=a;
-      var p=s.paymentMethod||'Autre'; pay[p]=(pay[p]||0)+a;
-    });
-    var payRows=Object.keys(pay).map(function(k){return {n:k,v:pay[k]};}).filter(function(r){return r.v>0;}).sort(function(a,b){return b.v-a.v;});
-    var catRows=Object.keys(cat).map(function(k){return {n:k,v:cat[k]};}).sort(function(a,b){return b.v-a.v;}).slice(0,8);
-    var outs=(db.outings||[]).filter(function(o){return yr(o.date)===y;}).map(function(o){var u=outingPlacesUsed(o);return {n:o.name||'Sortie',v:u,cap:o.capacity||0,c:(o.capacity&&u>=o.capacity)?'#ef4444':'#6366f1'};});
-    var stock=(db.tickets||[]).filter(function(t){return !t.archived;}).map(function(t){var s=Number(t.stock)||0;return {n:t.title||'Billet',v:s,c:s<=5?'#ef4444':(s<=15?'#f59e0b':'#10b981')};}).sort(function(a,b){return a.v-b.v;}).slice(0,12);
-    var paid=0,recu=0,wait=0;
-    (db.chequesVacances||[]).forEach(function(cv){
-      (cv.installments||[]).forEach(function(i){
-        var d=i.date||i.dueDate||cv.date||cv.createdAt; if(d&&yr(d)!==y)return;
-        var a=Number(i.amount)||0,st=i.status||(i.paid?'paye':'attente');
-        if(st==='paye')paid+=a; else if(st==='recu')recu+=a; else wait+=a;
-      });
-    });
-    var cvRows=[{n:'Payé',v:paid,c:'#10b981'},{n:'Reçu (chèque non encaissé)',v:recu,c:'#f59e0b'},{n:'En attente',v:wait,c:'#ef4444'}].filter(function(r){return r.v>0;});
-    var solde=inc.map(function(v,i){return v-exp[i];}),run=0,cum=solde.map(function(v){run+=v;return run;});
-    var tI=inc.reduce(function(a,b){return a+b;},0),tE=exp.reduce(function(a,b){return a+b;},0);
-    return '<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">'
-      +card('Recettes et dépenses par mois','fa-chart-column',groupedBars(MOIS,[{n:'Recettes',c:'#10b981',v:inc},{n:'Dépenses',c:'#ef4444',v:exp}]),'Budget réel '+y+' : recettes '+eur(tI)+' · dépenses '+eur(tE)+' · solde '+eur(tI-tE)+'.')
-      +card('Ventes billetterie par mois','fa-ticket',groupedBars(MOIS,[{n:'Ventes',c:'#6366f1',v:sales}]))
-      +card('Modes de paiement (ventes)','fa-credit-card',donut(payRows))
-      +card('Dépenses par catégorie','fa-tags',hBars(catRows),'Les 8 plus grosses catégories de l\'année.')
-      +card('Participation aux sorties','fa-bus',hBars(outs,function(r){return r.v+(r.cap?' / '+r.cap+' places':' inscrits');}),'Rouge = sortie complète.')
-      +card('Stock de billets (les plus bas)','fa-boxes-stacked',hBars(stock,function(r){return r.v+' en stock';}),'Rouge ≤ 5, orange ≤ 15.')
-      +card('Chèques Vacances : paiements','fa-umbrella-beach',donut(cvRows))
-      +card('Solde cumulé du budget','fa-chart-line',groupedBars(MOIS,[{n:'Solde cumulé',c:'#0ea5e9',v:cum.map(function(v){return Math.max(0,v);})}]),'Les mois en négatif ne sont pas dessinés ; solde fin d\'année : '+eur(run)+'.')
-      +'</div>';
-  }
 
   /* ===== V.4.40 : graphiques corrigés (filtre budget, N-1, réel seulement, compte courant) ===== */
   var CH={budget:'ALL'};
@@ -39134,7 +38788,6 @@ function pfReal(x) {
     r.exp = v59R(r.exp); r.inc = v59R(r.inc); r.net = v59R(r.exp - r.inc); return r;
 }
 function pfDeposits(x) { return Array.isArray(x.f.deposits) ? x.f.deposits : []; }
-function pfRender() { return pfollowRender(); }
 function pfollowRender() {
     var box = document.getElementById('pfollow-root'); if (!box) return;
     var L = pfAll();
@@ -43502,7 +43155,6 @@ var qrcode = function() {
   window.CSE_IDEE_ST = IDEE_ST;
   function post(a, p) { return cseScriptPost(a, p); }
   function close(id) { var m = document.getElementById(id); if (m) m.classList.add('hidden'); }
-  function closeAll() { document.querySelectorAll('.fixed.inset-0:not(.hidden)').forEach(function (m) { if (/^modal-v70/.test(m.id)) m.classList.add('hidden'); }); }
 
   // ------------------------------------------------------------------
   // Lien personnel
@@ -46091,7 +45743,6 @@ var qrcode = function() {
   };
   function sigTick() { try { if (window.__dbLoaded && !document.hidden && isCse() && !seed() && Date.now() - SGR.at > 5 * 60000) cseSigRecuperer(false); } catch (e) { } }
   // Dans la fiche publiée du salarié : ses documents à signer
-  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try { var L = SG().filter(function (x) { return x.statut === 'attente' && String(x.empId) === String(e.id); }); if (L.length) f.aSigner = L.map(function (x) { return { id: x.id, kind: x.kind, type: KIND[x.kind][0], titre: x.titre, date: x.date, lignes: x.lignes, montant: x.montant || 0, texte: x.texte }; }); } catch (er) { } }; })();
   // Liste de tout ce qui attend une signature
   window.cseSigListe = function (deja) {
     if (!deja) { SGR.at = 0; cseSigRecuperer(false).then(function (n) { var m = $('v94-sig-modal'); if (n && m && !m.classList.contains('hidden')) cseSigListe(true); }); }
@@ -46293,10 +45944,6 @@ var qrcode = function() {
     } catch (e) { PRT.err = /inconnue/i.test(e.message) ? 'script v83 à installer' : e.message; }
     PRT.busy = false; return n;
   };
-  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try {
-    var L = (db.docLog || []).filter(function (x) { return String(x.emp) === String(e.id) && x.url && x.partage && !x.remplace; }).slice(-80).reverse();
-    if (L.length) f.documents = L.map(function (x) { return { date: String(x.at || '').slice(0, 10), titre: x.titre || x.fichier || 'Document', url: x.url }; });
-  } catch (er) { } }; })();
   function prtTick() { try { if (window.__dbLoaded && !document.hidden && isCse() && Date.now() - PRT.at > 2 * 60000) csePartagerDocs(); } catch (e) { } }
 
   // =====================================================================
@@ -46501,7 +46148,6 @@ var qrcode = function() {
     };
   }
   // Mon espace : le salarié est prévenu (chèque de caution à apporter à la permanence, signature au retrait)
-  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) { if (prev) { try { prev(P); } catch (er) { } } try { var R = ccfg(); P.caution = R.on ? { montant: R.montant, jours: R.jours } : null; } catch (er) { } }; })();
   // Réglages : montant, délais, adresse du CSE (pour les lettres)
   window.cseCautionSet = function (k, v) { var c = cfg(); if (k === 'on') c.cautionOn = !!v; else if (k === 'montant') c.cautionMontant = Math.max(1, parseFloat(String(v).replace(',', '.')) || 100); else if (k === 'jours') c.cautionJours = Math.max(1, parseInt(v, 10) || 7); else if (k === 'delai') c.cautionDelai = Math.max(1, parseInt(v, 10) || 8); else if (k === 'adresse') c.cseAdresse = String(v || '').trim(); save(); cautionCard(); };
   function cautionCard() {
@@ -47113,12 +46759,6 @@ var qrcode = function() {
     return out;
   };
   // Dans la fiche publiée des élus : les permanences à prendre
-  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try {
-    if (!pcfg().vides || !(typeof window.cseEmpIsCse === 'function' && cseEmpIsCse(e))) return;
-    var N = pcfg().n; f.permVides = permJours(6, today()).filter(function (d) { return presentsLe(d).length < N && presentsLe(d).indexOf(e.id) < 0; }).map(function (d) { return { date: d, presents: presentsLe(d).map(function (id) { var x = emp(id); return x ? (x.firstname || '') + ' ' + (x.lastname || '') : ''; }).filter(Boolean) }; });
-    f.permMoi = permJours(6, today()).filter(function (d) { return presentsLe(d).indexOf(e.id) >= 0; });
-    f.permTexte = permTxt();
-  } catch (er) { } }; })();
   // Permanences prises depuis l'espace : ajoutées au planning
   var PPR = { busy: false, at: 0 };
   async function permPrisesTick(force) {
@@ -47749,20 +47389,6 @@ var qrcode = function() {
   }
 
   // ---------- 15c) Rappel délégation du 15 ----------
-  (function () { var prev = window.cseRappelsExtra; window.cseRappelsExtra = function (out, PU) {
-    if (prev) { try { out = prev(out, PU) || out; } catch (er) { } }
-    try {
-      if (!PU || cfg().delegMiMois === false) return out; var t = today(), on = t.slice(0, 8) + '15'; if (t > on) return out;
-      (db.employees || []).forEach(function (e) {
-        if (!e.espaceToken || e.active === false || !(typeof window.cseEmpIsCse === 'function' && cseEmpIsCse(e))) return;
-        var f = {}; try { window.cseEspaceFicheExtra && window.cseEspaceFicheExtra(f, e); } catch (er) { } var mo = f.deleg && f.deleg.mois; if (!mo) return; var cr = Number(mo.credit) || Number(mo.base) || 0; if (!(cr > 0)) return;
-        var reste = mo.reste != null ? Number(mo.reste) : cr - (Number(mo.used) || 0); if (!(reste > cr / 2)) return;
-        var hh = function (n) { n = Math.round(n * 60); return Math.floor(n / 60) + ' h' + (n % 60 ? String(n % 60).padStart(2, '0') : ''); };
-        out.push({ id: 'deleg15:' + e.id + ':' + t.slice(0, 7), on: on, h: 8, t: e.espaceToken, pt: '🕒 Heures de délégation', px: 'Il vous reste ' + hh(reste) + ' sur ' + hh(cr) + ' ce mois-ci. Pensez à les poser depuis votre espace.', who: nom(e), what: '📲 Délégation (15 du mois)', subject: 'Heures de délégation', body: '' });
-      });
-    } catch (er) { console.warn('[deleg15]', er); }
-    return out;
-  }; })();
 
   // ---------- 15d) Budget par activité + alertes (Aujourd'hui) ----------
   function bud(y) { var c = cfg(); c.budgetCats = c.budgetCats || {}; c.budgetCats[y] = c.budgetCats[y] || {}; return c.budgetCats[y]; }
@@ -47938,15 +47564,6 @@ var qrcode = function() {
     if (perm) pr.push('🕐 Permanence ' + perm.charAt(0).toLowerCase() + perm.slice(1));
     return pr.join(' · ');
   }
-  (function () { var prev = window.cseRappelsExtra; window.cseRappelsExtra = function (out, PU) {
-    if (prev) { try { out = prev(out, PU) || out; } catch (er) { } }
-    try {
-      if (!PU || !cfg().resumeMois) return out; var t = today(), d1 = t.slice(0, 8) + '01'; if (t !== d1) return out;
-      var tx = resumeTexte(); if (!tx) return out;
-      msEmps().forEach(function (e) { out.push({ id: 'resume:' + e.id + ':' + t.slice(0, 7), on: d1, h: 8, t: e.espaceToken, pt: '📰 Ce mois-ci au CSE', px: tx.slice(0, 220), who: nom(e), what: '📰 Résumé du mois', subject: 'Ce mois-ci au CSE', body: '' }); });
-    } catch (er) { console.warn('[résumé du mois]', er); }
-    return out;
-  }; })();
   // ---------- 16e) Relancer les salariés sans prestation ----------
   window.cseRelanceNonUsers = function (rows) {
     try {
@@ -48105,18 +47722,6 @@ var qrcode = function() {
     });
   }
   // ---------- 17c) Ce que l'espace reçoit : photos, aides, équipe de la semaine ----------
-  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
-    if (prev) { try { prev(P); } catch (er) { } }
-    try {
-      (P.billets || []).forEach(function (b) { var t = catObj('t', b.id); if (t && phId(t)) b.photo = { id: t.photo.id }; if (t) b.cat = catBillet(t); });
-      (P.sorties || []).forEach(function (s) { var o = catObj('o', s.id); if (o && phId(o)) s.photo = { id: o.photo.id }; });
-      var c = cfg(); P.aides = c.aidesOn ? aidesL().filter(function (a) { return a.nom; }).map(function (a) { return { nom: a.nom, montant: Number(a.montant) || 0, info: a.info || '', justif: a.justif !== false }; }) : [];
-    } catch (er) { console.warn('[espace 10.1]', er); }
-  }; })();
-  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) {
-    if (prev) { try { prev(f, e); } catch (er) { } }
-    try { if (e && e.groupe) { var p = posteDe(e.groupe); f.equipe = { groupe: e.groupe, poste: p, texte: posteTxt(p) }; } } catch (er) { }
-  }; })();
   // ---------- 17d) Alertes au choix : notification aux salariés intéressés seulement ----------
   var AL = { base: null, prefs: null, at: 0, q: [], busy: false };
   function alEtat() { var S = {}; (db.tickets || []).forEach(function (t) { if (t && !t.archived) S['t:' + t.id] = 1; }); (db.outings || []).forEach(function (o) { if (o.status !== 'annulee') S['o:' + o.id] = 1; }); (db.equipment || []).forEach(function (q) { if (!q.espaceHidden) S['m:' + q.id] = 1; }); return S; }
@@ -48325,15 +47930,6 @@ var qrcode = function() {
     if (bp) { row.querySelectorAll('[data-v85t]').forEach(function (x) { x.className = x.className.replace('bg-brand-600 text-white border-brand-600', 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'); }); bpRender(); }
   };
   // ---------- 18c) Publication vers l'espace ----------
-  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
-    if (prev) { try { prev(P); } catch (er) { } }
-    try {
-      var lim = addD(today(), -30);
-      (P.billets || []).forEach(function (b) { var t = catObj('t', b.id); if (!t) return; if (t.une) b.une = true; if (t.ajouteLe && t.ajouteLe !== 'ancien' && t.ajouteLe >= lim) b.nouveau = t.ajouteLe; });
-      (P.sorties || []).forEach(function (s) { var o = catObj('o', s.id); if (o && o.une) s.une = true; });
-      P.bonsPlans = bpL().filter(bpActif).map(function (p) { return { id: p.id, nom: p.nom, cat: bpCat(p.cat), reduc: p.reduc || '', code: p.code || '', adresse: p.adresse || '', site: /^https?:\/\//.test(p.site || '') ? p.site : '', cond: p.cond || '', fin: p.fin || '', photo: p.photo && p.photo.id ? { id: p.photo.id } : null, nouveau: p.ajouteLe && p.ajouteLe >= lim ? p.ajouteLe : '' }; });
-    } catch (er) { console.warn('[espace 10.2]', er); }
-  }; })();
   // ---------- 18d) Alerte « Bons plans » ----------
   var alEtat0 = alEtat; alEtat = function () { var S = alEtat0(); bpL().forEach(function (p) { if (bpActif(p)) S['p:' + p.id] = 1; }); return S; };
   var alQuoi0 = alQuoi; alQuoi = function (k) { if (k.indexOf('p:') !== 0) return alQuoi0(k); var p = bpL().filter(function (x) { return x.id === k.slice(2); })[0]; if (!p) return null; return { cats: ['bonsplans'], titre: '🏷️ Nouveau bon plan : ' + p.nom, texte: (p.reduc || 'Réduction pour les salariés') + '. Détails dans votre espace, onglet Bons plans.', nom: p.nom }; };
@@ -48486,20 +48082,6 @@ var qrcode = function() {
     if (mine) { INF.tab = tab; row.querySelectorAll('[data-v85t],[data-v102]').forEach(function (x) { x.className = x.className.replace('bg-brand-600 text-white border-brand-600', 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'); }); if (tab === 'signal' && INF.sig === null) { } infRender(); }
   };
   // ---------- 19g) Publication vers l'espace ----------
-  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
-    if (prev) { try { prev(P); } catch (er) { } }
-    try {
-      var I = IF(), elus = elusVrais();
-      P.infos = {
-        fiches: FICHES_T.filter(function (f) { return I.on[f[0]]; }).map(function (f) { return f[0]; }), chez: I.chez, calculs: !!I.calculsOn, evts: I.evts, preavis: I.preavis, cpDebut: I.cpDebut || 6,
-        affichage: I.affichage.map(function (a) { return { titre: a.titre, type: a.type, url: a.url, at: String(a.at || '').slice(0, 10) }; }),
-        pv: (db.meetings || []).filter(function (m) { return m.pvPublie && m.pvEnvoi && m.pvEnvoi.url; }).sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); }).map(function (m) { return { date: m.date, titre: m.title || m.type || 'Réunion du CSE', url: m.pvEnvoi.url }; }),
-        elus: elus.map(function (e) { var c = e.cseContact || {}, p = ''; try { p = posteTxt(posteDe(e.groupe)); } catch (er) { } return { nom: nom(e), role: roleDe(e), service: e.service || '', equipe: p, tel: c.tel || '', mail: c.mail || '', photo: c.photo && c.photo.id ? { id: c.photo.id } : null, referent: I.referents.indexOf(String(e.id)) >= 0 }; }),
-        contacts: I.contacts.map(function (c) { return { type: c.type, nom: c.nom, tel: c.tel, mail: c.mail, adresse: c.adresse, site: /^https?:\/\//.test(c.site || '') ? c.site : '', info: c.info }; }),
-        faq: I.faq.map(function (q) { return { cat: q.cat, q: q.q, r: q.r }; }), signal: !!I.signalOn
-      };
-    } catch (er) { console.warn('[espace 10.3]', er); }
-  }; })();
   // =====================================================================
   // 20) V.10.4 : CALCULS HEURES SUP / PRIME DE NUIT / PONTS, FICHE « COMPRENDRE MA FICHE DE PAIE »,
   //     MUTUELLE ET PRÉVOYANCE (désactivée par défaut). Justificatif PDF à chaque opération : voir 15b (amJustif).
@@ -48536,14 +48118,6 @@ var qrcode = function() {
   // Onglets de Communication : réglages des calculs sous « Mes droits », nouvel onglet « Mutuelle »
   (function () { var d = INF_TABS[0], r0 = d[3]; d[3] = function () { return r0() + rCalc104(); }; var i = -1; INF_TABS.forEach(function (t, k) { if (t[0] === 'signal') i = k; }); INF_TABS.splice(i < 0 ? INF_TABS.length : i, 0, ['mutuelle', 'fa-heart-pulse', 'Mutuelle', rMutuelle]); })();
   // Publication vers l'espace
-  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
-    if (prev) { try { prev(P); } catch (er) { } }
-    try {
-      var I = IF(), M = MU(); P.infos = P.infos || {};
-      P.infos.hs = I.hs || {}; P.infos.nuit = I.nuit || {};
-      P.infos.mutuelle = M.on ? { on: true, mut: M.mut, prev: M.prev, garanties: M.garanties || '', docs: M.docs.map(function (a) { return { titre: a.titre, url: a.url, at: String(a.at || '').slice(0, 10) }; }) } : null;
-    } catch (er) { console.warn('[espace 10.4]', er); }
-  }; })();
 
   // =====================================================================
   // 21) V.10.5 : ÉVÉNEMENTS DE VIE (cadeau du CSE), LIVRET D'ACCUEIL DES NOUVEAUX,
@@ -48734,7 +48308,6 @@ var qrcode = function() {
     SST().on = true; save(); cseComm('sst');
   };
   window.cseSstOuvrir = function () { try { cseComm('sst'); SS.filtre = 'retard'; infRender(); } catch (e) { } };
-  (function () { var prev = window.cseTodayExtra; window.cseTodayExtra = function (G) { G = (prev ? prev(G) : G) || G; try { var S = SST(); if (S.on) { var R = sstRetard(); if (R.length) G.push({ ic: '🛡️', t: 'Santé-sécurité', l: R.slice(0, 3).map(function (a) { return '<b class="text-rose-700">' + E(a.titre) + '</b> : prévu le ' + fd(a.echeance); }).concat(R.length > 3 ? ['… et ' + (R.length - 3) + ' autre(s)'] : []), go: 'fn:cseSstOuvrir', b: 'Voir', warn: true }); } } catch (e) { } return G; }; })();
   function sstTick() {
     try {
       var S = SST(); if (!S.on || !scriptOk() || seed() || !isCse() || !window.__dbLoaded || !pushPret()) return; var j = today(), ch = false;
@@ -48805,10 +48378,6 @@ var qrcode = function() {
     var sg = INF_TABS[i]; if (sg) { var r0 = sg[3]; sg[3] = function () { var h = r0(); if (INF.sigSel && SST().on) h = '<div class="' + BOX + ' flex flex-wrap items-center gap-2"><span class="text-xs flex-1">🛡️ Transformer le signalement ouvert en action santé-sécurité (responsable, date limite, relance).</span><button type="button" class="' + BTN + '" onclick="cseSstDepuisSignal(\'' + E(INF.sigSel) + '\')">Créer une action</button></div>' + h; return h; }; }
     INF_TABS.push(['accueil', 'fa-hand-holding-heart', 'Accueil et événements', rAccueil], ['sst', 'fa-helmet-safety', 'Santé-sécurité', rSst], ['baro', 'fa-chart-simple', 'Baromètre', rBaro]);
   })();
-  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
-    if (prev) { try { prev(P); } catch (er) { } }
-    try { var c = cfg(); P.bienvenue = c.espaceBienvenue || ''; P.evtVie = c.evtVieOn ? vieL().filter(function (v) { return v.nom; }).map(function (v) { return { id: v.id, nom: v.nom, conge: v.conge || '', cadeau: v.cadeau || '', montant: Number(v.montant) || 0, justif: v.justif || '' }; }) : null; } catch (er) { console.warn('[espace 10.5]', er); }
-  }; })();
 
   // =====================================================================
   // 23) V.10.5.5 : JUSTIFICATIFS DES DEMANDES DE PRESTATION SUR LE DRIVE + ESPACE DU SALARIÉ
@@ -49206,8 +48775,6 @@ var qrcode = function() {
     try { await cseScriptPost('code-effacer', { t: e.espaceToken }); if (CODES.liste) delete CODES.liste[e.espaceToken]; try { logAction('Espace salarié', 'employees', 'Code personnel effacé : ' + nom(e)); } catch (er) { } say('Code effacé.', 'success'); } catch (er) { say('Effacement impossible : ' + er.message, 'error'); }
     codesCard();
   };
-  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) { if (prev) { try { prev(P); } catch (er) { } } try { P.codePropose = cfg().espaceCode !== false; } catch (er) { } }; })();
-  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try { if (e.birthdate && /^\d{4}-\d{2}-\d{2}/.test(e.birthdate)) f.anniv = String(e.birthdate).slice(5, 10); } catch (er) { } }; })();
 
   // ---------- 26d) Communication : un vrai onglet ----------
   function commOnglet() {
@@ -49417,10 +48984,6 @@ var qrcode = function() {
     });
   }
   // ---------- 27e) Obligations du CSE dans « Aujourd'hui » ----------
-  (function () { var prev = window.cseTodayExtra; window.cseTodayExtra = function (G) { G = (prev ? prev(G) : G) || G; try {
-    var L = []; [oblYear, oblYear + 1].forEach(function (y) { oblList(y).forEach(function (it) { var s = oblStatus(y, it); if (!s.done && (s.key === 'late' || (s.key === 'soon' && s.left <= 30))) L.push({ t: it.t, s: s }); }); });
-    if (L.length) G.push({ ic: '📋', t: 'Obligations du CSE', l: L.slice(0, 3).map(function (x) { return '<b class="' + (x.s.key === 'late' ? 'text-rose-700' : 'text-amber-700') + '">' + E(x.t) + '</b> : ' + E(x.s.label); }).concat(L.length > 3 ? ['… et ' + (L.length - 3) + ' autre(s)'] : []), go: 'obligations', b: 'Voir', warn: L.some(function (x) { return x.s.key === 'late'; }) });
-  } catch (e) { } return G; }; })();
   (function () {
     if ($('v11-style2')) return;
     var st = document.createElement('style'); st.id = 'v11-style2';
@@ -49466,6 +49029,108 @@ var qrcode = function() {
     if (o.innerHTML !== h2) o.innerHTML = h2;
   }
   window.cseV11OblPush = function (v) { cfg().oblPush = !!v; save(); say(v ? 'Les élus seront prévenus des obligations.' : 'Rappel des obligations coupé.', 'success'); };
+  // Notes dictées : majuscule au début et point à la fin quand la dictée s'arrête
+  function joli(ta) { var v = String(ta.value || '').replace(/\s+/g, ' ').trim(); if (!v) return; v = v.charAt(0).toUpperCase() + v.slice(1); v = v.replace(/([.!?]\s+)([a-zà-ÿ])/g, function (m, a, b) { return a + b.toUpperCase(); }); if (!/[.!?…]$/.test(v)) v += '.'; if (v !== ta.value) { ta.value = v; ta.dispatchEvent(new Event('input', { bubbles: true })); } }
+
+  // =====================================================================
+  //  BRANCHEMENTS REGROUPÉS (rangement V.11.2) : chaque bloc ajoute sa part, dans l'ordre des versions.
+  // =====================================================================
+  // ---------- cseEspacePubExtra : ce que l'espace reçoit pour tous (publication) ----------
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) { if (prev) { try { prev(P); } catch (er) { } } try { var R = ccfg(); P.caution = R.on ? { montant: R.montant, jours: R.jours } : null; } catch (er) { } }; })();
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try {
+      (P.billets || []).forEach(function (b) { var t = catObj('t', b.id); if (t && phId(t)) b.photo = { id: t.photo.id }; if (t) b.cat = catBillet(t); });
+      (P.sorties || []).forEach(function (s) { var o = catObj('o', s.id); if (o && phId(o)) s.photo = { id: o.photo.id }; });
+      var c = cfg(); P.aides = c.aidesOn ? aidesL().filter(function (a) { return a.nom; }).map(function (a) { return { nom: a.nom, montant: Number(a.montant) || 0, info: a.info || '', justif: a.justif !== false }; }) : [];
+    } catch (er) { console.warn('[espace 10.1]', er); }
+  }; })();
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try {
+      var lim = addD(today(), -30);
+      (P.billets || []).forEach(function (b) { var t = catObj('t', b.id); if (!t) return; if (t.une) b.une = true; if (t.ajouteLe && t.ajouteLe !== 'ancien' && t.ajouteLe >= lim) b.nouveau = t.ajouteLe; });
+      (P.sorties || []).forEach(function (s) { var o = catObj('o', s.id); if (o && o.une) s.une = true; });
+      P.bonsPlans = bpL().filter(bpActif).map(function (p) { return { id: p.id, nom: p.nom, cat: bpCat(p.cat), reduc: p.reduc || '', code: p.code || '', adresse: p.adresse || '', site: /^https?:\/\//.test(p.site || '') ? p.site : '', cond: p.cond || '', fin: p.fin || '', photo: p.photo && p.photo.id ? { id: p.photo.id } : null, nouveau: p.ajouteLe && p.ajouteLe >= lim ? p.ajouteLe : '' }; });
+    } catch (er) { console.warn('[espace 10.2]', er); }
+  }; })();
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try {
+      var I = IF(), elus = elusVrais();
+      P.infos = {
+        fiches: FICHES_T.filter(function (f) { return I.on[f[0]]; }).map(function (f) { return f[0]; }), chez: I.chez, calculs: !!I.calculsOn, evts: I.evts, preavis: I.preavis, cpDebut: I.cpDebut || 6,
+        affichage: I.affichage.map(function (a) { return { titre: a.titre, type: a.type, url: a.url, at: String(a.at || '').slice(0, 10) }; }),
+        pv: (db.meetings || []).filter(function (m) { return m.pvPublie && m.pvEnvoi && m.pvEnvoi.url; }).sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); }).map(function (m) { return { date: m.date, titre: m.title || m.type || 'Réunion du CSE', url: m.pvEnvoi.url }; }),
+        elus: elus.map(function (e) { var c = e.cseContact || {}, p = ''; try { p = posteTxt(posteDe(e.groupe)); } catch (er) { } return { nom: nom(e), role: roleDe(e), service: e.service || '', equipe: p, tel: c.tel || '', mail: c.mail || '', photo: c.photo && c.photo.id ? { id: c.photo.id } : null, referent: I.referents.indexOf(String(e.id)) >= 0 }; }),
+        contacts: I.contacts.map(function (c) { return { type: c.type, nom: c.nom, tel: c.tel, mail: c.mail, adresse: c.adresse, site: /^https?:\/\//.test(c.site || '') ? c.site : '', info: c.info }; }),
+        faq: I.faq.map(function (q) { return { cat: q.cat, q: q.q, r: q.r }; }), signal: !!I.signalOn
+      };
+    } catch (er) { console.warn('[espace 10.3]', er); }
+  }; })();
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try {
+      var I = IF(), M = MU(); P.infos = P.infos || {};
+      P.infos.hs = I.hs || {}; P.infos.nuit = I.nuit || {};
+      P.infos.mutuelle = M.on ? { on: true, mut: M.mut, prev: M.prev, garanties: M.garanties || '', docs: M.docs.map(function (a) { return { titre: a.titre, url: a.url, at: String(a.at || '').slice(0, 10) }; }) } : null;
+    } catch (er) { console.warn('[espace 10.4]', er); }
+  }; })();
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try { var c = cfg(); P.bienvenue = c.espaceBienvenue || ''; P.evtVie = c.evtVieOn ? vieL().filter(function (v) { return v.nom; }).map(function (v) { return { id: v.id, nom: v.nom, conge: v.conge || '', cadeau: v.cadeau || '', montant: Number(v.montant) || 0, justif: v.justif || '' }; }) : null; } catch (er) { console.warn('[espace 10.5]', er); }
+  }; })();
+  (function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) { if (prev) { try { prev(P); } catch (er) { } } try { P.codePropose = cfg().espaceCode !== false; } catch (er) { } }; })();
+
+  // ---------- cseEspaceFicheExtra : ce que chaque fiche salarié reçoit (publication) ----------
+  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try { var L = SG().filter(function (x) { return x.statut === 'attente' && String(x.empId) === String(e.id); }); if (L.length) f.aSigner = L.map(function (x) { return { id: x.id, kind: x.kind, type: KIND[x.kind][0], titre: x.titre, date: x.date, lignes: x.lignes, montant: x.montant || 0, texte: x.texte }; }); } catch (er) { } }; })();
+  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try {
+    var L = (db.docLog || []).filter(function (x) { return String(x.emp) === String(e.id) && x.url && x.partage && !x.remplace; }).slice(-80).reverse();
+    if (L.length) f.documents = L.map(function (x) { return { date: String(x.at || '').slice(0, 10), titre: x.titre || x.fichier || 'Document', url: x.url }; });
+  } catch (er) { } }; })();
+  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try {
+    if (!pcfg().vides || !(typeof window.cseEmpIsCse === 'function' && cseEmpIsCse(e))) return;
+    var N = pcfg().n; f.permVides = permJours(6, today()).filter(function (d) { return presentsLe(d).length < N && presentsLe(d).indexOf(e.id) < 0; }).map(function (d) { return { date: d, presents: presentsLe(d).map(function (id) { var x = emp(id); return x ? (x.firstname || '') + ' ' + (x.lastname || '') : ''; }).filter(Boolean) }; });
+    f.permMoi = permJours(6, today()).filter(function (d) { return presentsLe(d).indexOf(e.id) >= 0; });
+    f.permTexte = permTxt();
+  } catch (er) { } }; })();
+  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) {
+    if (prev) { try { prev(f, e); } catch (er) { } }
+    try { if (e && e.groupe) { var p = posteDe(e.groupe); f.equipe = { groupe: e.groupe, poste: p, texte: posteTxt(p) }; } } catch (er) { }
+  }; })();
+  (function () { var prev = window.cseEspaceFicheExtra; window.cseEspaceFicheExtra = function (f, e) { if (prev) { try { prev(f, e); } catch (er) { } } try { if (e.birthdate && /^\d{4}-\d{2}-\d{2}/.test(e.birthdate)) f.anniv = String(e.birthdate).slice(5, 10); } catch (er) { } }; })();
+
+  // ---------- cseTodayExtra : lignes ajoutées à « Aujourd'hui » ----------
+  (function () { var prev = window.cseTodayExtra; window.cseTodayExtra = function (G) { G = (prev ? prev(G) : G) || G; try { var S = SST(); if (S.on) { var R = sstRetard(); if (R.length) G.push({ ic: '🛡️', t: 'Santé-sécurité', l: R.slice(0, 3).map(function (a) { return '<b class="text-rose-700">' + E(a.titre) + '</b> : prévu le ' + fd(a.echeance); }).concat(R.length > 3 ? ['… et ' + (R.length - 3) + ' autre(s)'] : []), go: 'fn:cseSstOuvrir', b: 'Voir', warn: true }); } } catch (e) { } return G; }; })();
+  (function () { var prev = window.cseTodayExtra; window.cseTodayExtra = function (G) { G = (prev ? prev(G) : G) || G; try {
+    var L = []; [oblYear, oblYear + 1].forEach(function (y) { oblList(y).forEach(function (it) { var s = oblStatus(y, it); if (!s.done && (s.key === 'late' || (s.key === 'soon' && s.left <= 30))) L.push({ t: it.t, s: s }); }); });
+    if (L.length) G.push({ ic: '📋', t: 'Obligations du CSE', l: L.slice(0, 3).map(function (x) { return '<b class="' + (x.s.key === 'late' ? 'text-rose-700' : 'text-amber-700') + '">' + E(x.t) + '</b> : ' + E(x.s.label); }).concat(L.length > 3 ? ['… et ' + (L.length - 3) + ' autre(s)'] : []), go: 'obligations', b: 'Voir', warn: L.some(function (x) { return x.s.key === 'late'; }) });
+  } catch (e) { } return G; }; })();
+
+  // ---------- cseRappelsExtra : rappels et notifications automatiques ----------
+  (function () { var prev = window.cseRappelsExtra; window.cseRappelsExtra = function (out, PU) {
+    if (prev) { try { out = prev(out, PU) || out; } catch (er) { } }
+    try {
+      if (!PU || cfg().delegMiMois === false) return out; var t = today(), on = t.slice(0, 8) + '15'; if (t > on) return out;
+      (db.employees || []).forEach(function (e) {
+        if (!e.espaceToken || e.active === false || !(typeof window.cseEmpIsCse === 'function' && cseEmpIsCse(e))) return;
+        var f = {}; try { window.cseEspaceFicheExtra && window.cseEspaceFicheExtra(f, e); } catch (er) { } var mo = f.deleg && f.deleg.mois; if (!mo) return; var cr = Number(mo.credit) || Number(mo.base) || 0; if (!(cr > 0)) return;
+        var reste = mo.reste != null ? Number(mo.reste) : cr - (Number(mo.used) || 0); if (!(reste > cr / 2)) return;
+        var hh = function (n) { n = Math.round(n * 60); return Math.floor(n / 60) + ' h' + (n % 60 ? String(n % 60).padStart(2, '0') : ''); };
+        out.push({ id: 'deleg15:' + e.id + ':' + t.slice(0, 7), on: on, h: 8, t: e.espaceToken, pt: '🕒 Heures de délégation', px: 'Il vous reste ' + hh(reste) + ' sur ' + hh(cr) + ' ce mois-ci. Pensez à les poser depuis votre espace.', who: nom(e), what: '📲 Délégation (15 du mois)', subject: 'Heures de délégation', body: '' });
+      });
+    } catch (er) { console.warn('[deleg15]', er); }
+    return out;
+  }; })();
+  (function () { var prev = window.cseRappelsExtra; window.cseRappelsExtra = function (out, PU) {
+    if (prev) { try { out = prev(out, PU) || out; } catch (er) { } }
+    try {
+      if (!PU || !cfg().resumeMois) return out; var t = today(), d1 = t.slice(0, 8) + '01'; if (t !== d1) return out;
+      var tx = resumeTexte(); if (!tx) return out;
+      msEmps().forEach(function (e) { out.push({ id: 'resume:' + e.id + ':' + t.slice(0, 7), on: d1, h: 8, t: e.espaceToken, pt: '📰 Ce mois-ci au CSE', px: tx.slice(0, 220), who: nom(e), what: '📰 Résumé du mois', subject: 'Ce mois-ci au CSE', body: '' }); });
+    } catch (er) { console.warn('[résumé du mois]', er); }
+    return out;
+  }; })();
   (function () { var prev = window.cseRappelsExtra; window.cseRappelsExtra = function (out, PU) {
     if (prev) { try { out = prev(out, PU) || out; } catch (er) { } }
     try {
@@ -49482,8 +49147,6 @@ var qrcode = function() {
     } catch (er) { console.warn('[obligations]', er); }
     return out;
   }; })();
-  // Notes dictées : majuscule au début et point à la fin quand la dictée s'arrête
-  function joli(ta) { var v = String(ta.value || '').replace(/\s+/g, ' ').trim(); if (!v) return; v = v.charAt(0).toUpperCase() + v.slice(1); v = v.replace(/([.!?]\s+)([a-zà-ÿ])/g, function (m, a, b) { return a + b.toUpperCase(); }); if (!/[.!?…]$/.test(v)) v += '.'; if (v !== ta.value) { ta.value = v; ta.dispatchEvent(new Event('input', { bubbles: true })); } }
 
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }

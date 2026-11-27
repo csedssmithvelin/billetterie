@@ -1248,7 +1248,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   };
   // ---------- Heures de délégation (élus du CSE) ----------
   function dgSaison() { var d = new Date(), y = d.getMonth() >= 6 ? d.getFullYear() : d.getFullYear() - 1; return { debut: y + '-07-01', fin: (y + 1) + '-06-30', y: y }; }
-  function dgHeures(L, from, to) { return (L || []).filter(function (d) { return d.statut !== 'annulée' && d.du >= from && d.du <= to; }).reduce(function (s, d) { return s + (Number(d.heures) || 0); }, 0); }
   function hFr(n) { n = Math.round((Number(n) || 0) * 60); var sg = n < 0 ? '−' : ''; n = Math.abs(n); var h = Math.floor(n / 60), m = n % 60; return sg + h + ' h' + (m ? String(m).padStart(2, '0') : ''); }
   // Toutes mes heures de l'année : celles connues de l'appli du CSE + celles envoyées d'ici (pas encore reprises par l'appli)
   function dgListe() {
@@ -1758,8 +1757,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   window.addEventListener('pagehide', function () { try { speechSynthesis.cancel(); } catch (e) { } });
 
   // V.11.2 : pas de traduction (demande du CSE)
-  var LANG = 'fr'; try { localStorage.removeItem('cse_lang'); document.documentElement.removeAttribute('dir'); } catch (e) { }
-  function v11Trad() { }
+  try { localStorage.removeItem('cse_lang'); document.documentElement.removeAttribute('dir'); } catch (e) { }
 
   // ---------- « Mon année CSE » : récap en 5 images ----------
   window.cseMonAnnee = function () {
@@ -1865,7 +1863,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     sheet(head(v11Initiales() + ' · ' + ((f.prenom || '') + ' ' + (f.nom || '')).trim(), 'Mon compte')
       + it.map(function (x) { return '<button class="srow" onclick="cseClose();cseGo(\'' + x[0] + '\')"><span class="si">' + x[1] + '</span><span class="st"><b>' + x[2] + '</b><small>' + x[3] + '</small></span><span class="sa">›</span></button>'; }).join('')
       + '<button class="srow" onclick="cseClose();cseV11Code()"><span class="si">🔒</span><span class="st"><b>Mon code personnel</b><small>' + (D.code && D.code.actif ? 'Actif' : 'Pas encore choisi') + '</small></span><span class="sa">›</span></button>');
-    if (LANG !== 'fr') v11Trad($('sheet'));
   };
   function v11BilletBtn(b) {
     window.__v11B = window.__v11B || {}; window.__v11B[b.id] = b;
@@ -1888,7 +1885,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if (!V11D.lien) { V11D.lien = 1; var ml = /(^|[#&])sortie=([^&]+)/.exec(location.hash); if (ml) { var sid = decodeURIComponent(ml[2]), id = /^\d+$/.test(sid) ? Number(sid) : sid; setTimeout(function () { go('sorties'); var o = ((D.pub || {}).sorties || []).filter(function (x) { return String(x.id) === String(sid); })[0], deja = ((D.fiche || {}).sorties || []).some(function (x) { return String(x.outingId) === String(sid); }); if (o && !deja) setTimeout(function () { try { cseSortie(id); } catch (e) { } }, 350); }, 50); } }
     document.querySelectorAll('#nav button').forEach(function (b) { if (!b.getAttribute('aria-label')) b.setAttribute('aria-label', b.dataset.l || b.textContent.trim()); });
     try { v11Haut(); } catch (e) { }
-    if (LANG !== 'fr') { v11Trad(app); v11Trad($('nav')); v11Trad(document.querySelector('header')); }
   }
   function v11Squelette() { return '<div class="sk-wrap" aria-busy="true" aria-label="Chargement de votre espace"><div class="sk sk-h"></div><div class="sk sk-c"></div><div class="sk sk-c" style="height:120px"></div><div class="sk-row"><div class="sk sk-t"></div><div class="sk sk-t"></div><div class="sk sk-t"></div><div class="sk sk-t"></div></div></div>'; }
 
@@ -2227,10 +2223,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
   // V.8.9 : sur Android, ouvre directement l'appli Swile si elle est installée (sinon la page web).
   // Sur iPhone, le lien https ouvre l'appli tout seul quand elle est installée (lien universel).
-  function swileHref(u) {
-    if (!/android/i.test(navigator.userAgent) || !/^https:\/\//.test(u)) return u;
-    return 'intent://' + u.replace(/^https:\/\//, '') + '#Intent;scheme=https;package=hr.lunc.client;S.browser_fallback_url=' + encodeURIComponent(u) + ';end';
-  }
   function swileCard(memeTarif) {
     var W = D && D.pub && D.pub.swile; if (!W) return '';
     return '<div class="card"><h2>🛍️ Billetterie en ligne Swile</h2>' + (memeTarif ? '<p><b>Vous pouvez aussi prendre vos places aux mêmes tarifs sur la boutique Swile du CSE</b>, quand vous voulez, depuis votre téléphone.</p>' : '') + '<p class="mute">' + E(W.texte || 'Achetez vos billets à prix CSE sur la boutique Swile du CSE.') + '</p>'
@@ -2263,7 +2255,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '11.3', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '11.4', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
