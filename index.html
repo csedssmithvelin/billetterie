@@ -44,7 +44,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"UaBPPQyHolayikpKLES2jQ==","iv":"c6UMLAVxzq3AmBSu","rev":"boot","lastModified":"2026-11-27T23:35:59.557Z","by":"Michaël GROSJEAN","data":"EKrluT7u6nibtYzxJgapT/fi7pKBczyzI2HMMySoLx8I///GRpe6QUipWrFEkVt28YpfjQ14WO1AbGs44EgVXg=="},"at":"2026-11-27T23:35:59.606Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"ZzJ0VdzsWr1M84nuaouwDQ==","iv":"mnGWRKy3a3qkx4WU","rev":"boot","lastModified":"2026-11-27T23:43:08.211Z","by":"Michaël GROSJEAN","data":"y8vbVzRvkUOXxX9ug0E4VWxceq9I58QP1xYoaYvh5LcfhnjpIQp6FoLijb3qMbZaOTvlaGfrLGLw4Y4mHy1CFg=="},"at":"2026-11-27T23:43:08.252Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.8";
+        const APP_VERSION = "V.11.8.1";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.8.1', date: '2026-11-28', items: ['Cinémas : liens AlloCiné du Palace (Épinal) et du Majestic (Remiremont) déjà remplis ; l\'espace ouvre les séances du jour.'] },
             { v: 'V.11.8', date: '2026-11-28', items: ['Espace : météo de l\'usine sur l\'accueil avec alerte chaleur / grand froid et rappel des droits ; jours fériés officiels (liste de l\'État) ; boutons « Voir le programme » des cinémas (Palace Épinal, Majestic Remiremont) dans Billets. « Ce qui change » : actualités Service-public.fr en plus. Réglages dans Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace ». Nécessite le script Google v98.'] },
             { v: 'V.11.7', date: '2026-11-28', items: ['« Ce qui change » : bouton « Chercher les dernières infos officielles » (Code du travail numérique), on coche et on ajoute ; alerte dans « Aujourd\'hui » quand il y a du nouveau (vérifié chaque semaine) et rappel le 2 janvier / 2 juillet ; option « ajouter toutes seules » (coupée par défaut). Nécessite le script Google v97.'] },
             { v: 'V.11.6.1', date: '2026-11-28', items: ['Date limite des chèques vacances : on peut de nouveau taper l\'année en entier (la case ne se recharge plus pendant la saisie).'] },
@@ -49498,7 +49499,8 @@ var qrcode = function() {
   //     actualités service-public en plus dans « Ce qui change » (script v98), jours fériés officiels (espace).
   // =====================================================================
   function v10() { var C = v7(); C.meteo = C.meteo || { on: true, nom: '', lat: null, lon: null, chaud: 33, froid: -5 };
-    if (!C.cines) C.cines = [{ nom: 'Palace — Épinal', url: '' }, { nom: 'Majestic — Remiremont', url: '' }]; return C; }
+    if (!C.cines) C.cines = [{ nom: 'Palace — Épinal', url: 'https://www.allocine.fr/seance/salle_gen_csalle=P0461.html' }, { nom: 'Majestic — Remiremont', url: 'https://www.allocine.fr/seance/salle_gen_csalle=P0531.html' }];
+    C.cines.forEach(function (x) { if (!x.url && /Palace/.test(x.nom)) x.url = 'https://www.allocine.fr/seance/salle_gen_csalle=P0461.html'; if (!x.url && /Majestic/.test(x.nom)) x.url = 'https://www.allocine.fr/seance/salle_gen_csalle=P0531.html'; }); return C; }
   var V10 = { msg: '' };
   window.cseV10 = function (k, v) { var C = v10(), M = C.meteo;
     if (k === 'met-on') M.on = !!v; else if (k === 'met-chaud') M.chaud = Number(v) || 33; else if (k === 'met-froid') M.froid = v === '' ? -5 : Number(v);

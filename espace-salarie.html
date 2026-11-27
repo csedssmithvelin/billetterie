@@ -2403,9 +2403,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     return L.sort().map(function (k) { var p = k.split('-'); return [new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12), J[k]]; });
   };
   // Programme des cinémas (liens donnés par le CSE) sur la page Billetterie
+  // Lien AlloCiné : remplace la date (shwt_date=AAAA-MM-JJ) par celle du jour, ou l'ajoute
+  function v119Jour(u) { var d = new Date(), j = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    u = String(u || ''); if (/shwt_date=\d{4}-\d{2}-\d{2}/.test(u)) return u.replace(/shwt_date=\d{4}-\d{2}-\d{2}/, 'shwt_date=' + j);
+    if (/allocine\.fr\/seance\//.test(u)) return u.split('#')[0] + '#shwt_date=' + j; return u; }
   function v119Cines() {
     var L = ((D.pub || {}).cines || []).filter(function (c) { return c && c.url; }); if (!L.length) return '';
-    return '<div class="card v119-cine"><h2>🎬 Au programme des cinémas</h2><p class="mute">Les films et les horaires, sur le site de chaque cinéma.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' + L.map(function (c) { return '<a class="btn" target="_blank" rel="noopener" href="' + E(c.url) + '">🎬 ' + E(c.nom || 'Programme') + '</a>'; }).join('') + '</div></div>';
+    return '<div class="card v119-cine"><h2>🎬 Au programme des cinémas</h2><p class="mute">Les films et les horaires, sur le site de chaque cinéma.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' + L.map(function (c) { return '<a class="btn" target="_blank" rel="noopener" href="' + E(v119Jour(c.url)) + '">🎬 ' + E(c.nom || 'Programme') + '</a>'; }).join('') + '</div></div>';
   }
   var v113Apres0 = v113Apres; v113Apres = function () {
     v113Apres0();
@@ -2739,7 +2743,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '11.9', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '11.9.1', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
