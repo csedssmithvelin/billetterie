@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.4";
+        const APP_VERSION = "V.11.6";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,8 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.6', date: '2026-11-28', items: ['« Mon CSE en chiffres » dans l\'espace (bénéficiaires, offert, budget ASC, billets, sorties, chèques vacances, colis, mot des élus) : coupé par défaut.', 'Médaille du travail : alerte dans « Aujourd\'hui » à 20, 30, 35 et 40 ans d\'ancienneté, 4 mois avant (coupée par défaut).', 'Rappels 3 jours avant les dates limites : inscriptions aux sorties, chèques vacances, justificatifs (coupés par défaut).', 'Tout se règle dans Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace ».'] },
+            { v: 'V.11.5', date: '2026-11-28', items: ['Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace » : convention collective, accords, inspection du travail, zone scolaire ; page « Ce qui change » (brouillon proposé) ; calendrier social ; photos des sorties (Drive) ; petites annonces validées par le CSE (coupé) ; idées des collègues avec j\'aime (coupé) ; quiz du mois avec tirage au sort du gagnant (coupé) ; récap « Cette semaine au CSE » chaque lundi.', 'Espace 11.7 : Liens officiels, Me former, Mes aides, Ma retraite, Le saviez-vous du jour, compte à rebours, 4 calculs en plus.', 'Nécessite le script Google v96 (annonces, j\'aime, quiz).'] },
             { v: 'V.11.4', date: '2026-11-27', items: ['Équité par équipe (A, B, C, J) : tableau par année (bénéficiaires, montant offert, billets, sorties, colis, prêts, chèques vacances), alerte si une équipe profite nettement moins, ajouté au bilan annuel. Coupé par défaut : Paramètres › Année et bilans.'] },
             { v: 'V.11.3', date: '2026-11-27', items: ['Accueil : les bulles « Ma journée » s\'ouvrent d\'un appui (Impayés, Délégations…), le bloc concerné s\'allume.', 'État du système : test complet une seule fois, 5 min après l\'ouverture.', 'Sorties : bouton « Image » à côté de « Affiche » (image prête pour un e-mail ou WhatsApp, avec le QR code).', 'Impayés : bouton « Relancer les N salarié(s) en un clic » dans Aujourd\'hui, avec aperçu du message ; texte et objet de la relance modifiables dans Paramètres (carte Relances des impayés).', 'Script Google v94 : agenda du CSE en abonnement pour le téléphone des salariés.'] },
             { v: 'V.11.2', date: '2026-11-27', items: ['Rangement du code (rien ne change à l\'écran) : sommaire par thème en tête du fichier, code qui ne servait plus retiré (ancien import Excel des chèques vacances, anciennes fonctions de rappel et de graphique…), branchements vers l\'espace salarié et vers « Aujourd\'hui » regroupés au même endroit.', 'Ouverture plus rapide (sw.js et espace-sw.js à publier) : l\'appli et l\'espace s\'affichent tout de suite avec la copie gardée sur l\'appareil, sans attendre GitHub ; s\'il y a une nouvelle version, le bandeau « mettre à jour » apparaît quelques secondes après.'] },
@@ -46968,7 +46970,7 @@ var qrcode = function() {
   // 15) V.9.9 : MESSAGERIE SALARIÉ ↔ CSE, E-MAILS AUTOMATIQUES AU SALARIÉ, SERVICES EN LIGNE (santé),
   //     ALERTES URSSAF / BUDGET PAR ACTIVITÉ, RAPPEL DÉLÉGATION DU 15
   // =====================================================================
-  var SCRIPT_ATTENDU = 94;
+  var SCRIPT_ATTENDU = 96;
   function pushPret() { return !!(cfg().pushCfg && cfg().pushVapid); }
   function empTok(t) { return (db.employees || []).filter(function (e) { return e.espaceToken && e.espaceToken === t; })[0] || null; }
   function hrel(iso) { if (!iso) return ''; var d = new Date(iso), m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'à l\'instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 && d.getDate() === new Date().getDate() ? 'à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
@@ -49165,6 +49167,275 @@ var qrcode = function() {
   window.cseEquite = equiteData;
 
   // =====================================================================
+  // 31) V.11.5 : INFOS PRATIQUES ET VIE DE L'ESPACE — liens (convention, accords, inspection), zone scolaire,
+  //     « Ce qui change », calendrier social, photos des sorties, petites annonces (OFF), idées des collègues
+  //     avec j'aime (OFF), quiz du mois (OFF), récap « Cette semaine au CSE » chaque lundi (notification).
+  //     Tout est dans Paramètres › Espace salarié › « Infos pratiques et vie de l'espace ».
+  // =====================================================================
+  function v7() { var c = cfg(); c.v117 = c.v117 || {}; var V = c.v117; V.liens = V.liens || { cc: {}, accords: [], inspection: {} }; V.change = V.change || { on: false, titre: 'Ce qui change', items: [] }; V.calSoc = V.calSoc || null; V.quiz = V.quiz || { on: false, lot: '', res: {} }; V.recap = V.recap || { on: true }; if (V.zone == null) V.zone = 'B'; return V; }
+  var QZB = [
+    { q: 'Combien de jours de congés payés gagne-t-on par mois travaillé ?', c: ['2 jours ouvrables', '2,5 jours ouvrables', '3 jours ouvrables'], b: 1, x: 'Soit 30 jours ouvrables (5 semaines) par an. Code du travail, art. L3141-3.' },
+    { q: 'Quel est le seul jour férié forcément chômé ?', c: ['Le 14 juillet', 'Le 1er mai', 'Le 25 décembre'], b: 1, x: 'S\'il est travaillé, il est payé double. Art. L3133-6.' },
+    { q: 'Dès combien d\'heures de travail a-t-on droit à une pause de 20 minutes ?', c: ['4 heures', '6 heures', '8 heures'], b: 1, x: 'Art. L3121-16.' },
+    { q: 'Combien d\'heures de repos au minimum entre deux journées de travail ?', c: ['9 heures', '11 heures', '13 heures'], b: 1, x: 'Art. L3131-1.' },
+    { q: 'Sans accord d\'entreprise, de combien sont majorées les 8 premières heures sup ?', c: ['10 %', '25 %', '50 %'], b: 1, x: 'Puis 50 % au-delà de la 43e heure. Art. L3121-36.' },
+    { q: 'Combien de jours de congé pour son mariage ou son PACS (minimum légal) ?', c: ['2 jours', '4 jours', '7 jours'], b: 1, x: 'Votre convention collective peut prévoir plus. Art. L3142-4.' },
+    { q: 'Combien de jours dure le congé de paternité (hors naissances multiples) ?', c: ['11 jours', '25 jours', '45 jours'], b: 1, x: 'En plus des 3 jours de congé de naissance. Art. L1225-35.' },
+    { q: 'Combien de temps dure le congé maternité pour un 1er enfant ?', c: ['10 semaines', '16 semaines', '26 semaines'], b: 1, x: '6 semaines avant la naissance, 10 après. Art. L1225-17.' },
+    { q: 'Sous combien de temps faut-il envoyer un arrêt maladie ?', c: ['24 heures', '48 heures', '1 semaine'], b: 1, x: 'À la CPAM et à l\'employeur.' },
+    { q: 'Que peut faire un salarié face à un danger grave et imminent ?', c: ['Rien, il doit continuer', 'Se retirer après avoir alerté', 'Démissionner'], b: 1, x: 'C\'est le droit de retrait, sans sanction ni retenue de salaire. Art. L4131-1.' },
+    { q: 'Combien la journée de solidarité représente-t-elle d\'heures par an ?', c: ['3 heures', '7 heures', '10 heures'], b: 1, x: 'Art. L3133-7.' },
+    { q: 'Quelle part de l\'abonnement de transport en commun l\'employeur rembourse-t-il au minimum ?', c: ['25 %', '50 %', '100 %'], b: 1, x: 'Art. L3261-2.' },
+    { q: 'Combien d\'euros par an un temps plein reçoit-il sur son CPF ?', c: ['200 €', '500 €', '1 000 €'], b: 1, x: 'Plafond 5 000 € ; 800 € par an pour les salariés peu qualifiés. Art. L6323-11.' },
+    { q: 'Dès quelle ancienneté a-t-on droit à l\'indemnité légale de licenciement ?', c: ['3 mois', '8 mois', '2 ans'], b: 1, x: 'Sauf faute grave ou lourde. Art. L1234-9.' },
+    { q: 'Après une rupture conventionnelle signée, combien de jours pour changer d\'avis ?', c: ['7 jours', '15 jours calendaires', '1 mois'], b: 1, x: 'Art. L1237-13.' },
+    { q: 'Quelle est la durée maximale d\'une journée de travail, sauf dérogation ?', c: ['8 heures', '10 heures', '12 heures'], b: 1, x: 'Art. L3121-18.' },
+    { q: 'Au maximum, combien d\'heures de travail sur une même semaine ?', c: ['44 heures', '48 heures', '52 heures'], b: 1, x: 'Et pas plus de 44 heures en moyenne sur 12 semaines. Art. L3121-20.' },
+    { q: 'Un arrêt maladie ordinaire donne-t-il des congés payés ?', c: ['Non, jamais', 'Oui, 2 jours ouvrables par mois', 'Oui, 2,5 jours par mois'], b: 1, x: 'Depuis 2024, dans la limite de 24 jours par an. Art. L3141-5-1.' },
+    { q: 'Le repos hebdomadaire dure au moins…', c: ['24 heures', '35 heures d\'affilée', '48 heures'], b: 1, x: '24 h + les 11 h de repos quotidien. Art. L3132-2.' },
+    { q: 'Peut-on donner des jours de repos à un collègue dont l\'enfant est gravement malade ?', c: ['Non, c\'est interdit', 'Oui', 'Seulement des RTT de l\'employeur'], b: 1, x: 'C\'est le don de jours de repos. Art. L1225-65-1.' },
+    { q: 'Un accident sur le trajet domicile-travail est-il un accident du travail pour la Sécu ?', c: ['Non', 'Oui, il est pris en charge comme tel', 'Seulement en voiture de société'], b: 1, x: 'Code de la Sécurité sociale, art. L411-2.' },
+    { q: 'Combien de temps dure au plus la période d\'essai d\'un cadre en CDI (hors renouvellement) ?', c: ['2 mois', '4 mois', '6 mois'], b: 1, x: '2 mois pour un ouvrier ou employé, 3 pour un agent de maîtrise ou technicien. Art. L1221-19.' },
+    { q: 'Après quelle durée d\'arrêt maladie la visite de reprise est-elle obligatoire ?', c: ['15 jours', '60 jours', '6 mois'], b: 1, x: '30 jours pour un accident du travail. Art. R4624-31.' },
+    { q: 'Jusqu\'à quand faut-il garder ses fiches de paie ?', c: ['5 ans', '10 ans', 'Toute sa vie'], b: 2, x: 'Elles prouvent vos périodes de travail pour la retraite.' },
+    { q: 'Qui gère les billets, sorties et chèques vacances de l\'entreprise ?', c: ['La direction', 'Le CSE', 'L\'Urssaf'], b: 1, x: 'Ce sont les activités sociales et culturelles du CSE.' }
+  ];
+  function qzMois(m) { var p = String(m).split('-'), n = Number(p[0]) * 12 + Number(p[1]) - 1, L = []; for (var i = 0; i < 5; i++) L.push((n * 5 + i) % QZB.length); return L; }
+  // Les choix sont mélangés chaque mois (la bonne réponse n'est pas toujours à la même place)
+  function qzQ(i, m) { var x = QZB[i], n = x.c.length, r = (i + Number(String(m).slice(5, 7)) + Number(String(m).slice(2, 4))) % n; return { q: x.q, c: x.c.slice(r).concat(x.c.slice(0, r)), b: (x.b - r + n) % n, x: x.x }; }
+  function moisCourant() { return String(today()).slice(0, 7); }
+  function finMois(m) { var p = m.split('-'), d = new Date(Number(p[0]), Number(p[1]), 0); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function moisAvant(m) { var p = m.split('-'), d = new Date(Number(p[0]), Number(p[1]) - 2, 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+  var CAL0 = [['janvier', 'Commande des chèques vacances', 'Dans votre espace, onglet Chèques vacances.'], ['janvier', 'Nouveaux montants (SMIC, plafonds…)', 'Voir « Ce qui change ».'], ['février', 'Entretiens annuels', 'Préparez vos questions : formation, évolution, horaires.'], ['mars', 'Négociation annuelle sur les salaires (NAO)', 'Le CSE vous tient informés.'], ['avril', 'Déclaration de revenus', 'En ligne sur impots.gouv.fr, d\'avril à juin.'], ['mai', 'Congés d\'été : posez vos dates', 'Période légale du congé principal : 1er mai – 31 octobre.'], ['juin', 'Prime de partage de la valeur, intéressement', 'Si un accord le prévoit.'], ['septembre', 'Rentrée : aides du CSE', 'Voir « Événements » dans votre espace.'], ['novembre', 'Colis et arbre de Noël du CSE', ''], ['décembre', 'Bilan annuel du CSE', 'Ce que le CSE a fait pour vous dans l\'année.']];
+  var CHG0 = [['SMIC : +1,6 % au 1er décembre 2026', 'Environ 1 502 € net par mois pour un temps plein. À vérifier : le CSE met à jour au 1er janvier.', 'https://code.travail.gouv.fr/actualite/smic-une-augmentation-au-1er-decembre-2026-quelles-consequences-sur-les-salaires'], ['Retraite : réforme de 2023 suspendue', 'L\'âge de départ et le nombre de trimestres sont figés pour certaines générations. Vérifiez votre situation sur info-retraite.fr.', 'https://www.info-retraite.fr/'], ['Nouveaux montants au 1er janvier', 'Plafond de la Sécurité sociale, titres-restaurant, barèmes : le CSE complète cette page en janvier.', 'https://www.service-public.gouv.fr/particuliers/actualites']];
+  function calSoc() { var V = v7(); return V.calSoc || CAL0.map(function (x) { return { d: x[0], t: x[1], txt: x[2] }; }); }
+  function lignes(txt, n) { return String(txt || '').split('\n').map(function (l) { return l.split('|').map(function (x) { return x.trim(); }); }).filter(function (p) { return p[0]; }).slice(0, n || 60); }
+  function versLignes(L, ks) { return (L || []).map(function (x) { return ks.map(function (k) { return x[k] || ''; }).join(' | ').replace(/( \| )+$/, ''); }).join('\n'); }
+  // ---------- Ce que l'espace reçoit (branché en dernier : après les blocs qui remplissent P.infos) ----------
+  setTimeout(function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try {
+      var V = v7(), I = P.infos = P.infos || {};
+      I.liens = { cc: V.liens.cc && V.liens.cc.url ? V.liens.cc : null, accords: (V.liens.accords || []).filter(function (a) { return a.url; }), inspection: V.liens.inspection || {} };
+      I.zone = V.zone || '';
+      I.change = V.change.on && (V.change.items || []).length ? { on: true, titre: V.change.titre || 'Ce qui change', maj: V.change.maj || '', items: V.change.items } : null;
+      I.calSoc = calSoc();
+      var lim = addD(today(), -400);
+      P.album = (db.outings || []).filter(function (o) { return (o.album || []).length && String(isoDe(o.date) || '') >= lim; }).sort(function (a, b) { return String(isoDe(b.date)).localeCompare(String(isoDe(a.date))); }).slice(0, 24).map(function (o) { return { id: o.id, titre: o.name || o.title || 'Sortie', date: isoDe(o.date), photos: o.album.map(function (p) { return { id: p.id }; }) }; });
+      P.paOn = !!V.paOn;
+      P.ideesPub = V.ideesOn ? (db.ideas || []).filter(function (x) { return x.v117 && !x.deleted; }).slice(-30).map(function (x) { return { id: x.id, texte: x.texte, reponse: x.reponse || '' }; }) : [];
+      var Q = V.quiz, m = moisCourant();
+      P.quiz = Q.on ? { mois: m, lot: Q.lot || '', fin: finMois(m), questions: qzMois(m).map(function (i) { var z = qzQ(i, m); return { q: z.q, choix: z.c }; }) } : null;
+      var mr = Object.keys(Q.res || {}).filter(function (k) { return k < m; }).sort().pop();
+      P.quizRes = Q.on && mr ? { mois: mr, lot: Q.res[mr].lot || '', gagnant: Q.res[mr].gagnant || '', nb: Q.res[mr].nb || 0, reponses: qzMois(mr).map(function (i) { return { q: QZB[i].q, bonne: QZB[i].c[QZB[i].b], expl: QZB[i].x }; }) } : null;
+    } catch (er) { console.warn('[v117]', er); }
+  }; }, 0);
+  // ---------- Carte des réglages ----------
+  var V7 = { open: '', commu: null, msg: '', busy: false };
+  window.cseV7 = function (k, v) {
+    var V = v7(), c = cfg();
+    if (k === 'cc-nom') V.liens.cc.nom = v; else if (k === 'cc-url') V.liens.cc.url = v;
+    else if (k === 'accords') V.liens.accords = lignes(v, 20).map(function (p) { return { titre: p[0], url: p[1] || '' }; });
+    else if (/^ins-/.test(k)) V.liens.inspection[k.slice(4)] = v;
+    else if (k === 'zone') V.zone = v;
+    else if (k === 'chg-on') V.change.on = !!v; else if (k === 'chg-titre') V.change.titre = v;
+    else if (k === 'chg-items') { V.change.items = lignes(v, 30).map(function (p) { return { t: p[0], txt: p[1] || '', url: p[2] || '' }; }); V.change.maj = today(); }
+    else if (k === 'chg-brouillon') { V.change.items = CHG0.map(function (x) { return { t: x[0], txt: x[1], url: x[2] }; }); V.change.maj = today(); V.change.titre = V.change.titre && V.change.titre !== 'Ce qui change' ? V.change.titre : 'Ce qui change en ' + (new Date().getMonth() >= 10 ? new Date().getFullYear() + 1 : new Date().getFullYear()); }
+    else if (k === 'cal') V.calSoc = lignes(v, 60).map(function (p) { return { d: p[0], t: p[1] || '', txt: p[2] || '' }; }).filter(function (x) { return x.t; });
+    else if (k === 'cal-defaut') V.calSoc = null;
+    else if (k === 'pa-on') V.paOn = !!v; else if (k === 'id-on') V.ideesOn = !!v;
+    else if (k === 'qz-on') V.quiz.on = !!v; else if (k === 'qz-lot') V.quiz.lot = v;
+    else if (k === 'rc-on') V.recap.on = !!v;
+    else if (k === 'open') V7.open = V7.open === v ? '' : v;
+    save(); var z = $('v117-card'); if (z) z.dataset.h = ''; v7Card();
+    if (/^(open|pa-on|id-on|qz-on)$/.test(k) && (V7.open === 'pa' || V7.open === 'qz' || V7.open === 'id') && !V7.commu && scriptOk()) cseV7Commu();
+  };
+  window.cseV7Commu = async function () { if (V7.busy) return; V7.busy = true; V7.msg = 'Lecture…'; v7Re(); try { V7.commu = await cseScriptPost('commu', {}); V7.msg = ''; } catch (e) { V7.msg = /inconnue/i.test(e.message) ? 'Installez le script Google v96 pour les annonces, les j\'aime et le quiz.' : 'Erreur : ' + e.message; } V7.busy = false; v7Re(); };
+  window.cseV7Pa = async function (id, st) { var motif = ''; if (st === 'refus') { motif = await uiPrompt('Motif du refus (le salarié le verra) :', ''); if (motif == null) return; } try { V7.commu = await cseScriptPost('annonce-statut', { id: id, statut: st, motif: motif }); say(st === 'ok' ? '📢 Annonce mise en ligne.' : st === 'refus' ? 'Annonce refusée.' : 'Annonce retirée.', 'success'); } catch (e) { say('Erreur : ' + e.message, 'error'); } v7Re(); };
+  window.cseV7Idee = function (id, k, v) { var x = (db.ideas || []).filter(function (i) { return String(i.id) === String(id); })[0]; if (!x) return; if (k === 'pub') x.v117 = !!v; else x.reponse = v; save(); v7Re(); };
+  window.cseV7Tirage = function (m) {
+    var V = v7(), R = ((V7.commu || {}).quiz || {})[m] || [], Q = qzMois(m), ok = R.filter(function (r) { return Q.every(function (i, k) { return Number(r.r[k]) === qzQ(i, m).b; }); });
+    var L = ok.length ? ok : R; if (!L.length) { say('Personne n\'a répondu à ce quiz.', 'warning'); return; }
+    var g = L[Math.floor(Math.random() * L.length)], nm = String(g.nom || '').trim(), pr = nm.split(/\s+/);
+    V.quiz.res = V.quiz.res || {}; V.quiz.res[m] = { gagnant: pr.length > 1 ? pr.slice(1).join(' ') + ' ' + pr[0].charAt(0) + '.' : nm, nomComplet: nm, nb: R.length, sansFaute: ok.length, lot: V.quiz.lot || '', at: new Date().toISOString() };
+    save(); say('🏆 Gagnant du quiz : ' + nm + (ok.length ? ' (tiré au sort parmi ' + ok.length + ' sans-faute)' : ' (personne n\'a tout juste : tiré parmi tous)') + '. Publiez l\'espace pour l\'afficher.', 'success'); v7Re();
+  };
+  window.cseV7Photos = async function (oid, inp) {
+    var F = [].slice.call(inp.files || []); inp.value = ''; var o = (db.outings || []).filter(function (x) { return String(x.id) === String(oid); })[0]; if (!o || !F.length) return;
+    if (!scriptOk()) { say('Le script Google n\'est pas relié.', 'warning'); return; }
+    o.album = o.album || []; var Y = String(isoDe(o.date) || today()).slice(0, 4), n = 0;
+    for (var i = 0; i < F.length && i < 40; i++) {
+      V7.msg = 'Envoi de la photo ' + (i + 1) + ' / ' + Math.min(F.length, 40) + '…'; v7Re();
+      try { var ph = await pjLire(F[i]); if (ph.type === 'application/pdf') continue; var j = await cseScriptPost('fichier', { data: ph.data, type: 'image/jpeg', nom: (o.name || 'Sortie') + ' - photo ' + (o.album.length + 1), chemin: [Y, '7 - Communication', 'Photos des sorties', fd(isoDe(o.date)).replace(/\//g, '-') + ' ' + (o.name || 'Sortie')] }); try { await cseScriptPost('partager', { ids: [j.id] }); } catch (er) { } o.album.push({ id: j.id, url: j.url, at: new Date().toISOString() }); n++; save(); }
+      catch (e) { V7.msg = 'Erreur : ' + e.message; v7Re(); return; }
+    }
+    V7.msg = '✔ ' + n + ' photo(s) ajoutée(s) : visibles dans l\'espace à la prochaine publication.'; v7Re();
+  };
+  window.cseV7PhotoOter = function (oid, k) { var o = (db.outings || []).filter(function (x) { return String(x.id) === String(oid); })[0]; if (!o || !o.album) return; o.album.splice(k, 1); save(); v7Re(); };
+  function v7Re() { var z = $('v117-card'); if (z) z.dataset.h = ''; v7Card(); }
+  function v7Card() {
+    var tab = $('tab-settings'); if (!tab) return;
+    var c = $('v117-card'); if (!c) { c = document.createElement('div'); c.id = 'v117-card'; c.className = CARD + ' max-w-5xl'; c.dataset.sg = 'espace'; try { if (typeof settingsGroup !== 'undefined' && settingsGroup !== 'espace') c.classList.add('sg-hidden'); } catch (e) { } tab.appendChild(c); }
+    var V = v7(), o = V7.open, TA = 'w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono', sw = function (k, on, l) { return '<label class="text-sm text-slate-700 flex items-center gap-2"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="cseV7(\'' + k + '\',this.checked)"> ' + l + '</label>'; };
+    var sec = function (k, t, etat, corps) { return '<div class="border border-slate-200 rounded-xl"><button type="button" class="w-full flex items-center justify-between px-3 py-2 text-left" onclick="cseV7(\'open\',\'' + k + '\')"><b class="text-sm text-slate-800">' + t + '</b><span class="text-[11px] ' + (/Coupé/.test(etat) ? 'text-slate-400' : 'text-emerald-700') + '">' + etat + ' ' + (o === k ? '▲' : '▼') + '</span></button>' + (o === k ? '<div class="px-3 pb-3 space-y-2">' + corps() + '</div>' : '') + '</div>'; };
+    var C = V7.commu || {}, h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-compass text-indigo-600"></i> Infos pratiques et vie de l\'espace</h3><p class="text-xs text-slate-500">Liens officiels, Me former, Mes aides et Ma retraite sont déjà dans l\'espace (pages fixes). Ici, ce qui est propre à votre CSE et les fonctions qui s\'activent.</p>'
+      + (V7.msg ? '<p class="text-xs text-indigo-700">' + E(V7.msg) + '</p>' : '')
+      + sec('liens', '🔗 Convention collective, accords, inspection du travail', V.liens.cc && V.liens.cc.url ? 'Renseigné' : 'À compléter', function () {
+        var L = V.liens, I = L.inspection || {}, inp = function (k, v, ph) { return '<input class="' + INP + '" value="' + E(v || '') + '" placeholder="' + E(ph) + '" onchange="cseV7(\'' + k + '\',this.value)">'; };
+        return '<div class="grid sm:grid-cols-2 gap-2">' + inp('cc-nom', L.cc.nom, 'Nom de la convention collective') + inp('cc-url', L.cc.url, 'Lien (Légifrance ou PDF sur le Drive)') + '</div>'
+          + '<label class="text-xs text-slate-600 block">Accords d\'entreprise : un par ligne, « titre | lien »<textarea class="' + TA + '" rows="3" onchange="cseV7(\'accords\',this.value)">' + E(versLignes(L.accords, ['titre', 'url'])) + '</textarea></label>'
+          + '<div class="grid sm:grid-cols-2 gap-2">' + inp('ins-nom', I.nom, 'Inspection du travail : nom du service') + inp('ins-tel', I.tel, 'Téléphone') + inp('ins-adresse', I.adresse, 'Adresse') + inp('ins-url', I.url, 'Site (facultatif)') + '</div>'
+          + '<label class="text-xs text-slate-600 block">Zone des vacances scolaires (compte à rebours de l\'accueil)<select class="' + INP + '" onchange="cseV7(\'zone\',this.value)">' + [['A', 'Zone A'], ['B', 'Zone B (Vosges, Nancy-Metz…)'], ['C', 'Zone C'], ['', 'Ne pas afficher']].map(function (z) { return '<option value="' + z[0] + '"' + ((V.zone || '') === z[0] ? ' selected' : '') + '>' + z[1] + '</option>'; }).join('') + '</select></label>';
+      })
+      + sec('chg', '🆕 Ce qui change', V.change.on ? 'Publié' : 'Coupé', function () {
+        return sw('chg-on', V.change.on, 'Publier la page « Ce qui change » dans l\'espace') + '<input class="' + INP + '" value="' + E(V.change.titre || '') + '" placeholder="Titre (ex. : Ce qui change en 2027)" onchange="cseV7(\'chg-titre\',this.value)">'
+          + '<label class="text-xs text-slate-600 block">Un changement par ligne : « titre | explication | lien de la source »<textarea class="' + TA + '" rows="6" onchange="cseV7(\'chg-items\',this.value)">' + E(versLignes(V.change.items, ['t', 'txt', 'url'])) + '</textarea></label>'
+          + '<div class="flex flex-wrap gap-2 items-center"><button type="button" class="' + BTN + '" onclick="cseV7(\'chg-brouillon\')"><i class="fa-solid fa-wand-magic-sparkles"></i> Mettre le brouillon proposé</button><span class="text-[11px] text-amber-700">Vérifiez les chiffres sur les sources avant de publier, surtout au 1er janvier.</span></div>';
+      })
+      + sec('cal', '📆 Calendrier social', calSoc().length + ' date(s)', function () {
+        return '<label class="text-xs text-slate-600 block">Une date par ligne : « mois ou date (AAAA-MM-JJ) | titre | détail »<textarea class="' + TA + '" rows="8" onchange="cseV7(\'cal\',this.value)">' + E(versLignes(calSoc(), ['d', 't', 'txt'])) + '</textarea></label><button type="button" class="' + BTN + '" onclick="cseV7(\'cal-defaut\')">Remettre la liste proposée</button><p class="text-[11px] text-slate-500">Ajoutez vos dates : élections du CSE, NAO, versement de l\'intéressement, inventaire…</p>';
+      })
+      + sec('ph', '📸 Photos des sorties', (db.outings || []).filter(function (x) { return (x.album || []).length; }).length + ' album(s)', function () {
+        var L = (db.outings || []).filter(function (x) { var d = String(isoDe(x.date) || ''); return d && d <= addD(today(), 1) && d >= addD(today(), -400); }).sort(function (a, b) { return String(isoDe(b.date)).localeCompare(String(isoDe(a.date))); }).slice(0, 15);
+        return '<p class="text-xs text-slate-500">Les photos vont sur le Drive (CSE - Documents › année › 7 - Communication › Photos des sorties) et s\'affichent dans l\'espace, onglet « Photos des sorties ». Pensez à l\'accord des personnes photographiées.</p>' + (L.length ? L.map(function (x) { var A = x.album || []; return '<div class="py-2 border-t border-slate-100"><div class="flex items-center gap-2"><b class="text-sm text-slate-800 flex-1">' + E(x.name || 'Sortie') + ' <span class="text-[11px] text-slate-500 font-normal">' + fd(isoDe(x.date)) + ' · ' + A.length + ' photo(s)</span></b><label class="' + BTN + '" style="cursor:pointer"><i class="fa-solid fa-camera"></i> Ajouter<input type="file" accept="image/*" multiple style="display:none" onchange="cseV7Photos(\'' + E(x.id) + '\',this)"></label></div>' + (A.length ? '<div class="flex flex-wrap gap-1 mt-1">' + A.map(function (p, k) { return '<span style="position:relative;display:inline-block"><img src="https://drive.google.com/thumbnail?id=' + encodeURIComponent(p.id) + '&sz=w120" style="width:52px;height:52px;object-fit:cover;border-radius:8px;background:#f1f5f9"><button type="button" title="Retirer" onclick="cseV7PhotoOter(\'' + E(x.id) + '\',' + k + ')" style="position:absolute;top:-4px;right:-4px;background:#fff;border:1px solid #cbd5e1;border-radius:99px;width:18px;height:18px;font-size:10px;line-height:1">×</button></span>'; }).join('') + '</div>' : '') + '</div>'; }).join('') : '<p class="text-xs text-slate-400">Aucune sortie passée récente.</p>');
+      })
+      + sec('pa', '📢 Petites annonces entre collègues', V.paOn ? 'Activé' : 'Coupé', function () {
+        var L = (C.annonces || []).filter(function (a) { return a.statut !== 'fini'; }).reverse(), att = L.filter(function (a) { return a.statut === 'attente'; });
+        return sw('pa-on', V.paOn, 'Activer les petites annonces dans l\'espace (validées par le CSE avant d\'être visibles)')
+          + (V.paOn ? '<div class="flex items-center gap-2"><b class="text-xs text-slate-700 flex-1">' + att.length + ' annonce(s) à valider · ' + L.filter(function (a) { return a.statut === 'ok'; }).length + ' en ligne</b><button type="button" class="' + BTN + '" onclick="cseV7Commu()"><i class="fa-solid fa-rotate"></i> Actualiser</button></div>'
+            + L.slice(0, 40).map(function (a) { return '<div class="py-2 border-t border-slate-100 text-xs"><div class="flex gap-2"><div class="flex-1"><b class="text-slate-800">' + E(a.titre) + '</b>' + (a.prix ? ' · ' + E(a.prix) : '') + ' <span class="text-slate-500">(' + E(a.type) + ', ' + E(a.nom) + ', ' + fd(a.at) + ')</span>' + (a.texte ? '<div class="text-slate-600">' + E(a.texte) + '</div>' : '') + (a.contact ? '<div class="text-slate-500">Contact : ' + E(a.contact) + '</div>' : '') + '</div><div class="flex flex-col gap-1 items-end">' + (a.statut === 'attente' ? '<button type="button" class="' + BTNP + '" onclick="cseV7Pa(\'' + E(a.id) + '\',\'ok\')">Valider</button><button type="button" class="' + BTN + '" onclick="cseV7Pa(\'' + E(a.id) + '\',\'refus\')">Refuser</button>' : '<span class="' + (a.statut === 'ok' ? 'text-emerald-700' : 'text-rose-700') + '">' + (a.statut === 'ok' ? 'En ligne' : 'Refusée') + '</span>' + (a.statut === 'ok' ? '<button type="button" class="' + BTN + '" onclick="cseV7Pa(\'' + E(a.id) + '\',\'fini\')">Retirer</button>' : '')) + '</div></div></div>'; }).join('') : '');
+      })
+      + sec('id', '❤️ Idées des collègues (avec « j\'aime »)', V.ideesOn ? 'Activé' : 'Coupé', function () {
+        var L = (db.ideas || []).filter(function (x) { return !x.deleted && x.type !== 'message'; }).slice(-40).reverse(), J = C.jaime || {};
+        return sw('id-on', V.ideesOn, 'Montrer aux salariés les idées choisies, avec un bouton « j\'aime »') + '<p class="text-[11px] text-slate-500">Cochez les idées à partager (le nom de l\'auteur n\'est jamais affiché). Une réponse courte du CSE peut s\'afficher dessous.</p>'
+          + (L.length ? L.map(function (x) { return '<div class="py-2 border-t border-slate-100 text-xs flex gap-2 items-start"><input type="checkbox" class="mt-1"' + (x.v117 ? ' checked' : '') + ' onchange="cseV7Idee(\'' + E(x.id) + '\',\'pub\',this.checked)"><div class="flex-1"><b class="text-slate-800">' + E(x.texte) + '</b>' + (x.v117 ? ' <span class="text-rose-600">❤️ ' + (J[x.id] || 0) + '</span>' : '') + (x.v117 ? '<input class="' + INP + ' mt-1" value="' + E(x.reponse || '') + '" placeholder="Réponse du CSE (facultatif)" onchange="cseV7Idee(\'' + E(x.id) + '\',\'rep\',this.value)">' : '') + '</div></div>'; }).join('') : '<p class="text-xs text-slate-400">Aucune idée reçue pour le moment.</p>');
+      })
+      + sec('qz', '🧠 Quiz du mois', V.quiz.on ? 'Activé' : 'Coupé', function () {
+        var m = moisCourant(), Q = qzMois(m), R = C.quiz || {}, mp = moisAvant(m), Rp = R[mp] || [], res = (V.quiz.res || {})[mp];
+        var ok = Rp.filter(function (r) { var q = qzMois(mp); return q.every(function (i, k) { return Number(r.r[k]) === qzQ(i, mp).b; }); });
+        return sw('qz-on', V.quiz.on, 'Publier un quiz de 5 questions chaque mois (questions changées automatiquement)')
+          + '<input class="' + INP + '" value="' + E(V.quiz.lot || '') + '" placeholder="Lot à gagner (ex. : 2 places de cinéma)" onchange="cseV7(\'qz-lot\',this.value)">'
+          + '<p class="text-xs text-slate-600 font-semibold">Questions de ce mois (' + (R[m] || []).length + ' réponse(s)) :</p><ol class="text-xs text-slate-600 list-decimal pl-5">' + Q.map(function (i) { return '<li>' + E(QZB[i].q) + ' <span class="text-emerald-700">→ ' + E(QZB[i].c[QZB[i].b]) + '</span></li>'; }).join('') + '</ol>'
+          + '<div class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-2"><span class="text-xs text-slate-700 flex-1">Mois dernier : ' + Rp.length + ' participant(s), ' + ok.length + ' sans-faute' + (res ? ' · 🏆 ' + E(res.nomComplet || res.gagnant) : '') + '</span><button type="button" class="' + BTN + '" onclick="cseV7Commu()"><i class="fa-solid fa-rotate"></i> Actualiser</button><button type="button" class="' + BTNP + '" onclick="cseV7Tirage(\'' + mp + '\')">🎲 Tirer au sort le gagnant</button></div><p class="text-[11px] text-slate-500">Le gagnant (prénom et initiale) et les bonnes réponses s\'affichent dans l\'espace après la publication.</p>';
+      })
+      + sec('rc', '📅 Récap « Cette semaine au CSE »', V.recap.on ? 'Activé' : 'Coupé', function () {
+        return sw('rc-on', V.recap.on, 'Chaque lundi, envoyer une notification aux salariés avec le programme de la semaine') + '<p class="text-xs text-slate-500">Envoyée à la première ouverture de l\'appli du lundi (ou mardi, mercredi si personne ne l\'a ouverte), seulement s\'il y a quelque chose à annoncer. La première fois, vous voyez le texte avant l\'envoi.' + (V.recap.last ? ' Dernier envoi : ' + fd(V.recap.last) + '.' : '') + '</p><div class="flex gap-2"><button type="button" class="' + BTN + '" onclick="cseV7Recap(false)"><i class="fa-solid fa-eye"></i> Aperçu de cette semaine</button></div>';
+      })
+      + v8Secs(sec, sw);
+    if (c.dataset.h !== h) { c.innerHTML = h; c.dataset.h = h; }
+  }
+  // ---------- Récap du lundi ----------
+  function lundi(d) { var x = new Date(d + 'T12:00'), w = (x.getDay() + 6) % 7; x.setDate(x.getDate() - w); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); }
+  function recapTexte() {
+    var P = {}; try { P = cseEspaceBuild().pub || {}; } catch (e) { }
+    var t = today(), f7 = addD(t, 7), L = [], J = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'], jr = function (d) { var x = new Date(d + 'T12:00'); return J[x.getDay()] + ' ' + x.getDate(); };
+    (P.agenda || []).filter(function (a) { return a.date >= t && a.date < f7; }).slice(0, 3).forEach(function (a) { L.push('📅 ' + jr(a.date) + ' : ' + a.titre); });
+    (P.sorties || []).filter(function (o) { return o.date >= t && o.date < f7; }).forEach(function (o) { L.push('🎭 ' + jr(o.date) + ' : ' + o.nom); });
+    (P.sorties || []).filter(function (o) { return o.limite && o.limite >= t && o.limite < f7 && !(o.date < f7); }).forEach(function (o) { L.push('⏰ Inscriptions « ' + o.nom + ' » jusqu\'au ' + jr(o.limite)); });
+    var bp = (P.bonsPlans || []).filter(function (b) { return b.nouveau; }).length; if (bp) L.push('🏷️ ' + bp + ' nouveau(x) bon(s) plan(s)');
+    if (P.quiz) L.push('🧠 Le quiz du mois est ouvert');
+    if (P.paOn) { var n = ((V7.commu || {}).annonces || []).filter(function (a) { return a.statut === 'ok' && a.at >= addD(t, -7); }).length; if (n) L.push('📢 ' + n + ' nouvelle(s) petite(s) annonce(s)'); }
+    return L.length ? { titre: '📅 Cette semaine au CSE', texte: L.join(' · ').slice(0, 230) } : null;
+  }
+  window.cseV7Recap = async function (envoyer) {
+    var R = recapTexte(); if (!R) { say('Rien à annoncer cette semaine : pas de notification.', 'info'); return false; }
+    if (!envoyer) { await uiDialog({ kind: 'alert', message: '', html: '<div style="text-align:left"><p class="text-xs text-slate-500 mb-2">Aperçu de la notification envoyée le lundi :</p><div style="border:1px solid #e2e8f0;border-radius:14px;padding:10px 12px;background:#f8fafc"><b>' + E(R.titre) + '</b><div style="font-size:13px;margin-top:4px">' + E(R.texte) + '</div></div></div>', okLabel: 'Fermer' }); return false; }
+    var j = await cseEspacePost('push', { cibles: 'tous', titre: R.titre, texte: R.texte }); return j;
+  };
+  async function recapTick() {
+    var V = v7(); if (!V.recap.on || seed() || !window.__dbLoaded || !isCse() || !scriptOk() || !cfg().espaceOn) return;
+    var t = today(), w = (new Date(t + 'T12:00').getDay() + 6) % 7, sem = lundi(t); if (w > 2 || V.recap.sem === sem) return;
+    var R = recapTexte(); if (!R) { V.recap.sem = sem; save(); return; }
+    if (!V.recap.vu) { var ok = await uiConfirm('', { html: '<div style="text-align:left"><b>📅 Récap du lundi aux salariés</b><p class="text-xs text-slate-500 my-2">Première fois : voici la notification qui part à tous les salariés abonnés. Les lundis suivants, elle partira toute seule (coupable dans Paramètres › Espace salarié).</p><div style="border:1px solid #e2e8f0;border-radius:14px;padding:10px 12px;background:#f8fafc"><b>' + E(R.titre) + '</b><div style="font-size:13px;margin-top:4px">' + E(R.texte) + '</div></div></div>', okLabel: 'Envoyer', cancelLabel: 'Pas cette semaine' }); V.recap.vu = true; if (!ok) { V.recap.sem = sem; save(); return; } }
+    V.recap.sem = sem; save();
+    try { var j = await cseV7Recap(true); V.recap.last = t; save(); if (j && j.envoyes) say('📅 Récap de la semaine envoyé sur ' + j.envoyes + ' téléphone(s).', 'success'); } catch (e) { console.warn('[recap]', e); }
+  }
+  window.cseV7RecapTick = recapTick;
+
+  // =====================================================================
+  // 32) V.11.6 : « MON CSE EN CHIFFRES » (espace, coupé par défaut), MÉDAILLE DU TRAVAIL (coupée),
+  //     RAPPELS 3 JOURS AVANT LES DATES LIMITES (coupés) : inscriptions, chèques vacances, justificatifs.
+  // =====================================================================
+  function v8() { var V = v7(); V.chiffres = V.chiffres || { on: false }; V.med = V.med || { on: false, fait: {} }; V.dl = V.dl || { on: false, sorties: true, cv: true, justif: true, cvLimite: '', justifJours: 30 }; return V; }
+  // ---------- Mon CSE en chiffres ----------
+  function chiffresData() {
+    var Y = String(new Date().getFullYear()), B = bilanData(Y), prevu = 0, Bc = (cfg().budgetCats || {})[Y] || {};
+    Object.keys(Bc).forEach(function (k) { if (/^ASC/.test(k)) prevu += Number(Bc[k]) || 0; });
+    var nbSorties = B.sorties.length, nbPart = B.sorties.reduce(function (s, x) { return s + (Number(x[1]) || 0); }, 0);
+    return { an: Y, maj: today(), nbSal: B.nbSal, nbBenef: B.nbBenef, offert: Math.round(B.totOff), moy: Math.round(B.moy), depASC: Math.round(B.totDep), prevuASC: Math.round(prevu),
+      parType: B.parType.slice(0, 6).map(function (x) { return [x[0], Math.round(x[1])]; }), dep: B.dep.slice(0, 6).map(function (x) { return [x[0], Math.round(x[1])]; }),
+      billets: B.nbBil, sorties: nbSorties, participants: nbPart, listeSorties: B.sorties.slice(0, 12).map(function (x) { return String(x[0]); }),
+      cv: B.cv.n, cvCse: Math.round(B.cv.cse), colis: B.colis, prets: B.prets, mot: v8().chiffres.mot || '' };
+  }
+  setTimeout(function () { var prev = window.cseEspacePubExtra; window.cseEspacePubExtra = function (P) {
+    if (prev) { try { prev(P); } catch (er) { } }
+    try { P.chiffres = v8().chiffres.on ? chiffresData() : null; } catch (er) { console.warn('[chiffres]', er); P.chiffres = null; }
+  }; }, 0);
+  // ---------- Médaille du travail ----------
+  var MED = [[20, 'argent'], [30, 'vermeil'], [35, 'or'], [40, 'grand or']];
+  function medListe() {
+    var V = v8(), t = today(), y = Number(t.slice(0, 4)), L = [];
+    (db.employees || []).forEach(function (e) {
+      if (e.active === false || e.exitDate || !e.entryDate) return; var d = isoDe(e.entryDate); if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
+      MED.forEach(function (m) { var dt = (Number(d.slice(0, 4)) + m[0]) + d.slice(4); if (dt.slice(0, 4) >= String(y) && dt <= addD(t, 120) && dt >= addD(t, -200)) L.push({ e: e, ans: m[0], med: m[1], date: dt, k: e.id + ':' + m[0], fait: !!(V.med.fait || {})[e.id + ':' + m[0]] }); });
+    });
+    return L.sort(function (a, b) { return a.date.localeCompare(b.date); });
+  }
+  window.cseMedFait = function (k) { var V = v8(); V.med.fait = V.med.fait || {}; if (V.med.fait[k]) delete V.med.fait[k]; else V.med.fait[k] = today(); save(); v7Re(); };
+  (function () { var prev = window.cseTodayExtra; window.cseTodayExtra = function (G) { G = (prev ? prev(G) : G) || G; try {
+    if (v8().med.on) { var L = medListe().filter(function (x) { return !x.fait; }); if (L.length) G.push({ ic: '🎖️', t: 'Médaille du travail', l: L.slice(0, 4).map(function (x) { return '<b>' + E(nom(x.e)) + '</b> : ' + x.ans + ' ans dans l\'entreprise le ' + fd(x.date) + ' (médaille ' + x.med + ')'; }), go: 'fn:cseMedOuvrir', b: 'Voir' }); }
+  } catch (e) { } return G; }; })();
+  window.cseMedOuvrir = function () { try { switchTab('settings'); settingsShowGroup('espace'); } catch (e) { } V7.open = 'med'; v7Re(); setTimeout(function () { var c = $('v117-card'); if (c) c.scrollIntoView({ behavior: 'smooth' }); }, 300); };
+  // ---------- Rappels 3 jours avant les dates limites ----------
+  (function () { var prev = window.cseRappelsExtra; window.cseRappelsExtra = function (out, PU) {
+    if (prev) { try { out = prev(out, PU) || out; } catch (er) { } }
+    try {
+      var V = v8().dl; if (!PU || !V.on) return out; var t = today(), Es = (db.employees || []).filter(function (e) { return e.espaceToken && e.active !== false && !e.exitDate; });
+      if (V.sorties !== false) (db.outings || []).forEach(function (o) {
+        var lim = isoDe(o.registrationDeadline || ''); if (!/^\d{4}-\d{2}-\d{2}$/.test(lim) || lim < t || o.status === 'annulee' || o.espaceHidden) return; var on = addD(lim, -3); if (on < t) on = t;
+        var ins = {}; (db.registrations || []).forEach(function (r) { if (r.outingId === o.id && !r.cancelled) ins[String(r.employeeId)] = 1; });
+        Es.forEach(function (e) { if (ins[String(e.id)]) return; out.push({ id: 'dl-sortie:' + o.id + ':' + e.id, on: on, h: 9, t: e.espaceToken, pt: '⏰ Plus que 3 jours', px: 'Inscriptions « ' + (o.name || 'sortie') + ' » jusqu\'au ' + fd(lim) + '. Ça se fait depuis votre espace.', who: nom(e), what: '⏰ Date limite sortie', subject: 'Date limite', body: '' }); });
+      });
+      var cl = V.cvLimite; if (V.cv !== false && cfg().espaceCvOpen && /^\d{4}-\d{2}-\d{2}$/.test(cl || '') && cl >= t) {
+        var on2 = addD(cl, -3); if (on2 < t) on2 = t; var cy = String(typeof cvCampYear === 'function' ? cvCampYear() : ''), deja = {};
+        (db.chequesVacances || []).forEach(function (c) { try { if (!cy || String(cvDossierYear(c)) === cy || String(cvDossierYear(c) + 1) === cy) deja[String(c.employeeId)] = 1; } catch (er) { } });
+        Es.forEach(function (e) { if (deja[String(e.id)]) return; out.push({ id: 'dl-cv:' + cl + ':' + e.id, on: on2, h: 9, t: e.espaceToken, pt: '⏰ Chèques vacances', px: 'Commandes jusqu\'au ' + fd(cl) + ' : plus que 3 jours. Ça se fait depuis votre espace, onglet Chèques vacances.', who: nom(e), what: '⏰ Date limite chèques vacances', subject: 'Chèques vacances', body: '' }); });
+      }
+      if (V.justif !== false) (db.socialRequests || []).forEach(function (r) {
+        if (r.status !== 'attente' || r.proofReceived || !r.date) return; var e = (db.employees || []).filter(function (x) { return String(x.id) === String(r.employeeId); })[0]; if (!e || !e.espaceToken) return;
+        var lim = addD(isoDe(r.date), Number(V.justifJours) || 30); if (lim < t) return; var on3 = addD(lim, -3); if (on3 < t) on3 = t;
+        out.push({ id: 'dl-justif:' + r.id, on: on3, h: 9, t: e.espaceToken, pt: '📎 Justificatif à envoyer', px: 'Pour votre demande' + (r.ref ? ' ' + r.ref : '') + ', envoyez le justificatif avant le ' + fd(lim) + ' (photo depuis votre espace ou à la permanence).', who: nom(e), what: '📎 Justificatif attendu', subject: 'Justificatif', body: '' });
+      });
+    } catch (er) { console.warn('[dates limites]', er); }
+    return out;
+  }; })();
+  // ---------- Réglages (dans la carte « Infos pratiques et vie de l'espace ») ----------
+  window.cseV8 = function (k, v) { var V = v8(); if (k === 'ch-on') V.chiffres.on = !!v; else if (k === 'ch-mot') V.chiffres.mot = v; else if (k === 'med-on') V.med.on = !!v; else if (k === 'dl-on') V.dl.on = !!v; else if (/^dl-/.test(k)) V.dl[k.slice(3)] = typeof v === 'boolean' ? v : v; save(); v7Re(); };
+  function v8Secs(sec, sw) {
+    var V = v8(), INPs = INP;
+    return sec('ch', '📊 Mon CSE en chiffres (espace)', V.chiffres.on ? 'Publié' : 'Coupé', function () {
+      var C = chiffresData();
+      return sw2('ch-on', V.chiffres.on, 'Publier la page « Mon CSE en chiffres » dans l\'espace (chiffres de l\'année, sans aucun nom)')
+        + '<p class="text-xs text-slate-600">' + C.an + ' à ce jour : ' + C.nbBenef + ' bénéficiaires sur ' + C.nbSal + ' salariés · ' + eur(C.offert) + ' offerts · ' + eur(C.depASC) + ' dépensés sur le budget ASC' + (C.prevuASC ? ' (prévu ' + eur(C.prevuASC) + ')' : '') + ' · ' + C.billets + ' billets · ' + C.sorties + ' sorties · ' + C.cv + ' dossiers chèques vacances · ' + C.colis + ' colis.</p>'
+        + '<label class="text-xs text-slate-600 block">Le mot des élus (facultatif, en haut de la page)<textarea class="' + INPs + '" rows="2" onchange="cseV8(\'ch-mot\',this.value)">' + E(V.chiffres.mot || '') + '</textarea></label><p class="text-[11px] text-slate-500">Mis à jour à chaque publication de l\'espace. Les dépenses viennent du budget « réel ».</p>';
+    })
+      + sec('med', '🎖️ Médaille du travail', V.med.on ? 'Activé' : 'Coupé', function () {
+        var L = medListe();
+        return sw2('med-on', V.med.on, 'Me prévenir (bloc « Aujourd\'hui ») quand un salarié atteint 20, 30, 35 ou 40 ans d\'ancienneté')
+          + '<p class="text-[11px] text-slate-500">Calcul sur la date d\'entrée de la fiche salarié, 4 mois à l\'avance. La médaille d\'honneur du travail compte toute la carrière (tous employeurs) : la demande se fait par le salarié ou l\'employeur auprès de la préfecture.</p>'
+          + (L.length ? L.map(function (x) { return '<div class="flex items-center gap-2 text-xs py-1 border-t border-slate-100"><span class="flex-1"><b>' + E(nom(x.e)) + '</b> · ' + x.ans + ' ans le ' + fd(x.date) + ' · médaille ' + x.med + '</span><button type="button" class="' + BTN + '" onclick="cseMedFait(\'' + E(x.k) + '\')">' + (x.fait ? '✔ Fait' : 'Marquer fait') + '</button></div>'; }).join('') : '<p class="text-xs text-slate-400">Personne dans les 4 prochains mois (ou dates d\'entrée manquantes).</p>');
+      })
+      + sec('dl', '⏰ Rappels des dates limites (3 jours avant)', V.dl.on ? 'Activé' : 'Coupé', function () {
+        return sw2('dl-on', V.dl.on, 'Envoyer une notification aux salariés concernés 3 jours avant une date limite')
+          + '<div class="pl-5 space-y-1">' + sw2('dl-sorties', V.dl.sorties !== false, 'Inscriptions aux sorties (à ceux qui ne sont pas inscrits)') + sw2('dl-cv', V.dl.cv !== false, 'Commande des chèques vacances (à ceux qui n\'ont pas de dossier)')
+          + '<label class="text-xs text-slate-600 block">Date limite de la campagne chèques vacances<input type="date" class="' + INPs + '" value="' + E(V.dl.cvLimite || '') + '" onchange="cseV8(\'dl-cvLimite\',this.value)"></label>'
+          + sw2('dl-justif', V.dl.justif !== false, 'Justificatif des demandes de prestation en attente') + '<label class="text-xs text-slate-600 block">Délai pour rendre le justificatif (jours)<input type="number" min="5" max="120" class="' + INPs + '" value="' + E(V.dl.justifJours || 30) + '" onchange="cseV8(\'dl-justifJours\',this.value)"></label></div>'
+          + '<p class="text-[11px] text-slate-500">Par notification, à 9 h, avec les autres rappels automatiques (il faut que les rappels par notification soient activés).</p>';
+      });
+  }
+  function sw2(k, on, l) { return '<label class="text-sm text-slate-700 flex items-center gap-2"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="cseV8(\'' + k + '\',this.checked)"> ' + l + '</label>'; }
+
+  // =====================================================================
   //  BRANCHEMENTS REGROUPÉS (rangement V.11.2) : chaque bloc ajoute sa part, dans l'ordre des versions.
   // =====================================================================
   // ---------- cseEspacePubExtra : ce que l'espace reçoit pour tous (publication) ----------
@@ -49291,6 +49562,7 @@ var qrcode = function() {
     try { if ($('tab-ticketing') && !$('tab-ticketing').classList.contains('hidden')) ticketsCard(); } catch (e) { }
     try { if ($('v94-exp-card')) bilanCard(); } catch (e) { }
     try { if ($('v94-bilan-card')) equiteCard(); } catch (e) { }
+    try { if ($('tab-settings') && document.querySelector('#tab-settings [data-sg]')) v7Card(); } catch (e) { }
     try { if (document.querySelector('#tab-settings [data-sg="cloture"]')) expCard(); } catch (e) { }
     try { if ($('todo-pane-today') && !$('v94-today')) todayCard(); } catch (e) { }
     try { if ($('v94-rel-card')) amCard(); } catch (e) { }
@@ -49310,6 +49582,7 @@ var qrcode = function() {
   }, 1500);
   setInterval(function () { try { v11Voyant(); } catch (e) { } }, 1000);
   setTimeout(function () { obBan(); }, 2000);
+  setTimeout(function () { recapTick(); }, 75000);
   setTimeout(function () { obVider(); phEnvoyer(); }, 40000);
   setTimeout(function () { bmTick(); }, 45000);
   setTimeout(function () { sigTick(); }, 50000);

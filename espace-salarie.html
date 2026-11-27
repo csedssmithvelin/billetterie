@@ -349,15 +349,22 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         agenda: [{ date: plus(4), heure: '11h - 13h30', titre: 'Permanence', type: 'permanence' }, { date: plus(9), heure: '14:00', titre: 'Réunion du CSE', type: 'reunion' }, { date: plus(12), heure: '', titre: 'Marché de Noël de Strasbourg', type: 'sortie', texte: 'Strasbourg' }, { date: plus(32), heure: '', titre: 'Pas de permanence (fêtes)', type: 'fermeture' }],
         sondages: [{ id: 's1', question: 'Quelle sortie pour le printemps ?', choix: ['Europa Park', 'Karting', 'Bowling + restaurant'], multi: false, anonyme: true, fin: plus(14), res: { total: 23, n: [12, 7, 4] } }],
         materiel: [{ id: 1, nom: 'Tables pliantes', qte: 12, occupe: [{ d: plus(5), f: plus(7), q: 4 }] }, { id: 2, nom: 'Bancs', qte: 24, occupe: [{ d: plus(5), f: plus(7), q: 8 }] }, { id: 3, nom: 'Chapiteau 3x6', qte: 2, occupe: [{ d: plus(12), f: plus(13), q: 2 }] }, { id: 4, nom: 'Appareil à raclette', qte: 4, occupe: [] }],
-        evtVie: [{ id: 'naissance', nom: 'Naissance ou adoption', conge: 'naissance', cadeau: 'Bon cadeau de 50 €' }, { id: 'mariage', nom: 'Mariage ou PACS', conge: 'mariage', cadeau: 'Bon cadeau de 80 €' }, { id: 'retraite', nom: 'Départ en retraite', conge: '', cadeau: 'Cadeau de départ' }, { id: 'deces', nom: 'Décès d\'un proche', conge: 'deces-parent', cadeau: '' }], infos: { fiches: ['conges-payes', 'jours-feries', 'evenements', 'paternite', 'maladie', 'accident', 'heures-sup', 'nuit', 'pauses', 'retrait', 'harcelement', 'medecine', 'cpf', 'entretien-pro', 'demission', 'rupture', 'paie'], hs: {}, nuit: { mode: 'pct', val: 20, plage: '21h à 5h' }, mutuelle: { on: true, mut: { organisme: 'Mutuelle Exemple', contrat: 'E-12345', tel: '03 29 00 00 00', site: 'https://www.exemple.fr', info: 'Tiers payant chez le pharmacien avec la carte. Remboursements sous 48 h.' }, garanties: 'Optique : 200 € tous les 2 ans\nDentaire : 300 % BR\nHospitalisation : chambre particulière 60 €/jour', prev: { organisme: 'Prévoyance Exemple', tel: '03 29 11 11 11', info: 'Relais du salaire après 90 jours d\'arrêt.' }, docs: [{ titre: 'Notice mutuelle 2026', url: 'https://www.exemple.fr/notice.pdf', at: '2026-01-05' }] }, chez: { evenements: 'Notre convention collective prévoit 5 jours pour le mariage ou le PACS du salarié.' }, calculs: true, evts: { mariage: 5 }, preavis: { ouvrier: { n: 2, u: 'semaines' }, etam: { n: 1, u: 'mois' }, cadre: { n: 3, u: 'mois' } }, cpDebut: 6, affichage: [{ titre: 'Convention collective', type: 'Convention collective', url: 'https://www.legifrance.gouv.fr', at: plus(-30) }, { titre: 'Consignes incendie', type: 'Consignes de sécurité et d\'incendie', url: 'https://exemple.fr', at: plus(-60) }], pv: [{ date: plus(-24), titre: 'Réunion ordinaire', url: 'https://exemple.fr' }], elus: [{ nom: 'Dominique MARTIN', role: 'Secrétaire', service: 'Production', equipe: 'Matin (5h–13h)', tel: '06 00 00 00 00', mail: '', photo: null, referent: true }, { nom: 'Lou PETIT', role: 'Trésorier', service: 'Maintenance', equipe: 'Journée', tel: '', mail: 'lou@exemple.fr', photo: null, referent: false }], contacts: [{ type: 'Médecine du travail', nom: 'Service de santé au travail', tel: '03 29 00 00 00', mail: '', adresse: '1 rue de la Santé, 88000 Épinal', site: '', info: 'Du lundi au vendredi, 8h30–17h.' }], faq: [{ cat: 'Chèques vacances', q: 'Quand puis-je commander mes chèques vacances ?', r: 'La campagne ouvre en janvier : vous recevez une notification et la demande se fait depuis l\'onglet Chèques vacances.' }, { cat: 'Colis', q: 'Je ne peux pas venir chercher mon colis, que faire ?', r: 'Un collègue peut le récupérer avec un mot signé de votre part, ou écrivez-nous pour convenir d\'une autre date.' }], signal: true },
+        evtVie: [{ id: 'naissance', nom: 'Naissance ou adoption', conge: 'naissance', cadeau: 'Bon cadeau de 50 €' }, { id: 'mariage', nom: 'Mariage ou PACS', conge: 'mariage', cadeau: 'Bon cadeau de 80 €' }, { id: 'retraite', nom: 'Départ en retraite', conge: '', cadeau: 'Cadeau de départ' }, { id: 'deces', nom: 'Décès d\'un proche', conge: 'deces-parent', cadeau: '' }], infos: { fiches: ['conges-payes', 'jours-feries', 'evenements', 'paternite', 'maladie', 'accident', 'heures-sup', 'nuit', 'pauses', 'retrait', 'harcelement', 'medecine', 'cpf', 'entretien-pro', 'demission', 'rupture', 'paie'], hs: {}, nuit: { mode: 'pct', val: 20, plage: '21h à 5h' }, mutuelle: { on: true, mut: { organisme: 'Mutuelle Exemple', contrat: 'E-12345', tel: '03 29 00 00 00', site: 'https://www.exemple.fr', info: 'Tiers payant chez le pharmacien avec la carte. Remboursements sous 48 h.' }, garanties: 'Optique : 200 € tous les 2 ans\nDentaire : 300 % BR\nHospitalisation : chambre particulière 60 €/jour', prev: { organisme: 'Prévoyance Exemple', tel: '03 29 11 11 11', info: 'Relais du salaire après 90 jours d\'arrêt.' }, docs: [{ titre: 'Notice mutuelle 2026', url: 'https://www.exemple.fr/notice.pdf', at: '2026-01-05' }] }, chez: { evenements: 'Notre convention collective prévoit 5 jours pour le mariage ou le PACS du salarié.' }, calculs: true, evts: { mariage: 5 }, preavis: { ouvrier: { n: 2, u: 'semaines' }, etam: { n: 1, u: 'mois' }, cadre: { n: 3, u: 'mois' } }, cpDebut: 6, zone: 'B', liens: { cc: { nom: 'Convention collective de la production des papiers-cartons (exemple)', url: 'https://www.legifrance.gouv.fr' }, accords: [{ titre: 'Accord temps de travail (exemple)', url: 'https://exemple.fr' }], inspection: { nom: 'Inspection du travail des Vosges (exemple)', adresse: '1 rue Exemple, 88000 Épinal', tel: '03 29 00 00 00', url: '' } }, change: { on: true, titre: 'Ce qui change cet hiver', maj: plus(-3), items: [{ t: 'SMIC : +1,6 % au 1er décembre 2026', txt: 'Environ 1 502 € net par mois pour un temps plein.', url: 'https://code.travail.gouv.fr/actualite/smic-une-augmentation-au-1er-decembre-2026-quelles-consequences-sur-les-salaires' }, { t: 'Retraite : réforme de 2023 suspendue', txt: 'Vérifiez votre âge de départ sur info-retraite.fr.', url: 'https://www.info-retraite.fr/' }] }, calSoc: [{ d: 'janvier', t: 'Commande des chèques vacances', txt: 'Dans votre espace, onglet Chèques vacances.' }, { d: 'février', t: 'Entretiens annuels' }, { d: 'avril', t: 'Déclaration de revenus', txt: 'En ligne sur impots.gouv.fr (avril à juin).' }, { d: plus(20), t: 'NAO : négociation des salaires' }], affichage: [{ titre: 'Convention collective', type: 'Convention collective', url: 'https://www.legifrance.gouv.fr', at: plus(-30) }, { titre: 'Consignes incendie', type: 'Consignes de sécurité et d\'incendie', url: 'https://exemple.fr', at: plus(-60) }], pv: [{ date: plus(-24), titre: 'Réunion ordinaire', url: 'https://exemple.fr' }], elus: [{ nom: 'Dominique MARTIN', role: 'Secrétaire', service: 'Production', equipe: 'Matin (5h–13h)', tel: '06 00 00 00 00', mail: '', photo: null, referent: true }, { nom: 'Lou PETIT', role: 'Trésorier', service: 'Maintenance', equipe: 'Journée', tel: '', mail: 'lou@exemple.fr', photo: null, referent: false }], contacts: [{ type: 'Médecine du travail', nom: 'Service de santé au travail', tel: '03 29 00 00 00', mail: '', adresse: '1 rue de la Santé, 88000 Épinal', site: '', info: 'Du lundi au vendredi, 8h30–17h.' }], faq: [{ cat: 'Chèques vacances', q: 'Quand puis-je commander mes chèques vacances ?', r: 'La campagne ouvre en janvier : vous recevez une notification et la demande se fait depuis l\'onglet Chèques vacances.' }, { cat: 'Colis', q: 'Je ne peux pas venir chercher mon colis, que faire ?', r: 'Un collègue peut le récupérer avec un mot signé de votre part, ou écrivez-nous pour convenir d\'une autre date.' }], signal: true },
         bonsPlans: [{ id: 'bp1', nom: 'Pizzeria Da Marco', cat: '🍽️ Restaurants', reduc: '-10 % sur l\'addition', code: 'CSEVELIN10', adresse: '5 place des Vosges, 88000 Épinal', site: 'https://exemple.fr', cond: 'Sur présentation de la carte CSE, hors menus du midi.', fin: plus(60), nouveau: plus(-2) }, { id: 'bp2', nom: 'Institut Zen', cat: '💆 Beauté, bien-être', reduc: '15 € offerts dès 60 € de soins', code: '', adresse: '18 rue Thiers, 88000 Épinal', site: '', cond: 'Une fois par an et par salarié.', fin: '' }],
         aides: [{ nom: 'Rentrée scolaire', montant: 30, info: 'Justificatif : certificat de scolarité.' }, { nom: 'Naissance ou adoption', montant: 100, info: 'Justificatif : acte de naissance ou livret de famille.' }, { nom: 'Mariage ou PACS', montant: 80, info: 'Justificatif : acte de mariage ou de PACS.' }, { nom: 'Départ en retraite', montant: 150, info: '' }],
         billets: [{ id: 11, titre: 'Cinéma Épinal', prix: 5.5, prixPublic: 11.9, stock: 23, expire: d(5, 2, y + 1), cinema: true }, { id: 13, titre: 'Cinéma Remiremont', prix: 5.5, prixPublic: 10.5, stock: 42, expire: d(5, 20, y + 1), cinema: true }, { id: 12, titre: 'Parc Astérix', prix: 35, prixPublic: 62, stock: 4, une: true, expire: d(10, 31, y + 1), cinema: false }, { id: 14, titre: 'Fraispertuis City', prix: 15, prixPublic: 29, stock: 18, expire: '', cinema: false }],
         quotas: { std: 2, stdFoyer: true, cine: 10, cineFoyer: false },
         reponses: [{ date: plus(-10), type: 'question', texte: 'Est-ce que les intérimaires ont droit à la billetterie ?', reponse: 'Non, la billetterie est réservée aux salariés de l\'entreprise, conformément au règlement intérieur du CSE.' }, { date: plus(-30), type: 'idee', texte: 'Mettre des places de cinéma moins chères.', reponse: 'Depuis octobre, la place de cinéma passe de 8 € à 6 €.' }],
         materielInfo: 'Retrait et retour le vendredi à la permanence du CSE.',
+        album: [{ id: 900, titre: 'Bowling de la rentrée', date: plus(-50), photos: ['#f59e0b,#ef4444', '#6366f1,#06b6d4', '#10b981,#84cc16', '#ec4899,#8b5cf6', '#0ea5e9,#22c55e'].map(function (c, i) { var k = c.split(','); return { id: 'demo' + i, url: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + k[0] + '"/><stop offset="1" stop-color="' + k[1] + '"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><text x="200" y="230" font-size="120" text-anchor="middle">' + ['🎳', '🍕', '🏆', '📸', '🎉'][i] + '</text></svg>') }; }) }],
+        paOn: true,
+        chiffres: { an: String(new Date().getFullYear()), maj: today(), nbSal: 182, nbBenef: 149, offert: 41830, moy: 281, depASC: 58420, prevuASC: 72000, parType: [['Chèques vacances', 18400], ['Billetterie', 9650], ['Sorties', 7320], ['Colis de Noël', 4100], ['Événements de vie', 2360]], dep: [['ASC · Chèques vacances', 18400], ['ASC · Sorties', 14200], ['ASC · Billetterie', 11300], ['ASC · Noël', 9600], ['ASC · Événements de vie', 2920]], billets: 612, sorties: 7, participants: 318, listeSorties: ['Europa Park (14/06)', 'Bowling de la rentrée (27/09)', 'Marché de Noël de Strasbourg (12/12)', 'Karting en famille (05/04)', 'Concert au Zénith (18/10)', 'Repas de fin d\'année (19/12)', 'Walygator (23/08)'], cv: 96, cvCse: 18400, colis: 176, prets: 31, mot: 'Merci à tous d\'avoir participé cette année. Vos idées dans la boîte à idées nous aident à choisir les prochaines sorties !' },
+        ideesPub: [{ id: 'i1', texte: 'Une sortie au parc Walygator l\'été prochain', reponse: 'On regarde les prix pour juin.' }, { id: 'i2', texte: 'Des places de foot pour un match à Nancy' }, { id: 'i3', texte: 'Un atelier massage pendant la pause' }],
+        quiz: { mois: today().slice(0, 7), lot: '2 places de cinéma', fin: plus(10), questions: [{ q: 'Combien de jours de congés payés gagne-t-on par mois travaillé ?', choix: ['2 jours', '2,5 jours ouvrables', '3 jours'] }, { q: 'Quel jour férié est forcément chômé ?', choix: ['Le 14 juillet', 'Le 1er mai', 'Le 25 décembre'] }, { q: 'Dès combien d\'heures de travail a-t-on droit à une pause ?', choix: ['4 heures', '6 heures', '8 heures'] }] },
+        quizRes: { mois: plus(-35).slice(0, 7), lot: '2 places de cinéma', gagnant: 'Lou P.', nb: 23, reponses: [{ q: 'Combien d\'heures de repos entre deux journées de travail ?', bonne: '11 heures', expl: 'Code du travail, art. L3131-1.' }] },
         docs: [{ titre: 'Règlement intérieur du CSE', date: d(1, 15), url: '#demo' }, { titre: 'Accord d\'entreprise (exemple)', date: d(2, 1), url: '#demo' }] },
       messages: [{ id: 'm1', at: plus(-2) + 'T09:12:00', de: 'sal', texte: 'Bonjour, est-ce que les billets du Parc Astérix sont encore valables en décembre ?' }, { id: 'm2', at: plus(-1) + 'T17:40:00', de: 'cse', par: 'Michaël', texte: 'Bonjour, oui : ils sont valables jusqu\'au 30/11. Passez à la permanence vendredi si vous voulez les échanger.' }],
+      commu: { annonces: [{ id: 'p1', at: plus(-2), type: 'vente', titre: 'Vélo enfant 16 pouces', texte: 'Très bon état, casque offert.', prix: '40 €', contact: '06 00 00 00 00', nom: 'Sam EXEMPLE', statut: 'ok' }, { id: 'p2', at: plus(-5), type: 'don', titre: 'Cartons de déménagement', texte: 'Une vingtaine, à récupérer au parking.', contact: 'à l\'atelier, équipe B', nom: 'Alex EXEMPLE', statut: 'ok' }, { id: 'p3', at: plus(-1), type: 'pret', titre: 'Remorque', texte: '', contact: '', nom: 'Camille EXEMPLE', statut: 'attente', mien: true }], jaime: { i1: 14, i2: 6, i3: 9 }, mesJaime: ['i1'], quizFait: false },
       avis: {}, demandes: [{ id: 'x1', at: plus(-3) + 'T10:00:00', type: 'materiel', resume: '1 x Chapiteau 3x6 du ' + fd(d(8, 20)) + ' au ' + fd(d(8, 22)), statut: 'acceptée', reponse: 'C\'est noté, à récupérer vendredi.' }, { id: 'x2', at: plus(-1) + 'T18:00:00', type: 'fiche', resume: 'Modifier : téléphone', statut: 'en attente', reponse: '' }] };
   }
 
@@ -383,6 +390,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (method === 'POST' && body.action === 'permanence-prendre') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'signature') { await new Promise(function (r) { setTimeout(r, 500); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'barometre-repondre') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true }; }
+      if (method === 'POST' && body.action === 'annonce') { await new Promise(function (r) { setTimeout(r, 400); }); return { ok: true, annonce: { id: 'n' + Date.now(), at: new Date().toISOString(), type: body.type, titre: body.titre, texte: body.texte, prix: body.prix, contact: body.contact, nom: 'Camille EXEMPLE', statut: 'attente', mien: true } }; }
+      if (method === 'POST' && /^(annonce-finie|quiz-repondre)$/.test(body.action)) { await new Promise(function (r) { setTimeout(r, 300); }); return { ok: true }; }
+      if (method === 'POST' && body.action === 'idee-jaime') { await new Promise(function (r) { setTimeout(r, 200); }); return { ok: true }; }
       if (method === 'POST' && body.action === 'avis') { await new Promise(function (r) { setTimeout(r, 400); }); D.avis = D.avis || {}; D.avis[body.o] = body.n; return { ok: true }; }
       if (method === 'POST') { await new Promise(function (r) { setTimeout(r, 500); }); D.demandes.push({ id: 'n' + Date.now(), at: new Date().toISOString(), type: body.type, resume: body.resume, statut: 'en attente', reponse: '' }); return { ok: true }; }
       return D;
@@ -934,7 +944,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   var CALC = { ouvert: '' };
   function droitsPage() {
     var I = INFO(), h = '<div class="card"><h2>⚖️ Mes droits</h2><p class="mute">Les règles principales du Code du travail, expliquées simplement. Votre convention collective ou un accord d\'entreprise peut être plus favorable : les encadrés « Chez nous » le précisent. Pour un cas précis, parlez-en à un élu.</p><input id="dr-q" placeholder="🔎 Rechercher (ex. : mariage, nuit, heures sup…)" oninput="cseDroitsQ(this.value)"></div>';
-    if (I.calculs) h += '<div class="card"><h2>🧮 Calculs pratiques</h2><p class="mute">Indicatif : seul le service paie fait foi. Rien n\'est envoyé au CSE.</p><div class="chips" style="margin-top:8px">' + [['cp', '🏖️ Mes congés payés'], ['evt', '💍 Événement familial'], ['pre', '✉️ Fin de préavis'], ['hs', '⏱️ Heures sup'], ['nuit', '🌙 Prime de nuit'], ['pont', '🌉 Meilleurs ponts']].map(function (c) { return '<button class="chip' + (CALC.ouvert === c[0] ? ' on' : '') + '" onclick="cseCalc(\'' + c[0] + '\')">' + c[1] + '</button>'; }).join('') + '</div><div id="calc-z">' + calcHtml() + '</div></div>';
+    if (I.calculs) h += '<div class="card"><h2>🧮 Calculs pratiques</h2><p class="mute">Indicatif : seul le service paie fait foi. Rien n\'est envoyé au CSE.</p><div class="chips" style="margin-top:8px">' + [['cp', '🏖️ Mes congés payés'], ['evt', '💍 Événement familial'], ['pre', '✉️ Fin de préavis'], ['hs', '⏱️ Heures sup'], ['nuit', '🌙 Prime de nuit'], ['pont', '🌉 Meilleurs ponts'], ['lic', '💼 Indemnité de licenciement'], ['rc', '🤝 Rupture conventionnelle'], ['frac', '➕ Jours de fractionnement'], ['net', '💶 Brut ↔ net']].map(function (c) { return '<button class="chip' + (CALC.ouvert === c[0] ? ' on' : '') + '" onclick="cseCalc(\'' + c[0] + '\')">' + c[1] + '</button>'; }).join('') + '</div><div id="calc-z">' + calcHtml() + '</div></div>';
     var L = (I.fiches || []).filter(function (id) { return FICHES[id]; });
     if (L.length) h += '<div id="dr-list">' + L.map(ficheHtml).join('') + '</div><p class="mute" id="dr-vide" hidden style="text-align:center">Aucune fiche ne correspond. Posez la question au CSE (onglet Messages).</p>';
     if ((I.affichage || []).length) h += '<div class="card"><h2>📌 Affichage obligatoire</h2>' + I.affichage.map(function (a) { return '<div class="row"><div class="l"><b>' + E(a.titre) + '</b><div class="mute">' + E(a.type || '') + (a.at ? ' · mis en ligne le ' + fd(a.at) : '') + '</div></div><div class="r"><a class="btn s" target="_blank" rel="noopener" href="' + E(a.url) + '">📄 Ouvrir</a></div></div>'; }).join('') + '</div>';
@@ -2042,6 +2052,315 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     setTimeout(function () { var a = $('v11-avion'); if (a) a.remove(); }, 1800);
   };
 
+  // =====================================================================
+  // V.11.7 : liens officiels, Me former, Mes aides, Ma retraite, Ce qui change, Calendrier social,
+  //          le saviez-vous du jour, compte à rebours, calculs en plus, photos des sorties,
+  //          petites annonces, idées des collègues (j'aime), quiz du mois
+  // =====================================================================
+  function v117Src(q) { return 'https://code.travail.gouv.fr/recherche?q=' + encodeURIComponent(q); }
+  var V117SV = [
+    ['Les congés payés se gagnent au rythme de 2,5 jours ouvrables par mois travaillé, soit 30 jours (5 semaines) par an.', 'L3141-3', 'congés payés acquisition'],
+    ['Depuis 2024, un arrêt maladie ordinaire donne aussi des congés payés : 2 jours ouvrables par mois d\'arrêt, 24 jours par an au plus.', 'L3141-5-1', 'congés payés arrêt maladie'],
+    ['Pendant un arrêt pour accident du travail ou maladie professionnelle, vous gagnez vos congés payés comme si vous travailliez.', 'L3141-5', 'congés payés accident du travail'],
+    ['Le 1er mai est le seul jour férié forcément chômé. S\'il est travaillé, il est payé double.', 'L3133-6', '1er mai travaillé'],
+    ['Un jour férié chômé ne peut pas faire baisser le salaire d\'un salarié qui a au moins 3 mois d\'ancienneté.', 'L3133-3', 'jour férié chômé salaire'],
+    ['La journée de solidarité, ce sont 7 heures de travail par an non payées en plus, pour l\'autonomie des personnes âgées et handicapées.', 'L3133-7', 'journée de solidarité'],
+    ['Dès 6 heures de travail dans la journée, vous avez droit à une pause d\'au moins 20 minutes d\'affilée.', 'L3121-16', 'temps de pause'],
+    ['Entre deux journées de travail, il faut au moins 11 heures de repos d\'affilée.', 'L3131-1', 'repos quotidien'],
+    ['Le repos de la semaine dure au moins 35 heures d\'affilée (24 h + les 11 h de repos quotidien).', 'L3132-2', 'repos hebdomadaire'],
+    ['Une journée de travail ne peut pas dépasser 10 heures, sauf dérogation ou accord.', 'L3121-18', 'durée maximale de travail'],
+    ['Sur une semaine, jamais plus de 48 heures de travail, et pas plus de 44 heures en moyenne sur 12 semaines.', 'L3121-20', 'durée maximale hebdomadaire'],
+    ['Sans accord d\'entreprise, les heures sup sont majorées de 25 % de la 36e à la 43e heure, puis de 50 %.', 'L3121-36', 'majoration heures supplémentaires'],
+    ['Vous êtes « travailleur de nuit » si vous faites au moins 3 heures de nuit, au moins 2 fois par semaine (ou un nombre d\'heures sur l\'année fixé par accord).', 'L3122-5', 'travailleur de nuit'],
+    ['Le travailleur de nuit a un suivi médical renforcé : une visite au moins tous les 3 ans.', 'R4624-17', 'travailleur de nuit suivi médical'],
+    ['Face à un danger grave et imminent, vous pouvez vous retirer de votre poste après avoir alerté. Aucune sanction ni retenue de salaire n\'est possible.', 'L4131-1', 'droit de retrait'],
+    ['Personne ne doit subir de harcèlement moral. Celui qui témoigne de bonne foi est protégé.', 'L1152-1', 'harcèlement moral'],
+    ['Votre CPF reçoit 500 € par an pour un temps plein (plafond 5 000 €), 800 € pour les salariés peu qualifiés (plafond 8 000 €).', 'L6323-11', 'compte personnel de formation'],
+    ['Le père ou le second parent a droit à 25 jours de congé de paternité (32 pour des naissances multiples), en plus des 3 jours de naissance.', 'L1225-35', 'congé de paternité'],
+    ['Le congé maternité dure 16 semaines pour un 1er ou 2e enfant : 6 avant la naissance, 10 après.', 'L1225-17', 'congé maternité durée'],
+    ['Votre mariage ou votre PACS vous donne 4 jours de congé payés par l\'employeur (votre convention collective peut prévoir plus).', 'L3142-4', 'congé mariage pacs'],
+    ['L\'annonce du handicap, d\'une maladie chronique ou d\'un cancer chez un enfant donne droit à 5 jours de congé.', 'L3142-4', 'congé annonce handicap enfant'],
+    ['Un arrêt maladie doit être envoyé sous 48 heures à la CPAM et à l\'employeur.', 'R321-2 CSS', 'arrêt maladie 48 heures'],
+    ['Après un arrêt maladie d\'au moins 60 jours, ou un accident du travail d\'au moins 30 jours, une visite de reprise est obligatoire.', 'R4624-31', 'visite de reprise'],
+    ['Pendant un arrêt de plus de 30 jours, vous pouvez demander un rendez-vous de liaison avec l\'employeur pour préparer le retour.', 'L1226-1-3', 'rendez-vous de liaison'],
+    ['Après 1 an d\'ancienneté, l\'employeur complète les indemnités de la Sécurité sociale en cas d\'arrêt maladie (après 7 jours de carence).', 'L1226-1', 'maintien de salaire maladie'],
+    ['La période d\'essai d\'un CDI dure au plus 2 mois pour un ouvrier ou employé, 3 mois pour un technicien ou agent de maîtrise, 4 mois pour un cadre.', 'L1221-19', 'période d\'essai durée'],
+    ['L\'indemnité légale de licenciement est due dès 8 mois d\'ancienneté (sauf faute grave ou lourde).', 'L1234-9', 'indemnité de licenciement'],
+    ['Après la signature d\'une rupture conventionnelle, chacun a 15 jours calendaires pour changer d\'avis.', 'L1237-13', 'rupture conventionnelle rétractation'],
+    ['L\'indemnité de rupture conventionnelle ne peut pas être plus petite que l\'indemnité légale de licenciement.', 'L1237-13', 'indemnité rupture conventionnelle'],
+    ['L\'employeur rembourse au moins la moitié de votre abonnement de transport en commun.', 'L3261-2', 'prise en charge abonnement transport'],
+    ['Le salaire est payé au moins une fois par mois. Vous pouvez demander un acompte égal à la moitié du salaire mensuel.', 'L3242-1', 'acompte sur salaire'],
+    ['Vous pouvez refuser de recevoir votre fiche de paie par voie électronique : elle vous est alors remise sur papier.', 'L3243-2', 'bulletin de paie électronique'],
+    ['Gardez vos fiches de paie toute votre vie : elles peuvent servir pour la retraite.', 'L3243-4', 'conservation bulletin de paie'],
+    ['Vous pouvez donner des jours de repos à un collègue dont l\'enfant est gravement malade.', 'L1225-65-1', 'don de jours de repos'],
+    ['Le congé de proche aidant permet d\'aider un proche en perte d\'autonomie : 3 mois renouvelables, 1 an au plus sur la carrière, avec une allocation.', 'L3142-16', 'congé de proche aidant'],
+    ['Si vous portez une tenue de travail obligatoire mise sur place, le temps d\'habillage donne droit à une contrepartie.', 'L3121-3', 'temps d\'habillage'],
+    ['Aucune discrimination n\'est permise (origine, sexe, âge, santé, handicap, activité syndicale…) à l\'embauche comme au travail.', 'L1132-1', 'discrimination au travail'],
+    ['Un accident sur le trajet entre le domicile et le travail est pris en charge comme un accident du travail.', 'L411-2 CSS', 'accident de trajet'],
+    ['Le congé sabbatique (6 à 11 mois) est ouvert après 36 mois d\'ancienneté et 6 ans d\'activité professionnelle.', 'L3142-28', 'congé sabbatique'],
+    ['Le CSE gère les activités sociales et culturelles : billets, sorties, chèques vacances, colis… financés par le budget ASC.', 'L2312-78', 'activités sociales et culturelles CSE'],
+    ['Votre relevé de carrière (sur info-retraite.fr) se vérifie bien avant la retraite : une année oubliée se corrige plus facilement tôt.', '', 'relevé de carrière retraite'],
+    ['À partir de 45 ans, vous pouvez demander un entretien information retraite gratuit.', '', 'entretien information retraite']
+  ];
+  function v117Jour() { var d = new Date(), s = new Date(d.getFullYear(), 0, 0); return Math.floor((d - s) / 864e5); }
+  var V117 = { sv: null, vac: null };
+  window.cseV117Sv = function () { V117.sv = ((V117.sv == null ? v117Jour() : V117.sv) + 1) % V117SV.length; var c = $('v117-sv'); if (c) c.outerHTML = v117SvCarte(); };
+  function v117SvCarte() {
+    var i = V117.sv == null ? v117Jour() % V117SV.length : V117.sv, x = V117SV[i];
+    return '<div class="card v117-sv" id="v117-sv"><h2>💡 Le saviez-vous ?</h2><p style="margin:4px 0 8px;font-size:15px;line-height:1.45">' + E(x[0]) + '</p><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><a class="btn s" target="_blank" rel="noopener" href="' + v117Src(x[2]) + '">📖 En savoir plus</a><button class="btn s" onclick="cseV117Sv()">🔄 Une autre</button>' + (x[1] ? '<span class="mute" style="font-size:12px">' + (/CSS/.test(x[1]) ? 'Code de la Sécurité sociale' : 'Code du travail') + ', art. ' + E(x[1].replace(' CSS', '')) + '</span>' : '') + '</div></div>';
+  }
+  // --- Compte à rebours : prochaine sortie, prochain jour férié, prochaines vacances scolaires ---
+  function v117Jours(d) { var a = new Date(today() + 'T12:00'), b = new Date(String(d).slice(0, 10) + 'T12:00'); return Math.round((b - a) / 864e5); }
+  function v117Dans(n) { return n <= 0 ? 'aujourd\'hui' : n === 1 ? 'demain' : 'dans ' + n + ' jours'; }
+  function v117Vacances() {
+    var z = (INFO().zone || '').toUpperCase(); if (!/^[ABC]$/.test(z)) return null;
+    if (V117.vac && V117.vac.z === z) return V117.vac.v;
+    try { var c = JSON.parse(localStorage.getItem('cse_v117_vac') || 'null'); if (c && c.z === z && c.at > Date.now() - 3 * 864e5 && (!c.v || c.v.fin >= today())) { V117.vac = c; return c.v; } } catch (e) { }
+    if (V117.charge) return null; V117.charge = 1;
+    var u = 'https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?limit=30&order_by=start_date&where=' + encodeURIComponent('zones="Zone ' + z + '" and end_date>="' + today() + '"');
+    fetch(u).then(function (r) { return r.json(); }).then(function (j) {
+      var L = (j.results || []).filter(function (x) { return x.start_date && x.description && !/enseignants/i.test(x.population || ''); });
+      var x = L[0], v = x ? { nom: String(x.description), debut: String(x.start_date).slice(0, 10), fin: String(x.end_date || '').slice(0, 10) } : null;
+      V117.vac = { z: z, at: Date.now(), v: v }; try { localStorage.setItem('cse_v117_vac', JSON.stringify(V117.vac)); } catch (e) { }
+      if (v && TAB === 'accueil') { var c = $('v117-cd'); if (c) c.outerHTML = v117Rebours(); }
+    }).catch(function () { V117.vac = { z: z, at: Date.now(), v: null }; });
+    return null;
+  }
+  function v117Rebours() {
+    var f = D.fiche || {}, P = D.pub || {}, t = today(), L = [];
+    var mes = (f.sorties || []).filter(function (x) { return x.date >= t; }).sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); })[0];
+    var ouv = (P.sorties || []).filter(function (x) { return x.date >= t; }).sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); })[0];
+    var so = mes || ouv; if (so) L.push(['🎭', (mes ? 'Votre sortie ' : 'Prochaine sortie : ') + so.nom, v117Jours(so.date), 'sorties']);
+    try { var y = new Date().getFullYear(), F = feries(y).concat(feries(y + 1)).map(function (x) { return [iso(x[0]), x[1]]; }).filter(function (x) { return x[0] >= t; })[0]; if (F) L.push(['🎉', F[1], v117Jours(F[0]), 'droits']); } catch (e) { }
+    var v = v117Vacances(); if (v) { var n = v117Jours(v.debut); L.push(['🏖️', v.nom, n, '', n <= 0 ? 'en cours, jusqu\'au ' + fd(v.fin) : '']); }
+    if (!L.length) return '';
+    return '<div class="card v117-cd" id="v117-cd"><h2>⏳ Bientôt</h2><div class="v117-cdl">' + L.map(function (x) { return '<div class="v117-c"' + (x[3] ? ' onclick="cseGo(\'' + x[3] + '\')" style="cursor:pointer"' : '') + '><span class="v117-ci">' + x[0] + '</span><b>' + (x[4] ? '' : (x[2] <= 0 ? '0' : x[2])) + '</b><small>' + (x[4] ? E(x[4]) : x[2] <= 1 ? v117Dans(x[2]) : 'jours') + '</small><span class="v117-cn">' + E(x[1]) + '</span></div>'; }).join('') + '</div></div>';
+  }
+  // --- Pages d'infos pratiques (liens officiels) ---
+  function v117Lien(u, t, d) { return '<a class="row v117-l" target="_blank" rel="noopener" href="' + E(u) + '"><div class="l"><b>' + t + '</b>' + (d ? '<div class="mute">' + d + '</div>' : '') + '</div><div class="r">↗</div></a>'; }
+  function v117Bloc(t, L) { return '<div class="card"><h2>' + t + '</h2>' + L.join('') + '</div>'; }
+  function v117PageLiens() {
+    var I = INFO(), K = I.liens || {}, h = '<div class="card"><h2>🔗 Liens officiels</h2><p class="mute">Les textes et outils officiels, en un appui. Pour votre cas précis, parlez-en à un élu du CSE.</p></div>';
+    var chez = [];
+    if (K.cc && K.cc.url) chez.push(v117Lien(K.cc.url, '📘 ' + E(K.cc.nom || 'Notre convention collective'), 'La convention collective qui s\'applique chez nous.'));
+    (K.accords || []).forEach(function (a) { if (a.url) chez.push(v117Lien(a.url, '🤝 ' + E(a.titre || 'Accord d\'entreprise'), 'Accord d\'entreprise')); });
+    if (chez.length) h += v117Bloc('🏭 Chez nous', chez);
+    h += v117Bloc('⚖️ Les textes', [
+      v117Lien('https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050', '📕 Le Code du travail', 'Sur Légifrance, le site officiel des lois.'),
+      v117Lien('https://code.travail.gouv.fr/', '💻 Le Code du travail numérique', 'Le ministère du Travail répond à vos questions, en langage simple.'),
+      v117Lien('https://code.travail.gouv.fr/outils/convention-collective', '🔎 Trouver sa convention collective', 'Avec le nom de l\'entreprise ou le numéro SIRET.'),
+      v117Lien('https://www.service-public.gouv.fr/particuliers', '🇫🇷 Service-public', 'Fiches officielles sur le travail, la famille, le logement…')]);
+    h += v117Bloc('🧮 Simulateurs officiels', [
+      v117Lien('https://code.travail.gouv.fr/outils', '🧰 Tous les simulateurs du Code du travail numérique', 'Préavis, indemnité de licenciement, salaire minimum de la branche, heures de recherche d\'emploi…'),
+      v117Lien('https://code.travail.gouv.fr/outils/indemnite-licenciement', '💶 Indemnité de licenciement', 'Le calcul officiel, avec votre convention collective.'),
+      v117Lien('https://mon-entreprise.urssaf.fr/simulateurs/salaire', '💰 Salaire brut ↔ net', 'Le simulateur de l\'Urssaf.')]);
+    var ins = K.inspection || {};
+    h += v117Bloc('🛡️ Être aidé', [
+      ins.nom || ins.adresse || ins.tel ? '<div class="row"><div class="l"><b>🏛️ ' + E(ins.nom || 'Inspection du travail') + '</b><div class="mute">' + E([ins.adresse, ins.tel].filter(Boolean).join(' · ')) + '</div>' + (ins.tel ? '<a class="btn s" style="margin-top:6px" href="tel:' + E(String(ins.tel).replace(/\s/g, '')) + '">📞 Appeler</a> ' : '') + (ins.url ? '<a class="btn s" style="margin-top:6px" target="_blank" rel="noopener" href="' + E(ins.url) + '">↗ Site</a>' : '') + '</div></div>'
+        : v117Lien(v117Src('inspection du travail'), '🏛️ Inspection du travail', 'Contrôle le respect du droit du travail et renseigne les salariés.'),
+      v117Lien('https://www.defenseurdesdroits.fr/', '⚖️ Défenseur des droits', 'En cas de discrimination ou si vos droits ne sont pas respectés. Gratuit.'),
+      '<div class="row" style="cursor:pointer" onclick="cseGo(\'aide\')"><div class="l"><b>🆘 Les élus et les contacts du CSE</b><div class="mute">Signaler un problème, trouver un élu, le référent harcèlement.</div></div><div class="r">›</div></div>']);
+    return h;
+  }
+  function v117PageCarriere() {
+    return '<div class="card"><h2>🎓 Me former, évoluer</h2><p class="mute">Changer de poste, apprendre un métier, faire reconnaître votre expérience : tout se finance, et des conseillers gratuits vous accompagnent.</p></div>'
+      + v117Bloc('💳 Mon compte formation (CPF)', [v117Lien('https://www.moncompteformation.gouv.fr/', '🔐 Mon Compte Formation', 'Voir vos droits en euros et choisir une formation. Connexion avec FranceConnect.'), '<p class="mute" style="margin:8px 0 0">500 € par an pour un temps plein (plafond 5 000 €), 800 € pour les salariés peu qualifiés. Une petite participation est demandée à chaque formation, sauf exceptions.</p>'])
+      + v117Bloc('🧭 Être conseillé (gratuit)', [v117Lien('https://mon-cep.org/', '🧭 Conseil en évolution professionnelle', 'Un conseiller gratuit et confidentiel pour faire le point et monter un projet.'), v117Lien('https://code.travail.gouv.fr/fiche-ministere-travail/conseil-en-evolution-professionnelle-cep', '📖 Comment ça marche', 'La fiche du ministère du Travail.')])
+      + v117Bloc('🔄 Changer de métier', [v117Lien(v117Src('projet de transition professionnelle'), '🚀 Projet de transition professionnelle', 'Une formation longue pour changer de métier, avec votre salaire maintenu. Dossier auprès de Transitions Pro de votre région.'), v117Lien(v117Src('bilan de compétences'), '📝 Bilan de compétences', 'Faire le point sur ses compétences et ses envies. Finançable avec le CPF.'), v117Lien('https://vae.gouv.fr/', '🏅 Validation des acquis de l\'expérience (VAE)', 'Obtenir un diplôme grâce à votre expérience.')])
+      + '<div class="card" style="cursor:pointer" onclick="cseGo(\'droits\')"><h2>💬 Mon entretien professionnel</h2><p class="mute">Un moment avec votre employeur pour parler de votre évolution et de vos formations. Voir la fiche dans « Mes droits ».</p></div>';
+  }
+  function v117PageAides() {
+    return '<div class="card"><h2>🏠 Mes aides</h2><p class="mute">Les aides publiques auxquelles vous avez peut-être droit sans le savoir. Faites le test : c\'est gratuit et anonyme.</p></div>'
+      + v117Bloc('🔎 Tout vérifier en une fois', [v117Lien('https://www.mesdroitssociaux.gouv.fr/', '✅ Mes droits sociaux', 'Le simulateur de l\'État : prime d\'activité, aides au logement, complémentaire santé solidaire…')])
+      + v117Bloc('🏡 Se loger', [v117Lien('https://www.actionlogement.fr/', '🔑 Action Logement', 'Pour les salariés du privé : aide à la location, prêt pour acheter ou faire des travaux, aide en cas de mobilité ou de difficulté.'), v117Lien('https://www.visale.fr/', '🛡️ Visale', 'Une caution gratuite pour louer un logement.')])
+      + v117Bloc('💶 Compléter ses revenus', [v117Lien('https://www.caf.fr/', '👪 Prime d\'activité (Caf)', 'Pour les salariés aux revenus modestes. Simulateur sur caf.fr › Mes services en ligne › Estimer vos droits.'), v117Lien('https://www.chequeenergie.gouv.fr/', '⚡ Chèque énergie', 'Pour payer l\'électricité, le gaz ou le fioul.'), v117Lien('https://www.ameli.fr/', '🩺 Complémentaire santé solidaire (ameli)', 'Une mutuelle gratuite ou à moins de 1 € par jour selon les revenus.')])
+      + '<div class="card" style="cursor:pointer" onclick="cseGo(\'' + (vieL().length ? 'vie' : 'aides') + '\')"><h2>🎁 Et les aides du CSE</h2><p class="mute">Naissance, mariage, rentrée… voir ce que le CSE prévoit.</p></div>';
+  }
+  function v117PageRetraite() {
+    return '<div class="card"><h2>🧓 Ma retraite</h2><p class="mute">Même loin de la retraite, vérifiez votre relevé de carrière : une erreur se corrige plus facilement tôt.</p></div>'
+      + v117Bloc('🔐 Mes démarches', [v117Lien('https://www.info-retraite.fr/', '📊 Info-retraite', 'Tous vos régimes au même endroit : relevé de carrière, âge de départ, estimation du montant, demande de retraite en ligne.'), v117Lien('https://www.lassuranceretraite.fr/', '🏛️ L\'Assurance retraite', 'La retraite de base des salariés du privé.'), v117Lien('https://www.agirc-arrco.fr/', '➕ Agirc-Arrco', 'La retraite complémentaire des salariés du privé.')])
+      + '<div class="card"><h2>📌 L\'essentiel, simplement</h2>'
+      + '<div class="row"><div class="l"><b>🎂 Mon âge de départ</b><div class="mute">Il dépend de votre année de naissance et des règles en vigueur (la réforme de 2023 a été suspendue fin 2025). Le seul chiffre fiable est celui d\'info-retraite.fr, avec votre carrière.</div></div></div>'
+      + '<div class="row"><div class="l"><b>✅ Le taux plein</b><div class="mute">Vous l\'avez quand vous avez tous vos trimestres, et dans tous les cas à 67 ans.</div></div></div>'
+      + '<div class="row"><div class="l"><b>🏃 Carrière longue</b><div class="mute">Si vous avez commencé à travailler jeune, vous pouvez peut-être partir plus tôt. Vérifiez sur info-retraite.fr.</div></div></div>'
+      + '<div class="row"><div class="l"><b>🗣️ Entretien information retraite</b><div class="mute">Gratuit, dès 45 ans, pour poser toutes vos questions à un conseiller.</div></div></div>'
+      + '<div class="row"><div class="l"><b>📄 Gardez vos fiches de paie</b><div class="mute">Toute votre vie : elles prouvent vos périodes de travail.</div></div></div></div>';
+  }
+  function v117Change() { var C = INFO().change; return C && C.on && (C.items || []).length ? C : null; }
+  function v117PageChange() {
+    var C = v117Change(); if (!C) return '<div class="card"><p class="empty">Rien pour le moment.</p></div>';
+    return '<div class="card"><h2>🆕 ' + E(C.titre || 'Ce qui change') + '</h2><p class="mute">Préparé par le CSE' + (C.maj ? ', mis à jour le ' + fd(C.maj) : '') + '. Chiffres à vérifier sur les sources officielles.</p></div>'
+      + '<div class="card">' + C.items.map(function (x) { return '<div class="row"><div class="l"><b>' + E(x.t) + '</b>' + (x.txt ? '<div class="mute" style="white-space:pre-line">' + E(x.txt) + '</div>' : '') + (x.url ? '<a class="btn s" style="margin-top:6px" target="_blank" rel="noopener" href="' + E(x.url) + '">📖 Source</a>' : '') + '</div></div>'; }).join('') + '</div>';
+  }
+  var V117M = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  function v117CalSoc() { return (INFO().calSoc || []).filter(function (x) { return x && x.t; }); }
+  function v117MoisDe(x) { var m = /^\d{4}-(\d{2})/.exec(x.d || ''); if (m) return Number(m[1]) - 1; var i = V117M.indexOf(String(x.d || '').toLowerCase().trim()); return i; }
+  function v117PageCal() {
+    var L = v117CalSoc(), m0 = new Date().getMonth(), G = {};
+    L.forEach(function (x) { var m = v117MoisDe(x); if (m < 0) m = 12; (G[m] = G[m] || []).push(x); });
+    var ordre = []; for (var i = 0; i < 12; i++) ordre.push((m0 + i) % 12); if (G[12]) ordre.push(12);
+    return '<div class="card"><h2>📆 Calendrier social</h2><p class="mute">Les rendez-vous importants de l\'année, à partir de ce mois-ci.</p></div>' + ordre.filter(function (m) { return G[m]; }).map(function (m) {
+      return '<div class="card' + (m === m0 ? ' v117-now' : '') + '"><h2>' + (m === 12 ? 'Dans l\'année' : (m === m0 ? '👉 ' : '') + V117M[m].charAt(0).toUpperCase() + V117M[m].slice(1)) + '</h2>' + G[m].map(function (x) { return '<div class="row"><div class="l"><b>' + E(x.t) + '</b>' + (/^\d{4}-\d{2}-\d{2}$/.test(x.d || '') ? ' <span class="tag">' + fd(x.d) + '</span>' : '') + (x.txt ? '<div class="mute">' + E(x.txt) + '</div>' : '') + '</div></div>'; }).join('') + '</div>';
+    }).join('');
+  }
+  // --- Photos des sorties ---
+  function v117Albums() { return ((D.pub || {}).album || []).filter(function (a) { return (a.photos || []).length; }); }
+  window.cseV117Photo = function (a, i) {
+    var A = v117Albums()[a]; if (!A) return; i = (i + A.photos.length) % A.photos.length; var p = A.photos[i];
+    var x = $('v117-lb'); if (x) x.remove();
+    document.body.insertAdjacentHTML('beforeend', '<div id="v117-lb" class="v117-lb" onclick="if(event.target===this)this.remove()"><img src="' + E(p.url || phUrl({ id: p.id }).replace('sz=w900', 'sz=w1600')) + '" alt=""><div class="v117-lbb"><button class="btn" onclick="cseV117Photo(' + a + ',' + (i - 1) + ')">‹</button><span>' + (i + 1) + ' / ' + A.photos.length + '</span><button class="btn" onclick="cseV117Photo(' + a + ',' + (i + 1) + ')">›</button><button class="btn" onclick="document.getElementById(\'v117-lb\').remove()">✕</button></div></div>');
+  };
+  function v117PagePhotos() {
+    var L = v117Albums(); if (!L.length) return '<div class="card"><p class="empty">Pas encore de photos.</p></div>';
+    return '<div class="card"><h2>📸 Photos des sorties</h2><p class="mute">Les souvenirs des sorties du CSE. Appuyez sur une photo pour l\'agrandir.</p></div>' + L.map(function (A, a) {
+      return '<div class="card"><h2>' + E(A.titre || 'Sortie') + ' <span class="mute" style="font-weight:500;font-size:13px">' + (A.date ? fd(A.date) : '') + ' · ' + A.photos.length + ' photo' + (A.photos.length > 1 ? 's' : '') + '</span></h2><div class="v117-gal">' + A.photos.map(function (p, i) { return '<img loading="lazy" src="' + E(p.url || phUrl({ id: p.id }).replace('sz=w900', 'sz=w400')) + '" alt="" onclick="cseV117Photo(' + a + ',' + i + ')">'; }).join('') + '</div></div>';
+    }).join('');
+  }
+  // --- Petites annonces entre collègues ---
+  var PA_T = { vente: '💶 Vente', don: '🎁 Don', pret: '🔁 Prêt', recherche: '🔎 Recherche', autre: '📌 Autre' };
+  var PA = { f: '' };
+  function v117PageAnnonces() {
+    var C = D.commu || {}, L = C.annonces || [], ok = L.filter(function (a) { return a.statut === 'ok' && (!PA.f || a.type === PA.f); }), mes = L.filter(function (a) { return a.mien; });
+    var h = '<div class="card"><h2>📢 Petites annonces</h2><p class="mute">Entre collègues : vendre, donner, prêter, chercher. Chaque annonce est vérifiée par le CSE avant d\'être visible.</p><button class="btn p" onclick="cseV117PaForm()">✏️ Déposer une annonce</button><div id="pa-form"></div></div>';
+    if (mes.length) h += '<div class="card"><h2>📝 Mes annonces</h2>' + mes.map(function (a) { return '<div class="row"><div class="l"><b>' + E(a.titre) + '</b><div class="mute">' + (PA_T[a.type] || '') + ' · ' + fd(a.at) + (a.motif ? ' · ' + E(a.motif) : '') + '</div></div><div class="r">' + ({ attente: '<span class="tag">En attente</span>', ok: '<span class="tag ok">En ligne</span>', refus: '<span class="tag bad">Refusée</span>' })[a.statut] + (a.statut !== 'refus' ? '<br><button class="btn s" style="margin-top:4px" onclick="cseV117PaFini(\'' + E(a.id) + '\')">✔ C\'est fini</button>' : '') + '</div></div>'; }).join('') + '</div>';
+    h += '<div class="chips" style="margin:4px 0 10px"><button class="chip' + (!PA.f ? ' on' : '') + '" onclick="cseV117PaF(\'\')">Tout</button>' + Object.keys(PA_T).map(function (k) { return '<button class="chip' + (PA.f === k ? ' on' : '') + '" onclick="cseV117PaF(\'' + k + '\')">' + PA_T[k] + '</button>'; }).join('') + '</div>';
+    h += ok.length ? ok.map(function (a) { return '<div class="card v117-pa"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><span class="tag">' + (PA_T[a.type] || '') + '</span> <b style="font-size:16px">' + E(a.titre) + '</b></div>' + (a.prix ? '<b style="white-space:nowrap">' + E(a.prix) + '</b>' : '') + '</div>' + (a.texte ? '<p style="margin:6px 0;white-space:pre-line">' + E(a.texte) + '</p>' : '') + '<div class="mute">Par ' + E(a.nom) + ' · ' + fd(a.at) + '</div>' + (a.contact ? '<div style="margin-top:6px">' + v117Contact(a.contact) + '</div>' : '') + '</div>'; }).join('') : '<div class="card"><p class="empty">Aucune annonce pour le moment.</p></div>';
+    return h;
+  }
+  function v117Contact(c) { c = String(c); var tel = /^[+\d][\d\s.]{7,}$/.test(c.trim()), mail = /@/.test(c); return tel ? '<a class="btn s" href="tel:' + E(c.replace(/[\s.]/g, '')) + '">📞 ' + E(c) + '</a>' : mail ? '<a class="btn s" href="mailto:' + E(c.trim()) + '">✉️ ' + E(c) + '</a>' : '<span class="mute">Contact : ' + E(c) + '</span>'; }
+  window.cseV117PaF = function (k) { PA.f = k; render(); };
+  window.cseV117PaForm = function () {
+    var z = $('pa-form'); if (!z) return; if (z.innerHTML) { z.innerHTML = ''; return; }
+    z.innerHTML = '<label>Type</label><select id="pa-type">' + Object.keys(PA_T).map(function (k) { return '<option value="' + k + '">' + PA_T[k] + '</option>'; }).join('') + '</select><label>Titre</label><input id="pa-titre" maxlength="80" placeholder="ex. : Vélo enfant 16 pouces"><label>Description</label><textarea id="pa-texte" rows="3" maxlength="1500" placeholder="État, taille, où le récupérer…"></textarea><label>Prix (si vente)</label><input id="pa-prix" maxlength="30" placeholder="ex. : 40 €"><label>Comment vous joindre</label><input id="pa-contact" maxlength="120" placeholder="Téléphone, e-mail ou « à l\'atelier, équipe B »"><p class="mute" style="margin:6px 0">Votre nom sera affiché avec l\'annonce. Pas d\'objet interdit, pas de vente pour une entreprise.</p><button class="btn p" onclick="cseV117PaEnvoi(this)">Envoyer au CSE pour validation</button><div id="pa-msg"></div>';
+  };
+  window.cseV117PaEnvoi = async function (b) {
+    var g = function (i) { return (($(i) || {}).value || '').trim(); };
+    if (g('pa-titre').length < 3) return say('pa-msg', 'Donnez un titre à votre annonce.', 'bad');
+    b.disabled = true; say('pa-msg', 'Envoi…');
+    try {
+      var j = await api('POST', { action: 'annonce', type: g('pa-type'), titre: g('pa-titre'), texte: g('pa-texte'), prix: g('pa-prix'), contact: g('pa-contact') });
+      D.commu = D.commu || {}; D.commu.annonces = D.commu.annonces || []; D.commu.annonces.unshift(j.annonce || { id: 'n' + Date.now(), at: new Date().toISOString(), type: g('pa-type'), titre: g('pa-titre'), statut: 'attente', mien: true });
+      render(); setTimeout(function () { say('pa-msg', '✔ Annonce envoyée : le CSE la vérifie avant de la mettre en ligne.', 'ok'); }, 30);
+    } catch (e) { b.disabled = false; say('pa-msg', e.message, 'bad'); }
+  };
+  window.cseV117PaFini = async function (id) { try { await api('POST', { action: 'annonce-finie', id: id }); (D.commu.annonces || []).forEach(function (a) { if (a.id === id) a.statut = 'fini'; }); D.commu.annonces = D.commu.annonces.filter(function (a) { return a.statut !== 'fini'; }); render(); } catch (e) { alert(e.message); } };
+  // --- Idées des collègues : j'aime ---
+  function v117IdeesHtml() {
+    var L = (D.pub || {}).ideesPub || []; if (!L.length) return '';
+    var C = D.commu || {}, J = C.jaime || {}, M = C.mesJaime || [];
+    var T = L.slice().sort(function (a, b) { return (J[b.id] || 0) - (J[a.id] || 0); });
+    return '<div class="card v117-id"><h2>❤️ Les idées des collègues</h2><p class="mute">Les idées que le CSE a choisi de partager. Soutenez celles que vous aimez : les plus soutenues passent en priorité.</p>' + T.map(function (i) {
+      var on = M.indexOf(i.id) >= 0;
+      return '<div class="row"><div class="l"><b>' + E(i.texte) + '</b>' + (i.reponse ? '<div class="mute">💬 Le CSE : ' + E(i.reponse) + '</div>' : '') + '</div><div class="r"><button class="btn s v117-j' + (on ? ' on' : '') + '" onclick="cseV117Jaime(\'' + E(i.id) + '\',this)">' + (on ? '❤️' : '🤍') + ' ' + (J[i.id] || 0) + '</button></div></div>';
+    }).join('') + '</div>';
+  }
+  window.cseV117Jaime = async function (id, b) {
+    var C = D.commu = D.commu || {}; C.jaime = C.jaime || {}; C.mesJaime = C.mesJaime || [];
+    var on = C.mesJaime.indexOf(id) < 0; b.disabled = true;
+    try { var j = await api('POST', { action: 'idee-jaime', id: id, on: on }); if (on) C.mesJaime.push(id); else C.mesJaime = C.mesJaime.filter(function (x) { return x !== id; }); C.jaime[id] = j.n != null ? j.n : Math.max(0, (C.jaime[id] || 0) + (on ? 1 : -1)); b.outerHTML = '<button class="btn s v117-j' + (on ? ' on' : '') + '" onclick="cseV117Jaime(\'' + E(id) + '\',this)">' + (on ? '❤️' : '🤍') + ' ' + C.jaime[id] + '</button>'; if (on) try { v11Vibre(15); } catch (e) { } }
+    catch (e) { b.disabled = false; alert(e.message); }
+  };
+  // --- Quiz du mois ---
+  var QZ = { r: [] };
+  function v117PageQuiz() {
+    var P = D.pub || {}, Q = P.quiz, R = P.quizRes, C = D.commu || {}, h = '';
+    if (Q) {
+      h += '<div class="card"><h2>🧠 Quiz du mois de ' + E(V117M[Number(String(Q.mois).slice(5, 7)) - 1] || '') + '</h2><p class="mute">' + Q.questions.length + ' questions sur vos droits.' + (Q.lot ? ' À gagner : <b>' + E(Q.lot) + '</b>, tiré au sort parmi les sans-faute.' : '') + (Q.fin ? ' Réponses jusqu\'au ' + fd(Q.fin) + '.' : '') + '</p></div>';
+      if (C.quizFait || QZ.fait === Q.mois) h += '<div class="card"><p class="msg ok">✔ Merci, vos réponses sont enregistrées. Les bonnes réponses et le gagnant seront affichés ici le mois prochain.</p></div>';
+      else h += Q.questions.map(function (q, i) { return '<div class="card"><h2 style="font-size:15px">' + (i + 1) + '. ' + E(q.q) + '</h2>' + q.choix.map(function (c, j) { return '<label class="v117-qc' + (QZ.r[i] === j ? ' on' : '') + '"><input type="radio" name="qz' + i + '"' + (QZ.r[i] === j ? ' checked' : '') + ' onchange="cseV117Qz(' + i + ',' + j + ')"> ' + E(c) + '</label>'; }).join('') + '</div>'; }).join('')
+        + '<div class="card"><button class="btn p" onclick="cseV117QzEnvoi(this)">Envoyer mes réponses</button><div id="qz-msg"></div></div>';
+    }
+    if (R && R.reponses) h += '<div class="card"><h2>✅ Réponses du quiz de ' + E(V117M[Number(String(R.mois).slice(5, 7)) - 1] || '') + '</h2>' + (R.gagnant ? '<p class="msg ok">🏆 Bravo à <b>' + E(R.gagnant) + '</b>' + (R.lot ? ', qui gagne ' + E(R.lot) : '') + ' ! (' + (R.nb || 0) + ' participant' + ((R.nb || 0) > 1 ? 's' : '') + ')</p>' : '') + R.reponses.map(function (x, i) { return '<div class="row"><div class="l"><b>' + (i + 1) + '. ' + E(x.q) + '</b><div>👉 ' + E(x.bonne) + '</div>' + (x.expl ? '<div class="mute">' + E(x.expl) + '</div>' : '') + '</div></div>'; }).join('') + '</div>';
+    return h || '<div class="card"><p class="empty">Pas de quiz en ce moment.</p></div>';
+  }
+  window.cseV117Qz = function (i, j) { QZ.r[i] = j; };
+  window.cseV117QzEnvoi = async function (b) {
+    var Q = (D.pub || {}).quiz; if (!Q) return; for (var i = 0; i < Q.questions.length; i++) if (QZ.r[i] == null) return say('qz-msg', 'Répondez à la question ' + (i + 1) + '.', 'bad');
+    b.disabled = true; say('qz-msg', 'Envoi…');
+    try { await api('POST', { action: 'quiz-repondre', mois: Q.mois, r: QZ.r.slice(0, Q.questions.length) }); QZ.fait = Q.mois; D.commu = D.commu || {}; D.commu.quizFait = true; render(); try { cseConfetti(); } catch (e) { } }
+    catch (e) { b.disabled = false; say('qz-msg', e.message, 'bad'); }
+  };
+  // --- Calculs en plus (Mes droits) ---
+  function v117Calc(k) {
+    if (k === 'lic' || k === 'rc') return '<label>Salaire brut mensuel de référence (€)</label><input type="number" step="1" min="0" id="lc-s" placeholder="ex. : 2200"><p class="mute" style="margin:4px 0 0">Le plus avantageux entre la moyenne des 12 derniers mois et celle des 3 derniers mois (primes comprises).</p><label>Ancienneté : années</label><input type="number" min="0" max="50" id="lc-a" value="0"><label>et mois</label><input type="number" min="0" max="11" id="lc-m" value="0"><button class="btn p" style="margin-top:10px" onclick="cseV117Lic(\'' + k + '\')">Calculer</button><div id="calc-r"></div>';
+    if (k === 'frac') return '<p class="mute" style="margin:8px 0 0">Jours du congé principal (les 4 premières semaines) pris en dehors de la période du 1er mai au 31 octobre :</p><label>Nombre de jours ouvrables</label><input type="number" min="0" max="24" id="fr-j" value="0"><button class="btn p" style="margin-top:10px" onclick="cseV117Frac()">Calculer</button><div id="calc-r"></div>';
+    if (k === 'net') return '<label>Je connais mon salaire</label><select id="nt-s"><option value="b">Brut → net</option><option value="n">Net → brut</option></select><label>Montant mensuel (€)</label><input type="number" min="0" id="nt-m" placeholder="ex. : 2200"><label>Statut</label><select id="nt-c"><option value="nc">Non-cadre</option><option value="c">Cadre</option></select><button class="btn p" style="margin-top:10px" onclick="cseV117Net()">Calculer</button><div id="calc-r"></div>';
+    return '';
+  }
+  window.cseV117Lic = function (k) {
+    var s = Number(String(($('lc-s') || {}).value).replace(',', '.')) || 0, a = Math.max(0, Number(($('lc-a') || {}).value) || 0), m = Math.max(0, Math.min(11, Number(($('lc-m') || {}).value) || 0)), an = a + m / 12;
+    if (!s) return;
+    if (k === 'lic' && an < 8 / 12) { $('calc-r').innerHTML = '<div class="msg info" style="margin-top:10px">Moins de 8 mois d\'ancienneté : pas d\'indemnité légale de licenciement (votre convention collective peut en prévoir une).</div>'; return; }
+    var v = s / 4 * Math.min(an, 10) + s / 3 * Math.max(0, an - 10);
+    $('calc-r').innerHTML = res('≈ ' + eu(v) + (k === 'rc' ? ' au minimum' : ''), '1/4 de mois de salaire par année jusqu\'à 10 ans, puis 1/3 de mois par année au-delà, les années incomplètes au prorata (R1234-2). ' + (k === 'rc' ? 'En rupture conventionnelle, l\'indemnité ne peut pas être plus basse, quelle que soit l\'ancienneté (L1237-13). Après signature, 15 jours pour se rétracter, puis validation par l\'administration. ' : '') + 'Votre convention collective peut prévoir plus : <a target="_blank" rel="noopener" href="https://code.travail.gouv.fr/outils/indemnite-licenciement">simulateur officiel</a>.');
+  };
+  window.cseV117Frac = function () {
+    var j = Math.max(0, Number(($('fr-j') || {}).value) || 0), n = j >= 6 ? 2 : j >= 3 ? 1 : 0;
+    $('calc-r').innerHTML = res(n ? '+ ' + n + ' jour' + (n > 1 ? 's' : '') + ' de congé' : 'Pas de jour en plus', 'Règle légale (L3141-23) : 1 jour en plus si vous prenez 3 à 5 jours du congé principal hors de la période du 1er mai au 31 octobre, 2 jours si vous en prenez 6 ou plus. La 5e semaine ne compte pas. Un accord ou votre convention collective peut prévoir autre chose, et l\'employeur peut vous demander d\'y renoncer par écrit.');
+  };
+  window.cseV117Net = function () {
+    var m = Number(String(($('nt-m') || {}).value).replace(',', '.')) || 0, s = ($('nt-s') || {}).value, c = ($('nt-c') || {}).value === 'c', t = c ? 0.75 : 0.78; if (!m) return;
+    var v = s === 'b' ? m * t : m / t;
+    $('calc-r').innerHTML = res('≈ ' + eu(v) + (s === 'b' ? ' net' : ' brut') + ' par mois', 'Estimation avec environ ' + Math.round((1 - t) * 100) + ' % de cotisations (' + (c ? 'cadre' : 'non-cadre') + '), avant impôt sur le revenu. Votre fiche de paie peut différer (mutuelle, heures sup, primes). Calcul précis : <a target="_blank" rel="noopener" href="https://mon-entreprise.urssaf.fr/simulateurs/salaire">simulateur de l\'Urssaf</a>.');
+  };
+  var calcHtml0 = calcHtml; calcHtml = function () { var k = CALC.ouvert; return /^(lic|rc|frac|net)$/.test(k) ? v117Calc(k) : calcHtml0(); };
+  // --- Onglets et rubriques ---
+  GRP.forEach(function (g) {
+    if (g[0] === 'infos') g[4].push('liens', 'carriere', 'maides', 'retraite', 'change', 'calsoc');
+    if (g[0] === 'avantages') g[4].push('photos');
+    if (g[0] === 'cse') g[4].push('pa', 'quiz');
+  });
+  Object.assign(TKW, { liens: 'loi code du travail convention collective accord inspection legifrance defenseur simulateur', carriere: 'formation cpf vae bilan competences carriere metier evoluer', maides: 'aide logement action logement visale prime activite caf cheque energie', retraite: 'retraite age depart releve carriere info-retraite', change: 'nouveau changement loi smic annee', calsoc: 'calendrier social dates nao entretien prime impots elections', photos: 'photo souvenir album sortie', pa: 'petite annonce vente don pret objet', quiz: 'quiz jeu question gagner lot' });
+  Object.assign(TIC, { liens: '🔗', carriere: '🎓', maides: '🏠', retraite: '🧓', change: '🆕', calsoc: '📆', photos: '📸', pa: '📢', quiz: '🧠' });
+  var tbAll0 = tbAll;
+  tbAll = function () {
+    var TB = tbAll0(), P = (D && D.pub) || {}, add = function (t) { TB.splice(TB.length - 2, 0, t); };
+    if (!D) return TB;
+    add(['liens', '🔗 Liens officiels']); add(['carriere', '🎓 Me former']); add(['maides', '🏠 Mes aides']); add(['retraite', '🧓 Ma retraite']);
+    if (v117Change()) add(['change', '🆕 Ce qui change']);
+    if (v117CalSoc().length) add(['calsoc', '📆 Calendrier social']);
+    if (v117Albums().length) add(['photos', '📸 Photos des sorties']);
+    if (P.paOn) add(['pa', '📢 Petites annonces']);
+    if (P.quiz || (P.quizRes && P.quizRes.reponses)) add(['quiz', '🧠 Quiz du mois']);
+    return TB;
+  };
+  function v117Pages(k) { return ({ liens: v117PageLiens, carriere: v117PageCarriere, maides: v117PageAides, retraite: v117PageRetraite, change: v117PageChange, calsoc: v117PageCal, photos: v117PagePhotos, pa: v117PageAnnonces, quiz: v117PageQuiz })[k](); }
+  function v117Accueil() {
+    var h = '';
+    try { h += v117Rebours(); } catch (e) { }
+    var P = D.pub || {}, C = D.commu || {};
+    if (P.quiz && !C.quizFait && QZ.fait !== P.quiz.mois) h += '<div class="card" style="cursor:pointer;border-left:4px solid #8b5cf6" onclick="cseGo(\'quiz\')"><h2>🧠 Le quiz du mois est ouvert</h2><p class="mute">' + P.quiz.questions.length + ' questions sur vos droits' + (P.quiz.lot ? ', à gagner : ' + E(P.quiz.lot) : '') + '.</p></div>';
+    if (v117Change() && !SIMPLE) h += '<div class="card" style="cursor:pointer" onclick="cseGo(\'change\')"><h2>🆕 ' + E(v117Change().titre || 'Ce qui change') + '</h2><p class="mute">' + E(v117Change().items.slice(0, 3).map(function (x) { return x.t; }).join(' · ')) + '</p></div>';
+    return h;
+  }
+  (function () { var st = document.createElement('style'); st.textContent = '.v117-cdl{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:6px}.v117-c{border-radius:14px;padding:10px;background:color-mix(in srgb,var(--brand) 10%,transparent);display:flex;flex-direction:column;align-items:flex-start;gap:1px}.v117-ci{font-size:22px}.v117-c b{font-size:26px;line-height:1.1}.v117-c small{font-size:12px;opacity:.75}.v117-cn{font-size:13px;font-weight:600;margin-top:2px}'
+    + '.v117-sv{border-left:4px solid #f59e0b}.v117-l{text-decoration:none;color:inherit}.v117-l:hover{background:rgba(127,127,127,.08)}.v117-now{border-left:4px solid var(--brand)}'
+    + '.v117-gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;margin-top:8px}.v117-gal img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer;background:rgba(127,127,127,.15)}'
+    + '.v117-lb{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px}.v117-lb img{max-width:100%;max-height:80vh;border-radius:10px}.v117-lbb{display:flex;gap:10px;align-items:center;color:#fff}'
+    + '.v117-qc{display:flex;gap:8px;align-items:center;padding:9px 10px;border:1px solid rgba(127,127,127,.3);border-radius:10px;margin-top:6px;cursor:pointer;font-weight:500}.v117-qc.on,.v117-qc:has(input:checked){border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,transparent)}.v117-qc input{width:auto;margin:0}'
+    + '.v117-j.on{border-color:#e11d48;color:#e11d48}'; document.head.appendChild(st); })();
+
+  // ---------- V.11.8 : Mon CSE en chiffres ----------
+  function v118Page() {
+    var C = (D.pub || {}).chiffres; if (!C) return '<div class="card"><p class="empty">Pas encore de chiffres.</p></div>';
+    var pc = C.nbSal ? Math.round(C.nbBenef * 100 / C.nbSal) : 0, h = '<div class="card v118-hero"><h2>📊 Mon CSE en chiffres</h2><p class="mute">Ce que le CSE a fait pour vous en ' + E(C.an) + ', à la date du ' + fd(C.maj) + '. Des chiffres d\'ensemble, sans aucun nom.</p>' + (C.mot ? '<div class="v118-mot">💬 ' + E(C.mot) + '<div class="mute" style="margin-top:4px">— Les élus du CSE</div></div>' : '') + '</div>';
+    var k = function (ic, v, l, go) { return '<div class="v118-k"' + (go ? ' onclick="cseGo(\'' + go + '\')" style="cursor:pointer"' : '') + '><span>' + ic + '</span><b class="v11-cnt" data-n="' + (Number(v) || 0) + '">' + E(String(v)) + '</b><small>' + l + '</small></div>'; };
+    h += '<div class="v118-ks">' + k('🙋', C.nbBenef, 'salariés ont profité du CSE') + k('🎁', eur(C.offert).replace(/,00\s/, ' '), 'offerts aux salariés') + k('🎟️', C.billets, 'billets à prix réduit', 'billets') + k('🎭', C.sorties, 'sorties · ' + C.participants + ' participants', 'sorties') + k('🏖️', C.cv, 'dossiers chèques vacances', 'cv') + k('📦', C.colis, 'colis remis') + '</div>';
+    h += '<div class="card"><h2>🙋 Qui en a profité ?</h2><div class="v118-bar"><i style="width:' + pc + '%"></i></div><p style="margin:6px 0 0"><b>' + pc + ' %</b> des salariés (' + C.nbBenef + ' sur ' + C.nbSal + ')' + (C.moy ? ', en moyenne <b>' + eur(C.moy) + '</b> chacun' : '') + '.</p></div>';
+    if (C.depASC) h += '<div class="card"><h2>💶 Le budget des activités sociales</h2>' + (C.prevuASC ? '<div class="v118-bar"><i style="width:' + Math.min(100, Math.round(C.depASC * 100 / C.prevuASC)) + '%"></i></div><p style="margin:6px 0 10px"><b>' + eur(C.depASC) + '</b> dépensés sur ' + eur(C.prevuASC) + ' prévus (' + Math.round(C.depASC * 100 / C.prevuASC) + ' %).</p>' : '<p style="margin:0 0 10px"><b>' + eur(C.depASC) + '</b> dépensés.</p>')
+      + (C.dep || []).map(function (x) { var p = Math.round(x[1] * 100 / C.depASC); return '<div class="v118-l"><span>' + E(String(x[0]).replace(/^ASC · /, '')) + '</span><b>' + eur(x[1]) + '</b></div><div class="v118-bar s"><i style="width:' + p + '%"></i></div>'; }).join('') + '</div>';
+    if ((C.parType || []).length) h += '<div class="card"><h2>🎁 Ce qui vous a été offert</h2>' + C.parType.map(function (x) { var p = C.offert ? Math.round(x[1] * 100 / C.offert) : 0; return '<div class="v118-l"><span>' + E(x[0]) + '</span><b>' + eur(x[1]) + '</b></div><div class="v118-bar s v"><i style="width:' + p + '%"></i></div>'; }).join('') + '</div>';
+    if ((C.listeSorties || []).length) h += '<div class="card"><h2>🎭 Les sorties de l\'année</h2>' + C.listeSorties.map(function (s) { return '<div class="row"><div class="l">' + E(s) + '</div></div>'; }).join('') + '</div>';
+    h += '<div class="card"><p class="mute" style="margin:0">Une question sur ces chiffres ? <a href="#" onclick="cseGo(\'messages\');return false">Écrivez au CSE</a>. Le bilan complet est présenté chaque année en réunion.</p></div>';
+    return h;
+  }
+  (function () { var st = document.createElement('style'); st.textContent = '.v118-ks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}@media(min-width:640px){.v118-ks{grid-template-columns:repeat(3,1fr)}}.v118-k{background:var(--card,#fff);border-radius:16px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:2px}.v118-k span{font-size:22px}.v118-k b{font-size:24px;line-height:1.15}.v118-k small{font-size:12.5px;opacity:.7}'
+    + '.v118-bar{height:12px;border-radius:99px;background:rgba(127,127,127,.18);overflow:hidden}.v118-bar.s{height:7px;margin:3px 0 10px}.v118-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--brand),#22c55e);animation:v118g 1.1s ease-out}.v118-bar.v i{background:linear-gradient(90deg,#f59e0b,#ef4444)}@keyframes v118g{from{width:0}}.v118-l{display:flex;justify-content:space-between;gap:8px;font-size:14px}.v118-mot{margin-top:10px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--brand) 9%,transparent);font-style:italic}'
+    + 'html.v11-calme .v118-bar i{animation:none}'; document.head.appendChild(st); })();
+  GRP.forEach(function (g) { if (g[0] === 'cse') g[4].push('chiffres'); });
+  TKW.chiffres = 'chiffres bilan budget transparence depenses beneficiaires'; TIC.chiffres = '📊';
+  var tbAll1 = tbAll; tbAll = function () { var TB = tbAll1(); if (D && D.pub && D.pub.chiffres) TB.splice(TB.length - 2, 0, ['chiffres', '📊 Mon CSE en chiffres']); return TB; };
+
   function render() {
     AGV = {};
     var f = D.fiche, P = D.pub || {}, h = '';
@@ -2054,6 +2373,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       mutuelle: function () { h += mutPage(); },
       vie: function () { h += viePage(); },
       baro: function () { h += baroPage(); },
+      liens: function () { h += v117Pages('liens'); }, carriere: function () { h += v117Pages('carriere'); }, maides: function () { h += v117Pages('maides'); }, retraite: function () { h += v117Pages('retraite'); }, change: function () { h += v117Pages('change'); }, calsoc: function () { h += v117Pages('calsoc'); }, photos: function () { h += v117Pages('photos'); }, pa: function () { h += v117Pages('pa'); }, quiz: function () { h += v117Pages('quiz'); }, chiffres: function () { h += v118Page(); },
       messages: function () { h += msgPage(); setTimeout(function () { var fl = $('msg-fil'); if (fl) fl.scrollTop = fl.scrollHeight; msgSeen(); }, 0); },
       accueil: function () {
         var offY = (f.offert || []).filter(function (o) { return String(o.date).slice(0, 4) === String(new Date().getFullYear()); }).reduce(function (s, o) { return s + (o.montant || 0); }, 0);
@@ -2064,6 +2384,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         A += signCards();
         A += baroCard();
         N += uneHtml(open);
+        N = v117Accueil() + N;
+        if (!SIMPLE) I = v117SvCarte() + I;
         if (f.equipe && f.equipe.texte) I += '<div class="msg" style="margin:0 0 10px">👷 Cette semaine, vous êtes en <b>' + E(({ matin: 'équipe du matin', 'apres-midi': 'équipe d\'après-midi', nuit: 'équipe de nuit', journee: 'journée' })[f.equipe.poste] || f.equipe.texte) + (/\(/.test(f.equipe.texte) ? ' ' + E(f.equipe.texte.replace(/^[^(]*/, '')) : '') + '</b>.</div>';
         h += tilesHtml(open);
         if ((f.prets || []).some(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }) && cautionTxt(true)) A += '<div class="card"><h2>⛺ Matériel à retirer</h2>' + (f.prets || []).filter(function (p) { return p.statut === 'Réservé' && p.fin >= today(); }).map(function (p) { return '<div class="row"><div class="l"><b>' + E(p.items) + '</b><div class="mute">du ' + fd(p.debut) + ' au ' + fd(p.fin) + '</div></div></div>'; }).join('') + cautionTxt(true) + '</div>';
@@ -2245,7 +2567,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           };
         }, 0);
       },
-      idees: function () { h += ideaBox(true); },
+      idees: function () { h += ideaBox(true) + v117IdeesHtml(); },
       billets: function () {
         var vieux = !P.billets, B = P.billets || [], Q = P.quotas || { std: 2, stdFoyer: true, cine: 10 }, pris = f.pris || {};
         var foyer = f.foyer || (1 + (f.children || []).filter(function (k) { return k && String(k.name || '').trim(); }).length + (f.spouse && f.spouse.name ? 1 : 0));
@@ -2365,7 +2687,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '11.6', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '11.8', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
