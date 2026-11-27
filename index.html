@@ -44,7 +44,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"tDMI5SYfN0IdRLFkE4PjhA==","iv":"GGyH8yByiP8WdHQi","rev":"boot","lastModified":"2026-11-27T22:20:51.786Z","by":"Michaël GROSJEAN","data":"1Tc/PrW6g5E3YyweIiDMNisucJuBHvXrQa7lBjSJmtmri2CaukAd308T8FbXefZaF4uJqfLScqN8mEe3EdS0Vw=="},"at":"2026-11-27T22:20:51.867Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"rZkU8nEbsCB/Qh/Dfm9BOQ==","iv":"A3RYldGpcba8HjSl","rev":"boot","lastModified":"2026-11-27T22:35:40.354Z","by":"Michaël GROSJEAN","data":"M/rbAcugzToY9xyWDta4+5Azn2gvfWp76oVHOiiZh9q/ogSC92yBZACwOEJ/m+xn6KLACWK+Pek+cbzGqPQvzA=="},"at":"2026-11-27T22:35:40.391Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.3";
+        const APP_VERSION = "V.11.4";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.4', date: '2026-11-27', items: ['Équité par équipe (A, B, C, J) : tableau par année (bénéficiaires, montant offert, billets, sorties, colis, prêts, chèques vacances), alerte si une équipe profite nettement moins, ajouté au bilan annuel. Coupé par défaut : Paramètres › Année et bilans.'] },
             { v: 'V.11.3', date: '2026-11-27', items: ['Accueil : les bulles « Ma journée » s\'ouvrent d\'un appui (Impayés, Délégations…), le bloc concerné s\'allume.', 'État du système : test complet une seule fois, 5 min après l\'ouverture.', 'Sorties : bouton « Image » à côté de « Affiche » (image prête pour un e-mail ou WhatsApp, avec le QR code).', 'Impayés : bouton « Relancer les N salarié(s) en un clic » dans Aujourd\'hui, avec aperçu du message ; texte et objet de la relance modifiables dans Paramètres (carte Relances des impayés).', 'Script Google v94 : agenda du CSE en abonnement pour le téléphone des salariés.'] },
             { v: 'V.11.2', date: '2026-11-27', items: ['Rangement du code (rien ne change à l\'écran) : sommaire par thème en tête du fichier, code qui ne servait plus retiré (ancien import Excel des chèques vacances, anciennes fonctions de rappel et de graphique…), branchements vers l\'espace salarié et vers « Aujourd\'hui » regroupés au même endroit.', 'Ouverture plus rapide (sw.js et espace-sw.js à publier) : l\'appli et l\'espace s\'affichent tout de suite avec la copie gardée sur l\'appareil, sans attendre GitHub ; s\'il y a une nouvelle version, le bandeau « mettre à jour » apparaît quelques secondes après.'] },
             { v: 'V.11.1', date: '2026-11-27', items: ['Menu en grands espaces : Accueil, Salariés, Activités, Argent et bilans (avec les statistiques et rapports), Élus et réunions, Communication, Administration.', '« Santé du système » rejoint « Sauvegardes et santé » et Paramètres › Sécurité.', 'Rappel des obligations du CSE sur le téléphone des élus 30 jours et 7 jours avant, puis en cas de retard (Paramètres › Élus, activé par défaut, avec les rappels en notification).', 'Notes de réunion dictées : majuscule et point ajoutés tout seuls ; elles forment le compte rendu (bouton Aperçu du compte rendu).', 'Espace 11.1 : cloche des nouveautés, rond avec les initiales (Mon compte), partager un billet, ajouter une réunion à l\'agenda, langues turc et arabe.'] },
@@ -49099,6 +49100,71 @@ var qrcode = function() {
     + '.v113-flash{animation:v113fl 1.6s ease-out}@keyframes v113fl{0%,30%{box-shadow:0 0 0 4px #6366f1}100%{box-shadow:0 0 0 0 #6366f100}}'; document.head.appendChild(st); })();
 
   // =====================================================================
+  // 30) V.11.4 : ÉQUITÉ PAR ÉQUIPE (A, B, C, J) — coupée par défaut (cfg.equiteOn)
+  //     Tableau par année : salariés, bénéficiaires, montant offert, billets, sorties, colis, prêts.
+  //     Ajouté au bilan annuel (PDF) quand c'est activé.
+  // =====================================================================
+  var EQ_G = ['A', 'B', 'C', 'J', ''];
+  function eqLib(g) { return g ? 'Équipe ' + g : 'Sans équipe'; }
+  function equiteData(Y) {
+    var inY = function (d) { return String(isoDe(d) || '').slice(0, 4) === String(Y); };
+    var emps = (db.employees || []).filter(function (e) { var x = e.exitDate ? isoDe(e.exitDate) : ''; return !x || x.slice(0, 4) >= Y; });
+    var T = {}; EQ_G.forEach(function (g) { T[g] = { g: g, nb: 0, benef: 0, off: 0, bil: 0, sor: 0, col: 0, pre: 0, cv: 0 }; });
+    var vu = {}, gDe = {}, F = typeof window.cseFicheData === 'function' ? cseFicheData : null;
+    emps.forEach(function (e) {
+      var g = EQ_G.indexOf(e.groupe) >= 0 ? e.groupe : ''; gDe[String(e.id)] = g; var t = T[g]; t.nb++;
+      var f = {}, tot = 0; try { f = F ? F(e) : {}; } catch (er) { } (f.offert || []).forEach(function (o) { if (inY(o.date)) tot += o.montant || 0; });
+      t.off += tot; if (tot > 0) vu[String(e.id)] = 1;
+    });
+    var de = function (id) { var g = gDe[String(id)]; if (g == null) return null; vu[String(id)] = 1; return T[g]; };
+    (db.sales || []).forEach(function (s) { if (!inY(s.date)) return; var t = de(s.employeeId); if (t) (s.items || []).forEach(function (i) { t.bil += Number(i.qty) || 0; }); });
+    var od = {}; (db.outings || []).forEach(function (o) { od[o.id] = o.date; });
+    (db.registrations || []).forEach(function (r) { if (r.cancelled || r.waitlist || !inY(od[r.outingId] || r.date)) return; var t = de(r.employeeId); if (t) t.sor++; });
+    (db.distributions || []).forEach(function (d) { if (!inY(d.date)) return; Object.keys(d.marks || {}).forEach(function (id) { var t = de(id); if (t) t.col++; }); });
+    (db.loans || []).forEach(function (l) { if (!inY(l.startDate)) return; var t = de(l.employeeId); if (t) t.pre++; });
+    (db.chequesVacances || []).forEach(function (c) { var ok = false; try { ok = String(cvDossierYear(c) + 1) === String(Y); } catch (er) { } if (!ok) return; var t = de(c.employeeId); if (t) t.cv++; });
+    Object.keys(vu).forEach(function (id) { var g = gDe[id]; if (g != null) T[g].benef++; });
+    var L = EQ_G.map(function (g) { return T[g]; }).filter(function (t) { return t.g || t.nb; });
+    var avec = L.filter(function (t) { return t.g && t.nb; }), tb = 0, tn = 0; avec.forEach(function (t) { tb += t.benef; tn += t.nb; });
+    var moy = tn ? tb * 100 / tn : 0, alertes = [];
+    avec.forEach(function (t) { var p = t.benef * 100 / t.nb; if (avec.length > 1 && p < moy - 15) alertes.push(eqLib(t.g) + ' : ' + Math.round(p) + ' % de bénéficiaires contre ' + Math.round(moy) + ' % en moyenne.'); });
+    return { Y: Y, L: L, moy: moy, alertes: alertes, sansEq: T[''].nb, total: emps.length };
+  }
+  function equiteTable(Q, pdf) {
+    var th = pdf ? 'style="border-bottom:1px solid #94a3b8;padding:4px 6px;text-align:right;font-size:10.5px"' : 'class="px-2 py-1 text-right font-semibold text-slate-600"';
+    var td = pdf ? 'style="border-bottom:1px solid #e2e8f0;padding:4px 6px;text-align:right;font-size:11px"' : 'class="px-2 py-1 text-right"';
+    var max = 0; Q.L.forEach(function (t) { if (t.nb) max = Math.max(max, t.benef / t.nb); });
+    var barre = function (t) { var p = t.nb ? t.benef / t.nb : 0, w = Math.round(p * 100); return '<div style="display:flex;align-items:center;gap:6px;justify-content:flex-end"><div style="width:70px;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden"><div style="width:' + w + '%;height:100%;background:' + (p < Q.moy / 100 - 0.15 ? '#e11d48' : '#059669') + '"></div></div>' + w + ' %</div>'; };
+    return '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;' + (pdf ? 'margin-top:6px' : 'font-size:12px') + '"><tr><th ' + th.replace('text-right', 'text-left').replace('text-align:right', 'text-align:left') + '>Équipe</th><th ' + th + '>Salariés</th><th ' + th + '>Bénéficiaires</th><th ' + th + '>Offert</th><th ' + th + '>Par salarié</th><th ' + th + '>Billets</th><th ' + th + '>Sorties</th><th ' + th + '>Colis</th><th ' + th + '>Prêts</th><th ' + th + '>Chèques vac.</th></tr>'
+      + Q.L.map(function (t) { return '<tr><td ' + td.replace('text-right', 'text-left font-semibold').replace('text-align:right', 'text-align:left;font-weight:700') + '>' + E(eqLib(t.g)) + '</td><td ' + td + '>' + t.nb + '</td><td ' + td + '>' + barre(t) + '</td><td ' + td + '>' + eur(t.off) + '</td><td ' + td + '>' + eur(t.nb ? t.off / t.nb : 0) + '</td><td ' + td + '>' + t.bil + '</td><td ' + td + '>' + t.sor + '</td><td ' + td + '>' + t.col + '</td><td ' + td + '>' + t.pre + '</td><td ' + td + '>' + t.cv + '</td></tr>'; }).join('') + '</table></div>';
+  }
+  var EQ = { y: null };
+  window.cseEqSet = function (k, v) { var c = cfg(); if (k === 'on') c.equiteOn = !!v; if (k === 'y') EQ.y = String(v); save(); var z = $('v114-eq-card'); if (z) z.dataset.h = ''; equiteCard(); };
+  function equiteCard() {
+    var cd = card('v114-eq-card', 'cloture', function () { return $('v94-bilan-card'); }); if (!cd) return;
+    var c = cfg(), on = !!c.equiteOn, yc = new Date().getFullYear(), Y = EQ.y || String(yc), h;
+    h = '<h3 class="font-bold text-slate-800 text-base flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-indigo-600"></i> Équité par équipe</h3>'
+      + '<label class="text-sm text-slate-700 flex items-center gap-2"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="cseEqSet(\'on\',this.checked)"> Activer le tableau par équipe (A, B, C, J)</label>'
+      + '<p class="text-xs text-slate-500">Montre si chaque équipe profite autant des activités : bénéficiaires (salariés qui ont eu au moins une chose dans l\'année), montant offert, billets, sorties, colis, prêts et chèques vacances. Il sert à repérer une équipe oubliée (par exemple l\'équipe de nuit) et s\'ajoute au bilan annuel. Les équipes se renseignent dans la fiche de chaque salarié ou avec « Répartir les salariés dans les groupes ».</p>';
+    if (on) {
+      var Q = equiteData(Y);
+      h += '<div class="flex flex-wrap gap-2">' + [yc, yc - 1, yc - 2].map(String).map(function (y) { return '<button type="button" class="' + (y === Y ? BTNP : BTN) + '" onclick="cseEqSet(\'y\',\'' + y + '\')">' + y + '</button>'; }).join('') + '</div>'
+        + equiteTable(Q, false)
+        + (Q.alertes.length ? '<div class="text-xs rounded-lg p-2 bg-rose-50 text-rose-800 border border-rose-200">⚠️ ' + Q.alertes.map(E).join('<br>⚠️ ') + '<br>Idée : une permanence ou une sortie à des horaires qui conviennent à cette équipe.</div>' : '<p class="text-xs text-emerald-700">✔ Aucune équipe nettement en dessous des autres.</p>')
+        + (Q.sansEq ? '<p class="text-xs text-amber-700">' + Q.sansEq + ' salarié(s) sans équipe renseignée : complétez leur fiche pour un tableau juste.</p>' : '');
+    }
+    if (cd.dataset.h !== h) { cd.innerHTML = h; cd.dataset.h = h; }
+  }
+  var bilanHtml0 = bilanHtml;
+  bilanHtml = function (B) {
+    var h = bilanHtml0(B); if (!cfg().equiteOn) return h;
+    var Q = equiteData(B.Y), bloc = '<h2 style="font-size:14px;color:#1e3a8a;border-bottom:1px solid #cbd5e1;padding-bottom:4px;margin:18px 0 8px">Répartition par équipe</h2>' + equiteTable(Q, true)
+      + (Q.alertes.length ? '<p style="font-size:11px;color:#be123c;margin-top:6px">' + Q.alertes.map(E).join('<br>') + '</p>' : '');
+    var k = h.lastIndexOf('<p style="font-size:9.5px'); return k > 0 ? h.slice(0, k) + bloc + h.slice(k) : h.replace(/<\/div>$/, bloc + '</div>');
+  };
+  window.cseEquite = equiteData;
+
+  // =====================================================================
   //  BRANCHEMENTS REGROUPÉS (rangement V.11.2) : chaque bloc ajoute sa part, dans l'ordre des versions.
   // =====================================================================
   // ---------- cseEspacePubExtra : ce que l'espace reçoit pour tous (publication) ----------
@@ -49224,6 +49290,7 @@ var qrcode = function() {
     try { if ($('v94-rel-card')) { veilleCard(); smCard(); dvCard(); cashCard(); bilCard(); cautionCard(); } } catch (e) { }
     try { if ($('tab-ticketing') && !$('tab-ticketing').classList.contains('hidden')) ticketsCard(); } catch (e) { }
     try { if ($('v94-exp-card')) bilanCard(); } catch (e) { }
+    try { if ($('v94-bilan-card')) equiteCard(); } catch (e) { }
     try { if (document.querySelector('#tab-settings [data-sg="cloture"]')) expCard(); } catch (e) { }
     try { if ($('todo-pane-today') && !$('v94-today')) todayCard(); } catch (e) { }
     try { if ($('v94-rel-card')) amCard(); } catch (e) { }
