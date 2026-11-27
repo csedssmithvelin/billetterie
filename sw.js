@@ -1,6 +1,6 @@
-// Appli CSE installable : la page est toujours vérifiée sur GitHub quand le réseau répond
-// (« no-cache » : si elle n'a pas changé, GitHub répond « inchangé » et rien n'est retéléchargé)
-// (les mises à jour arrivent tout de suite) ; sans réseau, la dernière copie s'ouvre quand même.
+// Appli CSE installable. V.11.2 : ouverture immédiate avec la copie gardée sur l'appareil, GitHub est vérifié
+// en arrière-plan ; une nouvelle version est annoncée par l'appli (« Nouvelle version, mettre à jour ? »).
+// Sans réseau, la dernière copie s'ouvre quand même.
 // Les données (Gist GitHub, Google) ne passent jamais par ce cache.
 const CACHE = 'cse-app-v4';   // V.11 : + outils Excel et PDF à part (lib-*.js), gardés pour le hors ligne
 self.addEventListener('install', e => {
@@ -15,10 +15,16 @@ self.addEventListener('fetch', e => {
   if (r.method !== 'GET') return;
   const u = new URL(r.url);
   if (u.origin !== self.location.origin) return;
-  e.respondWith(
-    fetch(r, { cache: 'no-cache' }).then(res => {
-      if (res && res.ok) { const c = res.clone(); caches.open(CACHE).then(cc => cc.put(r, c)); }
-      return res;
-    }).catch(() => caches.match(r, { ignoreSearch: true }).then(m => m || caches.match('./')))
-  );
+  const reseau = () => fetch(r, { cache: 'no-cache' }).then(res => {
+    if (res && res.ok) { const c = res.clone(); caches.open(CACHE).then(cc => cc.put(r, c)); }
+    return res;
+  });
+  const secours = () => caches.match(r, { ignoreSearch: true }).then(m => m || caches.match('./'));
+  // Vérification de nouvelle version (ou rechargement forcé) : toujours GitHub d'abord.
+  if (r.cache === 'no-cache' || r.cache === 'reload' || r.cache === 'no-store') { e.respondWith(reseau().catch(secours)); return; }
+  // Ouverture : la copie gardée s'affiche tout de suite, GitHub est vérifié en arrière-plan.
+  e.respondWith(caches.match(r, { ignoreSearch: true }).then(m => {
+    if (m) { e.waitUntil(reseau().catch(() => {})); return m; }
+    return reseau().catch(secours);
+  }));
 });

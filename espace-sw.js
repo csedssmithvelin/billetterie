@@ -1,4 +1,5 @@
 // Espace salarié du CSE : copie hors ligne de la page + notifications sur le téléphone (Firebase).
+// 11.4 : ouverture immédiate avec la copie gardée, mise à jour vérifiée en arrière-plan.
 // La configuration Firebase (publique) arrive dans l'adresse de ce fichier (?cfg=…), donnée par la page.
 const CACHE = 'cse-espace-v2';
 try {
@@ -21,12 +22,18 @@ self.addEventListener('fetch', e => {
   if (r.method !== 'GET') return;
   const u = new URL(r.url);
   if (u.origin !== self.location.origin) return;
-  e.respondWith(
-    fetch(r, { cache: 'no-cache' }).then(res => {
-      if (res && res.ok) { const c = res.clone(); caches.open(CACHE).then(cc => cc.put(r, c)); }
-      return res;
-    }).catch(() => caches.match(r, { ignoreSearch: true }).then(m => m || caches.match('espace-salarie.html')))
-  );
+  const reseau = () => fetch(r, { cache: 'no-cache' }).then(res => {
+    if (res && res.ok) { const c = res.clone(); caches.open(CACHE).then(cc => cc.put(r, c)); }
+    return res;
+  });
+  const secours = () => caches.match(r, { ignoreSearch: true }).then(m => m || caches.match('espace-salarie.html'));
+  // Vérification de nouvelle version (ou rechargement forcé) : toujours GitHub d'abord.
+  if (r.cache === 'no-cache' || r.cache === 'reload' || r.cache === 'no-store') { e.respondWith(reseau().catch(secours)); return; }
+  // Ouverture : la copie gardée s'affiche tout de suite, GitHub est vérifié en arrière-plan.
+  e.respondWith(caches.match(r, { ignoreSearch: true }).then(m => {
+    if (m) { e.waitUntil(reseau().catch(() => {})); return m; }
+    return reseau().catch(secours);
+  }));
 });
 // Clic sur une notification sans lien : ouvre (ou remet devant) l'espace salarié.
 self.addEventListener('notificationclick', e => {
