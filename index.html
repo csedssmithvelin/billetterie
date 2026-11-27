@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"V2YteBEe7wL/2qsTErWvLA==","iv":"ygtKNWalY9VHH6NL","rev":"boot","lastModified":"2026-11-27T11:33:11.247Z","by":"Michaël GROSJEAN","data":"5n1mk7cxz40npA+MGtEcwsr+WA1xfPYhuo6Jj4rA5mnnPM+TuLGZ/hqSL1+AuJbfGh1W6e+HGwVO/ankrFfKhg=="},"at":"2026-11-27T11:33:11.285Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"RpFauLCZ8aPuV+dqRGxWQw==","iv":"ynVFOUjt3FssaZLM","rev":"boot","lastModified":"2026-11-27T11:50:26.949Z","by":"Michaël GROSJEAN","data":"EZQ+XZlrjwW9R+GDz9dHlkfwIRD68OOvRwaFlGVo1bRB4q3M/inTbn75uRUJTT9kqkcVOBgnjlWux8a1r9+qOA=="},"at":"2026-11-27T11:50:26.989Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6941,7 +6941,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.10.5.4";
+        const APP_VERSION = "V.10.5.5";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21724,6 +21724,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.10.5.5', date: '2026-11-27', items: ['Demandes de prestation (œuvres sociales) : le justificatif joint part tout seul sur le Drive (CSE - Documents › année › Œuvres sociales › prestation) et apparaît dans « Mes documents » de l\'espace du salarié ; l\'appli garde le lien (données plus légères).', 'E-mails automatiques au salarié à chaque étape : demande reçue, acceptée, versée ou remise (avec justificatif PDF), refusée (avec le motif). Textes modifiables comme les autres.'] },
             { v: 'V.10.5.4', date: '2026-11-27', items: ['E-mails automatiques au salarié : textes modifiables type par type (vente, inscription, colis, prêt, retour, paiement, virement, chèques vacances), avec des mots remplacés tout seuls ({prenom}, {montant}, {pour}…), aperçu et retour au texte d\'origine. Paramètres › carte « E-mails automatiques au salarié » › ✏️ Modifier les textes.', 'Nouveaux textes d\'origine pour un virement reçu et un versement de chèques vacances.'] },
             { v: 'V.10.5.3', date: '2026-11-27', items: ['Script Google v92 : quand la limite Gmail du jour (environ 100 destinataires) est atteinte, les e-mails partent avec Brevo (300 de plus par jour, gratuit), toujours au nom du CSE et avec les réponses dans la boîte Gmail. Facultatif : il suffit de coller la clé Brevo dans le script. Le compteur « E-mails restants aujourd\'hui » (Réglages › Services en ligne) montre Gmail + Brevo.'] },
             { v: 'V.10.5.2', date: '2026-11-27', items: ['Message « ancienne version du script » : indique maintenant le bon fichier (v91) au lieu de v69.', 'Espace : un seul onglet « 🎉 Événements » qui regroupe les événements de vie et les aides du CSE (l\'onglet « Aides » disparaît quand les événements sont activés). Une aide du même nom qu\'un événement s\'y ajoute (montant affiché), les autres aides sont à la suite.', 'Justificatif obligatoire, avec le document à fournir affiché pour chaque événement (modifiable dans Communication › Accueil et événements).'] },
@@ -47479,7 +47480,7 @@ var qrcode = function() {
   // ---------- 15b) E-mails automatiques au salarié ----------
   var AM_TYPES = [
     ['vente', '🎟️ Vente de billets (avec le reçu PDF)'], ['inscription', '🎭 Inscription à une sortie confirmée'], ['colis', '🎁 Colis récupéré'],
-    ['pret', '⛺ Matériel prêté'], ['retour', '⛺ Matériel rendu'], ['paiement', '💶 Paiement reçu'], ['demande', '📨 Réponse à une demande de l\'espace']];
+    ['pret', '⛺ Matériel prêté'], ['retour', '⛺ Matériel rendu'], ['paiement', '💶 Paiement reçu'], ['prestation', '🤝 Demande de prestation (reçue, acceptée, versée, refusée)'], ['demande', '📨 Réponse à une demande de l\'espace']];
   function amOn(k) { var c = cfg(); return c.amOn !== false && !(c.amOff || {})[k]; }
   function amLog() { db.amLog = Array.isArray(db.amLog) ? db.amLog : []; return db.amLog; }
   function regAmount(r) { try { return computeRegistrationAmount(r.outingId, r.guests || [], r.employeePrice) || 0; } catch (e) { return 0; } }
@@ -47491,6 +47492,7 @@ var qrcode = function() {
     (db.registrations || []).forEach(function (r) { S['r:' + r.id] = r.cancelled ? 'x' : r.waitlist ? 'w' : 'o'; });
     (db.distributions || []).forEach(function (d) { Object.keys(d.marks || {}).forEach(function (k) { S['k:' + d.id + ':' + k] = 1; }); });
     (db.loans || []).forEach(function (l) { S['l:' + l.id] = (l.pickedUp ? 'p' : '') + (l.returned ? 'r' : ''); });
+    (db.socialRequests || []).forEach(function (r) { S['sr:' + r.id] = r.status || 'attente'; });
     return S;
   }
   var AM = { base: null, pull: false, q: [], busy: false, last: 0 };
@@ -47507,6 +47509,7 @@ var qrcode = function() {
         if (ty === 'v' && !B[k]) { var s = (db.sales || []).filter(function (x) { return String(x.id) === p[1]; })[0]; if (s) ev.push({ type: 'vente', empId: s.employeeId, ref: s.id }); }
         if (ty === 'r' && S[k] === 'o' && B[k] !== 'o' && B[k] !== 'x') { var r = (db.registrations || []).filter(function (x) { return String(x.id) === p[1]; })[0]; if (r) ev.push({ type: 'inscription', empId: r.employeeId, ref: r.id }); }
         if (ty === 'k' && !B[k]) { var d = (db.distributions || []).filter(function (x) { return String(x.id) === p[1]; })[0], mk = p.slice(2).join(':'), mm = /^(e|c):([^:]+)(?::(.*))?$/.exec(mk); if (d && mm) ev.push({ type: 'colis', empId: mm[2], ref: d.id, enfant: mm[1] === 'c' ? String(mm[3] || '').split('|')[0] : '' }); }
+        if (ty === 'sr') { var sq = (db.socialRequests || []).filter(function (x) { return String(x.id) === p[1]; })[0], et = !B[k] ? (S[k] === 'attente' ? 'enreg' : '') : S[k] !== B[k] ? ({ validee: 'valid', payee: 'paye', refusee: 'refus' })[S[k]] || '' : ''; if (sq && et) ev.push({ type: 'prestation', etape: et, empId: sq.employeeId, ref: sq.id }); }
         if (ty === 'l') { var l = (db.loans || []).filter(function (x) { return String(x.id) === p[1]; })[0]; if (l && B[k] != null) { if (S[k].indexOf('p') >= 0 && String(B[k]).indexOf('p') < 0) ev.push({ type: 'pret', empId: l.employeeId, ref: l.id }); if (S[k].indexOf('r') >= 0 && String(B[k]).indexOf('r') < 0) ev.push({ type: 'retour', empId: l.employeeId, ref: l.id }); } }
       });
       Object.keys(B).forEach(function (k) {
@@ -47544,20 +47547,30 @@ var qrcode = function() {
         ? { subject: 'Prêt de matériel du CSE', body: bj + 'Vous avez emprunté au CSE le ' + fd(today()) + ' :\n' + items + '\n\nÀ rendre le ' + fd(l.endDate) + ', complet et en bon état, à la permanence du CSE' + perm + '.' + fin }
         : { subject: 'Matériel rendu au CSE', body: bj + 'Le CSE a bien reçu le matériel que vous aviez emprunté :\n' + items + '\n\nMerci !' + fin };
     }
+    if (x.type === 'prestation') {
+      var q = prReq(x.ref) || {}, bn = prNom(q), mt = Number(q.cseAmount) || 0, pb = q.beneficiary ? ' (pour ' + q.beneficiary + ')' : '';
+      if (x.etape === 'enreg') return { subject: 'Votre demande « ' + bn + ' » est bien reçue', body: bj + 'Le CSE a bien reçu votre demande « ' + bn + ' »' + pb + ' du ' + fd(q.date || today()) + (mt ? ', pour un montant de ' + eur(mt) : '') + '.\n\nLes élus vont l\'examiner : vous serez prévenu(e) de la réponse.' + fin };
+      if (x.etape === 'valid') return { subject: 'Votre demande « ' + bn + ' » est acceptée', body: bj + 'Bonne nouvelle : le CSE a accepté votre demande « ' + bn + ' »' + pb + '.' + (mt ? '\n\nLe montant de ' + eur(mt) + ' va vous être remis ou versé prochainement.' : '') + ' Vous serez prévenu(e) dès que c\'est fait.' + fin };
+      if (x.etape === 'paye') return { subject: 'Prestation du CSE : ' + bn, body: bj + 'Le CSE vous a ' + (/esp[eè]ces|bon|ch[eè]que cadeau/i.test(q.paymentMethod || '') ? 'remis' : 'versé') + ' ' + eur(mt) + ' pour « ' + bn + ' »' + pb + ' le ' + fd(q.paidDate || today()) + (q.paymentMethod ? ' (' + String(q.paymentMethod).toLowerCase() + ')' : '') + '.\n\nMerci et à bientôt.' + fin };
+      if (x.etape === 'refus') return { subject: 'Votre demande « ' + bn + ' »', body: bj + 'Après examen, le CSE n\'a pas pu accepter votre demande « ' + bn + ' »' + pb + ' du ' + fd(q.date || today()) + '.' + (q.refusedReason ? '\n\nMotif : ' + q.refusedReason : '') + '\n\nPour toute question, écrivez-nous depuis votre espace CSE (Messages) ou passez à la permanence.' };
+    }
     if (x.type === 'paiement') { var mk = amCle(x), mdp = modePaie(x.ref); if (mk === 'paiement-cv') return { subject: 'Chèques vacances : versement reçu', body: bj + 'Le CSE a bien reçu votre versement de ' + eur(x.montant || 0) + (mdp ? ' (' + String(mdp).toLowerCase() + ')' : '') + ' pour : ' + (x.lib || 'vos chèques vacances') + '.\n\nMerci !' + fin };
       if (mk === 'paiement-virement') return { subject: 'Virement reçu par le CSE', body: bj + 'Le CSE a bien reçu votre virement de ' + eur(x.montant || 0) + ' pour : ' + (x.lib || 'votre achat') + '.\n\nMerci !' + fin };
       return { subject: 'Paiement reçu par le CSE', body: bj + 'Le CSE a bien reçu votre paiement de ' + eur(x.montant || 0) + (mdp ? ' (' + String(mdp).toLowerCase() + ')' : '') + ' pour : ' + (x.lib || 'votre achat') + '.\n\nMerci !' + fin }; }
     return { subject: 'CSE', body: bj };
   }
   // V.10.5.4 : textes des e-mails modifiables, type par type ({prenom}, {montant}…)
-  var AM_TPL = [['vente', '🎟️ Vente de billets'], ['inscription', '🎭 Inscription à une sortie'], ['colis', '🎁 Colis récupéré'], ['pret', '⛺ Matériel prêté'], ['retour', '⛺ Matériel rendu'], ['paiement', '💶 Paiement reçu (CB, espèces, chèque…)'], ['paiement-virement', '🏦 Virement reçu'], ['paiement-cv', '🏖️ Chèques vacances : versement reçu']];
-  var AM_VARS = [['prenom', 'prénom du salarié'], ['nom', 'nom complet'], ['montant', 'montant'], ['pour', 'ce qui est payé'], ['mode', 'mode de paiement'], ['details', 'liste (billets, matériel…)'], ['sortie', 'nom de la sortie'], ['date_sortie', 'date de la sortie'], ['lieu', 'lieu'], ['rendre', 'date de retour du matériel'], ['colis', 'nom du colis'], ['date', 'date du jour'], ['permanence', 'horaires de permanence']];
-  function amCle(x) { if (x.type !== 'paiement') return x.type; var r = String(x.ref || ''), m = modePaie(r); if (r.indexOf('c:') === 0) return 'paiement-cv'; if (/virement/i.test(m)) return 'paiement-virement'; return 'paiement'; }
+  var AM_TPL = [['vente', '🎟️ Vente de billets'], ['inscription', '🎭 Inscription à une sortie'], ['colis', '🎁 Colis récupéré'], ['pret', '⛺ Matériel prêté'], ['retour', '⛺ Matériel rendu'], ['paiement', '💶 Paiement reçu (CB, espèces, chèque…)'], ['paiement-virement', '🏦 Virement reçu'], ['paiement-cv', '🏖️ Chèques vacances : versement reçu'], ['prest-enreg', '🤝 Prestation : demande reçue'], ['prest-valid', '🤝 Prestation : demande acceptée'], ['prest-paye', '🤝 Prestation : versée ou remise'], ['prest-refus', '🤝 Prestation : demande refusée']];
+  var AM_VARS = [['prenom', 'prénom du salarié'], ['nom', 'nom complet'], ['montant', 'montant'], ['pour', 'ce qui est payé'], ['mode', 'mode de paiement'], ['details', 'liste (billets, matériel…)'], ['sortie', 'nom de la sortie'], ['date_sortie', 'date de la sortie'], ['lieu', 'lieu'], ['rendre', 'date de retour du matériel'], ['colis', 'nom du colis'], ['beneficiaire', 'bénéficiaire (enfant…)'], ['motif', 'motif du refus'], ['date', 'date du jour'], ['permanence', 'horaires de permanence']];
+  function prReq(id) { return (db.socialRequests || []).filter(function (r) { return String(r.id) === String(id); })[0] || null; }
+  function prNom(q) { var b = q && (db.socialBenefits || []).filter(function (y) { return String(y.id) === String(q.benefitId); })[0]; return (b && b.name) || 'prestation'; }
+  function amCle(x) { if (x.type === 'prestation') return 'prest-' + (x.etape || 'enreg'); if (x.type !== 'paiement') return x.type; var r = String(x.ref || ''), m = modePaie(r); if (r.indexOf('c:') === 0) return 'paiement-cv'; if (/virement/i.test(m)) return 'paiement-virement'; return 'paiement'; }
   function amVars(x) {
-    var e = emp(x.empId) || {}, c = cfg(), V = { prenom: e.firstname || '', nom: nom(e), montant: x.montant ? eur(x.montant) : '', pour: x.lib || '', mode: String(modePaie(x.ref) || '').toLowerCase(), details: '', sortie: '', date_sortie: '', lieu: '', rendre: '', colis: '', date: fd(today()), permanence: c.espacePermanence || '' };
+    var e = emp(x.empId) || {}, c = cfg(), V = { beneficiaire: '', motif: '', prenom: e.firstname || '', nom: nom(e), montant: x.montant ? eur(x.montant) : '', pour: x.lib || '', mode: String(modePaie(x.ref) || '').toLowerCase(), details: '', sortie: '', date_sortie: '', lieu: '', rendre: '', colis: '', date: fd(today()), permanence: c.espacePermanence || '' };
     try {
       if (x.type === 'vente') { var s = (db.sales || []).filter(function (y) { return String(y.id) === String(x.ref); })[0] || { items: [] }; V.details = (s.items || []).map(function (i) { return '- ' + (i.qty || 1) + ' × ' + (i.ticketTitle || 'billet'); }).join('\n'); V.montant = eur(s.totalPaid || 0); V.mode = String(s.paymentMethod || '').toLowerCase(); }
       if (x.type === 'inscription') { var r = (db.registrations || []).filter(function (y) { return String(y.id) === String(x.ref); })[0] || {}, o = sortieDe(r.outingId) || {}, m = regAmount(r); V.sortie = o.name || ''; V.date_sortie = o.date ? fd(o.date) : ''; V.lieu = o.location || ''; V.montant = m > 0 ? eur(m) : ''; V.details = 'vous' + ((r.guests || []).length ? ' + ' + r.guests.map(function (g) { return g.name; }).filter(Boolean).join(', ') : ''); }
+      if (x.type === 'prestation') { var q = prReq(x.ref) || {}; V.pour = prNom(q); V.montant = q.cseAmount ? eur(q.cseAmount) : ''; V.mode = String(q.paymentMethod || '').toLowerCase(); V.beneficiaire = q.beneficiary || ''; V.motif = q.refusedReason || ''; }
       if (x.type === 'colis') { var d = (db.distributions || []).filter(function (y) { return String(y.id) === String(x.ref); })[0] || {}; V.colis = (d.name || 'colis du CSE') + (x.enfant ? ' de ' + x.enfant : ''); }
       if (x.type === 'pret' || x.type === 'retour') { var l = (db.loans || []).filter(function (y) { return String(y.id) === String(x.ref); })[0] || {}; V.details = (l.items || []).map(function (i) { return '- ' + (i.qty || 1) + ' × ' + (i.equipmentName || 'matériel'); }).join('\n'); V.rendre = l.endDate ? fd(l.endDate) : ''; }
     } catch (er) { }
@@ -47571,7 +47584,8 @@ var qrcode = function() {
     var V = amVars(x); return { subject: T.subject ? amRemplir(T.subject, V) : t.subject, body: T.body ? amRemplir(T.body, V) : t.body };
   }
   function amExemple(k) {
-    var e = (db.employees || []).filter(function (x) { return x.active !== false; })[0] || { id: 0, firstname: 'Camille' }, ty = k.indexOf('paiement') === 0 ? 'paiement' : k;
+    var e = (db.employees || []).filter(function (x) { return x.active !== false; })[0] || { id: 0, firstname: 'Camille' }, ty = k.indexOf('paiement') === 0 ? 'paiement' : k.indexOf('prest-') === 0 ? 'prestation' : k;
+    if (ty === 'prestation') { var q0 = (db.socialRequests || [])[(db.socialRequests || []).length - 1]; return { type: 'prestation', etape: k.slice(6), empId: q0 ? q0.employeeId : e.id, ref: q0 ? q0.id : '' }; }
     var ex = { type: ty, empId: e.id, ref: '', lib: k === 'paiement-cv' ? 'Chèques vacances 2027 : échéance 2' : 'Sortie : exemple du 12/12', montant: 25 };
     if (k === 'paiement-cv') { var cv = (db.chequesVacances || [])[0]; ex.ref = 'c:' + (cv ? cv.id : 'x') + ':0'; }
     if (k === 'paiement-virement') ex.ref = 'z:virement';
@@ -47645,6 +47659,11 @@ var qrcode = function() {
         ? { html: justPage('Prêt de matériel du ' + fd(l.startDate) + ' au ' + fd(l.endDate), x, Li, 0, '', 'Matériel à rendre le ' + fd(l.endDate) + ', complet et en bon état.'), file: 'Prêt de matériel - ' + n + ' - ' + d0, chemin: ['3 - Prêts de matériel', 'Prêts'], titre: 'Prêt de matériel', ref: 'pret:' + l.id }
         : { html: justPage('Matériel rendu au CSE', x, Li, 0, '', 'Le CSE atteste avoir reçu le matériel ci-dessus le ' + fd(today()) + '.'), file: 'Restitution de matériel - ' + n + ' - ' + d0, chemin: ['3 - Prêts de matériel', 'Restitutions'], titre: 'Restitution de matériel', ref: 'retour:' + l.id };
     }
+    if (x.type === 'prestation') {
+      var q = prReq(x.ref); if (!q || x.etape !== 'paye') return null; var bn = prNom(q);
+      return { html: justPage('Prestation du CSE : ' + bn, x, [[bn + (q.beneficiary ? ' (pour ' + q.beneficiary + ')' : '') + (q.ref ? ' · ' + q.ref : ''), eur(q.cseAmount || 0)]], q.cseAmount || 0, q.paymentMethod || '', 'Le CSE atteste avoir ' + (/esp[eè]ces|bon|ch[eè]que cadeau/i.test(q.paymentMethod || '') ? 'remis' : 'versé') + ' cette prestation le ' + fd(q.paidDate || today()) + '.'),
+        file: 'Prestation - ' + n + ' - ' + bn + ' - ' + d0, chemin: ['Œuvres sociales', bn], titre: 'Prestation : ' + bn + ' (' + eur(q.cseAmount || 0) + ')', ref: 'prest:' + q.id };
+    }
     if (x.type === 'paiement') {
       var md = modePaie(x.ref); if (estEsp(md)) return null; // reçu espèces signé à part
       return { html: justPage('Reçu de paiement', x, [[x.lib || 'Achat au CSE', eur(x.montant || 0)]], x.montant || 0, md, 'Le CSE atteste avoir reçu ce paiement le ' + fd(today()) + '.'),
@@ -47678,10 +47697,10 @@ var qrcode = function() {
     var m = $('v94-sig-modal'); if (m && !m.classList.contains('hidden')) { setTimeout(amSuivant, 3000); return; }
     AM.busy = true; var x = AM.q.shift(), t = amTexte(x), e = emp(x.empId), c = cfg(); c.amVu = c.amVu || {};
     try {
-      if (!c.amVu[x.type] && e && e.email) {
+      if (!c.amVu[amCle(x)] && e && e.email) {
         var ok = await amApercu(x, t, e); if (ok === 'non') { AM.busy = false; setTimeout(amSuivant, 500); return; }
         if (ok === 'jamais') { c.amOff = c.amOff || {}; c.amOff[x.type] = true; save(); AM.busy = false; setTimeout(amSuivant, 500); return; }
-        t = ok; c.amVu[x.type] = today();
+        t = ok; c.amVu[amCle(x)] = today();
       }
       var r = await amEnvoyer(x, t); save();
       if (r.mail) say('📧 E-mail envoyé à ' + nom(e) + ' : ' + t.subject, 'success'); else if (r.push) say('🔔 ' + nom(e) + ' n\'a pas d\'e-mail : notification envoyée.', 'info');
@@ -48794,6 +48813,34 @@ var qrcode = function() {
     if (prev) { try { prev(P); } catch (er) { } }
     try { var c = cfg(); P.bienvenue = c.espaceBienvenue || ''; P.evtVie = c.evtVieOn ? vieL().filter(function (v) { return v.nom; }).map(function (v) { return { id: v.id, nom: v.nom, conge: v.conge || '', cadeau: v.cadeau || '', montant: Number(v.montant) || 0, justif: v.justif || '' }; }) : null; } catch (er) { console.warn('[espace 10.5]', er); }
   }; })();
+
+  // =====================================================================
+  // 23) V.10.5.5 : JUSTIFICATIFS DES DEMANDES DE PRESTATION SUR LE DRIVE + ESPACE DU SALARIÉ
+  // Le document joint à une demande (œuvres sociales) part sur le Drive (CSE - Documents › année › Œuvres sociales › prestation),
+  // apparaît dans « Mes documents » de l'espace du salarié (lien en lecture), et l'appli garde le lien à la place du fichier.
+  // =====================================================================
+  var PRU = { busy: false, at: 0 };
+  async function prUpload() {
+    if (PRU.busy || !window.__dbLoaded || seed() || !scriptOk() || !isCse()) return;
+    var L = (db.attachments || []).filter(function (a) { return a.entityType === 'socialRequest' && a.dataUrl && !a.driveKo && prReq(a.entityId); });
+    if (!L.length) return; PRU.busy = true;
+    try {
+      for (var i = 0; i < Math.min(L.length, 5); i++) {
+        var a = L[i], q = prReq(a.entityId), e = emp(a.employeeId != null ? a.employeeId : q.employeeId) || emp(q.employeeId), bn = prNom(q), Y = String(q.date || today()).slice(0, 4), ch = [Y, 'Œuvres sociales', bn];
+        var ty = a.mimeType || ((/^data:([^;,]+)/.exec(a.dataUrl) || [])[1]) || '';
+        try {
+          var j = await cseScriptPost('fichier', { data: a.dataUrl, type: ty, nom: (e ? nom(e) + ' - ' : '') + (a.fileName || 'justificatif'), chemin: ch });
+          if (!j || !j.url) throw new Error((j && j.error) || 'pas de lien');
+          a.url = j.url; a.driveId = j.id || ''; a.drive = ch.join(' › '); delete a.dataUrl;
+          if (e) { db.docLog = Array.isArray(db.docLog) ? db.docLog : []; db.docLog.push({ id: uid(), at: new Date().toISOString(), doc: 'just-prestation', ref: 'prest-pj:' + a.id, titre: 'Justificatif : ' + bn + (a.fileName ? ' (' + a.fileName + ')' : ''), fichier: a.fileName || '', emp: e.id, to: '', url: j.url, dossier: ch.join(' › '), par: qui() }); }
+        } catch (er) { if (horsLigne(er)) break; if (/non accepté|illisible|trop gros/i.test(er.message)) a.driveKo = er.message; console.warn('[justificatif prestation]', er); }
+      }
+      save(); setTimeout(function () { try { csePartagerDocs(); } catch (er) { } }, 1200);
+    } finally { PRU.busy = false; PRU.at = Date.now(); }
+  }
+  window.csePrestUpload = prUpload;
+  setInterval(function () { if (!document.hidden && Date.now() - PRU.at > 60000) prUpload(); }, 20000);
+  if (typeof window.saveDB === 'function') { var sdP = window.saveDB, sdPW = function () { var r = sdP.apply(this, arguments); setTimeout(prUpload, 2500); return r; }; for (var kP in sdP) sdPW[kP] = sdP[kP]; window.saveDB = sdPW; }
 
   // ---------- Branchements ----------
   try { APP_RENDER_HOOKS.push(function () { try { todayCard(); } catch (e) { console.warn(e); } }); } catch (e) { }
