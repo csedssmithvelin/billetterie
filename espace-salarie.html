@@ -46,7 +46,7 @@
 .chip input{width:auto;margin:0}
 html.dark{--bg:#0b1120;--card:#111a2e;--ink:#e5e9f2;--mute:#94a3b8;--line:#22304a;--brand2:#1e2a4a;--okb:#064e3b;--ok:#6ee7b7;--warnb:#451a03;--warn:#fcd34d;--badb:#450a0a;--bad:#fca5a5;--sh:0 1px 2px #0006,0 10px 28px -14px #000a;color-scheme:dark}
 html.dark .btn{background:#17223a;color:var(--ink);border-color:var(--line)}
-html.dark .btn.p{background:linear-gradient(135deg,var(--brand),var(--brand-d));border-color:transparent;color:#fff}
+html.dark label{color:#cbd5e1}html.dark .btn.p{background:linear-gradient(135deg,var(--brand),var(--brand-d));border-color:transparent;color:#fff}
 html.dark input,html.dark select,html.dark textarea{background:#0f172a;border-color:#2a3a58;color:var(--ink)}
 html.dark #sheet{background:var(--card);color:var(--ink)}
 html.dark nav button:hover{background:#1b2742}
@@ -647,9 +647,16 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function res(big, regle) { return '<div class="msg ok" style="margin-top:12px"><div style="font-size:20px;font-weight:800">' + big + '</div><div style="font-weight:500;font-size:13px;margin-top:4px">' + regle + '</div></div>'; }
   window.cseCalcCp = function () {
     var deb = ($('cp-deb') || {}).value, ent = ($('cp-ent') || {}).value, mal = Math.max(0, Number(($('cp-mal') || {}).value) || 0); if (!deb) return;
-    var d0 = new Date((ent && ent > deb ? ent : deb) + 'T12:00'), now = new Date(), mois = (now.getFullYear() - d0.getFullYear()) * 12 + (now.getMonth() - d0.getMonth()) - (now.getDate() < d0.getDate() ? 1 : 0); mois = Math.max(0, Math.min(12, mois)); mal = Math.min(mal, mois);
-    var j = Math.min(30, (mois - mal) * 2.5 + Math.min(24, mal * 2)), jo = Math.ceil(j), ouv = Math.round(jo * 5 / 6 * 2) / 2;
-    $('calc-r').innerHTML = res('≈ ' + jo + ' jours ouvrables <span style="font-size:14px;font-weight:600">(soit ' + String(ouv).replace('.', ',') + ' jours ouvrés)</span>', mois + ' mois complets depuis le ' + fd(iso(d0)) + (mal ? ', dont ' + mal + ' en arrêt maladie' : '') + ' · Règle : 2,5 jours ouvrables par mois travaillé, 2 jours par mois d\'arrêt maladie ordinaire (24 au plus), 30 jours au plus par an, arrondi au jour supérieur. Les jours déjà pris ne sont pas déduits.');
+    var d0 = new Date((ent && ent > deb ? ent : deb) + 'T12:00'), fin = new Date(deb + 'T12:00'); fin.setFullYear(fin.getFullYear() + 1);
+    function nbMois(a) { var m = (a.getFullYear() - d0.getFullYear()) * 12 + (a.getMonth() - d0.getMonth()) - (a.getDate() < d0.getDate() ? 1 : 0); return Math.max(0, Math.min(12, m)); }
+    function acq(a) { var m = nbMois(a), ml = Math.min(mal, m); return { m: m, j: Math.ceil(Math.min(30, (m - ml) * 2.5 + Math.min(24, ml * 2))) }; }
+    function ouv(j) { return String(Math.round(j * 5 / 6 * 2) / 2).replace('.', ','); }
+    var now = new Date(), fm = new Date(now.getFullYear(), now.getMonth() + 1, 1, 12); if (fm > fin) fm = fin;
+    var A = acq(now), M = acq(fm), F = acq(fin), dfm = new Date(fm); dfm.setDate(dfm.getDate() - 1); var dfin = new Date(fin); dfin.setDate(dfin.getDate() - 1);
+    var lig = function (t, x) { return '<div style="display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px solid rgba(127,127,127,.25)"><span>' + t + '</span><b>' + x.j + ' j ouvrables (' + ouv(x.j) + ' ouvrés)</b></div>'; };
+    $('calc-r').innerHTML = res('≈ ' + F.j + ' jours ouvrables <span style="font-size:14px;font-weight:600">au ' + fd(iso(dfin)) + ' (soit ' + ouv(F.j) + ' jours ouvrés)</span>',
+      '<div style="margin:6px 0">' + lig('Acquis aujourd\'hui (' + A.m + ' mois complet' + (A.m > 1 ? 's' : '') + ')', A) + (fm < fin ? lig('Fin du mois en cours (' + fd(iso(dfm)) + ')', M) : '') + lig('Fin de la période (' + fd(iso(dfin)) + ')', F) + '</div>'
+      + 'Depuis le ' + fd(iso(d0)) + (mal ? ', avec ' + mal + ' mois d\'arrêt maladie' : '') + '. Les congés se gagnent mois par mois : un mois commencé compte quand il est terminé. Règle : 2,5 jours ouvrables par mois travaillé, 2 jours par mois d\'arrêt maladie ordinaire (24 au plus), 30 jours au plus par an, arrondi au jour supérieur. Les jours déjà pris ne sont pas déduits.');
   };
   function evtRes(k) { var I = INFO(), e = EVTS.filter(function (x) { return x[0] === k; })[0]; if (!e) return ''; var cc = Number((I.evts || {})[k]) || 0, j = Math.max(e[2], cc); var plus = k === 'naissance' ? ' Le père ou le second parent a en plus 25 jours de congé de paternité (voir la fiche).' : k === 'deces-enfant' ? ' 7 jours ouvrés si l\'enfant avait moins de 25 ans, plus un congé de deuil de 8 jours.' : ''; return res(j + ' jour' + (j > 1 ? 's' : '') + ' payé' + (j > 1 ? 's' : ''), (cc > e[2] ? 'Durée prévue chez nous (la loi prévoit ' + e[2] + ' jours).' : 'Minimum prévu par la loi (Code du travail, L3142-4).') + plus + ' À prendre au moment de l\'événement, avec un justificatif.'); }
   window.cseCalcEvt = function () { $('calc-r').innerHTML = evtRes(($('ev-k') || {}).value); };
@@ -1448,7 +1455,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '10.3', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '10.3.1', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
