@@ -44,7 +44,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"4S4lkfQnBqTtFIn+cxAIMQ==","iv":"hL0XY7anu29vjtkc","rev":"boot","lastModified":"2026-11-27T23:01:46.318Z","by":"Michaël GROSJEAN","data":"JAAc07IZyu4t8rkzZLuKBALRY8Bii2zkA1Xo0jpMCoF2JgWMGLX5WK9M7Egk3yY0ReFDd0I0RiHuhNtvsjco3w=="},"at":"2026-11-27T23:01:46.384Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"6K5kRi+ATsV8e3eIE0d+fQ==","iv":"WO8LuXhEkV4u+O3O","rev":"boot","lastModified":"2026-11-27T23:13:34.564Z","by":"Michaël GROSJEAN","data":"DF5OTs+BZqdoNamitaDNg5n6IfOUu4RE5N2Ve/LaURZ1T45/4a5z2T5u93I9/SNnYpiaeFkGfNLiZw7HWiLEzw=="},"at":"2026-11-27T23:13:34.604Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.6";
+        const APP_VERSION = "V.11.6.1";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.6.1', date: '2026-11-28', items: ['Date limite des chèques vacances : on peut de nouveau taper l\'année en entier (la case ne se recharge plus pendant la saisie).'] },
             { v: 'V.11.6', date: '2026-11-28', items: ['« Mon CSE en chiffres » dans l\'espace (bénéficiaires, offert, budget ASC, billets, sorties, chèques vacances, colis, mot des élus) : coupé par défaut.', 'Médaille du travail : alerte dans « Aujourd\'hui » à 20, 30, 35 et 40 ans d\'ancienneté, 4 mois avant (coupée par défaut).', 'Rappels 3 jours avant les dates limites : inscriptions aux sorties, chèques vacances, justificatifs (coupés par défaut).', 'Tout se règle dans Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace ».'] },
             { v: 'V.11.5', date: '2026-11-28', items: ['Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace » : convention collective, accords, inspection du travail, zone scolaire ; page « Ce qui change » (brouillon proposé) ; calendrier social ; photos des sorties (Drive) ; petites annonces validées par le CSE (coupé) ; idées des collègues avec j\'aime (coupé) ; quiz du mois avec tirage au sort du gagnant (coupé) ; récap « Cette semaine au CSE » chaque lundi.', 'Espace 11.7 : Liens officiels, Me former, Mes aides, Ma retraite, Le saviez-vous du jour, compte à rebours, 4 calculs en plus.', 'Nécessite le script Google v96 (annonces, j\'aime, quiz).'] },
             { v: 'V.11.4', date: '2026-11-27', items: ['Équité par équipe (A, B, C, J) : tableau par année (bénéficiaires, montant offert, billets, sorties, colis, prêts, chèques vacances), alerte si une équipe profite nettement moins, ajouté au bilan annuel. Coupé par défaut : Paramètres › Année et bilans.'] },
@@ -49410,7 +49411,8 @@ var qrcode = function() {
     return out;
   }; })();
   // ---------- Réglages (dans la carte « Infos pratiques et vie de l'espace ») ----------
-  window.cseV8 = function (k, v) { var V = v8(); if (k === 'ch-on') V.chiffres.on = !!v; else if (k === 'ch-mot') V.chiffres.mot = v; else if (k === 'med-on') V.med.on = !!v; else if (k === 'dl-on') V.dl.on = !!v; else if (/^dl-/.test(k)) V.dl[k.slice(3)] = typeof v === 'boolean' ? v : v; save(); v7Re(); };
+  window.cseV8 = function (k, v) { var V = v8(); if (k === 'ch-on') V.chiffres.on = !!v; else if (k === 'ch-mot') V.chiffres.mot = v; else if (k === 'med-on') V.med.on = !!v; else if (k === 'dl-on') V.dl.on = !!v; else if (/^dl-/.test(k)) { if (k === 'dl-cvLimite' && v && !/^(19|20)\d{2}-/.test(v)) return; V.dl[k.slice(3)] = v; }
+    save(); if (typeof v === 'boolean') v7Re(); };
   function v8Secs(sec, sw) {
     var V = v8(), INPs = INP;
     return sec('ch', '📊 Mon CSE en chiffres (espace)', V.chiffres.on ? 'Publié' : 'Coupé', function () {
@@ -49428,7 +49430,7 @@ var qrcode = function() {
       + sec('dl', '⏰ Rappels des dates limites (3 jours avant)', V.dl.on ? 'Activé' : 'Coupé', function () {
         return sw2('dl-on', V.dl.on, 'Envoyer une notification aux salariés concernés 3 jours avant une date limite')
           + '<div class="pl-5 space-y-1">' + sw2('dl-sorties', V.dl.sorties !== false, 'Inscriptions aux sorties (à ceux qui ne sont pas inscrits)') + sw2('dl-cv', V.dl.cv !== false, 'Commande des chèques vacances (à ceux qui n\'ont pas de dossier)')
-          + '<label class="text-xs text-slate-600 block">Date limite de la campagne chèques vacances<input type="date" class="' + INPs + '" value="' + E(V.dl.cvLimite || '') + '" onchange="cseV8(\'dl-cvLimite\',this.value)"></label>'
+          + '<label class="text-xs text-slate-600 block">Date limite de la campagne chèques vacances<input type="date" class="' + INPs + '" value="' + E(V.dl.cvLimite || '') + '" onchange="cseV8(\'dl-cvLimite\',this.value)" onblur="cseV8(\'dl-cvLimite\',this.value)"></label>'
           + sw2('dl-justif', V.dl.justif !== false, 'Justificatif des demandes de prestation en attente') + '<label class="text-xs text-slate-600 block">Délai pour rendre le justificatif (jours)<input type="number" min="5" max="120" class="' + INPs + '" value="' + E(V.dl.justifJours || 30) + '" onchange="cseV8(\'dl-justifJours\',this.value)"></label></div>'
           + '<p class="text-[11px] text-slate-500">Par notification, à 9 h, avec les autres rappels automatiques (il faut que les rappels par notification soient activés).</p>';
       });
