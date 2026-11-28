@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.9.2";
+        const APP_VERSION = "V.11.9.3";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.9.3', date: '2026-11-28', items: ['Commandes chèques vacances : bouton « Supprimer les modèles » (efface les modèles ANCV gardés sur cet appareil).'] },
             { v: 'V.11.9.2', date: '2026-11-28', items: ['Commandes chèques vacances : les fichiers Connect et papier sont remplis dans les modèles d\'origine de l\'ANCV (couleurs, mise en page et onglets intacts), à choisir une fois par appareil ; adresses ajoutées aussi dans le fichier « envoi sur site ».'] },
             { v: 'V.11.9.1', date: '2026-11-28', items: ['Commandes chèques vacances : la fenêtre tient dans l\'écran (le haut n\'est plus coupé), la liste « Pas encore payés » défile et se replie quand elle est longue.'] },
             { v: 'V.11.9', date: '2026-11-28', items: ['Chèques vacances : bouton « Commandes » qui prépare les 4 fichiers des prestataires (Swile vacances en CSV, Chèque-Vacances Connect, papier envoi sur site 000, papier par courrier en RECOMMANDE AR R3) pour les dossiers entièrement payés ; adresses découpées (voie, code postal, ville), nombre de chèques de 10 € (un de 25 € si besoin), matricules 001, 002… ; liste des problèmes à corriger et des salariés qui n\'ont pas fini de payer. Télécharger = essai ; « C\'est commandé » marque les dossiers (annulable).'] },
@@ -49647,6 +49648,11 @@ var qrcode = function() {
   async function cvcTplCharger() { if (CVC.tpl) return CVC.tpl; var T = {}; try { var d = await cvcIdb(); await Promise.all(['connect', 'site', 'benef'].map(function (k) { return new Promise(function (ok) { var q = d.transaction('f').objectStore('f').get(k); q.onsuccess = function () { if (q.result) T[k] = q.result; ok(); }; q.onerror = function () { ok(); }; }); })); } catch (e) { } CVC.tpl = T; return T; }
   async function cvcTplGarder(k, buf) { var d = await cvcIdb(); await new Promise(function (ok, ko) { var t = d.transaction('f', 'readwrite'); t.objectStore('f').put(buf, k); t.oncomplete = ok; t.onerror = function () { ko(t.error); }; }); CVC.tpl = CVC.tpl || {}; CVC.tpl[k] = buf; }
   function cvcTplType(buf) { var z = XLSX.CFB.read(new Uint8Array(buf), { type: 'array' }), w = XLSX.CFB.find(z, '/xl/workbook.xml'); if (!w) return ''; var x = new TextDecoder('utf-8').decode(w.content), m = /<sheet [^>]*name="([^"]+)"/.exec(x), n = m ? m[1].replace(/&amp;/g, '&') : ''; return /lectronique/i.test(n) ? 'connect' : /sur site/i.test(n) ? 'site' : /n.ficiaires/i.test(n) ? 'benef' : ''; }
+  window.cseCvcModelesSuppr = async function () {
+    if (!(await uiConfirm('Supprimer les modèles ANCV enregistrés sur cet appareil ? Vous pourrez les choisir à nouveau tout de suite.', { title: 'Supprimer les modèles', okLabel: 'Supprimer', tone: 'danger' }))) return;
+    try { var d = await cvcIdb(); await new Promise(function (ok) { var t = d.transaction('f', 'readwrite'); t.objectStore('f').clear(); t.oncomplete = ok; t.onerror = ok; }); } catch (e) { }
+    CVC.tpl = {}; say('Modèles supprimés de cet appareil.', 'success'); cvcRe();
+  };
   window.cseCvcModeles = function () {
     var i = document.createElement('input'); i.type = 'file'; i.multiple = true; i.accept = '.xlsx';
     i.onchange = async function () { try { await cseLib('xlsx'); } catch (e) { say('Outil Excel indisponible.', 'error'); return; } var ok = [], ko = [];
@@ -49691,7 +49697,7 @@ var qrcode = function() {
     var h = '<div class="flex flex-wrap items-center gap-2"><label class="text-xs text-slate-600">Dossiers <select class="p-1.5 border border-slate-300 rounded-lg text-xs" onchange="cseCvc(\'an\',this.value)">' + ans.map(function (a) { return '<option value="' + a + '"' + (a === R.an ? ' selected' : '') + '>créés en ' + a + ' (chèques ' + (a + 1) + ')</option>'; }).join('') + '</select></label>'
       + '<label class="text-xs text-slate-600 flex items-center gap-1"><input type="checkbox"' + (CVC.deja ? ' checked' : '') + ' onchange="cseCvc(\'deja\',this.checked)"> Reprendre aussi ceux déjà commandés</label></div>'
       + '<p class="text-xs text-slate-500">Seulement les dossiers <b>entièrement payés</b>' + (R.deja ? ' et pas encore commandés (' + R.deja + ' déjà commandé(s))' : '') + '. Les fichiers suivent les modèles des prestataires ; télécharger ne marque rien : vous pouvez essayer autant de fois que vous voulez.</p>'
-      + (function () { var T = CVC.tpl || {}, n = ['connect', 'site', 'benef'].filter(function (k) { return T[k]; }).length; return '<div class="flex flex-wrap items-center gap-2 text-xs ' + (n === 3 ? 'text-emerald-700' : 'text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2') + '"><span class="flex-1">' + (n === 3 ? '✔ Modèles d\'origine de l\'ANCV enregistrés sur cet appareil : les fichiers gardent leurs couleurs et leur mise en page.' : '⚠ Choisissez une fois les 3 fichiers « Modèle » de l\'ANCV (Connect, Envoi sur site, Envoi bénéficiaires) : ils seront remplis tels quels, couleurs et mise en page comprises. ' + n + '/3 enregistré(s).') + '</span><button type="button" class="' + BTN + '" onclick="cseCvcModeles()"><i class="fa-solid fa-file-excel text-emerald-600"></i> ' + (n ? 'Changer les modèles' : 'Choisir les modèles') + '</button></div>'; })()
+      + (function () { var T = CVC.tpl || {}, n = ['connect', 'site', 'benef'].filter(function (k) { return T[k]; }).length; return '<div class="flex flex-wrap items-center gap-2 text-xs ' + (n === 3 ? 'text-emerald-700' : 'text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2') + '"><span class="flex-1">' + (n === 3 ? '✔ Modèles d\'origine de l\'ANCV enregistrés sur cet appareil : les fichiers gardent leurs couleurs et leur mise en page.' : '⚠ Choisissez une fois les 3 fichiers « Modèle » de l\'ANCV (Connect, Envoi sur site, Envoi bénéficiaires) : ils seront remplis tels quels, couleurs et mise en page comprises. ' + n + '/3 enregistré(s).') + '</span><button type="button" class="' + BTN + '" onclick="cseCvcModeles()"><i class="fa-solid fa-file-excel text-emerald-600"></i> ' + (n ? 'Changer les modèles' : 'Choisir les modèles') + '</button>' + (n ? '<button type="button" class="' + BTN + '" onclick="cseCvcModelesSuppr()"><i class="fa-solid fa-trash text-rose-600"></i> Supprimer les modèles</button>' : '') + '</div>'; })()
       + bloc('swile', '🟣', 'Swile vacances (CSV : nom, prénom, e-mail, montant)', R.swile, R.tot.swile)
       + bloc('connect', '📱', 'Chèque-Vacances Connect', R.connect, R.tot.connect)
       + bloc('site', '🏭', 'Papier : envoi sur site (' + E(C.site) + ')', R.site, R.tot.site, q(R.site))
