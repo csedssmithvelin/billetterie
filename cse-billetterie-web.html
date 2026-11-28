@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.9.1";
+        const APP_VERSION = "V.11.9.2";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.9.2', date: '2026-11-28', items: ['Commandes chèques vacances : les fichiers Connect et papier sont remplis dans les modèles d\'origine de l\'ANCV (couleurs, mise en page et onglets intacts), à choisir une fois par appareil ; adresses ajoutées aussi dans le fichier « envoi sur site ».'] },
             { v: 'V.11.9.1', date: '2026-11-28', items: ['Commandes chèques vacances : la fenêtre tient dans l\'écran (le haut n\'est plus coupé), la liste « Pas encore payés » défile et se replie quand elle est longue.'] },
             { v: 'V.11.9', date: '2026-11-28', items: ['Chèques vacances : bouton « Commandes » qui prépare les 4 fichiers des prestataires (Swile vacances en CSV, Chèque-Vacances Connect, papier envoi sur site 000, papier par courrier en RECOMMANDE AR R3) pour les dossiers entièrement payés ; adresses découpées (voie, code postal, ville), nombre de chèques de 10 € (un de 25 € si besoin), matricules 001, 002… ; liste des problèmes à corriger et des salariés qui n\'ont pas fini de payer. Télécharger = essai ; « C\'est commandé » marque les dossiers (annulable).'] },
             { v: 'V.11.8.3', date: '2026-11-28', items: ['« Ce qui change » : cocher « Ajouter toutes seules » lance tout de suite la recherche et ajoute les infos officielles des 2 derniers mois pas encore dans la liste (avant : seulement la semaine suivante, et pas celles déjà vues) ; l\'espace est republié aussitôt après un ajout.'] },
@@ -49581,7 +49582,7 @@ var qrcode = function() {
         var q = cvcQte(pa); if (!q) add('Papier : ' + eur(pa) + ' ne se fait pas en chèques de 10 € et 25 €');
         if (c.homeDelivery) { var ad = cvcAdr(e.address); if (!ad) add('Courrier : adresse à compléter ou à corriger dans la fiche (« ' + (e.address || 'vide') + ' »)'); else { if (ad.voie.length > 38) add('Courrier : « ' + ad.voie + ' » dépasse 38 caractères'); if (ad.ville.length > 10) add('Courrier : la ville « ' + ad.ville + ' » dépasse 10 caractères (limite du modèle, à vérifier avec le prestataire)'); }
           R.benef.push({ n: n, p: p, ad: ad || { voie: '', cp: '', ville: '' }, q: q || { q10: 0, q25: 0 }, m: pa, c: c }); R.tot.benef += pa; }
-        else { R.site.push({ n: n, p: p, q: q || { q10: 0, q25: 0 }, m: pa, c: c }); R.tot.site += pa; }
+        else { R.site.push({ n: n, p: p, ad: cvcAdr(e.address) || { voie: '', cp: '', ville: '' }, q: q || { q10: 0, q25: 0 }, m: pa, c: c }); R.tot.site += pa; }
       }
       if (pbs.length) R.pb.push({ qui: qui, t: pbs, id: e.id });
     });
@@ -49605,15 +49606,55 @@ var qrcode = function() {
   function cvcTelecharger(k, R) {
     var C = cvcCfg(), L = R[k]; if (!L.length) return false;
     if (k === 'swile') {
-      var csv = '﻿nom;prenom;email\r\n' + L.map(function (x) { return [x.n, x.p, x.mail].map(function (v) { v = String(v).replace(/[;\r\n]/g, ' '); return v; }).join(';'); }).join('\r\n');
+      var csv = '﻿nom;prenom;email;montant\r\n' + L.map(function (x) { return [x.n, x.p, x.mail, String(Math.round(x.m * 100) / 100)].map(function (v) { v = String(v).replace(/[;\r\n]/g, ' '); return v; }).join(';'); }).join('\r\n');
       var b = new Blob([csv], { type: 'text/csv;charset=utf-8' }), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = cvcNomFichier(k, R) + '.csv'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000); return true;
     }
     var lignes;
     if (k === 'connect') lignes = L.map(function (x, i) { return [cvcMat(i, L.length), x.n, x.p, x.tel, x.mail, String(Math.round(x.m))]; });
-    else if (k === 'site') lignes = L.map(function (x, i) { return [C.site, '', cvcMat(i, L.length), x.n, x.p, '', '', '', '', '', '', '', x.q.q10 || '', '', x.q.q25 || '', '']; });
+    else if (k === 'site') lignes = L.map(function (x, i) { return [C.site, '', cvcMat(i, L.length), x.n, x.p, '', '', x.ad.voie, '', x.ad.cp, x.ad.ville, '', x.q.q10 || '', '', x.q.q25 || '', '']; });
     else lignes = L.map(function (x, i) { return [cvcMat(i, L.length), x.n, x.p, '', '', x.ad.voie, '', x.ad.cp, x.ad.ville, '', C.exp, C.retour, x.q.q10 || '', '', x.q.q25 || '', '']; });
-    XLSX.writeFile(cvcFeuille(k, lignes), cvcNomFichier(k, R) + '.xlsx'); return true;
+    var tpl = CVC.tpl && CVC.tpl[k], nomF = cvcNomFichier(k, R) + '.xlsx';
+    if (tpl) { var out = cvcRemplir(tpl, lignes), bl = new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), a2 = document.createElement('a'); a2.href = URL.createObjectURL(bl); a2.download = nomF; document.body.appendChild(a2); a2.click(); setTimeout(function () { URL.revokeObjectURL(a2.href); a2.remove(); }, 3000); }
+    else XLSX.writeFile(cvcFeuille(k, lignes), nomF);
+    return true;
   }
+  function cvcCol(n) { var s = ''; n++; while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
+  function cvcColN(s) { var n = 0; for (var i = 0; i < s.length; i++) n = n * 26 + s.charCodeAt(i) - 64; return n - 1; }
+  function cvcX(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  // Remplit la 1re feuille du modèle d'origine (lignes 4 et suivantes) sans toucher au reste : couleurs, largeurs, onglets.
+  function cvcRemplir(buf, lignes) {
+    var CFB = XLSX.CFB, z = CFB.read(new Uint8Array(buf), { type: 'array' });
+    var ent = CFB.find(z, '/xl/worksheets/sheet1.xml') || CFB.find(z, 'xl/worksheets/sheet1.xml'); if (!ent) throw new Error('modèle illisible (feuille 1 introuvable)');
+    var xml = new TextDecoder('utf-8').decode(ent.content), dernier = 3;
+    lignes.forEach(function (vals, i) {
+      var r = 4 + i, re = new RegExp('<row r="' + r + '"[^>]*?(?:/>|>[\\s\\S]*?</row>)'), m = re.exec(xml), cel = {}, ouv = '<row r="' + r + '">';
+      if (m) { var t = m[0], o = /^<row[^>]*?>/.exec(t)[0]; ouv = o.replace(/\/>$/, '>'); var rc = /<c r="([A-Z]+)\d+"([^>]*?)(?:\/>|>[\s\S]*?<\/c>)/g, k; while ((k = rc.exec(t))) cel[cvcColN(k[1])] = k[0]; }
+      vals.forEach(function (v, j) {
+        if (v == null || v === '') return; var ref = cvcCol(j) + r, s = cel[j] && /\ss="(\d+)"/.exec(cel[j]), st = s ? ' s="' + s[1] + '"' : '';
+        cel[j] = typeof v === 'number' ? '<c r="' + ref + '"' + st + '><v>' + v + '</v></c>' : '<c r="' + ref + '"' + st + ' t="inlineStr"><is><t xml:space="preserve">' + cvcX(v) + '</t></is></c>';
+      });
+      var row = ouv + Object.keys(cel).map(Number).sort(function (a, b) { return a - b; }).map(function (j) { return cel[j]; }).join('') + '</row>';
+      if (m) xml = xml.slice(0, m.index) + row + xml.slice(m.index + m[0].length);
+      else { var nx = new RegExp('<row r="(\\d+)"', 'g'), p = -1, q; while ((q = nx.exec(xml))) { if (Number(q[1]) > r) { p = q.index; break; } } if (p < 0) p = xml.indexOf('</sheetData>'); if (p < 0) { xml = xml.replace('<sheetData/>', '<sheetData>' + row + '</sheetData>'); } else xml = xml.slice(0, p) + row + xml.slice(p); }
+      dernier = r;
+    });
+    ent.content = new TextEncoder().encode(xml); ent.size = ent.content.length;
+    return CFB.write(z, { fileType: 'zip', type: 'array', compression: true });
+  }
+
+  // Modèles d'origine des prestataires, gardés sur cet appareil (IndexedDB), choisis une fois.
+  function cvcIdb() { return new Promise(function (ok, ko) { var r = indexedDB.open('cse-modeles-cv', 1); r.onupgradeneeded = function () { r.result.createObjectStore('f'); }; r.onsuccess = function () { ok(r.result); }; r.onerror = function () { ko(r.error); }; }); }
+  async function cvcTplCharger() { if (CVC.tpl) return CVC.tpl; var T = {}; try { var d = await cvcIdb(); await Promise.all(['connect', 'site', 'benef'].map(function (k) { return new Promise(function (ok) { var q = d.transaction('f').objectStore('f').get(k); q.onsuccess = function () { if (q.result) T[k] = q.result; ok(); }; q.onerror = function () { ok(); }; }); })); } catch (e) { } CVC.tpl = T; return T; }
+  async function cvcTplGarder(k, buf) { var d = await cvcIdb(); await new Promise(function (ok, ko) { var t = d.transaction('f', 'readwrite'); t.objectStore('f').put(buf, k); t.oncomplete = ok; t.onerror = function () { ko(t.error); }; }); CVC.tpl = CVC.tpl || {}; CVC.tpl[k] = buf; }
+  function cvcTplType(buf) { var z = XLSX.CFB.read(new Uint8Array(buf), { type: 'array' }), w = XLSX.CFB.find(z, '/xl/workbook.xml'); if (!w) return ''; var x = new TextDecoder('utf-8').decode(w.content), m = /<sheet [^>]*name="([^"]+)"/.exec(x), n = m ? m[1].replace(/&amp;/g, '&') : ''; return /lectronique/i.test(n) ? 'connect' : /sur site/i.test(n) ? 'site' : /n.ficiaires/i.test(n) ? 'benef' : ''; }
+  window.cseCvcModeles = function () {
+    var i = document.createElement('input'); i.type = 'file'; i.multiple = true; i.accept = '.xlsx';
+    i.onchange = async function () { try { await cseLib('xlsx'); } catch (e) { say('Outil Excel indisponible.', 'error'); return; } var ok = [], ko = [];
+      for (var j = 0; j < i.files.length; j++) { var f = i.files[j]; try { var b = await f.arrayBuffer(), k = cvcTplType(b); if (!k) { ko.push(f.name); continue; } await cvcTplGarder(k, b); ok.push(k); } catch (e) { ko.push(f.name); } }
+      say(ok.length ? '✔ Modèle(s) enregistré(s) sur cet appareil : ' + ok.map(function (k) { return { connect: 'Connect', site: 'papier sur site', benef: 'papier courrier' }[k]; }).join(', ') + (ko.length ? ' · non reconnu(s) : ' + ko.join(', ') : '') : 'Aucun modèle reconnu (il faut les fichiers « Modèle » téléchargés sur l\'espace ANCV).', ok.length ? 'success' : 'error'); cvcRe(); };
+    i.click();
+  };
+
   window.cseCvc = async function (act, v) {
     if (act === 'an') { CVC.an = Number(v); return cvcRe(); }
     if (act === 'deja') { CVC.deja = !!v; return cvcRe(); }
@@ -49622,6 +49663,7 @@ var qrcode = function() {
     var R = cvcData();
     if (act === 'dl' || act === 'tout') {
       try { await cseLib('xlsx'); } catch (e) { say('Outil Excel indisponible : ' + e.message, 'error'); return; }
+      await cvcTplCharger();
       var ks = act === 'tout' ? ['swile', 'connect', 'site', 'benef'] : [v], n = 0;
       for (var i = 0; i < ks.length; i++) { if (cvcTelecharger(ks[i], R)) n++; await new Promise(function (r) { setTimeout(r, 600); }); }
       say(n ? '📥 ' + n + ' fichier(s) téléchargé(s). C\'est un essai : rien n\'est marqué comme commandé.' : 'Aucun dossier à commander.', n ? 'success' : 'info'); return;
@@ -49649,7 +49691,8 @@ var qrcode = function() {
     var h = '<div class="flex flex-wrap items-center gap-2"><label class="text-xs text-slate-600">Dossiers <select class="p-1.5 border border-slate-300 rounded-lg text-xs" onchange="cseCvc(\'an\',this.value)">' + ans.map(function (a) { return '<option value="' + a + '"' + (a === R.an ? ' selected' : '') + '>créés en ' + a + ' (chèques ' + (a + 1) + ')</option>'; }).join('') + '</select></label>'
       + '<label class="text-xs text-slate-600 flex items-center gap-1"><input type="checkbox"' + (CVC.deja ? ' checked' : '') + ' onchange="cseCvc(\'deja\',this.checked)"> Reprendre aussi ceux déjà commandés</label></div>'
       + '<p class="text-xs text-slate-500">Seulement les dossiers <b>entièrement payés</b>' + (R.deja ? ' et pas encore commandés (' + R.deja + ' déjà commandé(s))' : '') + '. Les fichiers suivent les modèles des prestataires ; télécharger ne marque rien : vous pouvez essayer autant de fois que vous voulez.</p>'
-      + bloc('swile', '🟣', 'Swile vacances (CSV : nom, prénom, e-mail)', R.swile, R.tot.swile)
+      + (function () { var T = CVC.tpl || {}, n = ['connect', 'site', 'benef'].filter(function (k) { return T[k]; }).length; return '<div class="flex flex-wrap items-center gap-2 text-xs ' + (n === 3 ? 'text-emerald-700' : 'text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2') + '"><span class="flex-1">' + (n === 3 ? '✔ Modèles d\'origine de l\'ANCV enregistrés sur cet appareil : les fichiers gardent leurs couleurs et leur mise en page.' : '⚠ Choisissez une fois les 3 fichiers « Modèle » de l\'ANCV (Connect, Envoi sur site, Envoi bénéficiaires) : ils seront remplis tels quels, couleurs et mise en page comprises. ' + n + '/3 enregistré(s).') + '</span><button type="button" class="' + BTN + '" onclick="cseCvcModeles()"><i class="fa-solid fa-file-excel text-emerald-600"></i> ' + (n ? 'Changer les modèles' : 'Choisir les modèles') + '</button></div>'; })()
+      + bloc('swile', '🟣', 'Swile vacances (CSV : nom, prénom, e-mail, montant)', R.swile, R.tot.swile)
       + bloc('connect', '📱', 'Chèque-Vacances Connect', R.connect, R.tot.connect)
       + bloc('site', '🏭', 'Papier : envoi sur site (' + E(C.site) + ')', R.site, R.tot.site, q(R.site))
       + bloc('benef', '✉️', 'Papier : envoi par courrier (' + E(C.exp) + ')', R.benef, R.tot.benef, q(R.benef))
@@ -49664,8 +49707,8 @@ var qrcode = function() {
     return h;
   }
   function cvcRe() { var b = $('v12-cvc-b'); if (b) b.innerHTML = cvcHtml(); }
-  window.cseCvcOuvrir = function () {
-    var o = $('v12-cvc'); if (o) o.remove(); CVC.an = CVC.an || cvcAnDefaut();
+  window.cseCvcOuvrir = async function () {
+    var o = $('v12-cvc'); if (o) o.remove(); CVC.an = CVC.an || cvcAnDefaut(); try { await cseLib('xlsx'); } catch (e) { } await cvcTplCharger();
     document.body.insertAdjacentHTML('beforeend', '<div id="v12-cvc" class="fixed inset-0 z-[80] bg-slate-900/50 flex items-start justify-center p-2 sm:p-6 overflow-y-auto" onclick="if(event.target===this)cseCvc(\'fermer\')"><div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-auto flex flex-col" style="max-height:calc(100vh - 2rem)"><div class="flex items-center gap-2 p-4 border-b border-slate-200 shrink-0"><b class="flex-1 text-base">📦 Préparer les commandes de chèques vacances</b><button type="button" class="' + BTN + '" onclick="cseCvc(\'fermer\')">Fermer</button></div><div id="v12-cvc-b" class="p-4 space-y-3 overflow-y-auto">' + cvcHtml() + '</div></div></div>');
   };
   function cvcBouton() { var b = document.querySelector('button[onclick="exportCVExcel()"]'); if (b && !$('v12-cvc-btn')) b.insertAdjacentHTML('afterend', '<button id="v12-cvc-btn" type="button" onclick="cseCvcOuvrir()" title="Fichiers de commande Swile, Connect et papier" class="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold rounded-xl text-xs transition flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-box text-amber-600"></i> Commandes</button>'); }
