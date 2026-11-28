@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.8.1";
+        const APP_VERSION = "V.11.8.2";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.8.2', date: '2026-11-28', items: ['Les virements internes (Banque › Virement interne, transferts courant ↔ épargne) ne comptent plus dans « Mon CSE en chiffres » ni dans le bilan annuel ASC : ce ne sont ni des dépenses ni des recettes.'] },
             { v: 'V.11.8.1', date: '2026-11-28', items: ['Cinémas : liens AlloCiné du Palace (Épinal) et du Majestic (Remiremont) déjà remplis ; l\'espace ouvre les séances du jour.'] },
             { v: 'V.11.8', date: '2026-11-28', items: ['Espace : météo de l\'usine sur l\'accueil avec alerte chaleur / grand froid et rappel des droits ; jours fériés officiels (liste de l\'État) ; boutons « Voir le programme » des cinémas (Palace Épinal, Majestic Remiremont) dans Billets. « Ce qui change » : actualités Service-public.fr en plus. Réglages dans Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace ». Nécessite le script Google v98.'] },
             { v: 'V.11.7', date: '2026-11-28', items: ['« Ce qui change » : bouton « Chercher les dernières infos officielles » (Code du travail numérique), on coche et on ajoute ; alerte dans « Aujourd\'hui » quand il y a du nouveau (vérifié chaque semaine) et rappel le 2 janvier / 2 juillet ; option « ajouter toutes seules » (coupée par défaut). Nécessite le script Google v97.'] },
@@ -46915,7 +46916,7 @@ var qrcode = function() {
     var tr = [['0 €', 0], ['moins de 50 €', 0], ['50 à 100 €', 0], ['100 à 200 €', 0], ['200 à 400 €', 0], ['plus de 400 €', 0]];
     parSal.forEach(function (x) { tr[x <= 0 ? 0 : x < 50 ? 1 : x < 100 ? 2 : x < 200 ? 3 : x < 400 ? 4 : 5][1]++; });
     var BE = (db.budgetEntries || []).filter(function (b) { return inY(b.date) && b.status === 'reel'; }), dep = {}, rec = {}, depFct = 0, totDep = 0, totRec = 0;
-    BE.forEach(function (b) { var a = Math.abs(Number(b.amount) || 0), cat = b.category || 'Autre'; if ((b.envelope || 'ASC') !== 'ASC') { if (b.type === 'expense') depFct += a; return; } if (b.type === 'expense') { dep[cat] = (dep[cat] || 0) + a; totDep += a; } else { rec[cat] = (rec[cat] || 0) + a; totRec += a; } });
+    BE.forEach(function (b) { var a = Math.abs(Number(b.amount) || 0), cat = b.category || 'Autre'; if (b.transfer || /virement\s+interne/i.test(String(cat).normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) return; if ((b.envelope || 'ASC') !== 'ASC') { if (b.type === 'expense') depFct += a; return; } if (b.type === 'expense') { dep[cat] = (dep[cat] || 0) + a; totDep += a; } else { rec[cat] = (rec[cat] || 0) + a; totRec += a; } });
     var bil = {}, nbBil = 0, caBil = 0; (db.sales || []).forEach(function (s) { if (!inY(iso2(s.date))) return; caBil += Number(s.totalPaid) || 0; (s.items || []).forEach(function (i) { bil[i.ticketTitle || 'Billet'] = (bil[i.ticketTitle || 'Billet'] || 0) + (Number(i.qty) || 0); nbBil += Number(i.qty) || 0; }); });
     var sorties = (db.outings || []).filter(function (o) { return inY(iso2(o.date)); }).map(function (o) { var n = 0; (db.registrations || []).forEach(function (r) { if (r.outingId === o.id && !r.cancelled && !r.waitlist) n += 1 + (r.guests || []).length; }); return [o.name + ' (' + fd(iso2(o.date)) + ')', n, n + ' pers.']; });
     var cvL = (db.chequesVacances || []).filter(function (c) { try { return String(cvDossierYear(c) + 1) === String(Y); } catch (e) { return false; } }), cvTot = 0, cvCse = 0; cvL.forEach(function (c) { cvTot += Number(c.totalValue) || 0; cvCse += Number(c.cseAmount) || 0; });

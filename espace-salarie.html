@@ -76,6 +76,7 @@ html.dark #sheet{background:var(--card);color:var(--ink)}
 html.dark nav button:hover{background:#1b2742}
 html.dark .logo{background:#fff}
 html.dark [style*="background:#f1f5f9"]{background:#1b2742!important;color:var(--ink)!important}
+html.dark [style*="background:#eef2ff"]{background:#1e2a4d!important;color:var(--ink)!important}html.dark [style*="background:#ede9fe"]{background:#3b2a63!important;color:#ddd6fe!important}html.dark [style*="background:#fff7ed"]{background:#3a2412!important;color:#fed7aa!important}html.dark [style*="background:#eff6ff"]{background:#16264a!important;color:#bfdbfe!important}
 html.dark [style*="background:#fff"]:not(.logo):not(img){background:var(--card)!important}
 
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
@@ -918,7 +919,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(o, null, 2)], { type: 'application/json' })); a.download = 'mes-donnees-cse-' + today() + '.json'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   };
   // ---------- V.10.3 : Mes droits (fiches, calculs, affichage, PV) et Aide et contacts (signalements, contacts, FAQ) ----------
-  var SP = function (q) { return 'https://www.service-public.fr/particuliers/recherche?keyword=' + encodeURIComponent(q); }, CT = function (q) { return 'https://code.travail.gouv.fr/recherche?q=' + encodeURIComponent(q); };
+  var SP = function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q + ' site:service-public.gouv.fr'); }, CT = function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q + ' site:code.travail.gouv.fr'); };
   var FICHES = {
     'conges-payes': { t: '🏖️ Congés payés', k: 'vacances cp jours ouvrables ouvrés', h: '<p>Chaque mois de travail donne <b>2,5 jours ouvrables</b> de congés payés, soit <b>30 jours ouvrables (5 semaines) par an</b>. Les jours ouvrables vont du lundi au samedi (30 jours ouvrables = 25 jours ouvrés).</p><ul><li>L\'année de référence va en général du <b>1er juin au 31 mai</b> (un accord peut prévoir une autre période).</li><li>Comptent comme du travail : les congés payés, le congé maternité ou paternité, l\'accident du travail et la maladie professionnelle.</li><li><b>Arrêt maladie ordinaire</b> : depuis la loi du 22 avril 2024, il donne aussi des congés : <b>2 jours ouvrables par mois</b>, 24 jours au plus par an.</li><li>Le congé principal comprend au moins 12 jours ouvrables continus, pris entre le 1er mai et le 31 octobre. L\'employeur fixe l\'ordre des départs après avis du CSE.</li><li>Des jours de fractionnement peuvent s\'ajouter si une partie du congé principal est prise en dehors de cette période (sauf renonciation écrite).</li></ul>', s: [['Service-public : congés payés', SP('congés payés salarié')], ['Code du travail numérique', CT('congés payés')]], a: 'L3141-1 et suivants' },
     'jours-feries': { t: '📅 Jours fériés', k: 'ferie pont 1er mai solidarite pentecote', h: '<p>Il y a <b>11 jours fériés</b> : 1er janvier, lundi de Pâques, 1er mai, 8 mai, Ascension, lundi de Pentecôte, 14 juillet, 15 août, 1er novembre, 11 novembre et 25 décembre (2 de plus en Alsace-Moselle).</p><ul><li><b>Seul le 1er mai</b> est obligatoirement chômé et payé. S\'il est travaillé (activité qui ne peut pas s\'arrêter), il est payé double.</li><li>Les autres jours fériés sont chômés ou non selon la convention collective, un accord ou l\'usage de l\'entreprise.</li><li>Un jour férié chômé ne fait pas perdre de salaire au salarié qui a au moins 3 mois d\'ancienneté.</li><li>La <b>journée de solidarité</b> (souvent le lundi de Pentecôte) est une journée de 7 heures travaillée sans être payée en plus.</li></ul>', s: [['Service-public : jours fériés', SP('jours fériés salarié')]], a: 'L3133-1 et suivants' },
@@ -2059,7 +2060,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   //          le saviez-vous du jour, compte à rebours, calculs en plus, photos des sorties,
   //          petites annonces, idées des collègues (j'aime), quiz du mois
   // =====================================================================
-  function v117Src(q) { return 'https://code.travail.gouv.fr/recherche?q=' + encodeURIComponent(q); }
+  function v117Src(q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q + ' site:code.travail.gouv.fr'); }
   var V117SV = [
     ['Les congés payés se gagnent au rythme de 2,5 jours ouvrables par mois travaillé, soit 30 jours (5 semaines) par an.', 'L3141-3', 'congés payés acquisition'],
     ['Depuis 2024, un arrêt maladie ordinaire donne aussi des congés payés : 2 jours ouvrables par mois d\'arrêt, 24 jours par an au plus.', 'L3141-5-1', 'congés payés arrêt maladie'],
@@ -2155,7 +2156,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     h += v117Bloc('🧮 Simulateurs officiels', [
       v117Lien('https://code.travail.gouv.fr/outils', '🧰 Tous les simulateurs du Code du travail numérique', 'Préavis, indemnité de licenciement, salaire minimum de la branche, heures de recherche d\'emploi…'),
       v117Lien('https://code.travail.gouv.fr/outils/indemnite-licenciement', '💶 Indemnité de licenciement', 'Le calcul officiel, avec votre convention collective.'),
-      v117Lien('https://mon-entreprise.urssaf.fr/simulateurs/salaire', '💰 Salaire brut ↔ net', 'Le simulateur de l\'Urssaf.')]);
+      v117Lien('https://mon-entreprise.urssaf.fr/simulateurs/salaire-brut-net', '💰 Salaire brut ↔ net', 'Le simulateur de l\'Urssaf.')]);
     var ins = K.inspection || {};
     h += v117Bloc('🛡️ Être aidé', [
       ins.nom || ins.adresse || ins.tel ? '<div class="row"><div class="l"><b>🏛️ ' + E(ins.nom || 'Inspection du travail') + '</b><div class="mute">' + E([ins.adresse, ins.tel].filter(Boolean).join(' · ')) + '</div>' + (ins.tel ? '<a class="btn s" style="margin-top:6px" href="tel:' + E(String(ins.tel).replace(/\s/g, '')) + '">📞 Appeler</a> ' : '') + (ins.url ? '<a class="btn s" style="margin-top:6px" target="_blank" rel="noopener" href="' + E(ins.url) + '">↗ Site</a>' : '') + '</div></div>'
@@ -2303,7 +2304,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   window.cseV117Net = function () {
     var m = Number(String(($('nt-m') || {}).value).replace(',', '.')) || 0, s = ($('nt-s') || {}).value, c = ($('nt-c') || {}).value === 'c', t = c ? 0.75 : 0.78; if (!m) return;
     var v = s === 'b' ? m * t : m / t;
-    $('calc-r').innerHTML = res('≈ ' + eu(v) + (s === 'b' ? ' net' : ' brut') + ' par mois', 'Estimation avec environ ' + Math.round((1 - t) * 100) + ' % de cotisations (' + (c ? 'cadre' : 'non-cadre') + '), avant impôt sur le revenu. Votre fiche de paie peut différer (mutuelle, heures sup, primes). Calcul précis : <a target="_blank" rel="noopener" href="https://mon-entreprise.urssaf.fr/simulateurs/salaire">simulateur de l\'Urssaf</a>.');
+    $('calc-r').innerHTML = res('≈ ' + eu(v) + (s === 'b' ? ' net' : ' brut') + ' par mois', 'Estimation avec environ ' + Math.round((1 - t) * 100) + ' % de cotisations (' + (c ? 'cadre' : 'non-cadre') + '), avant impôt sur le revenu. Votre fiche de paie peut différer (mutuelle, heures sup, primes). Calcul précis : <a target="_blank" rel="noopener" href="https://mon-entreprise.urssaf.fr/simulateurs/salaire-brut-net">simulateur de l\'Urssaf</a>.');
   };
   var calcHtml0 = calcHtml; calcHtml = function () { var k = CALC.ouvert; return /^(lic|rc|frac|net)$/.test(k) ? v117Calc(k) : calcHtml0(); };
   // --- Onglets et rubriques ---
@@ -2743,7 +2744,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   function alertBox(m) { sheet(head('Chèques vacances') + '<p>' + E(m) + '</p><button class="btn" onclick="cseClose()">OK</button>'); }
 
   // --- V.9.2 : nouvelle version de la page en ligne → « Nouvelle version, mettre à jour ? » ---
-  var PAGE_VERSION = '11.9.1', UPV = { at: 0, non: '' };
+  var PAGE_VERSION = '11.9.4', UPV = { at: 0, non: '' };
   function vCmp(a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number); for (var i = 0; i < Math.max(a.length, b.length); i++) { var d = (a[i] || 0) - (b[i] || 0); if (d) return d > 0 ? 1 : -1; } return 0; }
   async function majCheck() {
     if (!/^https?:$/.test(location.protocol) || DEMO || Date.now() - UPV.at < 5 * 60000) return; UPV.at = Date.now();
