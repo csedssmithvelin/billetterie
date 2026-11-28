@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.8.3";
+        const APP_VERSION = "V.11.9";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.9', date: '2026-11-28', items: ['Chèques vacances : bouton « Commandes » qui prépare les 4 fichiers des prestataires (Swile vacances en CSV, Chèque-Vacances Connect, papier envoi sur site 000, papier par courrier en RECOMMANDE AR R3) pour les dossiers entièrement payés ; adresses découpées (voie, code postal, ville), nombre de chèques de 10 € (un de 25 € si besoin), matricules 001, 002… ; liste des problèmes à corriger et des salariés qui n\'ont pas fini de payer. Télécharger = essai ; « C\'est commandé » marque les dossiers (annulable).'] },
             { v: 'V.11.8.3', date: '2026-11-28', items: ['« Ce qui change » : cocher « Ajouter toutes seules » lance tout de suite la recherche et ajoute les infos officielles des 2 derniers mois pas encore dans la liste (avant : seulement la semaine suivante, et pas celles déjà vues) ; l\'espace est republié aussitôt après un ajout.'] },
             { v: 'V.11.8.2', date: '2026-11-28', items: ['Les virements internes (Banque › Virement interne, transferts courant ↔ épargne) ne comptent plus dans « Mon CSE en chiffres » ni dans le bilan annuel ASC : ce ne sont ni des dépenses ni des recettes.'] },
             { v: 'V.11.8.1', date: '2026-11-28', items: ['Cinémas : liens AlloCiné du Palace (Épinal) et du Majestic (Remiremont) déjà remplis ; l\'espace ouvre les séances du jour.'] },
@@ -49540,6 +49541,134 @@ var qrcode = function() {
     try { var C = v10(), M = C.meteo; P.meteo = M.on && M.lat != null ? { nom: M.nom, lat: M.lat, lon: M.lon, chaud: M.chaud, froid: M.froid } : null;
       P.cines = (C.cines || []).filter(function (x) { return x.url && /^https?:\/\//.test(x.url); }); } catch (er) { console.warn('[météo]', er); }
   }; }, 0);
+
+  // =====================================================================
+  // 35) V.11.9 : COMMANDES CHÈQUES VACANCES ET SWILE — 4 fichiers aux modèles des prestataires
+  //     (Swile CSV, Chèque-Vacances Connect, Classic envoi sur site, Classic envoi aux bénéficiaires),
+  //     seulement les dossiers payés ; mode essai (rien n'est marqué) puis « Marquer commandé » annulable.
+  // =====================================================================
+  var CVC_H = {"connect": {"sheet": "Envoi électronique", "rows": [["Ne pas modifier les cellules ci-dessous", null, null, null, null, null], ["CD", "Dématérialisé", 1209163.0, null, null, null], ["\nMATRICULE OU N° D'ORDRE*\n\n*Remplissage obligatoire\n\n13 caractères maximum\nEn l'absence de matricule, utilisez une suite de nombre. Pour chaque matricule le nombre de caractères doit être égal au nombre de caractères du plus grand matricule.\nex : si le plus grand matricule est 999, pour le matricule 7, saisissez 007.\n\nex: 007\n", "\nNOM DU BENEFICIAIRE*\n\n*Remplissage obligatoire\n\n38 caractères maximum\nNe doit pas contenir de chiffres.\n\n\n\n\n\nex: DUPONT\n", "\nPRENOM DU BENEFICIAIRE*\n\n*Remplissage obligatoire\n\n38 caractères maximum\nNe doit pas contenir de chiffres.\n\n\n\n\n\nex: Caroline\n", "\nNUMERO DE TELEPHONE MOBILE*\n\n*Remplissage obligatoire\n\nDoit respecter les conditions suivantes : numéro de portable uniquement, numéro français uniquement, format 06 ou 07 uniquement, pas de format type +33.\n\n\n\nex : 0606060606", "\nEMAIL DU BENEFICIAIRE*\n\n*Remplissage obligatoire\n\nDoit respecter le format indiqué en exemple ci-dessous.\n\n\n\n\n\n\nex : beneficiaire@gmail.com", "\nMONTANT DE LA DOTATION*\n\n*Remplissage obligatoire\n\nDoit respecter les conditions suivantes : 20 euros minimum, et par multiple de 10, ne pas insérer le symbole € dans les cellules.\n\n\n\nex : 30"]], "merged": ["A1:C1"], "widths": [47.109375, 46.109375, 44.5546875, 47.44140625, 60.0, 42.5546875, 11.44140625, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0]}, "site": {"sheet": "Envoi sur site", "rows": [["Ne pas modifier les cellules ci-dessous", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], ["CV", "SITE", 1209163.0, null, null, null, null, null, null, null, null, null, "Renseignez au moins une de ces 4 colonnes", null, null, null], ["\nNOM DE L'ADRESSE DE LIVRAISON*\n\n\n*Remplissage obligatoire\n\n38 caractères maximum. \n\nDoit correspondre à un nom d'adresse créée dans votre espace client, à retrouver dans l'onglet \"Mes adresses de livraison\".\n\nNe pas écrire d'adresse postale complète.\n\nex:  000, ADRESSE PRINCIPALE\n", "\nSERVICE DU BENEFICIAIRE\n\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex: Service client\n", "\nMATRICULE OU N° D'ORDRE*\n\n\n*Remplissage obligatoire\n\n13 caractères maximum\nEn l'absence de matricule, utilisez une suite de nombre.\nPour chaque matricule le nombre de caractères doit être égal au nombre de caractères du plus grand matricule.\nex : si le plus grand matricule est 999, pour le matricule 7, saisissez 007.\n\nex: 007\n", "\nNOM DU BENEFICIAIRE*\n\n\n*Remplissage obligatoire\n\n38 caractères maximum\nNe doit pas contenir de chiffres.\n\n\n\n\n\n\n\nex: DUPONT\n", "\nPRENOM DU BENEFICIAIRE\n\n\nRemplissage facultatif\n\n38 caractères maximum\nNe doit pas contenir de chiffres.\n\n\n\n\n\n\n\nex: Caroline\n", "\nN° APPARTEMENT, ETAGE\n\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex:  4ème étage\n", "\nN° ENTREE, BATIMENT, IMMEUBLE, PORTE, RESIDENCE\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex:  Résidence des Lilas\n", "\nN° ET VOIE\n\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex:  8 rue Auber\n", "\nLIEU DIT, BOITE POSTALE, TSA\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex:  BP210\n", "\nCODE POSTAL\n\n\nRemplissage facultatif\n\n10 caractères maximum\n\n\n\n\n\n\n\n\nex:  44000\n", "\nVILLE\n\n\nRemplissage facultatif\n\n\n10 caractères maximum\n\n\n\n\n\n\n\nex:  NANTES\n", "\nPAYS\n\n\nA remplir uniquement pour un envoi à l'étranger\n\nAllemagne, Andorre, Belgique, Espagne, Italie, Luxembourg, Monaco, Suisse. \n\n\n\n\n\nex:  BELGIQUE\n", "\nQUANTITE CHEQUE 10€\n\n\nRemplissage facultatif\n\n10 caractères (numérique)\n\n\n\n\n\n\n\n\nex:  5\n", "\n QUANTITE CHEQUE 20€\n\n\nRemplissage facultatif\n\n10 caractères (numérique)\n\n\n\n\n\n\n\n\nex:  5\n", "\n QUANTITE CHEQUE 25€\n\n\nRemplissage facultatif\n\n10 caractères (numérique)\n\n\n\n\n\n\n\n\nex:  5\n", "\n QUANTITE CHEQUE 50€\n\n\nRemplissage facultatif\n\n10 caractères (numérique)\n\n\n\n\n\n\n\n\nex:  5\n"]], "merged": ["A1:C1", "M2:P2"], "widths": [52.0, 33.33203125, 46.44140625, 35.0, 39.109375, 35.109375, 44.33203125, 31.88671875, 31.0, 30.44140625, 31.109375, 31.33203125, 30.109375, 13.0, 13.0, 13.0]}, "benef": {"sheet": "Envoi bénéficiaires", "rows": [["Ne pas modifier les cellules ci-dessous", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], ["CV", "Bénéficiaire", 1209163.0, null, "Renseignez au moins une de ces 3 colonnes", null, null, null, null, null, null, null, "Renseignez au moins une de ces 4 colonnes", null, null, null], ["\nMATRICULE OU N° D'ORDRE*\n\n\n*Remplissage obligatoire\n\n13 caractères maximum\nEn l'absence de matricule, utilisez une suite de nombre.\nPour chaque matricule le nombre de caractères doit être égal au nombre de caractères du plus grand matricule.\nex : si le plus grand matricule est 999, pour le matricule 7, saisissez 007.\n\nex: 007\n", "\nNOM DU BENEFICIAIRE*\n\n\n*Remplissage obligatoire\n\n38 caractères maximum\nNe doit pas contenir de chiffres.\n\n\n\n\n\n\n\nex: DUPONT\n", "\nPRENOM DU BENEFICIAIRE*\n\n\n*Remplissage obligatoire\n\n38 caractères maximum\nNe doit pas contenir de chiffres.\n\n\n\n\n\n\n\nex: Caroline\n", "\nN° APPARTEMENT, ETAGE\n\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex:  4ème étage\n", "\nN° ENTREE, BATIMENT, IMMEUBLE, PORTE, RESIDENCE\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex:  Résidence des Lilas\n", "\nN° ET VOIE\n\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex:  8 rue Auber\n", "\nLIEU DIT, BOITE POSTALE, TSA\n\nRemplissage facultatif\n\n38 caractères maximum\n\n\n\n\n\n\n\n\nex:  BP210\n", "\nCODE POSTAL*\n\n\n*Remplissage obligatoire\n\n10 caractères maximum\n\n\n\n\n\n\n\n\nex:  44000\n", "\nVILLE*\n\n\n*Remplissage obligatoire\n\n10 caractères maximum\n\n\n\n\n\n\n\n\nex:  NANTES\n", "\nPAYS\n\n\nA remplir uniquement pour un envoi à l'étranger\n\nAllemagne, Andorre, Belgique, Espagne, Italie, Luxembourg, Monaco, Suisse. \n\nNB : Tous les envois à l'étranger doivent être réalisés en courrier simple.\n\nex:  BELGIQUE\n", "\nTYPE D'EXPEDITION*\n\n\n*Remplissage obligatoire avec une de ces valeurs à l'identique :\n\nRECOMMANDE AR R3\nRECOMMANDE AR R2\nRECOMMANDE AR R1\nRECOMMANDE SIMPLE R3\nRECOMMANDE SIMPLE R2\nRECOMMANDE SIMPLE R1\nCOURRIER SIMPLE\nLETTRE SUIVIE\n\nex:  RECOMMANDE SIMPLE R2\n", "\nNOM DE L'ADRESSE DE RETOUR*\n\n\n*Remplissage obligatoire\n\n38 caractères maximum. \n\nDoit correspondre à un nom d'adresse créée dans votre espace client, à retrouver dans l'onglet \"Mes adresses de livraison\" du présent fichier.\n\nNe pas écrire d'adresse postale complète.\n\n\nex:  000, ADRESSE PRINCIPALE\n", "\nQUANTITE CHEQUE 10€\n\n\nRemplissage facultatif\n\n10 caractères (numérique)\n\n\n\n\n\n\n\n\nex:  5\n", "\n QUANTITE CHEQUE 20€\n\n\nRemplissage facultatif\n\n10 caractères (numérique)\n\n\n\n\n\n\n\n\nex:  5\n", "\n QUANTITE CHEQUE 25€\n\n\nRemplissage facultatif\n\n10 caractères (numérique)\n\n\n\n\n\n\n\n\nex:  5\n", "\n QUANTITE CHEQUE 50€\n\n\nRemplissage facultatif\n\n10 caractères (numérique)\n\n\n\n\n\n\n\n\nex:  5\n"]], "merged": ["A1:C1", "E2:G2", "M2:P2"], "widths": [42.44140625, 34.6640625, 40.44140625, 33.0, 44.109375, 40.6640625, 27.5546875, 29.33203125, 30.109375, 35.33203125, 72.5546875, 49.0, 30.44140625, 13.0, 13.0, 13.0]}};
+  var CVC = { an: null, deja: false, ref: '' };
+  function cvcCfg() { var c = cfg(); c.cvCmd = c.cvCmd || {}; var C = c.cvCmd; if (!C.client) C.client = '1209163'; if (!C.site) C.site = '000'; if (!C.retour) C.retour = '000'; if (!C.exp) C.exp = 'RECOMMANDE AR R3'; return C; }
+  function cvcAns() { var o = {}; (db.chequesVacances || []).forEach(function (c) { try { o[cvDossierYear(c)] = 1; } catch (e) { } }); return Object.keys(o).map(Number).sort(); }
+  function cvcAnDefaut() { var a = cvcAns(), y = new Date().getFullYear(); return a.indexOf(y) >= 0 ? y : (a.length ? a[a.length - 1] : y); }
+  function cvcSansAcc(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function cvcTel(t) { var d = String(t || '').replace(/[^\d+]/g, ''); if (/^\+33/.test(d)) d = '0' + d.slice(3); if (/^0033/.test(d)) d = '0' + d.slice(4); return d; }
+  // Adresse sur une ligne → { voie, cp, ville } (ex. « 8 rue Auber, 88510 Éloyes »)
+  function cvcAdr(a) {
+    var s = String(a || '').replace(/\s+/g, ' ').replace(/,?\s*France\s*$/i, '').trim(), m = /^(.*?)[,\s]+(\d{5})\s*,?\s*([^\d,][^,]*)$/.exec(s);
+    if (!m) { m = /^(\d{5})\s+([^,]+?)\s*,\s*(.+)$/.exec(s); if (m) return { voie: m[3].trim(), cp: m[1], ville: m[2].trim().toUpperCase() }; return null; }
+    return { voie: m[1].replace(/[,\s]+$/, '').trim(), cp: m[2], ville: m[3].trim().toUpperCase() };
+  }
+  function cvcQte(A) { A = Math.round(Number(A) || 0); if (A <= 0) return null; if (A % 10 === 0) return { q10: A / 10, q25: 0 }; if (A % 5 === 0 && A >= 25) return { q10: (A - 25) / 10, q25: 1 }; return null; }
+  function cvcEmp(c) { return (db.employees || []).filter(function (e) { return String(e.id) === String(c.employeeId); })[0] || null; }
+  function cvcData() {
+    var an = CVC.an || cvcAnDefaut(), L = (db.chequesVacances || []).filter(function (c) { try { return cvDossierYear(c) === an; } catch (e) { return false; } });
+    var R = { an: an, swile: [], connect: [], site: [], benef: [], pb: [], impayes: [], deja: 0, tot: { swile: 0, connect: 0, site: 0, benef: 0 } };
+    L.forEach(function (c) {
+      var e = cvcEmp(c), n = e ? String(e.lastname || '').toUpperCase().trim() : '?', p = e ? String(e.firstname || '').trim() : '', qui = (n + ' ' + p).trim(), f = c.formats || {};
+      if (!cvIsFullyPaid(c)) { R.impayes.push({ c: c, qui: qui, reste: cvRemainingAmount(c), tot: c.totalValue || 0 }); return; }
+      if (c.cvCmd && !CVC.deja) { R.deja++; return; }
+      var pbs = [], add = function (t) { pbs.push(t); };
+      if (!e) { R.pb.push({ qui: 'Dossier sans salarié', t: ['salarié introuvable'] }); return; }
+      if (/\d/.test(n + p)) add('chiffre dans le nom ou le prénom');
+      if (n.length > 38 || p.length > 38) add('nom ou prénom de plus de 38 caractères');
+      var mail = String(e.email || '').trim(), sw = Number(f.swile) || 0, co = Number(f.connect) || 0, pa = Number(f.paper) || 0;
+      if (sw > 0) { if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(mail)) add('Swile : e-mail manquant ou invalide'); R.swile.push({ n: n, p: p, mail: mail, m: sw, c: c }); R.tot.swile += sw; }
+      if (co > 0) { var tel = cvcTel(e.phone || e.mobile || ''); if (!/^0[67]\d{8}$/.test(tel)) add('Connect : il faut un portable en 06 ou 07 (fiche : « ' + (e.phone || 'vide') + ' »)'); if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(mail)) add('Connect : e-mail manquant ou invalide'); if (co < 20 || co % 10) add('Connect : ' + eur(co) + ' n\'est pas un multiple de 10 € (20 € minimum)'); R.connect.push({ n: n, p: p, tel: tel, mail: mail, m: co, c: c }); R.tot.connect += co; }
+      if (pa > 0) {
+        var q = cvcQte(pa); if (!q) add('Papier : ' + eur(pa) + ' ne se fait pas en chèques de 10 € et 25 €');
+        if (c.homeDelivery) { var ad = cvcAdr(e.address); if (!ad) add('Courrier : adresse à compléter ou à corriger dans la fiche (« ' + (e.address || 'vide') + ' »)'); else { if (ad.voie.length > 38) add('Courrier : « ' + ad.voie + ' » dépasse 38 caractères'); if (ad.ville.length > 10) add('Courrier : la ville « ' + ad.ville + ' » dépasse 10 caractères (limite du modèle, à vérifier avec le prestataire)'); }
+          R.benef.push({ n: n, p: p, ad: ad || { voie: '', cp: '', ville: '' }, q: q || { q10: 0, q25: 0 }, m: pa, c: c }); R.tot.benef += pa; }
+        else { R.site.push({ n: n, p: p, q: q || { q10: 0, q25: 0 }, m: pa, c: c }); R.tot.site += pa; }
+      }
+      if (pbs.length) R.pb.push({ qui: qui, t: pbs, id: e.id });
+    });
+    var tri = function (a, b) { return (a.n + ' ' + a.p).localeCompare(b.n + ' ' + b.p, 'fr'); };
+    ['swile', 'connect', 'site', 'benef'].forEach(function (k) { R[k].sort(tri); });
+    R.impayes.sort(function (a, b) { return a.qui.localeCompare(b.qui, 'fr'); });
+    return R;
+  }
+  function cvcMat(i, n) { var w = Math.max(3, String(n).length); return String(i + 1).padStart(w, '0'); }
+  function cvcFeuille(k, lignes) {
+    var H = CVC_H[k], C = cvcCfg(), rows = H.rows.map(function (r) { return r.slice(); });
+    rows[1][2] = /^\d+$/.test(C.client) ? Number(C.client) : C.client;
+    var ws = XLSX.utils.aoa_to_sheet(rows.concat(lignes));
+    ws['!merges'] = H.merged.map(function (m) { return XLSX.utils.decode_range(m); });
+    ws['!cols'] = H.widths.slice(0, rows[2].length).map(function (w) { return { wch: Math.round(w || 14) }; });
+    // textes forcés (matricules 001, codes postaux, téléphones)
+    Object.keys(ws).forEach(function (a) { if (a[0] === '!') return; var c = ws[a], r = XLSX.utils.decode_cell(a).r; if (r >= 3 && c.t === 's') c.z = '@'; });
+    var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, H.sheet); return wb;
+  }
+  function cvcNomFichier(k, R) { var t = { swile: 'Swile vacances', connect: 'Cheque Vacances Connect', site: 'Cheque Vacances papier - sur site', benef: 'Cheque Vacances papier - courrier' }[k]; return 'Commande ' + t + ' ' + (R.an + 1) + ' (' + today() + ')'; }
+  function cvcTelecharger(k, R) {
+    var C = cvcCfg(), L = R[k]; if (!L.length) return false;
+    if (k === 'swile') {
+      var csv = '﻿nom;prenom;email\r\n' + L.map(function (x) { return [x.n, x.p, x.mail].map(function (v) { v = String(v).replace(/[;\r\n]/g, ' '); return v; }).join(';'); }).join('\r\n');
+      var b = new Blob([csv], { type: 'text/csv;charset=utf-8' }), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = cvcNomFichier(k, R) + '.csv'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000); return true;
+    }
+    var lignes;
+    if (k === 'connect') lignes = L.map(function (x, i) { return [cvcMat(i, L.length), x.n, x.p, x.tel, x.mail, String(Math.round(x.m))]; });
+    else if (k === 'site') lignes = L.map(function (x, i) { return [C.site, '', cvcMat(i, L.length), x.n, x.p, '', '', '', '', '', '', '', x.q.q10 || '', '', x.q.q25 || '', '']; });
+    else lignes = L.map(function (x, i) { return [cvcMat(i, L.length), x.n, x.p, '', '', x.ad.voie, '', x.ad.cp, x.ad.ville, '', C.exp, C.retour, x.q.q10 || '', '', x.q.q25 || '', '']; });
+    XLSX.writeFile(cvcFeuille(k, lignes), cvcNomFichier(k, R) + '.xlsx'); return true;
+  }
+  window.cseCvc = async function (act, v) {
+    if (act === 'an') { CVC.an = Number(v); return cvcRe(); }
+    if (act === 'deja') { CVC.deja = !!v; return cvcRe(); }
+    if (act === 'cfg') { cvcCfg()[v[0]] = String(v[1] || '').trim(); save(); return; }
+    if (act === 'fermer') { var o = $('v12-cvc'); if (o) o.remove(); return; }
+    var R = cvcData();
+    if (act === 'dl' || act === 'tout') {
+      try { await cseLib('xlsx'); } catch (e) { say('Outil Excel indisponible : ' + e.message, 'error'); return; }
+      var ks = act === 'tout' ? ['swile', 'connect', 'site', 'benef'] : [v], n = 0;
+      for (var i = 0; i < ks.length; i++) { if (cvcTelecharger(ks[i], R)) n++; await new Promise(function (r) { setTimeout(r, 600); }); }
+      say(n ? '📥 ' + n + ' fichier(s) téléchargé(s). C\'est un essai : rien n\'est marqué comme commandé.' : 'Aucun dossier à commander.', n ? 'success' : 'info'); return;
+    }
+    if (act === 'commander') {
+      var L = [].concat(R.swile, R.connect, R.site, R.benef).map(function (x) { return x.c; }), u = []; L.forEach(function (c) { if (u.indexOf(c) < 0) u.push(c); });
+      if (!u.length) { say('Aucun dossier à marquer.', 'info'); return; }
+      if (R.pb.length && !(await uiConfirm(R.pb.length + ' dossier(s) ont encore un problème signalé. Marquer quand même ?', { title: 'Problèmes restants', okLabel: 'Marquer quand même' }))) return;
+      if (!(await uiConfirm('Marquer ' + u.length + ' dossier(s) comme commandés le ' + fd(today()) + ' ? Ils ne seront plus dans les prochaines commandes (annulable ensuite).', { title: 'Commande passée', okLabel: 'Oui, c\'est commandé' }))) return;
+      var ref = 'cmd-' + uid(); u.forEach(function (c) { c.cvCmd = { le: today(), ref: ref }; });
+      try { logAction('Modification', 'cv', 'Commande chèques vacances : ' + u.length + ' dossier(s) marqués commandés'); } catch (e) { }
+      save(); say('✔ ' + u.length + ' dossier(s) marqués commandés.', 'success'); return cvcRe();
+    }
+    if (act === 'annuler') {
+      var L2 = (db.chequesVacances || []).filter(function (c) { return c.cvCmd && c.cvCmd.ref === v; });
+      if (!(await uiConfirm('Annuler la commande du ' + fd(L2[0] && L2[0].cvCmd.le) + ' (' + L2.length + ' dossier(s)) ? Ils reviendront dans la prochaine commande.', { title: 'Annuler la commande', okLabel: 'Annuler la commande', tone: 'danger' }))) return;
+      L2.forEach(function (c) { delete c.cvCmd; }); try { logAction('Modification', 'cv', 'Commande chèques vacances annulée (' + L2.length + ' dossier(s))'); } catch (e) { } save(); return cvcRe();
+    }
+  };
+  function cvcHtml() {
+    var R = cvcData(), C = cvcCfg(), ans = cvcAns(); if (ans.indexOf(R.an) < 0) ans.push(R.an);
+    var bloc = function (k, ic, t, L, tot, det) { return '<div class="border border-slate-200 rounded-xl p-3 flex flex-wrap items-center gap-2"><span class="text-xl">' + ic + '</span><div class="flex-1 min-w-[12rem]"><b class="text-sm">' + t + '</b><div class="text-xs text-slate-500">' + L.length + ' salarié(s) · ' + eur(tot) + (det ? ' · ' + det : '') + '</div></div><button type="button" class="' + BTN + '"' + (L.length ? '' : ' disabled') + ' onclick="cseCvc(\'dl\',\'' + k + '\')"><i class="fa-solid fa-download"></i> Télécharger</button></div>'; };
+    var q = function (L) { var a = 0, b = 0; L.forEach(function (x) { a += x.q.q10; b += x.q.q25; }); return a + ' × 10 €' + (b ? ' + ' + b + ' × 25 €' : ''); };
+    var cmds = {}; (db.chequesVacances || []).forEach(function (c) { try { if (c.cvCmd && cvDossierYear(c) === R.an) { var k = c.cvCmd.ref; cmds[k] = cmds[k] || { le: c.cvCmd.le, n: 0 }; cmds[k].n++; } } catch (e) { } });
+    var h = '<div class="flex flex-wrap items-center gap-2"><label class="text-xs text-slate-600">Dossiers <select class="p-1.5 border border-slate-300 rounded-lg text-xs" onchange="cseCvc(\'an\',this.value)">' + ans.map(function (a) { return '<option value="' + a + '"' + (a === R.an ? ' selected' : '') + '>créés en ' + a + ' (chèques ' + (a + 1) + ')</option>'; }).join('') + '</select></label>'
+      + '<label class="text-xs text-slate-600 flex items-center gap-1"><input type="checkbox"' + (CVC.deja ? ' checked' : '') + ' onchange="cseCvc(\'deja\',this.checked)"> Reprendre aussi ceux déjà commandés</label></div>'
+      + '<p class="text-xs text-slate-500">Seulement les dossiers <b>entièrement payés</b>' + (R.deja ? ' et pas encore commandés (' + R.deja + ' déjà commandé(s))' : '') + '. Les fichiers suivent les modèles des prestataires ; télécharger ne marque rien : vous pouvez essayer autant de fois que vous voulez.</p>'
+      + bloc('swile', '🟣', 'Swile vacances (CSV : nom, prénom, e-mail)', R.swile, R.tot.swile)
+      + bloc('connect', '📱', 'Chèque-Vacances Connect', R.connect, R.tot.connect)
+      + bloc('site', '🏭', 'Papier : envoi sur site (' + E(C.site) + ')', R.site, R.tot.site, q(R.site))
+      + bloc('benef', '✉️', 'Papier : envoi par courrier (' + E(C.exp) + ')', R.benef, R.tot.benef, q(R.benef))
+      + '<div class="flex flex-wrap gap-2"><button type="button" class="' + BTNP + '" onclick="cseCvc(\'tout\')"><i class="fa-solid fa-file-arrow-down"></i> Télécharger les 4 fichiers (essai)</button><button type="button" class="' + BTN + '" onclick="cseCvc(\'commander\')"><i class="fa-solid fa-circle-check text-emerald-600"></i> C\'est commandé : marquer ces dossiers</button></div>';
+    if (R.pb.length) h += '<div class="border border-amber-300 bg-amber-50 rounded-xl p-3"><b class="text-sm text-amber-900">⚠ À vérifier (' + R.pb.length + ')</b>' + R.pb.map(function (x) { return '<div class="text-xs py-1 border-t border-amber-200"><b>' + E(x.qui) + '</b>' + (x.id != null ? ' <button type="button" class="underline text-indigo-700" onclick="cseCvc(\'fermer\');try{editEmployee(' + JSON.stringify(x.id).replace(/"/g, '&quot;') + ')}catch(e){}">corriger la fiche</button>' : '') + '<br>' + x.t.map(E).join('<br>') + '</div>'; }).join('') + '</div>';
+    else h += '<p class="text-xs text-emerald-700">✔ Aucun problème détecté sur les dossiers à commander.</p>';
+    h += '<details class="border border-slate-200 rounded-xl p-3"' + (R.impayes.length ? ' open' : '') + '><summary class="text-sm font-bold cursor-pointer">⏳ Pas encore payés (' + R.impayes.length + ') · reste ' + eur(R.impayes.reduce(function (s, x) { return s + x.reste; }, 0)) + '</summary>'
+      + (R.impayes.length ? R.impayes.map(function (x) { return '<div class="flex justify-between gap-2 text-xs py-1 border-t border-slate-100"><span>' + E(x.qui) + '</span><span class="text-rose-700 font-semibold">reste ' + eur(x.reste) + ' sur ' + eur(x.tot) + '</span></div>'; }).join('') : '<p class="text-xs text-slate-400">Tout le monde a payé.</p>') + '</details>';
+    var ks = Object.keys(cmds); if (ks.length) h += '<div class="border border-slate-200 rounded-xl p-3"><b class="text-sm">Commandes déjà marquées</b>' + ks.map(function (k) { return '<div class="flex items-center gap-2 text-xs py-1 border-t border-slate-100"><span class="flex-1">Le ' + fd(cmds[k].le) + ' · ' + cmds[k].n + ' dossier(s)</span><button type="button" class="' + BTN + '" onclick="cseCvc(\'annuler\',\'' + E(k) + '\')">Annuler</button></div>'; }).join('') + '</div>';
+    h += '<details class="text-xs text-slate-600"><summary class="cursor-pointer">Réglages des fichiers</summary><div class="grid sm:grid-cols-2 gap-2 mt-2">'
+      + [['client', 'N° client (haut des modèles)'], ['site', 'Nom de l\'adresse de livraison sur site'], ['retour', 'Nom de l\'adresse de retour (courrier)'], ['exp', 'Type d\'expédition (courrier)']].map(function (f) { return '<label>' + f[1] + '<input class="' + INP + '" value="' + E(C[f[0]]) + '" onchange="cseCvc(\'cfg\',[\'' + f[0] + '\',this.value])"></label>'; }).join('') + '</div></details>';
+    return h;
+  }
+  function cvcRe() { var b = $('v12-cvc-b'); if (b) b.innerHTML = cvcHtml(); }
+  window.cseCvcOuvrir = function () {
+    var o = $('v12-cvc'); if (o) o.remove(); CVC.an = CVC.an || cvcAnDefaut();
+    document.body.insertAdjacentHTML('beforeend', '<div id="v12-cvc" class="fixed inset-0 z-[80] bg-slate-900/50 flex items-start sm:items-center justify-center p-2 sm:p-6 overflow-y-auto" onclick="if(event.target===this)cseCvc(\'fermer\')"><div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl"><div class="flex items-center gap-2 p-4 border-b border-slate-200"><b class="flex-1 text-base">📦 Préparer les commandes de chèques vacances</b><button type="button" class="' + BTN + '" onclick="cseCvc(\'fermer\')">Fermer</button></div><div id="v12-cvc-b" class="p-4 space-y-3">' + cvcHtml() + '</div></div></div>');
+  };
+  function cvcBouton() { var b = document.querySelector('button[onclick="exportCVExcel()"]'); if (b && !$('v12-cvc-btn')) b.insertAdjacentHTML('afterend', '<button id="v12-cvc-btn" type="button" onclick="cseCvcOuvrir()" title="Fichiers de commande Swile, Connect et papier" class="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold rounded-xl text-xs transition flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-box text-amber-600"></i> Commandes</button>'); }
+  setTimeout(cvcBouton, 1500); setInterval(cvcBouton, 4000);
 
   // =====================================================================
   //  BRANCHEMENTS REGROUPÉS (rangement V.11.2) : chaque bloc ajoute sa part, dans l'ordre des versions.
