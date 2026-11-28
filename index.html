@@ -44,7 +44,7 @@
     <meta name="theme-color" content="#0f172a">
     <title>Portail & Gestion Intégrée CSE - Velin / DS Smith</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"p/vZfo7k328okdEB5m5dfQ==","iv":"qiqD5/MCThbwJOCm","rev":"boot","lastModified":"2026-11-27T23:59:24.695Z","by":"Michaël GROSJEAN","data":"SRTIYflNlabmHSkDFMhdhGKgDioiLGY+i6fZVDkQfFp6IWtM41JbCt+xIRFnRD/n/EDn7nblCC9wr1VyLTEcWA=="},"at":"2026-11-27T23:59:24.733Z"};</script>
+    <script id="cse-boot">window.CSE_BOOT={"gist":"c2a25e13c7a879d14b96623ce7ab5a9b","tok":{"cseEncrypted":1,"format":"AES-256-GCM / PBKDF2-SHA256","iter":250000,"salt":"pCSAenujFV3IuFxEHEEEYQ==","iv":"jwIU1s3jYM6xtlEx","rev":"boot","lastModified":"2026-11-28T09:16:57.654Z","by":"Michaël GROSJEAN","data":"YK9oCEdcD7T7oqvI3JtIQJq9XdmIDQhGveHg+UJSd8ZkMb1OWU1MFAiMoTMDCk26Ydt7Dhjnxd9TNiqWo0qKkQ=="},"at":"2026-11-28T09:16:57.707Z"};</script>
 
     
     <!-- Icônes Font Awesome et police Inter : intégrées au fichier -->
@@ -6981,7 +6981,7 @@ html.dark .st5-kpi.warn,html.dark .st5-kpi.bad,html.dark .st5-kpi.good{backgroun
         // une remise à zéro des données (perte de sauvegarde), sauf si explicitement retirés ou remplacés
         // dans "Paramètres" (auquel cas la valeur enregistrée dans db.config.signatures prévaut).
         // Version de l'application : fixe, non modifiable depuis l'interface.
-        const APP_VERSION = "V.11.8.2";
+        const APP_VERSION = "V.11.8.3";
         // Adresse d'expédition du CSE : rappelée à chaque ouverture de la messagerie.
         const CSE_SENDER_EMAIL = "cse.dssmith.velin@gmail.com";
 
@@ -21439,6 +21439,7 @@ Utilisez « Inscrire » dans la liste d'attente, sous le tableau des inscription
         //  NOUVEAUTÉS (historique des versions) — à compléter à chaque nouvelle version
         // =====================================================================
         const CHANGELOG = [
+            { v: 'V.11.8.3', date: '2026-11-28', items: ['« Ce qui change » : cocher « Ajouter toutes seules » lance tout de suite la recherche et ajoute les infos officielles des 2 derniers mois pas encore dans la liste (avant : seulement la semaine suivante, et pas celles déjà vues) ; l\'espace est republié aussitôt après un ajout.'] },
             { v: 'V.11.8.2', date: '2026-11-28', items: ['Les virements internes (Banque › Virement interne, transferts courant ↔ épargne) ne comptent plus dans « Mon CSE en chiffres » ni dans le bilan annuel ASC : ce ne sont ni des dépenses ni des recettes.'] },
             { v: 'V.11.8.1', date: '2026-11-28', items: ['Cinémas : liens AlloCiné du Palace (Épinal) et du Majestic (Remiremont) déjà remplis ; l\'espace ouvre les séances du jour.'] },
             { v: 'V.11.8', date: '2026-11-28', items: ['Espace : météo de l\'usine sur l\'accueil avec alerte chaleur / grand froid et rappel des droits ; jours fériés officiels (liste de l\'État) ; boutons « Voir le programme » des cinémas (Palace Épinal, Majestic Remiremont) dans Billets. « Ce qui change » : actualités Service-public.fr en plus. Réglages dans Paramètres › Espace salarié › « Infos pratiques et vie de l\'espace ». Nécessite le script Google v98.'] },
@@ -49460,9 +49461,10 @@ var qrcode = function() {
   window.cseV9Coche = function (i, on) { V9.coche[i] = !!on; };
   window.cseV9Ajouter = function () {
     var C = v9(), nv = []; (V9.L || []).forEach(function (it, i) { if (V9.coche[i] && !v9Deja(it)) nv.push(v9Item(it)); }); var n = nv.length; C.items = nv.concat(C.items || []);
-    V9.coche = {}; if (n) { C.maj = today(); save(); say('🆕 ' + n + ' info(s) ajoutée(s) à « Ce qui change ». Vérifiez puis publiez l\'espace.', 'success'); } v7Re();
+    V9.coche = {}; if (n) { C.maj = today(); save(); v9Pub(); say('🆕 ' + n + ' info(s) ajoutée(s) à « Ce qui change ». L\'espace est mis à jour.', 'success'); } v7Re();
   };
-  window.cseV9Set = function (k, v) { var A = v9().actus; A[k] = !!v; save(); v7Re(); };
+  window.cseV9Set = function (k, v) { var A = v9().actus; A[k] = !!v; save(); v7Re(); if (k === 'auto' && v) v9Tick(true); };
+  function v9Pub() { setTimeout(function () { try { if (window.cseEspacePublish) window.cseEspacePublish(true); } catch (e) { } }, 800); }
   function v9Html() {
     var A = v9().actus, L = V9.L;
     var h = '<div class="border-t border-slate-100 pt-2 space-y-2"><div class="flex flex-wrap items-center gap-2"><button type="button" class="' + BTNP + '" onclick="cseV9Actus(true)"><i class="fa-solid fa-rotate"></i> Chercher les dernières infos officielles</button><span class="text-[11px] text-slate-500">Sources : Code du travail numérique et Service-public.fr (actualités).' + (A.last ? ' Dernière recherche : ' + fd(A.last) + '.' : '') + '</span></div>'
@@ -49474,16 +49476,17 @@ var qrcode = function() {
     return h;
   }
   // Vérification de la semaine (et ajout automatique si choisi)
-  async function v9Tick() {
+  async function v9Tick(maintenant) {
     var C = v9(), A = C.actus; if (seed() || !window.__dbLoaded || !isCse() || !scriptOk() || (A.alerte === false && !A.auto)) return;
-    if (A.last && A.last > addD(today(), -7)) return;
+    if (!maintenant && A.last && A.last > addD(today(), -7)) return;
     try {
-      var j = await cseScriptPost('actus', {}), L = (j.items || []).filter(function (x) { return !A.vus[x.id] && (!x.date || x.date >= addD(today(), -60)); });
+      var j = await cseScriptPost('actus', maintenant ? { frais: true } : {}), L = (j.items || []).filter(function (x) { return (A.auto ? !v9Deja(x) : !A.vus[x.id]) && (!x.date || x.date >= addD(today(), -60)); });
       A.last = today(); L.forEach(function (x) { A.vus[x.id] = 1; });
-      if (A.auto && L.length) { var nv = L.filter(function (x) { return !v9Deja(x); }).map(v9Item); C.items = nv.concat(C.items || []).filter(function (x) { return !x.d || x.d >= addD(today(), -365); }).slice(0, 20); C.maj = today(); A.nouv = 0; if (nv.length) say('🆕 « Ce qui change » : ' + nv.length + ' nouvelle(s) info(s) officielle(s) ajoutée(s).', 'info'); }
+      if (A.auto && L.length) { var nv = L.filter(function (x) { return !v9Deja(x); }).map(v9Item); C.items = nv.concat(C.items || []).filter(function (x) { return !x.d || x.d >= addD(today(), -365); }).slice(0, 20); C.maj = today(); A.nouv = 0; if (nv.length) { v9Pub(); say('🆕 « Ce qui change » : ' + nv.length + ' nouvelle(s) info(s) officielle(s) ajoutée(s), espace mis à jour.', 'info'); } else if (maintenant) say('« Ce qui change » est déjà à jour : aucune nouvelle info officielle des 2 derniers mois.', 'info'); }
+      else if (maintenant && A.auto) say('« Ce qui change » est déjà à jour : aucune nouvelle info officielle des 2 derniers mois.', 'info');
       else A.nouv = (A.nouv || 0) + L.length;
-      save();
-    } catch (e) { }
+      save(); v7Re();
+    } catch (e) { if (maintenant) say('Recherche impossible : ' + (/inconnue/i.test(e.message) ? 'installez le script Google v98.' : e.message), 'error'); }
   }
   window.cseV9Ouvrir = function () { try { switchTab('settings'); settingsShowGroup('espace'); } catch (e) { } V7.open = 'chg'; v7Re(); setTimeout(function () { var c = $('v117-card'); if (c) c.scrollIntoView({ behavior: 'smooth' }); cseV9Actus(false); }, 300); };
   window.cseV9Vu = function () { var A = v9().actus, t = today(); A.nouv = 0; A.rappel = t.slice(0, 4) + (t.slice(5, 7) >= '07' ? 'b' : 'a'); save(); };
